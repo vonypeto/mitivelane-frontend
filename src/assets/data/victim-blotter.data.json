@@ -1,0 +1,15 @@
+[
+    {
+        "victim_id" : 1,
+        "blotter_id" : 1,
+        "barangay_id" : 1002,
+        "victimname": "Gian Mediavillo"
+    },
+    {
+        "victim_id" : 12,
+        "blotter_id" : 1,
+        "barangay_id" : 1002,
+
+        "victimname": "Rojhon Mediavillo"
+    }
+]

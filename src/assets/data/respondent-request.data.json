@@ -1,0 +1,15 @@
+[
+    {
+        "respondent_id" : 1,
+        "blotter_id" : 1,
+        "barangay_id" : 1002,
+        "respondentname": "Gian Mediavillo"
+    },
+    {
+        "respondent_id" : 12,
+        "blotter_id" : 1,
+        "barangay_id" : 1002,
+
+        "respondentname": "Rojhon Mediavillo"
+    }
+]

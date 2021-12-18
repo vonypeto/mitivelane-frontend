@@ -1,0 +1,263 @@
+import  {React, useState, useEffect} from "react";
+import {  Divider,  Col , Card, Avatar, Dropdown, Table, Menu, Tag } from 'antd';
+import BlotterRole from "assets/data/blotter-role.json"
+import Flex from 'components/shared-components/Flex'
+
+import { 
+    FileExcelOutlined, 
+    PrinterOutlined, 
+    EllipsisOutlined, 
+    ReloadOutlined ,
+    EyeOutlined,
+    DeleteOutlined
+   
+} from '@ant-design/icons';
+import utils from 'utils';
+
+import EllipsisDropdown from 'components/shared-components/EllipsisDropdown';
+
+
+	
+const viewDetails = row => {
+}
+
+const deleteRow = row => {
+   
+}
+
+const dropdownMenu = row => (
+    <Menu>
+        <Menu.Item onClick={() => viewDetails(row)}>
+            <Flex alignItems="center">
+                <EyeOutlined />
+                <span className="ml-2">View</span>
+            </Flex>
+        </Menu.Item>
+      
+    </Menu>
+);
+
+const AccountData = [
+    {
+        id: '#5331',
+        resident_id: 1,
+        applicant: 'Clayton Bates',
+        date: '8 May 2020',
+        classification: 'Rape',
+        status: 'Connected',
+        avatarColor: '#04d182'
+    },
+    {
+        id: '#5332',
+        resident_id: 2,
+
+        applicant: 'Gabriel Frazier',
+        date: '6 May 2020',
+        classification: 'Baho Gian',
+        status: 'Disconnected',
+        avatarColor: '#fa8c16'
+    },
+    {
+        id: '#5333',
+        resident_id: 4,
+
+        applicant: 'Debra Hamilton',
+        date: '1 May 2020',
+        classification: 'Attack',
+        status: 'Connected',
+        avatarColor: '#1890ff'
+    },
+    {
+        id: '#5334',
+        resident_id: 6,
+
+        applicant: 'Stacey Ward',
+        date: '28 April 2020',
+        classification: 'Molested',
+        status: 'Connected',
+        avatarColor: '#ffc542'
+    },
+    {
+        id: '#5335',
+        applicant: 'Troy Alexander',
+        resident_id: 3,
+        date: '28 April 2020',
+        classification: 'test',
+        status: 'Disconnected',
+        avatarColor: '#ff6b72'
+    },
+];
+
+
+
+const AccountList = (
+    <Menu>
+      <Menu.Item key="0">
+        <span>
+          <div className="d-flex align-items-center">
+            <ReloadOutlined />
+            <span className="ml-2">Refresh</span>
+          </div>
+        </span>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <span>
+          <div className="d-flex align-items-center">
+            <PrinterOutlined />
+            <span className="ml-2">Print</span>
+          </div>
+        </span>
+      </Menu.Item>
+      <Menu.Item key="12">
+        <span>
+          <div className="d-flex align-items-center">
+            <FileExcelOutlined />
+            <span className="ml-2">Export</span>
+          </div>
+        </span>
+      </Menu.Item>
+    </Menu>
+  );
+
+const cardDropdown = (menu) => (
+
+    
+    <Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+      <a href="/#" className="text-gray font-size-lg" onClick={e => e.preventDefault()}>
+        <EllipsisOutlined />
+      </a>
+    </Dropdown>
+  )
+
+
+
+  const columns = [
+    {
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+      render: (_,rolelist) => (
+        <div className="text-left">
+        <Tag className="mr-0" color={rolelist.role === 'Reporter' ? 'cyan' : rolelist.role === 'Assailant' ? 'volcano' : 'volcano'}>{rolelist.role}</Tag>
+      </div>
+      ),
+    },
+    {
+      title: 'Classification',
+      dataIndex: 'classification',
+      key: 'classification',
+
+
+    },
+    {
+        title: 'Date Occurred',
+        dataIndex: 'date_incident',
+        key: 'date_incident',
+  
+  
+    },
+    {
+          title: 'Location Occurred',
+          dataIndex: 'incident_location',
+          key: 'incident_location',
+    
+    
+    },
+    {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            render: (_,statuslist) => (
+                <div className="text-left">
+                <Tag className="mr-0" color={statuslist.status === 'Ongoing' ? 'cyan' : statuslist.status === 'Settled' ? 'blue' : 'volcano'}>{statuslist.status}</Tag>
+              </div>
+            )
+      
+      
+    },
+      
+    {
+        title: () => <div className="text-right">Action</div>,
+        dataIndex: 'actions',
+        render: (_, elm) => (
+            <div className="text-right">
+                <EllipsisDropdown menu={dropdownMenu(elm)}/>
+            </div>
+        )
+    }
+  ];
+  
+
+
+
+//   "blotter_id": 21,
+//   "resident_id": 1,
+//   "role": "Reporter",
+//   "classification": "Rape",
+//   "status": "Ongoing",
+//   "date_incident": "08/04/2021",
+//   "incident_location": "Baras",
+//   "date_reported": "08/05/2021"
+  const data = [
+    {
+      key: '1',
+      name: 'John Brown',
+      age: 32,
+      address: 'New York No. 1 Lake Park',
+      tags: ['nice', 'developer'],
+    },
+    {
+      key: '2',
+      name: 'Jim Green',
+      age: 42,
+      address: 'London No. 1 Lake Park',
+      tags: ['loser'],
+    },
+    {
+      key: '3',
+      name: 'Joe Black',
+      age: 32,
+      address: 'Sidney No. 1 Lake Park',
+      tags: ['cool', 'teacher'],
+    },
+  ];
+
+
+
+
+
+  const BlotterField = (props) => {
+
+    const [list, setList] = useState(BlotterRole)
+    const key = 'resident_id'
+    const { param } = props
+  
+  
+  
+    const [accountData] = useState(AccountData)
+
+	return (
+        <Col key="1" xs={24} sm={24} md={24} lg={24}>
+        <Card title="Connect Account" extra={cardDropdown(list)}>		
+         
+          
+        
+			
+            <Table columns={columns}
+                  className="no-border-last" 
+                   dataSource={utils.filterArray(BlotterRole, key, param)}
+                   rowKey='blotter_role_id'
+                   pagination="true" 
+                   />
+		</Card>
+        </Col>
+
+	)
+}
+
+
+
+
+
+
+export default BlotterField

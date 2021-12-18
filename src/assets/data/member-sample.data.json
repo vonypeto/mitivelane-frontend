@@ -1,0 +1,24 @@
+[
+    {
+        "member_id": 1,
+        "barangay_id": 1002,
+        "member_name": "John Cena",
+        "email": "johncena@gmail.com",
+        "permission": "Administrator",
+        "avatarColor": "04d182",
+        "status": "Active"
+        
+        
+    },
+    {
+        "member_id": 2,
+        "barangay_id": 1002,
+        "member_name": "John Cena",
+        "email": "johncena@gmail.com",
+        "permission": "Administrator",
+        "avatarColor": "04d182",
+        "status": "Pending"
+     
+    }
+    
+]

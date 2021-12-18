@@ -1,0 +1,384 @@
+
+
+import React, {useState} from 'react'
+import { Col , Card, Table, Tooltip,Select, Input, Button, Menu ,Space, Row, Badge, Tag , List} from 'antd';
+import BlotterListData from "assets/data/blotter.data.json"
+import DonutChartWidget from 'components/shared-components/DonutChartWidget'
+import NumberFormat from 'react-number-format';
+import { EyeOutlined,EllipsisOutlined, DeleteOutlined, SearchOutlined, PlusCircleOutlined,  FileExcelOutlined, 
+PrinterOutlined, 
+ReloadOutlined  } from '@ant-design/icons';
+import EllipsisDropdown from 'components/shared-components/EllipsisDropdown';
+import Flex from 'components/shared-components/Flex'
+import { useHistory } from "react-router-dom";
+import utils from 'utils'
+
+import { Dropdown } from 'antd';
+import { 
+sessionData, 
+sessionLabels, 
+conbinedSessionData,
+sessionColor,
+BlotterReportMost
+} from './BlotterData'
+const { Option } = Select
+const { users, userProfileVisible, selectedUser } = this.state;
+
+const categories = ['Scheduled', 'Unscheduled', 'Settled', 'Unsettled']
+const BlotterRecord   = (props) => {
+const {param_url} = props;
+console.log("List Second Loop: "+ param_url);
+let history = useHistory();
+const [list, setList] = useState(BlotterListData)
+const [selectedRows, setSelectedRows] = useState([])
+const [selectedRowKeys, setSelectedRowKeys] = useState([])
+
+// const showUserProfile = UserID => {
+//    this.setState({
+//       userProfileVisible: true,
+//       selectedUser: UserID
+//    });
+// };
+
+// const closeUserProfile = () => {
+//    this.setState({
+//       userProfileVisible: false,
+//       selectedUser: null
+//  });
+// }
+const dropdownMenu = row => (
+<Menu>
+   <Menu.Item onClick={() =>
+      viewDetails(row)}>
+      <Flex alignItems="center">
+         <EyeOutlined />
+         <span className="ml-2">View Details</span>
+      </Flex>
+   </Menu.Item>
+   <Menu.Item onClick={() =>
+      deleteRow(row)}>
+      <Flex alignItems="center">
+         <DeleteOutlined />
+         <span className="ml-2">{selectedRows.length > 0 ? `Delete (${selectedRows.length})` : 'Delete'}</span>
+      </Flex>
+   </Menu.Item>
+</Menu>
+);
+
+const AddResident = () => {
+history.push(`/app/1002/residents/resident-information/add`)
+}
+const viewDetails = row => {
+history.push(`/app/1002/residents/resident-information/${row.resident_id}`)
+
+}
+const deleteRow = row => {
+const objKey = 'resident_id'
+let data = list
+if(selectedRows.length > 1) {
+selectedRows.forEach(elm => {
+
+
+data = utils.deleteArrayRow(data, objKey, elm.resident_id)
+setList(data)
+setSelectedRows([])
+})
+
+
+} else {
+data = utils.deleteArrayRow(data, objKey, row.resident_id)
+setList(data)
+}
+}
+
+
+
+// COLUMNS
+const tableColumns = [
+{
+title: 'ID',
+dataIndex: 'blotter_id',
+sorter: (a, b) => utils.antdTableSorter(a, b, 'blotter_id')
+},
+{
+title: 'Actions',
+dataIndex: 'actions',
+render: (_, elm) => (
+<div className="text-right">
+   <EllipsisDropdown menu={dropdownMenu(elm)}/>
+</div>
+)
+}
+];
+
+
+const BlotterRequest = [
+   {
+   title: 'ID',
+   dataIndex: 'blotter_id',
+   sorter: (a, b) => utils.antdTableSorter(a, b, 'blotter_id')
+   },
+   {
+   title: 'Actions',
+   dataIndex: 'actions',
+   render: (_, elm) => (
+   <div className="text-right">
+          <div className="text-right d-flex justify-content-end">
+            <Tooltip title="View">
+               {console.log(elm)}
+               <Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => {}} size="small"/>
+            </Tooltip>
+            <Tooltip title="Delete">
+               <Button danger icon={<DeleteOutlined />} onClick={()=> {}} size="small"/>
+            </Tooltip>
+      </div>
+   </div>
+   )
+   }
+   ];
+
+   //EXPORT
+const ResidentList = (
+<Menu>
+   <Menu.Item key="0">
+      <span>
+         <div className="d-flex align-items-center">
+            <ReloadOutlined />
+            <span className="ml-2">Refresh</span>
+         </div>
+      </span>
+   </Menu.Item>
+   <Menu.Item key="1">
+      <span>
+         <div className="d-flex align-items-center">
+            <PrinterOutlined />
+            <span className="ml-2">Print</span>
+         </div>
+      </span>
+   </Menu.Item>
+   <Menu.Item key="12">
+      <span>
+         <div className="d-flex align-items-center">
+            <FileExcelOutlined />
+            <span className="ml-2">Export</span>
+         </div>
+      </span>
+   </Menu.Item>
+</Menu>
+);
+
+//SEARCH
+const rowSelection = {
+onChange: (key, rows) => {
+setSelectedRows(rows)
+setSelectedRowKeys(key)
+}
+};
+const onBlotterSearch = e => {
+const value = e.currentTarget.value
+const searchArray = e.currentTarget.value? list : BlotterListData
+const data = utils.wildCardSearch(searchArray, value)
+setList(data)
+setSelectedRowKeys([])
+}
+
+const onBlotterRequestSearch = e => {
+	const value = e.currentTarget.value
+	const searchArray = e.currentTarget.value? list : BlotterListData
+	const data = utils.wildCardSearch(searchArray, value)
+	setList(data)
+	setSelectedRowKeys([])
+	}
+
+const BlotterCases = value => {
+if(value !== 'All') {
+const key = 'blotter_id'
+const data = utils.filterArray(BlotterListData, key, value)
+setList(data)
+} else {
+setList(BlotterListData)
+}
+}
+const cardDropdown = (menu) => (
+<Dropdown overlay={menu} trigger={['click']} placement="bottomRight">
+   <a href="/#" className="text-gray font-size-lg" onClick={e =>
+      e.preventDefault()}>
+      <EllipsisOutlined />
+   </a>
+</Dropdown>
+)
+
+//  RETURN
+const RecordCases = () => (
+<DonutChartWidget 
+series={sessionData} 
+labels={sessionLabels} 
+title="Record by Cases"
+customOptions={{colors: sessionColor}}
+bodyClass="mb-2 mt-3"
+extra={
+<Row  justify="center">
+   <Col xs={20} sm={20} md={20} lg={24}>
+   <div className="mx-auto mt-4" style={{maxWidth: 200}}>
+   {conbinedSessionData.map(elm => (
+   <Flex alignItems="center" justifyContent="between" className="mb-3" key={elm.label}>
+      <div>
+         <Badge color={elm.color} />
+         <span className="text-gray-light">{elm.label}</span>
+      </div>
+      <span className="font-weight-bold text-dark">{elm.data}</span>
+   </Flex>
+   ))}
+   </div>
+   </Col>
+</Row>
+}
+/>
+)
+const MostReportedBlotter = () => (
+<Card title="Most Reported Cases">
+   <List
+      itemLayout="horizontal"
+      dataSource={BlotterReportMost}
+      renderItem={item =>
+   (
+   <List.Item>
+      <div className="d-flex align-items-center justify-content-between w-100">
+         <div>
+            <h4 className="mb-0 font-weight-bold">{item.title}</h4>
+            <span className="text-muted">{item.update}</span>
+         </div>
+         <div>
+            <Tag color="blue">
+               <span className="font-weight-bold">
+                  <NumberFormat value={item.amount} thousandSeparator={true} displayType="text" ></NumberFormat>
+               </span>
+            </Tag>
+         </div>
+      </div>
+   </List.Item>
+   )}
+   />
+</Card>
+)
+return (
+	<>
+<Row gutter={16}>
+
+
+   <Col  xs={24} sm={24} md={24} lg={12} xl={24} xxl={18}>
+   
+   <Card title="Blotter Records" extra={cardDropdown(ResidentList)}>
+      <Flex alignItems="center" className="" justifyContent="between" mobileFlex={false}>
+         <Flex className="mb-1" mobileFlex={false}>
+            <div className="mb-3 mr-md-3">
+               <Input placeholder="Search" prefix={
+               <SearchOutlined />
+               } onChange={e => onBlotterSearch(e)}/>
+            </div>
+            <div className="mb-3">
+               <Select 
+               defaultValue="All" 
+               className="w-100" 
+               style={{ minWidth: 180 }} 
+               onChange={BlotterCases} 
+               placeholder="Category"
+               >
+               <Option value="All">All</Option>
+               {
+               categories.map(elm => (
+               <Option key={elm} value={elm}>{elm}</Option>
+               ))
+               }
+               </Select>
+            </div>
+         </Flex>
+         <div className="justify-content-between">
+            <Space>
+       
+               <Col>
+               <Button onClick={AddResident} type="primary" icon={
+               <PlusCircleOutlined />
+               } block>Add Resident</Button>
+               </Col>	
+            </Space>
+         </div>
+      </Flex>
+      <div className="table-responsive">
+         <Table 
+         columns={tableColumns} 
+         dataSource={list} 
+         rowKey='resident_id' 
+         rowSelection={{
+         selectedRowKeys: selectedRowKeys,
+         type: 'checkbox',
+         preserveSelectedRowKeys: false,
+         ...rowSelection,
+         }}
+         />
+      </div>
+   </Card>
+
+
+
+
+   <Card title="Blotter Request" extra={cardDropdown(ResidentList)}>
+      <Flex alignItems="center" className="" justifyContent="between" mobileFlex={false}>
+         <Flex className="mb-1" mobileFlex={false}>
+            <div className="mb-3 mr-md-3">
+               <Input placeholder="Search" prefix={
+               <SearchOutlined />
+               } onChange={e => onBlotterRequestSearch(e)}/>
+            </div>
+            <div className="mb-3">
+               <Select 
+               defaultValue="All" 
+               className="w-100" 
+               style={{ minWidth: 180 }} 
+               onChange={BlotterCases} 
+               placeholder="Category"
+               >
+               <Option value="All">All</Option>
+               {
+               categories.map(elm => (
+               <Option key={elm} value={elm}>{elm}</Option>
+               ))
+               }
+               </Select>
+            </div>
+         </Flex>
+       
+      </Flex>
+      <div className="table-responsive">
+         <Table 
+         columns={BlotterRequest} 
+         dataSource={list} 
+         rowKey='resident_id' 
+         rowSelection={{
+         selectedRowKeys: selectedRowKeys,
+         type: 'checkbox',
+         preserveSelectedRowKeys: false,
+         ...rowSelection,
+         }}
+         />
+      </div>
+   </Card>
+   
+   </Col>
+   <Col xs={24} sm={24} md={24} lg={24} xxl={6}>
+          <RecordCases/>
+          <MostReportedBlotter/>
+        
+   </Col>
+
+   {/* <UserView data={selectedUser} visible={userProfileVisible} close={()=> {closeUserProfile()}}/> */}
+
+
+
+  
+</Row>
+</>
+)
+}
+export default BlotterRecord
+
