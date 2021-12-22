@@ -21,7 +21,23 @@ export async function createBarangay(
     barangay_name: values.barangay,
     email: currentUser?.email,
     auth_id: user_id,
+    province: values.province,
+    municipality: values.municipality,
+    address: values.address,
     role: "Administrator",
+    //UserProfile
+    first_name: values.first_name,
+    last_name: values.last_name,
+    middle_name: values.middle_name,
+    birthday: values.birthday,
+    gender: values.gender,
+    civil_status: values.civil_status,
+    personal_country: values.personal_country,
+    personal_province: values.personal_province,
+    personal_municipality: values.personal_municipality,
+    mobile: values.mobile_number,
+    telephone: values.telephone_number,
+    personal_address: values.personal_address,
   };
   axios
     .post("http://localhost:5000/pre/create-barangay", dataInfo)

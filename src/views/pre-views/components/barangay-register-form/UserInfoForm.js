@@ -99,7 +99,7 @@ const BarangayRegisterForm = () => {
       <Col xxl={8} xl={8} lg={8} md={12} sm={24} xs={24}>
         <Form.Item
           className="form1-items"
-          name="country"
+          name="personal_country"
           rules={[{ required: true, message: "Need country!" }]}
           label="Country: "
           hasFeedback
@@ -116,7 +116,7 @@ const BarangayRegisterForm = () => {
       <Col xxl={8} xl={8} lg={8} md={12} sm={24} xs={24}>
         <Form.Item
           className="form1-items"
-          name="province"
+          name="personal_province"
           rules={[{ required: true, message: "Need province!" }]}
           label="Province: "
           hasFeedback
@@ -127,7 +127,7 @@ const BarangayRegisterForm = () => {
       <Col xxl={8} xl={8} lg={8} md={12} sm={24} xs={24}>
         <Form.Item
           className="form1-items"
-          name="municipality"
+          name="personal_municipality"
           rules={[{ required: true, message: "Need municipality!" }]}
           label="Municipality:"
           hasFeedback
@@ -162,7 +162,7 @@ const BarangayRegisterForm = () => {
       <Col span={24}>
         <Form.Item
           className="form1-items"
-          name="address"
+          name="personal_address"
           rules={[{ required: true, message: "Enter your address!" }]}
           label="Address:"
           hasFeedback

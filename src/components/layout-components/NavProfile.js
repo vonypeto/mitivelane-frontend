@@ -1,48 +1,56 @@
 import React from "react";
 import { Menu, Dropdown, Avatar } from "antd";
-import { connect } from 'react-redux'
-import { 
-  EditOutlined, 
-  SettingOutlined, 
-  ShopOutlined, 
-  QuestionCircleOutlined, 
-  LogoutOutlined 
-} from '@ant-design/icons';
-import Icon from 'components/util-components/Icon';
-import { signOut } from 'redux/actions/Auth';
+import { connect } from "react-redux";
+import {
+  EditOutlined,
+  SettingOutlined,
+  ShopOutlined,
+  QuestionCircleOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
+import Icon from "components/util-components/Icon";
+import { signOut } from "redux/actions/Auth";
 import utils from "utils";
+import { useAuth } from "contexts/AuthContext";
 
 const menuItem = [
-	{
-		title: "Edit Profile",
-		icon: EditOutlined ,
-		path: "/"
-    },
-    
-    {
-		title: "Account Setting",
-		icon: SettingOutlined,
-		path: "/"
-    },
-    {
-		title: "Billing",
-		icon: ShopOutlined ,
-		path: "/"
-	},
-    {
-		title: "Help Center",
-		icon: QuestionCircleOutlined,
-		path: "/"
-	}
-]
+  {
+    title: "Edit Profile",
+    icon: EditOutlined,
+    path: "/",
+  },
 
-export const NavProfile = ({signOut}) => {
+  {
+    title: "Account Setting",
+    icon: SettingOutlined,
+    path: "/",
+  },
+  {
+    title: "Billing",
+    icon: ShopOutlined,
+    path: "/",
+  },
+  {
+    title: "Help Center",
+    icon: QuestionCircleOutlined,
+    path: "/",
+  },
+];
+
+export const NavProfile = ({ signOut }) => {
+  const { currentUser } = useAuth();
   const profileImg = "/img/avatars/thumb-1.jpg";
   const profileMenu = (
     <div className="nav-profile nav-dropdown">
       <div className="nav-profile-header">
         <div className="d-flex">
-          <Avatar size={45}   style={{ backgroundColor: "green" }} >  {utils.getNameInitial("Von Maniquis")}</Avatar>
+          <Avatar
+            src={currentUser?.photoURL}
+            size={45}
+            style={{ backgroundColor: "green" }}
+          >
+            {} {utils.getNameInitial("von.aralar@gmail.com")}
+          </Avatar>
           <div className="pl-3">
             <h4 className="mb-0">VON MANIQUIS</h4>
             <span className="text-muted">Developer</span>
@@ -61,9 +69,9 @@ export const NavProfile = ({signOut}) => {
               </Menu.Item>
             );
           })}
-          <Menu.Item key={menuItem.length + 1} onClick={e => signOut()}>
+          <Menu.Item key={menuItem.length + 1} onClick={(e) => signOut()}>
             <span>
-              <LogoutOutlined className="mr-3"/>
+              <LogoutOutlined className="mr-3" />
               <span className="font-weight-normal">Sign Out</span>
             </span>
           </Menu.Item>
@@ -75,11 +83,16 @@ export const NavProfile = ({signOut}) => {
     <Dropdown placement="bottomRight" overlay={profileMenu} trigger={["click"]}>
       <Menu className="d-flex align-item-center" mode="horizontal">
         <Menu.Item key="profile">
-          <Avatar style={{ backgroundColor: "green" }} >{utils.getNameInitial("Von Maniquis")} </Avatar>
+          <Avatar
+            src={currentUser?.photoURL}
+            style={{ backgroundColor: "green" }}
+          >
+            {utils.getNameInitial("von.aralar@gmail.com")}{" "}
+          </Avatar>
         </Menu.Item>
       </Menu>
     </Dropdown>
   );
-}
+};
 
-export default connect(null, {signOut})(NavProfile)
+export default connect(null, { signOut })(NavProfile);

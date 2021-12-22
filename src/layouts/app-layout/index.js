@@ -11,7 +11,7 @@ import PageHeader from "components/layout-components/PageHeader";
 import Footer from "components/layout-components/Footer";
 import AppViews from "views/app-views";
 import { Layout, Grid } from "antd";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "contexts/AuthContext";
 
 import navigationConfig from "configs/NavigationConfig";
 import {
@@ -29,7 +29,7 @@ const { Content } = Layout;
 const { useBreakpoint } = Grid;
 
 export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
-  const { currentBarangay } = useAuth();
+  const { currentBarangay, currentUser } = useAuth();
   const [id, setId] = useState(currentBarangay);
 
   const screens = utils.getBreakPoint(useBreakpoint());
@@ -102,6 +102,10 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
             />
             {/* {localStorage.getItem("auth_barangay")} */}
             {/* {id} */}
+            {/*
+            {currentUser.photoURL}
+            <img src={currentUser.photoURL} /> */}
+            {console.log(currentUser)}
             <Content>
               <AppViews />
             </Content>

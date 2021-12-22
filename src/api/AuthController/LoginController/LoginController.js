@@ -1,43 +1,3 @@
-// import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
-// import { PRE_PREFIX_PATH } from "configs/AppConfig";
-// import { db } from "auth/FirebaseAuth";
-// export async function loginBarangay(
-//   token,
-//   setBarangayMemberList,
-//   setBarangay,
-//   redirect,
-//   history
-// ) {
-//   // Make the initial query
-//   const tmp = token;
-//   const query = await db
-//     .collection("barangay_members")
-//     .where("auth_id", "==", tmp)
-//     .get();
-
-//   if (!query.empty) {
-//     const snapshot = query.docs[0];
-//     const data = snapshot.data();
-//     console.log("Doc", snapshot.id);
-//     localStorage.setItem(AUTH_BARANGAY_LIST, snapshot.id);
-
-//     localStorage.setItem(AUTH_BARANGAY, data.barangay_id);
-
-//     setBarangayMemberList(snapshot.id);
-//     setBarangay(data.barangay_id);
-
-//     return history.push(redirect);
-//   } else {
-//     console.log("Doc");
-//     localStorage.setItem(AUTH_BARANGAY_LIST, null);
-//     localStorage.setItem(AUTH_BARANGAY, null);
-
-//     setBarangayMemberList(null);
-//     setBarangay(null);
-//     return history.push(PRE_PREFIX_PATH);
-//   }
-// }
-
 import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
 import { PRE_PREFIX_PATH } from "configs/AppConfig";
 import axios from "axios";
@@ -47,9 +7,10 @@ export async function loginBarangay(
   setBarangayMemberList,
   setBarangay,
   redirect,
-  history
+  history,
+  currentUser
 ) {
-  let barangay, role_id;
+  let role_id;
 
   axios
     .get(" http://localhost:5000/app/users/" + token)
@@ -79,5 +40,33 @@ export async function loginBarangay(
     })
     .catch((error) => {
       console.log(error);
+      const register = {
+        uuid: token,
+        email: currentUser?.email,
+      };
+      // before adding add JWT here later
+      const querylist = axios
+        .post("http://localhost:5000/auth/register", register)
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      if (!querylist) {
+        console.log("true");
+        console.log(querylist);
+        localStorage.setItem(AUTH_BARANGAY_LIST, null);
+        localStorage.setItem(AUTH_BARANGAY, null);
+        setBarangayMemberList(null);
+        setBarangay(null);
+        return history.push(redirect);
+      } else {
+        localStorage.setItem(AUTH_BARANGAY_LIST, null);
+        localStorage.setItem(AUTH_BARANGAY, null);
+        setBarangayMemberList(null);
+        setBarangay(null);
+        return history.push(PRE_PREFIX_PATH);
+      }
     });
 }
