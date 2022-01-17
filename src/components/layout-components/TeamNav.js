@@ -44,7 +44,7 @@ const TeamNav = () => {
       setTimeout(() => {
         setVisible(!visible);
       }, 200);
-      history.push(`/app/` + id + `/setting/team-create`);
+      history.push(`/pre`);
       console.log("click", e.key);
     }
   };

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./index.css";
 
 import UserInfoForm from "views/pre-views/components/barangay-register-form/UserInfoForm";
 import BarangayInfoForm from "views/pre-views/components/barangay-register-form/BarangayInfoForm";
 import { createBarangay } from "api/AuthController/PreRegisterController/PreRegisterController";
 import { Row, Col, Card, Form, Button, Input } from "antd";
-import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 import {
   signIn,
   signInWithGoogle,
@@ -17,17 +17,39 @@ import { HeaderNavRegister } from "components/layout-components/HeaderNavRegiste
 import { useHistory } from "react-router-dom";
 
 const BarangayRegister = (props) => {
-  const { auth } = props;
-  let history = useHistory();
   const { currentUser, setBarangay, setBarangayMemberList } = useAuth();
+  const [firstTime, setFirstTime] = useState(true);
+  const { auth } = props;
   const user_id = auth.token;
-
   const formRef = React.createRef();
-  const handleSubmit = async (values) => {
-    // const data = values;
-    // console.log(uuidv4());
-    // console.log(moment(values.birthday).format(DATE_FORMAT_YYYY_MM_DD));
+  let history = useHistory();
+  useEffect(() => {
+    let cancel = true;
 
+    axios
+      .get("/app/users/" + user_id)
+      .then((response) => {
+        if (response.data[0].barangays[0] && response.data[0].members[0]) {
+          if (response.data.length > 0) {
+            console.log(response.data);
+            if (cancel) {
+              setFirstTime(response.data.first_time);
+              console.log(firstTime);
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return () => {
+      cancel = false;
+    };
+    // return () => {
+    //   cleanup
+    // }
+  }, []);
+  const handleSubmit = async (values) => {
     console.log(values);
     createBarangay(
       history,
@@ -35,40 +57,9 @@ const BarangayRegister = (props) => {
       values,
       user_id,
       setBarangay,
-      setBarangayMemberList
+      setBarangayMemberList,
+      firstTime
     );
-    //   await db
-    //     .collection("barangay_list")
-    //     .doc(uuid)
-    //     .set({
-    //       name: "Baras",
-    //     })
-    //     .then(() => {
-    //       console.log("Document successfully written!");
-    //       db.collection("barangay_members")
-    //         .doc()
-    //         .set({
-    //           name: data.first_name,
-    //           email: currentUser?.email,
-    //           role: "Administrator",
-    //           auth_id: user_id,
-    //           barangay_id: uuid,
-    //         })
-    //         .catch(() => {
-    //           db.collection("barangay_list")
-    //             .doc(uuid)
-    //             .delete()
-    //             .then(() => {
-    //               console.log("Document successfully deleted!");
-    //             })
-    //             .catch((error) => {
-    //               console.error("Error removing document: ", error);
-    //             });
-    //         });
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error writing document: ", error);
-    //     });
   };
   return (
     <div className=" w-100">
@@ -80,19 +71,20 @@ const BarangayRegister = (props) => {
       >
         <Col>
           <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
-            <Card className="barangay-register-card">
-              <div style={{ textAlign: "center", margin: "auto 15%" }}>
-                <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
-                  Personal Info
-                </h1>
-                <p>
-                  We need your personal data to help others identify you and can
-                  be used to make filling up forms in the future faster.
-                </p>
-              </div>
-
-              <UserInfoForm />
-            </Card>
+            {firstTime ? (
+              <Card className="barangay-register-card">
+                <div style={{ textAlign: "center", margin: "auto 15%" }}>
+                  <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
+                    Personal Info
+                  </h1>
+                  <p>
+                    We need your personal data to help others identify you and
+                    can be used to make filling up forms in the future faster.
+                  </p>
+                </div>
+                <UserInfoForm />
+              </Card>
+            ) : null}
 
             <Card className="barangay-register-card">
               <div style={{ textAlign: "center", margin: "auto 15%" }}>

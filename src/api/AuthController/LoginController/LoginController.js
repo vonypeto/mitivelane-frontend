@@ -1,6 +1,7 @@
 import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
 import { PRE_PREFIX_PATH } from "configs/AppConfig";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 export async function loginBarangay(
   token,
@@ -12,19 +13,35 @@ export async function loginBarangay(
 ) {
   let role_id;
 
-  axios
-    .get(" http://localhost:5000/app/users/" + token)
-    .then((response) => {
-      if (response.data[0].barangays[0] && response.data[0].members[0]) {
-        if (response.data.length > 0) {
-          console.log(response.data);
-          response.data[0].barangays[0].map((barangay) => {
-            localStorage.setItem(AUTH_BARANGAY, barangay._id);
-            setBarangay(barangay._id);
+  await axios
+    .get("/auth/login/" + token)
+    .then((res) => {
+      console.log(jwt_decode(res.data));
+      let response = jwt_decode(res.data);
+      console.log(response);
+      if (response.barangays[0] && response.members[0]) {
+        if (response.barangays[0].length > 0) {
+          response.barangays.map((barangay) => {
+            console.log(barangay);
+            return (
+              localStorage.setItem(AUTH_BARANGAY, barangay[0].barangay_id),
+              setBarangay(barangay._id)
+            );
           });
-          response.data[0].members[0].map((member) => {
-            role_id = member;
+          localStorage.setItem(
+            AUTH_BARANGAY,
+            response.barangays[0].barangay_id
+          );
+
+          response.barangays[0].map((barangay) => {
+            console.log(barangay);
+            return (
+              localStorage.setItem(AUTH_BARANGAY, barangay.barangay_id),
+              setBarangay(barangay.barangay_id)
+            );
           });
+          console.log(response.barangays[0]);
+          response.members[0].map((member) => (role_id = member));
 
           localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
           setBarangayMemberList(role_id);
@@ -38,15 +55,15 @@ export async function loginBarangay(
         return history.push(PRE_PREFIX_PATH);
       }
     })
-    .catch((error) => {
+    .catch(async (error) => {
       console.log(error);
       const register = {
         uuid: token,
         email: currentUser?.email,
       };
       // before adding add JWT here later
-      const querylist = axios
-        .post("http://localhost:5000/auth/register", register)
+      const querylist = await axios
+        .post("/auth/register", register)
         .then((res) => {
           return res.data;
         })

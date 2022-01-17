@@ -14,24 +14,18 @@ export function AuthProvider({ children }) {
 
   const [loading, setLoading] = useState(true);
   function setBarangay(barangay) {
-    // const data = localStorage.getItem("auth_barangay");
-    // console.log("authcontext", data);
     return setCurrentBarangay(barangay);
   }
   function setBarangayMemberList(barangay) {
-    // const data = localStorage.getItem("auth_barangay");
-    // console.log("authcontext", data);
     return setCurrentBarangayMemberList(barangay);
   }
-  useEffect(() => {
-    function checkUserBarangay() {
-      const item = localStorage.getItem("auth_barangay");
-
-      if (item) {
-        setCurrentBarangay(item);
-      }
+  function checkUserBarangay() {
+    const item = localStorage.getItem("auth_barangay");
+    if (item) {
+      setCurrentBarangay(item);
     }
-
+  }
+  useEffect(() => {
     const listener = window.addEventListener("storage", checkUserBarangay);
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       setCurrentuser(user);

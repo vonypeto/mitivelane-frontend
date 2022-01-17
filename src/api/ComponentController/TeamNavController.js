@@ -3,7 +3,7 @@ import axios from "axios";
 export async function getBarangay(currentUser, setBarangayMember) {
   const user = currentUser?.uid;
   axios
-    .get(" http://localhost:5000/app/users/" + user)
+    .get("/app/users/" + user)
     .then((response) => {
       if (response.data.length > 0) {
         console.log(response.data);

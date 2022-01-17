@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { LockOutlined, MailOutlined, NumberOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Alert } from "antd";
+import { Button, Form, Input, Alert, Divider } from "antd";
 import {
   signUp,
   showAuthMessage,
   showLoading,
   hideAuthMessage,
+  signInWithGoogle,
+  signInWithFacebook,
 } from "redux/actions/Auth";
 import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "contexts/AuthContext";
 import { registerBarangay } from "api/AuthController/RegisterController/RegisterController";
-
+import PropTypes from "prop-types";
+import { GoogleSVG, FacebookSVG } from "assets/svg/icon";
+import CustomIcon from "components/util-components/CustomIcon";
 const rules = {
   email: [
     {
@@ -48,7 +52,7 @@ const rules = {
 
 export const RegisterForm = (props) => {
   const { setBarangay, setBarangayMemberList, currentUser } = useAuth();
-
+  const codeRef = useRef();
   const {
     signUp,
     showLoading,
@@ -59,55 +63,74 @@ export const RegisterForm = (props) => {
     showMessage,
     hideAuthMessage,
     allowRedirect,
+    otherSignIn,
+    showForgetPassword,
+    onForgetPasswordClick,
+    signInWithGoogle,
+    signInWithFacebook,
+    extra,
+    signIn,
   } = props;
+
   const [form] = Form.useForm();
   let history = useHistory();
+  const onGoogleLogin = () => {
+    if (codeRef.current.value)
+      localStorage.setItem("code", String(codeRef.current.value));
+    else localStorage.setItem("code", null);
 
+    showLoading();
+    signInWithGoogle();
+  };
+
+  const onFacebookLogin = () => {
+    showLoading();
+    signInWithFacebook();
+  };
   const onSignUp = (values) => {
     console.log(values);
+    localStorage.setItem("code", String(values.code));
+    const datas = values.code;
+    console.log("localstorage", datas);
     form.validateFields().then((values) => {
       showLoading();
       signUp(values);
     });
   };
 
+  const renderOtherSignIn = (
+    <div>
+      <Divider>
+        <span className="text-muted font-size-base font-weight-normal">
+          or connect with
+        </span>
+      </Divider>
+      <div className="d-flex justify-content-center">
+        <Button
+          onClick={() => onGoogleLogin()}
+          className="mr-2"
+          disabled={loading}
+          icon={<CustomIcon svg={GoogleSVG} />}
+        >
+          Google
+        </Button>
+        <Button
+          onClick={() => onFacebookLogin()}
+          icon={<CustomIcon svg={FacebookSVG} />}
+          disabled={loading}
+        >
+          Facebook
+        </Button>
+      </div>
+    </div>
+  );
   useEffect(() => {
     console.log("token", token, "allowredirect", allowRedirect);
-    console.log(form);
-    // async function getBarangay(token) {
-    //   // Make the initial query
-    //   const tmp = token;
-    //   const query = await db
-    //     .collection("barangay_members")
-    //     .where("auth_id", "==", tmp)
-    //     .get();
-
-    //   if (!query.empty) {
-    //     const snapshot = query.docs[0];
-    //     const data = snapshot.data();
-    //     console.log("Doc", snapshot.id);
-    //     localStorage.setItem(AUTH_BARANGAY_LIST, snapshot.id);
-
-    //     localStorage.setItem(AUTH_BARANGAY, data.barangay_id);
-    //     console.log(localStorage.getItem("auth_barangay"));
-
-    //     setBarangayMemberList(snapshot.id);
-    //     setBarangay(data.barangay_id);
-
-    //     return history.push(redirect);
-    //   } else {
-    //     console.log("Doc");
-    //     localStorage.setItem(AUTH_BARANGAY_LIST, null);
-    //     localStorage.setItem(AUTH_BARANGAY, null);
-
-    //     setBarangayMemberList(null);
-    //     setBarangay(null);
-
-    //     return history.push(PRE_PREFIX_PATH);
-    //   }
-    // }
+    let cancel = false;
     if (token !== null) {
       console.log("test");
+      console.log(localStorage.getItem("code"));
+      if (cancel) return;
       registerBarangay(
         token,
         setBarangay,
@@ -122,6 +145,9 @@ export const RegisterForm = (props) => {
         hideAuthMessage();
       }, 3000);
     }
+    return () => {
+      cancel = true;
+    };
   });
 
   return (
@@ -164,16 +190,28 @@ export const RegisterForm = (props) => {
           <Input
             placeholder="XXXX-XXXX-XXXX"
             prefix={<NumberOutlined className="text-primary" />}
+            ref={codeRef}
           />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>
             Sign Up
           </Button>
-        </Form.Item>
+        </Form.Item>{" "}
+        {otherSignIn ? renderOtherSignIn : null}
+        {extra}
       </Form>
     </>
   );
+};
+RegisterForm.propTypes = {
+  otherSignIn: PropTypes.bool,
+  showForgetPassword: PropTypes.bool,
+  extra: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+};
+RegisterForm.defaultProps = {
+  otherSignIn: true,
+  showForgetPassword: true,
 };
 
 const mapStateToProps = ({ auth }) => {
@@ -186,6 +224,8 @@ const mapDispatchToProps = {
   showAuthMessage,
   hideAuthMessage,
   showLoading,
+  signInWithGoogle,
+  signInWithFacebook,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);

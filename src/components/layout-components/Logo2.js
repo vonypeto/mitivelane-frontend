@@ -42,12 +42,8 @@ const getLogo = (props) => {
   return "/img/logo.png";
 };
 
-const getLogoDisplay = (isMobile, mobileLogo) => {
-  if (isMobile && !mobileLogo) {
-    return "d-none";
-  } else {
-    return "logo";
-  }
+const getLogoDisplay = () => {
+  return "logo";
 };
 
 export const Logo = (props) => {

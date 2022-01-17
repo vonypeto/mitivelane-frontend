@@ -33,7 +33,7 @@ const setDefaultOpen = (key) => {
 
 const SideNavContent = (props) => {
   const { currentBarangay } = useAuth();
-  console.log(props);
+  // console.log(props);
   const [id, setId] = useState(localStorage.getItem(AUTH_BARANGAY));
 
   // useEffect(() => {

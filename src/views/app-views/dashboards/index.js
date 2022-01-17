@@ -7,7 +7,7 @@ import Campaign from "./campaign";
 
 const Dashboards = ({ match }) => {
   let { barangay_id } = useParams();
-  console.log(barangay_id);
+  // console.log(barangay_id);
   return (
     <Suspense fallback={<Loading cover="content" />}>
       <Switch>

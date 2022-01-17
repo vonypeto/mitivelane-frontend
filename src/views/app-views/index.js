@@ -33,11 +33,15 @@ export const AppViews = () => {
           path={`${APP_PREFIX_PATH}/:barangay_id/components`}
           component={lazy(() => import(`./components`))}
         />{" "}
+        <Route
+          path={`${APP_PREFIX_PATH}/user/profile`}
+          component={lazy(() => import(`./accounts`))}
+        />
         {/* Redirect From Login to other part of the auth process */}
         <Redirect
           from={`${APP_PREFIX_PATH}`}
           to={`${APP_PREFIX_PATH}/` + currentBarangay + `/dashboards/home`}
-        />
+        />{" "}
         {/* {currentBarangay == null ? (
           <Redirect
             from={`${APP_PREFIX_PATH}`}

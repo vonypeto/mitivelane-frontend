@@ -21,7 +21,6 @@ import { loginBarangay } from "api/AuthController/LoginController/LoginControlle
 export const LoginForm = (props) => {
   const { setBarangayMemberList, setBarangay, currentUser } = useAuth();
   let history = useHistory();
-  console.log(props);
   const {
     otherSignIn,
     showForgetPassword,

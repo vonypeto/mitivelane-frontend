@@ -37,7 +37,7 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
   const isNavSide = navType === NAV_TYPE_SIDE;
   const isNavTop = navType === NAV_TYPE_TOP;
   useEffect(() => {
-    console.log("layout", currentBarangay);
+    // console.log("layout", currentBarangay);
     return currentBarangay;
   });
   useEffect(() => {
@@ -105,7 +105,7 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
             {/*
             {currentUser.photoURL}
             <img src={currentUser.photoURL} /> */}
-            {console.log(currentUser)}
+            {/* {console.log(currentUser)} */}
             <Content>
               <AppViews />
             </Content>

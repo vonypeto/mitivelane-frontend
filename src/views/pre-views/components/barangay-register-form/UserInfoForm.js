@@ -147,7 +147,7 @@ const BarangayRegisterForm = () => {
         </Form.Item>
       </Col>
 
-      <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+      <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
         <Form.Item
           className="form1-items"
           name="telephone_number"
