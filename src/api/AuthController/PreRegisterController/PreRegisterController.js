@@ -57,7 +57,7 @@ export async function createBarangay(
   }
 
   axios
-    .post("/pre/create-barangay", dataInfo)
+    .post("/api/pre/create-barangay", dataInfo)
     .then((response) => {
       if (response.data.length > 0) {
         console.log(response.data);

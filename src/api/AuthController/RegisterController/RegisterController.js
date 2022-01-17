@@ -21,7 +21,7 @@ export async function registerBarangay(
   console.log(localStorage.getItem("code"));
   // before adding add JWT here later
 
-  const querylist = axios.post("/auth/register", register).then((res) => {
+  const querylist = axios.post("/api/auth/register", register).then((res) => {
     return jwt_decode(res.data);
   });
   localStorage.removeItem("code");

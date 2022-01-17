@@ -11,35 +11,40 @@ export async function loginBarangay(
   history,
   currentUser
 ) {
-  let role_id;
+  let role_id, barangay_id;
 
   await axios
-    .get("/auth/login/" + token)
+    .get("/api/auth/login/" + token)
     .then((res) => {
       console.log(jwt_decode(res.data));
       let response = jwt_decode(res.data);
       console.log(response);
       if (response.barangays[0] && response.members[0]) {
         if (response.barangays[0].length > 0) {
-          response.barangays.map((barangay) => {
-            console.log(barangay);
-            return (
-              localStorage.setItem(AUTH_BARANGAY, barangay[0].barangay_id),
-              setBarangay(barangay._id)
-            );
-          });
-          localStorage.setItem(
-            AUTH_BARANGAY,
-            response.barangays[0].barangay_id
-          );
+          // response.barangays.map((barangay) => {
+          //   console.log(barangay);
+          //   return (
+          //     localStorage.setItem(AUTH_BARANGAY, barangay),
+          //     setBarangay(barangay)
+          //   );
+          // });
+          // localStorage.setItem(
+          //   AUTH_BARANGAY,
+          //   response.barangays[0].barangay_id
+          // );
 
-          response.barangays[0].map((barangay) => {
-            console.log(barangay);
-            return (
-              localStorage.setItem(AUTH_BARANGAY, barangay.barangay_id),
-              setBarangay(barangay.barangay_id)
-            );
-          });
+          // response.barangays[0].map((barangay) => {
+          //   console.log(barangay);
+          //   return (
+          //     localStorage.setItem(AUTH_BARANGAY, barangay.barangay_id),
+          //     setBarangay(barangay.barangay_id)
+          //   );
+          // });
+
+          response.barangays[0].map((barangay) => (barangay_id = barangay));
+
+          localStorage.setItem(AUTH_BARANGAY, barangay_id);
+          setBarangay(barangay_id);
           console.log(response.barangays[0]);
           response.members[0].map((member) => (role_id = member));
 
@@ -63,7 +68,7 @@ export async function loginBarangay(
       };
       // before adding add JWT here later
       const querylist = await axios
-        .post("/auth/register", register)
+        .post("/api/auth/register", register)
         .then((res) => {
           return res.data;
         })

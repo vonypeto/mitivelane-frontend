@@ -25,9 +25,9 @@ const BarangayRegister = (props) => {
   let history = useHistory();
   useEffect(() => {
     let cancel = true;
-
+    //convert this to a new component later to the api folder
     axios
-      .get("/app/users/" + user_id)
+      .get("/api/app/users/" + user_id)
       .then((response) => {
         if (response.data[0].barangays[0] && response.data[0].members[0]) {
           if (response.data.length > 0) {
