@@ -5,9 +5,7 @@
 [[redirects]]
   from = "/*"
   to = "/"
-  status = 200 
-  force = true
-  headers = {X-From = "Netlify"}
+  status = 200
 
 
   [[redirects]]
