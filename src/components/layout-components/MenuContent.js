@@ -93,7 +93,12 @@ const SideNavContent = (props) => {
     <Menu
       theme={sideNavTheme === SIDE_NAV_LIGHT ? "light" : "dark"}
       mode="inline"
-      style={{ height: "100%", borderRight: 0 }}
+      style={{
+        backgroundColor: "rgb(40,49,66)",
+        margin: "0",
+        height: "100%",
+        borderRight: 0,
+      }}
       defaultSelectedKeys={[routeInfo?.key]}
       defaultOpenKeys={setDefaultOpen(routeInfo?.key)}
       className={hideGroupTitle ? "hide-group-title" : ""}
@@ -105,6 +110,7 @@ const SideNavContent = (props) => {
                 key={menu.key}
                 title={setLocale(localization, menu.title)}
                 style={{
+                  backgroundColor: "rgb(40,49,66)",
                   fontFamily:
                     "'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji'",
                 }}

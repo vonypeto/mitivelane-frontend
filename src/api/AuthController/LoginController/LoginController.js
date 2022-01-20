@@ -1,4 +1,8 @@
-import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
+import {
+  AUTH_BARANGAY,
+  AUTH_BARANGAY_LIST,
+  ACCESS_TOKEN,
+} from "redux/constants/Auth";
 import { PRE_PREFIX_PATH } from "configs/AppConfig";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
@@ -16,7 +20,7 @@ export async function loginBarangay(
   await axios
     .get("/api/auth/login/" + token)
     .then((res) => {
-      console.log(jwt_decode(res.data));
+      localStorage.setItem(ACCESS_TOKEN, res.data);
       let response = jwt_decode(res.data);
       console.log(response);
       if (response.barangays[0] && response.members[0]) {
@@ -50,6 +54,7 @@ export async function loginBarangay(
 
           localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
           setBarangayMemberList(role_id);
+
           return history.push(redirect);
         }
       } else {

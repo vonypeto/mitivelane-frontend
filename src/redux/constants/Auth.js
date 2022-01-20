@@ -10,7 +10,7 @@ export const SHOW_LOADING = "SHOW_LOADING";
 export const AUTH_TOKEN = "auth_token";
 export const AUTH_BARANGAY = "auth_barangay";
 export const AUTH_BARANGAY_LIST = "auth_barangay_list";
-
+export const ACCESS_TOKEN = "access_token";
 export const SIGNIN_WITH_GOOGLE = "SIGNIN_WITH_GOOGLE";
 export const SIGNIN_WITH_GOOGLE_AUTHENTICATED =
   "SIGNIN_WITH_GOOGLE_AUTHENTICATED";

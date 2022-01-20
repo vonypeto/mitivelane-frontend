@@ -15,9 +15,17 @@ import { useAuth } from "contexts/AuthContext";
 import { connect } from "react-redux";
 import { HeaderNavRegister } from "components/layout-components/HeaderNavRegister";
 import { useHistory } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import sign from "jwt-encode";
 
 const BarangayRegister = (props) => {
-  const { currentUser, setBarangay, setBarangayMemberList } = useAuth();
+  const {
+    currentUser,
+    setBarangay,
+    setBarangayMemberList,
+    authorization,
+    authorizationConfig,
+  } = useAuth();
   const [firstTime, setFirstTime] = useState(true);
   const { auth } = props;
   const user_id = auth.token;
@@ -49,6 +57,7 @@ const BarangayRegister = (props) => {
     //   cleanup
     // }
   }, []);
+
   const handleSubmit = async (values) => {
     console.log(values);
     createBarangay(
@@ -60,6 +69,68 @@ const BarangayRegister = (props) => {
       setBarangayMemberList,
       firstTime
     );
+  }; // test
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    //Starting Fetch Storage
+    let response = jwt_decode(localStorage.getItem("access_token"));
+    console.log(response.auth_id);
+    const date = new Date().getTime() / 1000;
+    console.log(date);
+    const unix = Math.round(date);
+    const data = {
+      auth_id: response.auth_id,
+      iat: unix,
+      exp: unix + 5,
+    };
+    //End Fetch Storage
+    const data2 = {
+      uuid: localStorage.getItem("auth_token"),
+      token: localStorage.getItem("access_token"),
+    };
+    console.log(process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+
+    const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+    console.log(jwt);
+    authorizationConfig(jwt);
+    const header = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+    await axios.post("/api/refresh", data2, header).then((res) => {
+      console.log(res);
+      localStorage.setItem("access_token", res.data.accessToken);
+    });
+  };
+  const onAction = async (e) => {
+    e.preventDefault();
+    // let response = jwt_decode(localStorage.getItem("access_token"));
+    // console.log(response.auth_id);
+    // const date = new Date().getTime() / 1000;
+    // console.log(date);
+    // const unix = Math.round(date);
+    // const data = {
+    //   auth_id: response.auth_id,
+    //   iat: unix,
+    // };
+    // const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+    // //24 hour 86400
+    // authorizationConfig(jwt);
+    // const header = {
+    //   headers: {
+    //     Authorization: `Bearer ${jwt}`,
+    //   },
+    // };
+
+    await axios
+      .get("/api/posts", authorization)
+      .then((res) => {
+        console.log(res.status);
+      })
+      .catch((e) => {
+        console.log(e.message);
+      });
   };
   return (
     <div className=" w-100">
@@ -70,6 +141,13 @@ const BarangayRegister = (props) => {
         className="barangay-register-container"
       >
         <Col>
+          {/* test
+          <form onSubmit={onSubmit}>
+            <button type="submit">refresh</button>
+          </form>
+          <form onSubmit={onAction}>
+            <button type="submit">action</button>
+          </form> */}
           <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
             {firstTime ? (
               <Card className="barangay-register-card">

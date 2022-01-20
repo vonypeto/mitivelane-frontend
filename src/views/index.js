@@ -15,7 +15,11 @@ import {
 } from "configs/AppConfig";
 import useBodyClass from "hooks/useBodyClass";
 import { useAuth } from "../contexts/AuthContext";
-import { AUTH_BARANGAY } from "../redux/constants/Auth";
+import {
+  AUTH_BARANGAY,
+  AUTH_BARANGAY_LIST,
+  ACCESS_TOKEN,
+} from "../redux/constants/Auth";
 function RouteInterceptor({ children, isAuthenticated, ...rest }) {
   return (
     <Route
@@ -56,13 +60,15 @@ function RoutePreInterceptor({ children, isAuthenticated, ...rest }) {
 }
 export const Views = (props) => {
   const { locale, token, location, direction } = props;
-  const { setBarangay } = useAuth();
+  const { setBarangay, setBarangayMemberList, authorizationConfig } = useAuth();
   const currentAppLocale = AppLocale[locale];
 
   useBodyClass(`dir-${direction}`);
   useEffect(() => {
     //set GLobalContext When Refreshed
     setBarangay(localStorage.getItem(AUTH_BARANGAY));
+    setBarangayMemberList(localStorage.getItem(AUTH_BARANGAY_LIST));
+    authorizationConfig(localStorage.getItem(ACCESS_TOKEN));
     // async function getBarangay(token) {
     //   // Make the initial query
     //   console.log("token", token);
