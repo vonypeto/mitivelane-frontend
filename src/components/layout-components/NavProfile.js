@@ -40,6 +40,11 @@ const menuItem = [
 export const NavProfile = ({ signOut }) => {
   const { currentUser } = useAuth();
   const profileImg = "/img/avatars/thumb-1.jpg";
+
+  const signOutNode = () => {
+    console.log("test");
+    signOut();
+  };
   const profileMenu = (
     <div className="nav-profile nav-dropdown">
       <div className="nav-profile-header">
@@ -69,7 +74,7 @@ export const NavProfile = ({ signOut }) => {
               </Menu.Item>
             );
           })}
-          <Menu.Item key={menuItem.length + 1} onClick={(e) => signOut()}>
+          <Menu.Item key={menuItem.length + 1} onClick={(e) => signOutNode()}>
             <span>
               <LogoutOutlined className="mr-3" />
               <span className="font-weight-normal">Sign Out</span>

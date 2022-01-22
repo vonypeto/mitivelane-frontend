@@ -3,6 +3,7 @@ import {
   AUTH_TOKEN,
   AUTH_BARANGAY,
   AUTH_BARANGAY_LIST,
+  ACCESS_TOKEN,
   SIGNIN,
   SIGNOUT,
   SIGNUP,
@@ -50,6 +51,7 @@ export function* signOut() {
         localStorage.removeItem(AUTH_TOKEN);
         localStorage.removeItem(AUTH_BARANGAY);
         localStorage.removeItem(AUTH_BARANGAY_LIST);
+        localStorage.removeItem(ACCESS_TOKEN);
 
         yield put(signOutSuccess(signOutUser));
       } else {

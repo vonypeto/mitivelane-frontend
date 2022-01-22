@@ -25,6 +25,7 @@ const BarangayRegister = (props) => {
     setBarangayMemberList,
     authorization,
     authorizationConfig,
+    generateToken,
   } = useAuth();
   const [firstTime, setFirstTime] = useState(true);
   const { auth } = props;
@@ -67,7 +68,8 @@ const BarangayRegister = (props) => {
       user_id,
       setBarangay,
       setBarangayMemberList,
-      firstTime
+      firstTime,
+      generateToken
     );
   }; // test
   const onSubmit = async (e) => {
@@ -92,15 +94,18 @@ const BarangayRegister = (props) => {
 
     const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
     console.log(jwt);
-    authorizationConfig(jwt);
+
     const header = {
       headers: {
         Authorization: `Bearer ${jwt}`,
+        "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
+        "X-XSS-Protection": "1; mode=block",
       },
     };
     await axios.post("/api/refresh", data2, header).then((res) => {
       console.log(res);
       localStorage.setItem("access_token", res.data.accessToken);
+      authorizationConfig(res.data.accessToken);
     });
   };
   const onAction = async (e) => {
@@ -122,15 +127,19 @@ const BarangayRegister = (props) => {
     //     Authorization: `Bearer ${jwt}`,
     //   },
     // };
-
+    let testToken = generateToken();
+    // setTimeout(async () => {
     await axios
-      .get("/api/posts", authorization)
+      .get("/api/posts", testToken[1])
       .then((res) => {
         console.log(res.status);
       })
       .catch((e) => {
         console.log(e.message);
       });
+    // }, 3000);
+
+    console.log(testToken[1]);
   };
   return (
     <div className=" w-100">
@@ -141,13 +150,13 @@ const BarangayRegister = (props) => {
         className="barangay-register-container"
       >
         <Col>
-          {/* test
+          test
           <form onSubmit={onSubmit}>
-            <button type="submit">refresh</button>
+            <button type="submit">refresh if remember</button>
           </form>
           <form onSubmit={onAction}>
             <button type="submit">action</button>
-          </form> */}
+          </form>
           <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
             {firstTime ? (
               <Card className="barangay-register-card">

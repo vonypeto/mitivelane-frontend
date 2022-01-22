@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./LoginForm.css";
 import { connect } from "react-redux";
-import { Button, Form, Input, Divider, Alert } from "antd";
+import { Button, Form, Input, Divider, Alert, Checkbox } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import PropTypes from "prop-types";
 import { GoogleSVG, FacebookSVG } from "assets/svg/icon";
@@ -13,13 +13,19 @@ import {
   hideAuthMessage,
   signInWithGoogle,
   signInWithFacebook,
+  signOut,
 } from "redux/actions/Auth";
 import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "contexts/AuthContext";
 import { loginBarangay } from "api/AuthController/LoginController/LoginController";
 export const LoginForm = (props) => {
-  const { setBarangayMemberList, setBarangay, currentUser } = useAuth();
+  const {
+    setBarangayMemberList,
+    setBarangay,
+    currentUser,
+    generateToken,
+  } = useAuth();
   let history = useHistory();
   const {
     otherSignIn,
@@ -37,6 +43,7 @@ export const LoginForm = (props) => {
     showMessage,
     message,
     allowRedirect,
+    signOut,
   } = props;
 
   const initialCredential = {
@@ -62,13 +69,16 @@ export const LoginForm = (props) => {
   useEffect(() => {
     if (token !== null && allowRedirect) {
       // getBarangay(token);
+
       loginBarangay(
         token,
         setBarangayMemberList,
         setBarangay,
         redirect,
         history,
-        currentUser
+        currentUser,
+        generateToken,
+        signOut
       );
     }
     if (showMessage) {
@@ -162,12 +172,23 @@ export const LoginForm = (props) => {
         </Form.Item>
 
         {showForgetPassword && (
-          <span
-            onClick={() => onForgetPasswordClick}
-            className="pb-2 cursor-pointer font-size-sm font-weight-normal text-muted ant-form-item"
-          >
-            Forget Password?
-          </span>
+          <div className="d-flex justify-content-between">
+            {" "}
+            <Checkbox
+              className="pb-2 mb-2 cursor-pointer font-size-sm font-weight-normal text-muted "
+              onChange={() => {}}
+            >
+              Remember me
+            </Checkbox>{" "}
+            <div className="mt-2">
+              <span
+                onClick={() => onForgetPasswordClick}
+                className="pb-2 cursor-pointer font-size-sm font-weight-normal text-muted ant-form-item"
+              >
+                Forget Password?
+              </span>
+            </div>
+          </div>
         )}
         <Form.Item>
           <Button
@@ -199,12 +220,13 @@ LoginForm.defaultProps = {
 };
 
 const mapStateToProps = ({ auth }) => {
-  const { loading, message, showMessage, token, redirect } = auth;
+  const { loading, message, showMessage, token, redirect, signOut } = auth;
   return { loading, message, showMessage, token, redirect };
 };
 
 const mapDispatchToProps = {
   signIn,
+  signOut,
   showAuthMessage,
   showLoading,
   hideAuthMessage,

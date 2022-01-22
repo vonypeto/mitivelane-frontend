@@ -11,10 +11,12 @@ export async function createBarangay(
   user_id,
   setBarangay,
   setBarangayMemberList,
-  firstTime
+  firstTime,
+  generateToken
 ) {
   // const data = values;
   let dataInfo = {};
+  let token = generateToken();
   console.log(moment(values.birthday).format(DATE_FORMAT_YYYY_MM_DD));
 
   console.log(values);
@@ -56,8 +58,8 @@ export async function createBarangay(
     };
   }
 
-  axios
-    .post("/api/pre/create-barangay", dataInfo)
+  await axios
+    .post("/api/pre/create-barangay", dataInfo, token[1])
     .then((response) => {
       if (response.data.length > 0) {
         console.log(response.data);

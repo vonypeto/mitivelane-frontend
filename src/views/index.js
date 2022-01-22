@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import AppLayout from "layouts/app-layout";
 import AuthLayout from "layouts/auth-layout";
 import PreLayout from "layouts/pre-layout";
-
+import PageNotFound from "views/auth-views/errors/error-page-1";
 import AppLocale from "lang";
 import { IntlProvider } from "react-intl";
 import { ConfigProvider } from "antd";
@@ -108,6 +108,7 @@ export const Views = (props) => {
               <PreLayout />
             </Route>{" "}
           </RoutePreInterceptor>
+          <Route component={PageNotFound} />
         </Switch>
       </ConfigProvider>
     </IntlProvider>

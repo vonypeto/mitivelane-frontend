@@ -1,7 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import firebase from "firebase/app";
 import { auth } from "auth/FirebaseAuth";
-import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
+import {
+  AUTH_BARANGAY,
+  AUTH_BARANGAY_LIST,
+  ACCESS_TOKEN,
+} from "redux/constants/Auth";
+import jwt_decode from "jwt-decode";
+import sign from "jwt-encode";
 
 const AuthContext = React.createContext();
 
@@ -32,8 +38,37 @@ export function AuthProvider({ children }) {
     return setAuthorization({
       headers: {
         Authorization: `Bearer ${token}`,
+        "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
+        "X-XSS-Protection": "1; mode=block",
+        "Content-Security-Policy":
+          " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
       },
     });
+  }
+  function generateToken() {
+    let response = jwt_decode(localStorage.getItem("access_token"));
+    console.log(response.auth_id);
+    const date = new Date().getTime() / 1000;
+    console.log(date);
+    const unix = Math.round(date);
+    const data = {
+      auth_id: response.auth_id,
+      iat: unix,
+      exp: unix + 5,
+    };
+    const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+    const header = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
+        "X-XSS-Protection": "1; mode=block",
+        "Content-Security-Policy":
+          " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
+      },
+    };
+    console.log(jwt);
+    authorizationConfig(jwt);
+    return [jwt, header];
   }
   useEffect(() => {
     const listener = window.addEventListener("storage", checkUserBarangay);
@@ -56,6 +91,7 @@ export function AuthProvider({ children }) {
     currentBarangayMemberList,
     authorizationConfig,
     authorization,
+    generateToken,
   };
   return (
     <AuthContext.Provider value={value}>

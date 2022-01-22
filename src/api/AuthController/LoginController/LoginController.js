@@ -6,6 +6,7 @@ import {
 import { PRE_PREFIX_PATH } from "configs/AppConfig";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
+import sign from "jwt-encode";
 
 export async function loginBarangay(
   token,
@@ -13,14 +14,36 @@ export async function loginBarangay(
   setBarangay,
   redirect,
   history,
-  currentUser
+  currentUser,
+  generateToken,
+  signOut
 ) {
   let role_id, barangay_id;
 
+  const date = new Date().getTime() / 1000;
+  const unix = Math.round(date);
+  const data = {
+    auth_id: token,
+    iat: unix,
+    exp: unix + 60,
+  };
+  const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+  const header = {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+      "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
+      "X-XSS-Protection": "1; mode=block",
+      "Content-Security-Policy":
+        " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
+    },
+  };
+
   await axios
-    .get("/api/auth/login/" + token)
+    .get("/api/auth/login/" + token, header)
     .then((res) => {
       localStorage.setItem(ACCESS_TOKEN, res.data);
+      let tmp = generateToken();
+      localStorage.setItem(ACCESS_TOKEN, tmp[0]);
       let response = jwt_decode(res.data);
       console.log(response);
       if (response.barangays[0] && response.members[0]) {
@@ -66,34 +89,35 @@ export async function loginBarangay(
       }
     })
     .catch(async (error) => {
+      signOut();
       console.log(error);
-      const register = {
-        uuid: token,
-        email: currentUser?.email,
-      };
-      // before adding add JWT here later
-      const querylist = await axios
-        .post("/api/auth/register", register)
-        .then((res) => {
-          return res.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      if (!querylist) {
-        console.log("true");
-        console.log(querylist);
-        localStorage.setItem(AUTH_BARANGAY_LIST, null);
-        localStorage.setItem(AUTH_BARANGAY, null);
-        setBarangayMemberList(null);
-        setBarangay(null);
-        return history.push(redirect);
-      } else {
-        localStorage.setItem(AUTH_BARANGAY_LIST, null);
-        localStorage.setItem(AUTH_BARANGAY, null);
-        setBarangayMemberList(null);
-        setBarangay(null);
-        return history.push(PRE_PREFIX_PATH);
-      }
+      // const register = {
+      //   uuid: token,
+      //   email: currentUser?.email,
+      // };
+      // // before adding add JWT here later
+      // const querylist = await axios
+      //   .post("/api/auth/register", register)
+      //   .then((res) => {
+      //     return res.data;
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+      // if (!querylist) {
+      //   console.log("true");
+      //   console.log(querylist);
+      //   localStorage.setItem(AUTH_BARANGAY_LIST, null);
+      //   localStorage.setItem(AUTH_BARANGAY, null);
+      //   setBarangayMemberList(null);
+      //   setBarangay(null);
+      //   return history.push(redirect);
+      // } else {
+      //   localStorage.setItem(AUTH_BARANGAY_LIST, null);
+      //   localStorage.setItem(AUTH_BARANGAY, null);
+      //   setBarangayMemberList(null);
+      //   setBarangay(null);
+      //   return history.push(PRE_PREFIX_PATH);
+      // }
     });
 }
