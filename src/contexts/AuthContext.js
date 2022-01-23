@@ -54,7 +54,7 @@ export function AuthProvider({ children }) {
     const data = {
       auth_id: response.auth_id,
       iat: unix,
-      exp: unix + 5,
+      exp: unix + 60,
     };
     const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
     const header = {
