@@ -30,7 +30,7 @@ export async function loginBarangay(
   const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
   const header = {
     headers: {
-      Authorization: `Bearer ${jwt}`,
+      authorization: `Bearer ${jwt}`,
       "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
       "X-XSS-Protection": "1; mode=block",
       "Content-Security-Policy":

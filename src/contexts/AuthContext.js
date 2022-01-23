@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
   function authorizationConfig(token) {
     return setAuthorization({
       headers: {
-        Authorization: `Bearer ${token}`,
+        authorization: `Bearer ${token}`,
         "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
         "X-XSS-Protection": "1; mode=block",
         "Content-Security-Policy":
