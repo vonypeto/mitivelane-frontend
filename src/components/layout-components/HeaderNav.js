@@ -121,8 +121,7 @@ export const HeaderNav = (props) => {
             <TeamNav />
             <NavNotification />
             <NavLanguage />
-            <NavProfile />
-            <NavPanel direction={direction} />
+            <NavPanel direction={direction} /> <NavProfile />
           </div>
           <NavSearch active={searchActive} close={onSearchClose} />
         </div>

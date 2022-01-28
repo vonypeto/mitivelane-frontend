@@ -4,7 +4,9 @@ import "./index.css";
 import UserInfoForm from "views/pre-views/components/barangay-register-form/UserInfoForm";
 import BarangayInfoForm from "views/pre-views/components/barangay-register-form/BarangayInfoForm";
 import { createBarangay } from "api/AuthController/PreRegisterController/PreRegisterController";
-import { Row, Col, Card, Form, Button, Input } from "antd";
+import { Spin } from "antd";
+import Loading from "components/shared-components/Loading";
+import { Row, Col, Card, Form, Button } from "antd";
 import axios from "axios";
 import {
   signIn,
@@ -23,34 +25,45 @@ const BarangayRegister = (props) => {
     currentUser,
     setBarangay,
     setBarangayMemberList,
-    authorization,
     authorizationConfig,
     generateToken,
   } = useAuth();
   const [firstTime, setFirstTime] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
   const { auth } = props;
   const user_id = auth.token;
   const formRef = React.createRef();
   let history = useHistory();
-  useEffect(() => {
+  // const getData = async () => {
+  //   const res = await axios.get("https://geolocation-db.com/json/");
+  //   console.log(res.data);
+  // };
+  // useEffect(() => {
+  //   //passing getData method to the lifecycle method
+  //   getData();
+  // }, []);
+  useEffect(async () => {
     let cancel = true;
+
     //convert this to a new component later to the api folder
-    axios
-      .get("/api/app/users/" + user_id)
-      .then((response) => {
-        if (response.data[0].barangays[0] && response.data[0].members[0]) {
+    if (cancel) {
+      await axios
+        .get("/api/app/users/" + user_id)
+        .then((response) => {
+          setIsLoading(!isLoading);
+          // if (response.data[0].barangays) {
+          console.log(response.data[0].first_time);
           if (response.data.length > 0) {
-            console.log(response.data);
-            if (cancel) {
-              setFirstTime(response.data.first_time);
-              console.log(firstTime);
-            }
+            setFirstTime(response.data[0].first_time);
+            // }
           }
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
     return () => {
       cancel = false;
     };
@@ -108,8 +121,7 @@ const BarangayRegister = (props) => {
       authorizationConfig(res.data.accessToken);
     });
   };
-  const onAction = async (e) => {
-    e.preventDefault();
+  const onAction = async () => {
     // let response = jwt_decode(localStorage.getItem("access_token"));
     // console.log(response.auth_id);
     // const date = new Date().getTime() / 1000;
@@ -144,56 +156,71 @@ const BarangayRegister = (props) => {
   return (
     <div className=" w-100">
       <HeaderNavRegister />
-      <Row
-        align="middle"
-        justify="center"
-        className="barangay-register-container"
-      >
-        <Col>
-          test
-          <form onSubmit={onSubmit}>
-            <button type="submit">refresh if remember</button>
-          </form>
-          <form onSubmit={onAction}>
-            <button type="submit">action</button>
-          </form>
-          <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
-            {firstTime ? (
+      {isLoading ? (
+        <Row
+          align="middle"
+          justify="center"
+          className="barangay-register-container"
+          style={{ height: "600px" }}
+        >
+          {" "}
+          <Loading />
+        </Row>
+      ) : (
+        <Row
+          align="middle"
+          justify="center"
+          className="barangay-register-container"
+        >
+          <Col>
+            test
+            <form onSubmit={onSubmit}>
+              <button type="submit">refresh if remember</button>
+            </form>
+            <Form onFinish={onAction}>
+              <Button htmlType="submit">action</Button>
+            </Form>
+            <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
+              {firstTime ? (
+                <Card className="barangay-register-card">
+                  <div style={{ textAlign: "center", margin: "auto 15%" }}>
+                    <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
+                      Personal Info
+                    </h1>
+                    <p>
+                      We need your personal data to help others identify you and
+                      can be used to make filling up forms in the future faster.
+                    </p>
+                  </div>
+                  <UserInfoForm />
+                </Card>
+              ) : null}
+
               <Card className="barangay-register-card">
                 <div style={{ textAlign: "center", margin: "auto 15%" }}>
                   <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
-                    Personal Info
+                    Register Barangay
                   </h1>
                   <p>
-                    We need your personal data to help others identify you and
-                    can be used to make filling up forms in the future faster.
+                    Enter the data accordingly to your barangay. You can always
+                    update your barnagay's data anytime.
                   </p>
                 </div>
-                <UserInfoForm />
+
+                <BarangayInfoForm />
               </Card>
-            ) : null}
 
-            <Card className="barangay-register-card">
-              <div style={{ textAlign: "center", margin: "auto 15%" }}>
-                <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
-                  Register Barangay
-                </h1>
-                <p>
-                  Enter the data accordingly to your barangay. You can always
-                  update your barnagay's data anytime.
-                </p>
-              </div>
-
-              <BarangayInfoForm />
-            </Card>
-
-            <Button htmlType="submit" type="primary" style={{ float: "right" }}>
-              Submit
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-
+              <Button
+                htmlType="submit"
+                type="primary"
+                style={{ float: "right" }}
+              >
+                Submit
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+      )}
       <p style={{ textAlign: "center", paddingBottom: "20px" }}>
         By clicking "Submit" you agree with the <a>Terms & Condition</a> and{" "}
         <a>Privacy Terms</a>

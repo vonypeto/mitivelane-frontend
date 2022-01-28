@@ -10,9 +10,10 @@ import {
 } from "@ant-design/icons";
 import Icon from "components/util-components/Icon";
 import { signOut } from "redux/actions/Auth";
+import { useHistory } from "react-router-dom";
 import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
-
+import { logOut } from "api/ComponentController/NavProfileController";
 const menuItem = [
   {
     title: "Edit Profile",
@@ -38,12 +39,13 @@ const menuItem = [
 ];
 
 export const NavProfile = ({ signOut }) => {
-  const { currentUser } = useAuth();
+  let history = useHistory();
+  const { currentUser, generateToken } = useAuth();
   const profileImg = "/img/avatars/thumb-1.jpg";
 
   const signOutNode = () => {
-    console.log("test");
-    signOut();
+    logOut(signOut, generateToken);
+    // signOut();
   };
   const profileMenu = (
     <div className="nav-profile nav-dropdown">

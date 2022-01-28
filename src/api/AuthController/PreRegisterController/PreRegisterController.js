@@ -43,7 +43,7 @@ export async function createBarangay(
       mobile: values.mobile_number,
       telephone: values.telephone_number,
       personal_address: values.personal_address,
-      first_time: firstTime,
+      first_time: !firstTime,
     };
   } else {
     dataInfo = {

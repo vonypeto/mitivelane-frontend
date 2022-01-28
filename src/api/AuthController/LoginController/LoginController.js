@@ -2,6 +2,7 @@ import {
   AUTH_BARANGAY,
   AUTH_BARANGAY_LIST,
   ACCESS_TOKEN,
+  SESSION_TOKEN,
 } from "redux/constants/Auth";
 import { PRE_PREFIX_PATH } from "configs/AppConfig";
 import axios from "axios";
@@ -24,6 +25,7 @@ export async function loginBarangay(
   const unix = Math.round(date);
   const data = {
     auth_id: token,
+    email: currentUser?.email,
     iat: unix,
     exp: unix + 60,
   };
@@ -39,13 +41,18 @@ export async function loginBarangay(
   };
 
   await axios
-    .get("/api/auth/login/" + token, header)
+    .post("/api/auth/login/" + token, data, header)
     .then((res) => {
       localStorage.setItem(ACCESS_TOKEN, res.data);
+      localStorage.setItem(SESSION_TOKEN, res.data);
+
       let tmp = generateToken();
       localStorage.setItem(ACCESS_TOKEN, tmp[0]);
       let response = jwt_decode(res.data);
-      console.log(response);
+      // console.table(
+      //   [response.barangays[0].barangay_id],
+      //   [response.members[0].barangay_member_id]
+      // );
       if (response.barangays[0] && response.members[0]) {
         if (response.barangays[0].length > 0) {
           // response.barangays.map((barangay) => {
@@ -68,12 +75,16 @@ export async function loginBarangay(
           //   );
           // });
 
-          response.barangays[0].map((barangay) => (barangay_id = barangay));
+          response.barangays[0].map(
+            (barangay) => (barangay_id = barangay.barangay_id)
+          );
 
           localStorage.setItem(AUTH_BARANGAY, barangay_id);
           setBarangay(barangay_id);
           console.log(response.barangays[0]);
-          response.members[0].map((member) => (role_id = member));
+          response.members[0].map(
+            (member) => (role_id = member.barangay_member_id)
+          );
 
           localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
           setBarangayMemberList(role_id);

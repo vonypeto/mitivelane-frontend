@@ -53,13 +53,20 @@ const BlotterRecord = (props) => {
   console.log("List Second Loop: " + param_url);
   let history = useHistory();
   const [blotterlist, setBlotterList] = useState(BlotterListData);
-  const [blotterlistrequest, setBlotterListRequest] = useState(BlotterListRequestData);
+  const [blotterlistrequest, setBlotterListRequest] = useState(
+    BlotterListRequestData
+  );
 
   const [selectedRowsBlotter, setSelectedRowsBlotter] = useState([]);
   const [selectedRowKeysBlotter, setSelectedRowKeysBlotter] = useState([]);
 
-  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState([]);
-  const [selectedRowKeysBlotterRequest, setSelectedRowKeysBlotterRequest] = useState([]);
+  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState(
+    []
+  );
+  const [
+    selectedRowKeysBlotterRequest,
+    setSelectedRowKeysBlotterRequest,
+  ] = useState([]);
 
   const [userProfileVisible, SetUserProfileVisible] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
@@ -258,7 +265,7 @@ const BlotterRecord = (props) => {
       dataIndex: "actions",
       render: (_, elm) => (
         <div className="text-right">
-          {console.log("actio9n" + elm.blotter_id)}
+          {/* {console.log("actio9n" + elm.blotter_id)} */}
           <div className="text-right d-flex justify-content-end">
             <Tooltip title="Approve">
               <Button

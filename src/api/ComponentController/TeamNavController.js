@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getBarangay(currentUser, setBarangayMember) {
   const user = currentUser?.uid;
-  axios
+  await axios
     .get("/api/app/users/" + user)
     .then((response) => {
       if (response.data.length > 0) {

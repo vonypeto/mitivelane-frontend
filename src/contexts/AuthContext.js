@@ -47,9 +47,7 @@ export function AuthProvider({ children }) {
   }
   function generateToken() {
     let response = jwt_decode(localStorage.getItem("access_token"));
-    console.log(response.auth_id);
     const date = new Date().getTime() / 1000;
-    console.log(date);
     const unix = Math.round(date);
     const data = {
       auth_id: response.auth_id,
@@ -66,7 +64,6 @@ export function AuthProvider({ children }) {
           " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
       },
     };
-    console.log(jwt);
     authorizationConfig(jwt);
     return [jwt, header];
   }

@@ -51,7 +51,12 @@ const rules = {
 };
 
 export const RegisterForm = (props) => {
-  const { setBarangay, setBarangayMemberList, currentUser } = useAuth();
+  const {
+    setBarangay,
+    setBarangayMemberList,
+    currentUser,
+    generateToken,
+  } = useAuth();
   const codeRef = useRef();
   const {
     signUp,
@@ -137,7 +142,8 @@ export const RegisterForm = (props) => {
         setBarangayMemberList,
         redirect,
         history,
-        currentUser
+        currentUser,
+        generateToken
       );
     }
     if (showMessage) {
