@@ -162,7 +162,7 @@ const ChildrenConflictWithLaw = (props) => {
           </Form.Item>
         </Card>
         <Card title="Settlement Status:">
-          <Form.Item name="settlementstatus">
+          <Form.Item name="settlement_status">
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>

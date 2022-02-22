@@ -39,11 +39,11 @@ const Narrative = (props) => {
             </i>
           </div>
           <Form.Item
-                          name="subject"
-                          labelCol={{ span: 24 }}
-                        >
-                          <Input placeholder="Subject (Optional)" />
-                        </Form.Item>
+            name="subject"
+            labelCol={{ span: 24 }}
+          >
+            <Input placeholder="Subject (Optional)" />
+          </Form.Item>
           <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
             <Flex className="mb-1" mobileFlex={false}>
               <div className="">
@@ -67,7 +67,7 @@ const Narrative = (props) => {
           </Form.Item>
         </Card>
         <Card title="Settlement Status:">
-          <Form.Item name="settlementstatus">
+          <Form.Item name="settlement_status">
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
@@ -78,7 +78,7 @@ const Narrative = (props) => {
           </Form.Item>
         </Card>
         <Card title="Incident Details">
-          <Form.Item name="incident-type" label="Type of Incident">
+          <Form.Item name="incident_type" label="Type of Incident">
             <Col xs={24} sm={24} md={24}>
               <Input placeholder="Incident Type" />
             </Col>
@@ -93,8 +93,7 @@ const Narrative = (props) => {
             <DatePicker
               className="w-100"
               initialValues={moment(
-                `${current.getFullYear()}/${
-                  current.getMonth() + 1
+                `${current.getFullYear()}/${current.getMonth() + 1
                 }/${current.getDate()}`,
                 dateFormat
               )}

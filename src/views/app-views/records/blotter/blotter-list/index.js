@@ -103,7 +103,7 @@ const BlotterRecord = (props) => {
   );
 
   const AddResident = () => {
-    history.push(`/app/1002/records/blotter-record/add`);
+    history.push(`/app/${param_url}/records/blotter-record/add`);
   };
   const BlottereditwDetails = (row) => {
     history.push(`/app/1002/records/blotter-record/${row.blotter_id}/edit`);
