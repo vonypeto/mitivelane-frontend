@@ -2,56 +2,9 @@ import React from "react";
 import { Input, Row, Col, Card, Form } from "antd";
 
 const rules = {
-  firstname: [
-    {
-      required: true,
-      message: "Please enter first name",
-    },
-  ],
-  lastname: [
-    {
-      required: true,
-      message: "Please enter last name",
-    },
-  ],
-  middlename: [
-    {
-      required: true,
-      message: "Please enter middle name",
-    },
-  ],
-  alias: [
-    {
-      required: true,
-      message: "Please enter alias",
-    },
-  ],
-  description: [
-    {
-      required: true,
-      message: "Please enter product description",
-    },
-  ],
-  price: [
-    {
-      required: true,
-      message: "Please enter product price",
-    },
-  ],
-  comparePrice: [],
-  taxRate: [
-    {
-      required: true,
-      message: "Please enter tax rate",
-    },
-  ],
-  cost: [
-    {
-      required: true,
-      message: "Please enter item cost",
-    },
-  ],
+  //TBA
 };
+
 const SocialWelfareField = () => {
   return (
     <Row>
@@ -89,9 +42,8 @@ const SocialWelfareField = () => {
                 </Col>
                 <Col xs={24} sm={24} md={24}>
                   <Form.Item
-                    name="TIN"
+                    name="tin"
                     label="Taxpayer Identification Number"
-                    rules={rules.firstname}
                   >
                     <Input placeholder="Taxpayer Identification Number" />
                   </Form.Item>

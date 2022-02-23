@@ -223,7 +223,7 @@ const MainFormView = (props) => (
             </Col>
             <Col xs={12} sm={12} md={15} className="text-right">
               <span className="ml-5 text-detail-resident font-weight-bold">
-                {props.residentData.mobile}
+                {props.residentData.mobile_number}
               </span>
             </Col>
           </Row>

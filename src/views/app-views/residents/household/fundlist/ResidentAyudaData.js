@@ -41,11 +41,11 @@ const series = [{
 export const AyudaChartData = {
   series: [
     {
-      name: "Ayuda Distributed",
+      name: "Supply Distributed",
       data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
     },
     {
-      name: "Ayuda Stock",
+      name: "Supply Stock",
       data: [14, 31, 45, 61, 57, 68, 75, 11, 88]
     },
 

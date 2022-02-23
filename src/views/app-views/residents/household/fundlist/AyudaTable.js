@@ -12,16 +12,14 @@ const AyudaTable = () => {
     const expandedRowRender = (household_member_id) => {
 
         const data = [];
-
         ResidentTableData.map((resident_data) => {
-            if (resident_data.id === household_member_id) {
-                console.log(resident_data.id)
+            let isResidentValid = household_member_id.includes(resident_data.id)
+            if (isResidentValid === true) {
+                data.push(resident_data)
             }
-        }
+        })
 
-        )
-
-        return <Table columns={ResidentTableColumns} dataSource={data} pagination={false} />;
+        return <Table columns={ResidentTableColumns} dataSource={data} pagination={false} rowKey="id"/>;
     };
 
     return (
