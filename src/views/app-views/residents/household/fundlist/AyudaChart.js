@@ -10,7 +10,7 @@ import {
 const AyudaChart = () => {
     return (
         <Card>
-            <h4>Ayuda Distribution</h4>
+            <h4>Supply Distribution</h4>
             <Chart
                 options={AyudaChartData.options}
                 series={AyudaChartData.series}

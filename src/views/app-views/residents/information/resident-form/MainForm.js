@@ -197,8 +197,7 @@ const MainForm = (props) => {
                         <DatePicker
                           className="w-100"
                           initialValues={moment(
-                            `${current.getFullYear()}/${
-                              current.getMonth() + 1
+                            `${current.getFullYear()}/${current.getMonth() + 1
                             }/${current.getDate()}`,
                             dateFormat
                           )}
@@ -331,28 +330,36 @@ const MainForm = (props) => {
               <div key="b">
                 {" "}
                 <Card title="Additional Details">
-                  <Form.Item name="voterstatus" label="Voter Status">
+                  <Form.Item name="voter_status" label="Voter Status">
                     <Select className="w-100" placeholder="Voter Status">
-                      {yesno.map((elm) => (
-                        <Option key={elm} value={elm}>
-                          {elm}
-                        </Option>
-                      ))}
+                      <Option key={1} value={"Registered"}>
+                        Registered
+                      </Option>
+                      <Option key={2} value={"Not Registered"}>
+                        Not Registered
+                      </Option>
                     </Select>
                   </Form.Item>
-                  <Form.Item name="civilstatus" label="Civil Status">
+                  <Form.Item name="civil_status" label="Civil Status">
                     <Select className="w-100" placeholder="Civil Status">
-                      {yesno.map((elm) => (
-                        <Option key={elm} value={elm}>
-                          {elm}
-                        </Option>
-                      ))}
+
+                      <Option key={1} value={"Single"}>
+                        Single
+                      </Option>
+                      <Option key={2} value={"Married"}>
+                        Married
+                      </Option>
+                      <Option key={3} value={"Seperated"}>
+                        Seperated
+                      </Option>
+                      <Option key={4} value={"Widowed"}>
+                        Widowed
+                      </Option>
+
                     </Select>
                   </Form.Item>
-                  <Form.Item name="citizenship" label="CitizenShip">
-                    <Col xs={24} sm={24} md={24}>
-                      <Input placeholder="CitizenShip" />
-                    </Col>
+                  <Form.Item name="citizenship" label="Citizenship">
+                    <Input placeholder="Citizenship" />
                   </Form.Item>
                 </Card>
               </div>

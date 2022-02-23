@@ -16,7 +16,7 @@ const AyudaDonut = () => {
         <DonutChartWidget
             series={resident_ayuda_amount}
             labels={resident_ayuda_name}
-            title="Ayuda Distribution"
+            title="Supply Distribution"
             customOptions={{ colors: resident_ayuda_color }}
             bodyClass="mb-2 mt-3"
             extra={
