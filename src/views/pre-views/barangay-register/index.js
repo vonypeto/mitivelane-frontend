@@ -28,9 +28,10 @@ const BarangayRegister = (props) => {
     authorizationConfig,
     generateToken,
   } = useAuth();
+
   const [firstTime, setFirstTime] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [initialData, setInitialData] = useState([]);
   const { auth } = props;
   const user_id = auth.token;
   const formRef = React.createRef();
@@ -43,29 +44,67 @@ const BarangayRegister = (props) => {
   //   //passing getData method to the lifecycle method
   //   getData();
   // }, []);
-  useEffect(async () => {
-    let cancel = true;
+
+  // const header = () => {
+  //   let response = jwt_decode(localStorage.getItem("access_token"));
+  //   const date = new Date().getTime() / 1000;
+  //   const unix = Math.round(date);
+  //   const data = {
+  //     auth_id: response.auth_id,
+  //     iat: unix,
+  //     exp: unix + 60,
+  //   };
+  //   const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+  //   const header = {
+  //     headers: {
+  //       Authorization: `Bearer ${jwt}`,
+  //       "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
+  //       "X-XSS-Protection": "1; mode=block",
+  //       "Content-Security-Policy":
+  //         " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
+  //     },
+  //   };
+  //   return header;
+  // };
+  useEffect(() => {
+    let APIFetch = true;
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
 
     //convert this to a new component later to the api folder
-    if (cancel) {
-      await axios
-        .get("/api/app/users/" + user_id)
-        .then((response) => {
+
+    axios
+      .get("/api/pre/users/" + user_id, generateToken()[1], {
+        cancelToken: source.token,
+      })
+      .then((response) => {
+        setInitialData({
+          first_name: response.data[0].first_name,
+          last_name: response.data[0].last_name,
+        });
+        // if (response.data[0].barangays) {
+        if (APIFetch) {
+          // console.log(response.data[0].first_time);
           setIsLoading(!isLoading);
-          // if (response.data[0].barangays) {
-          console.log(response.data[0].first_time);
           if (response.data.length > 0) {
             setFirstTime(response.data[0].first_time);
+
             // }
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (axios.isCancel(error)) {
+          console.log("successfully aborted");
+        } else {
+          // handle error
+        }
+      });
 
     return () => {
-      cancel = false;
+      APIFetch = false;
+      source.cancel();
     };
     // return () => {
     //   cleanup
@@ -172,15 +211,20 @@ const BarangayRegister = (props) => {
           justify="center"
           className="barangay-register-container"
         >
-          <Col>
-            test
+          <Col align="middle" justify="center">
+            {/* test
             <form onSubmit={onSubmit}>
               <button type="submit">refresh if remember</button>
-            </form>
-            <Form onFinish={onAction}>
+            </form> */}
+            {/* <Form onFinish={onAction}>
               <Button htmlType="submit">action</Button>
-            </Form>
-            <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
+            </Form> */}
+            <Form
+              layout="vertical"
+              initialValues={initialData}
+              ref={formRef}
+              onFinish={handleSubmit}
+            >
               {firstTime ? (
                 <Card className="barangay-register-card">
                   <div style={{ textAlign: "center", margin: "auto 15%" }}>

@@ -137,3 +137,14 @@
     padding: 0px 0px !important;
   }
 }
+.margin-account-left {
+  margin-left: 1.5rem;
+}
+@media screen and (max-width: 767px) {
+  .margin-account-left {
+    margin-left: 0px;
+  }
+}
+.custom-file-upload input {
+  display: none !important;
+}

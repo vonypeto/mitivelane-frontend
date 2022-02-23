@@ -24,17 +24,13 @@ const menuItem = [
   {
     title: "Account Setting",
     icon: SettingOutlined,
-    path: "/",
+    path: "/app/user/profile",
   },
-  {
-    title: "Billing",
-    icon: ShopOutlined,
-    path: "/",
-  },
+
   {
     title: "Help Center",
     icon: QuestionCircleOutlined,
-    path: "/",
+    path: "/pre/help-center",
   },
 ];
 

@@ -46,19 +46,6 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
     return unsubscribe;
   }, [currentBarangay]);
 
-  // useEffect(() => {
-  //   setCurrent(localStorage.getItem("auth_barangay"));
-  //   setBarangay(localStorage.getItem("auth_barangay"));
-  //   // if (currentBarangay) {
-  //   //   setCurrent(currentBarangay);
-  //   //   console.log("setdata");
-  //   // }
-  //   const data = localStorage.getItem("auth_barangay");
-  //   if (data) {
-  //     setCurrent(currentBarangay);
-  //   }
-  // }, [currentBarangay, localStorage.getItem("auth_barangay")]);
-
   const currentRouteInfo = utils.getRouteInfo(
     navigationConfig,
     location.pathname
@@ -100,6 +87,7 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
               display={currentRouteInfo?.breadcrumb}
               title={currentRouteInfo?.title}
             />
+            {console.log(currentUser)}
             {/* {localStorage.getItem("auth_barangay")} */}
             {/* {id} */}
             {/*

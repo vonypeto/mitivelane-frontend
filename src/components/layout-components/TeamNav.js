@@ -4,13 +4,20 @@ import { Menu, Dropdown, message } from "antd";
 import { useAuth } from "contexts/AuthContext";
 import { getBarangay } from "api/ComponentController/TeamNavController";
 import { useHistory } from "react-router-dom";
+import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
 const TeamNav = () => {
   let history = useHistory();
-  const { setBarangay, currentBarangay, currentUser } = useAuth();
+  const {
+    setBarangay,
+    currentBarangay,
+    setBarangayMemberList,
+    currentUser,
+    generateToken,
+  } = useAuth();
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState(currentBarangay);
   const [barangayMember, setBarangayMember] = useState([
-    { name: "", barangay_id: "" },
+    { name: "", barangay_id: "", _id: "" },
   ]);
 
   useEffect(() => {
@@ -20,7 +27,7 @@ const TeamNav = () => {
   }, [currentBarangay]);
 
   useEffect(() => {
-    getBarangay(currentUser, setBarangayMember);
+    getBarangay(currentUser, setBarangayMember, generateToken);
     return () => {
       setBarangayMember({});
     };
@@ -51,14 +58,18 @@ const TeamNav = () => {
 
   const handleBarangayClick = (e) => {
     message.info("Click on menu item.");
+    var split = e.key.split(",");
 
-    console.log("click", e.key);
+    console.log("click", split);
     setTimeout(() => {
       setVisible(!visible);
     }, 200);
-    setBarangay(e.key);
-    localStorage.setItem("auth_barangay", e.key);
-    history.push(`/app/` + e.key + `/dashboards/home`);
+    setBarangay(split[1]);
+    setBarangayMemberList(split[0]);
+    localStorage.setItem(AUTH_BARANGAY, split[1]);
+    localStorage.setItem(AUTH_BARANGAY_LIST, split[0]);
+
+    history.push(`/app/` + split[1] + `/dashboards/home`);
   };
   const RenderName = () => (
     <div className="nav-profile-header-n">
@@ -76,13 +87,13 @@ const TeamNav = () => {
           <Menu onClick={handleBarangayClick} key="2">
             {barangayMember?.map((item) => (
               // eslint-disable-next-line
-              <Menu.Item key={item?.barangay_id}>
+              <Menu.Item key={item?.barangay_id + "," + item?._id}>
                 {/* //eslint-disable-next-line */}
                 <a href="#/">
                   <span className="d-flex justify-content-between align-items-center">
                     <div>
                       <span className=" font-weight-normal text-gray">
-                        Barangay {item?.name}
+                        Barangay {item?.barangay_name}
                       </span>
                     </div>
                     {id === item?.barangay_id ? (

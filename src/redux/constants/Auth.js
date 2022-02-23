@@ -10,8 +10,11 @@ export const SHOW_LOADING = "SHOW_LOADING";
 export const AUTH_TOKEN = "auth_token";
 export const AUTH_BARANGAY = "auth_barangay";
 export const AUTH_BARANGAY_LIST = "auth_barangay_list";
+export const PROFILE_URL = "profile_url";
 export const ACCESS_TOKEN = "access_token";
 export const SESSION_TOKEN = "session_token";
+export const CODE_TOKEN = "code";
+
 export const SIGNIN_WITH_GOOGLE = "SIGNIN_WITH_GOOGLE";
 export const SIGNIN_WITH_GOOGLE_AUTHENTICATED =
   "SIGNIN_WITH_GOOGLE_AUTHENTICATED";

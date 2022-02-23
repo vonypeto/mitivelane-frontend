@@ -41,7 +41,7 @@ export const AppViews = () => {
         <Redirect
           from={`${APP_PREFIX_PATH}`}
           to={`${APP_PREFIX_PATH}/` + currentBarangay + `/dashboards/home`}
-        />{" "}
+        />
         {/* {currentBarangay == null ? (
           <Redirect
             from={`${APP_PREFIX_PATH}`}

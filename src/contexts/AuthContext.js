@@ -64,7 +64,6 @@ export function AuthProvider({ children }) {
           " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
       },
     };
-    authorizationConfig(jwt);
     return [jwt, header];
   }
   useEffect(() => {
