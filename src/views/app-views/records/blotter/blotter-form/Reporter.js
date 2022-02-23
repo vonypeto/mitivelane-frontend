@@ -30,7 +30,13 @@ let final = {};
 let fullname;
 let countercolor = 0;
 
-const Victim = (props) => {
+export var reporter = [];
+
+export const resetReporter = (() => {
+  reporter = []
+})
+
+const Reporter = (props) => {
   const [residentlist, setResidentList] = useState(ResidentListData);
   const [residentpick, setResidentPick] = useState([]);
 
@@ -41,6 +47,8 @@ const Victim = (props) => {
     onChange: (key, rows) => {
       setResidentSelectedRows(rows);
       setResidentSelectedRowKeys(key);
+
+      var residentIds = []
       // console.log(rows)
 
       rows.map((elm) => {
@@ -48,10 +56,14 @@ const Victim = (props) => {
         tags.push([
           { label: fullname, value: DataColor[(countercolor += 1) % 4] },
         ]);
+        residentIds.push(elm.resident_id)
         return [tags];
       });
 
       final = [].concat.apply([], tags);
+      reporter = residentIds;
+
+      console.log("Reporter ", reporter)
 
       setResidentPick(final);
       tags = [];
@@ -104,11 +116,17 @@ const Victim = (props) => {
   };
 
   function tagRender(props) {
-    const { label, value, closable, onClose, color } = props;
+    const { label, value, closable, color } = props;
     const onPreventMouseDown = (event) => {
       event.preventDefault();
       event.stopPropagation();
     };
+
+    const onClose = () => {
+      reporter = []
+      setResidentSelectedRowKeys([])
+      console.log("Reporter Tag Close ", reporter)
+    }
     return (
       <Tag
         color={value}
@@ -179,7 +197,7 @@ const Victim = (props) => {
           </Form.Item>
         </Card>
         <Card title="Settlement Status:">
-          <Form.Item name="settlementstatus">
+          <Form.Item name="settlement_status">
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
@@ -234,4 +252,4 @@ const Victim = (props) => {
     </Row>
   );
 };
-export default Victim;
+export default Reporter;

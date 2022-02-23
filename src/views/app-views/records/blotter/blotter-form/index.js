@@ -14,6 +14,11 @@ import ChildrenConflictWithLaw from "./ChildrenConflict";
 import NarrativeReport from "./Narrative";
 import Receipt from "./Receipt";
 
+import { reporter, resetReporter } from "./Reporter";
+import { victim, resetVictim } from "./Victim";
+import { suspect, resetSuspect } from "./Suspect";
+import { respondent, resetRespondent } from "./Respondent";
+
 const { TabPane } = Tabs;
 
 const getBase64 = (img, callback) => {
@@ -38,6 +43,13 @@ const MainFormList = (props) => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   useEffect(() => {
+    resetReporter()
+    resetVictim()
+    resetSuspect()
+    resetRespondent()
+
+    console.log("Reset Data")
+
     if (mode === EDIT || mode === VIEW) {
       console.log("is edit & view");
 
@@ -93,11 +105,23 @@ const MainFormList = (props) => {
         setTimeout(() => {
           setSubmitLoading(false);
           if (mode === ADD) {
-            //RESIDENT INSERT ADD
-            message.success(`Added ${values.firstname} to Blotter list`);
+            //Blotter ADD
+            values.reporter = reporter
+            values.victim = victim
+            values.suspect = suspect
+            values.respondent = respondent
+
+            if(values.reporter.length == 0 || values.victim.length == 0 || values.suspect.length == 0 || values.respondent.length == 0){
+              message.error("Data Incomplete")
+            }else{
+            // Create Blotter
+            console.log("Blotter Data ", values)
+            message.success(`Added ${values.blotter_id} to Blotter list`);
+            }
+
           }
           if (mode === EDIT) {
-            //RESIDENT INSERT EDIT
+            //Blotter EDIT
             message.success(`Case saved`);
           }
         }, 1500);
@@ -157,7 +181,7 @@ const MainFormList = (props) => {
         </PageHeaderAlt>
         {mode === ADD || mode === EDIT ? (
           <div className="container">
-            <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
+            <Tabs defaultActiveKey="6" style={{ marginTop: 30 }}>
               <TabPane tab="Reporter Data" key="1">
                 <Reporter />
               </TabPane>
