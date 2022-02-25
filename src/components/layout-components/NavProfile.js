@@ -14,6 +14,8 @@ import { useHistory } from "react-router-dom";
 import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
 import { logOut } from "api/ComponentController/NavProfileController";
+import { PROFILE_URL } from "redux/constants/Auth";
+
 const menuItem = [
   {
     title: "Edit Profile",
