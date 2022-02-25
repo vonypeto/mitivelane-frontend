@@ -14,37 +14,39 @@ import { useHistory } from "react-router-dom";
 import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
 import { logOut } from "api/ComponentController/NavProfileController";
+import { PROFILE_URL } from "redux/constants/Auth";
 const menuItem = [
-  {
-    title: "Edit Profile",
-    icon: EditOutlined,
-    path: "/",
-  },
-
-  {
-    title: "Account Setting",
-    icon: SettingOutlined,
-    path: "/app/user/profile",
-  },
-
   {
     title: "Help Center",
     icon: QuestionCircleOutlined,
     path: "/pre/help-center",
   },
 ];
-
+let colortag = [
+  "#0085c3",
+  "#7ab800",
+  "#f2af00",
+  "#dc5034",
+  "#ce1126",
+  "#0085c3",
+  "#FF1493",
+];
 export const NavProfile = ({ signOut }) => {
   // let history = useHistory();
   const { currentUser, generateToken, currentPhoto } = useAuth();
-  const profile = JSON.parse(localStorage.getItem(PROFILE_URL) || "[]");
   // const profileImg = "/img/avatars/thumb-1.jpg";
+
+  const profile = JSON.parse(localStorage.getItem(PROFILE_URL) || "[]");
+
   const user =
     currentUser?.displayName != null ? currentUser.displayName : "N/A";
   const signOutNode = () => {
     logOut(signOut, generateToken);
     // signOut();
   };
+  console.log(currentPhoto?.profile_color);
+  const random = Math.floor(Math.random() * colortag.length);
+  console.log(random, colortag[random]);
   const profileMenu = (
     <div className="nav-profile nav-dropdown">
       <div className="nav-profile-header">
@@ -58,7 +60,6 @@ export const NavProfile = ({ signOut }) => {
           </Avatar>
           <div className="pl-3">
             <h4 className="mb-0">
-              {" "}
               {currentUser?.displayName != null
                 ? currentUser.displayName
                 : "N/A"}

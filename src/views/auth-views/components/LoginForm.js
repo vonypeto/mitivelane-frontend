@@ -56,6 +56,7 @@ export const LoginForm = (props) => {
   async function onLogin(values) {
     showLoading();
     signIn(values);
+    setIsLoading(true);
   }
 
   const onGoogleLogin = () => {
@@ -86,7 +87,6 @@ export const LoginForm = (props) => {
           signOut,
           setIsLoading
         );
-        setIsLoading(false);
       }
     }
     if (showMessage) {

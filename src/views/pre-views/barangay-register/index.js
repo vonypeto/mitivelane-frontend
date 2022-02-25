@@ -28,7 +28,7 @@ const BarangayRegister = (props) => {
     authorizationConfig,
     generateToken,
   } = useAuth();
-
+  const test = JSON.parse(localStorage.getItem("profile_url") || "[]");
   const [firstTime, setFirstTime] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);

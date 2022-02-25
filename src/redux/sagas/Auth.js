@@ -4,6 +4,7 @@ import {
   AUTH_BARANGAY,
   AUTH_BARANGAY_LIST,
   ACCESS_TOKEN,
+  PROFILE_URL,
   SESSION_TOKEN,
   SIGNIN,
   SIGNOUT,
@@ -54,6 +55,7 @@ export function* signOut() {
         localStorage.removeItem(AUTH_BARANGAY_LIST);
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(SESSION_TOKEN);
+        localStorage.removeItem(PROFILE_URL);
         yield put(signOutSuccess(signOutUser));
       } else {
         yield put(showAuthMessage(signOutUser.message));

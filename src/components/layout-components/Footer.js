@@ -28,8 +28,8 @@ const Footer = () => {
       <span>
         {/* <p> I'm the current user: {props.auth.token} </p> */}
         Copyright &copy; {`${new Date().getFullYear()}`}{" "}
-        <span className="font-weight-semibold">{`${APP_NAME}`}</span> All rights
-        reserved.
+        <span className="text-gray font-weight-semibold">{`${APP_NAME}`}</span>{" "}
+        All rights reserved.
       </span>
       <div>
         <a className="text-gray" href="/#" onClick={(e) => e.preventDefault()}>

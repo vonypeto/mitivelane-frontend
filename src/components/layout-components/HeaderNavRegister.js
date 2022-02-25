@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Layout } from "antd";
 import Logo from "./Logo2";
-import NavProfile from "./NavProfile";
+import NavProfile from "./NavProfileRegister";
 import { toggleCollapsedNav, onMobileNavToggle } from "redux/actions/Theme";
 import {
   NAV_TYPE_TOP,

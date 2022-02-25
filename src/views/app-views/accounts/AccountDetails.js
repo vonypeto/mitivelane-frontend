@@ -35,6 +35,10 @@ const AccountDetails = (props) => {
   };
 
   const convertBase64 = (file) => {
+    console.log(file);
+    if (file.size > 25000) {
+      alert("File is too big!");
+    }
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsDataURL(file);

@@ -18,6 +18,8 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentuser] = useState();
   const [currentBarangay, setCurrentBarangay] = useState();
+  const [currentPhoto, setCurrentPhoto] = useState();
+
   const [currentBarangayMemberList, setCurrentBarangayMemberList] = useState();
   const [authorization, setAuthorization] = useState();
 
@@ -25,8 +27,12 @@ export function AuthProvider({ children }) {
   function setBarangay(barangay) {
     return setCurrentBarangay(barangay);
   }
+
   function setBarangayMemberList(barangay) {
     return setCurrentBarangayMemberList(barangay);
+  }
+  function setPhoto(photo) {
+    return setCurrentPhoto(photo);
   }
   function checkUserBarangay() {
     const item = localStorage.getItem(AUTH_BARANGAY);
@@ -80,6 +86,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   const value = {
+    currentPhoto,
+    setPhoto,
     currentBarangay,
     setBarangay,
     setBarangayMemberList,

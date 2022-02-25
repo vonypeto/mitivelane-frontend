@@ -46,7 +46,7 @@ const LoginTwo = (props) => {
                   paddingTop: "7px",
                 }}
               >
-                MiBarangay
+                MITIVELANE
               </h1>
             </div>
             <Row justify="center">
@@ -56,7 +56,7 @@ const LoginTwo = (props) => {
                   src="/img/others/login-img.png"
                   alt=""
                 />
-                <h1 className="text-white">Welcome to MiBarangay</h1>
+                <h1 className="text-white">Welcome to MitiveLane</h1>
                 <p className="text-white">
                   We provide platform to help you connect to your barangay at
                   the comfort of your home.With fast and efficient data

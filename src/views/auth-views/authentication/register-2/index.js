@@ -45,7 +45,7 @@ const RegisterTwo = (props) => {
                   paddingTop: "7px",
                 }}
               >
-                MiBarangay
+                MITIVELANE
               </h1>
             </div>
             <Row justify="center">
@@ -55,7 +55,7 @@ const RegisterTwo = (props) => {
                   src="/img/others/register-img.png"
                   alt=""
                 />
-                <h1 className="text-white">Welcome to MiBarangay</h1>
+                <h1 className="text-white">Welcome to MitiveLane</h1>
                 <p className="text-white">
                   Be part of the community with your barangay anywhere &
                   anytime. What are you waiting for, register now!!

@@ -51,69 +51,77 @@ export async function registerBarangay(
     codeData = localStorage.getItem(CODE_TOKEN);
   }
 
-  getBase64FromUrl(currentUser?.photoURL).then((dataUrl) => {
-    const register = {
-      uuid: token,
-      email: currentUser?.email,
-      code: codeData,
-      user: currentUser?.displayName,
-      profile_url: dataUrl,
-    };
-    console.log(currentUser?.photoURL, "photo");
-    console.log(currentUser?.displayName, "displayname");
-    // before adding add JWT here later
-    const querylist = axios
-      .post("/api/auth/register", register, header)
-      .then((res) => {
-        setIsLoading(false);
-        localStorage.setItem(ACCESS_TOKEN, res.data);
-        localStorage.setItem(SESSION_TOKEN, res.data);
-        let tmp = generateToken();
-        localStorage.setItem(ACCESS_TOKEN, tmp[0]);
-        return jwt_decode(res.data);
-      });
-    localStorage.removeItem(CODE_TOKEN);
-    localStorage.removeItem(PROFILE_URL);
-    if (!querylist) {
-      localStorage.setItem(AUTH_BARANGAY_LIST, null);
-      localStorage.setItem(AUTH_BARANGAY, null);
-      setBarangayMemberList(null);
-      setBarangay(null);
-      // user.updateProfile({
-      //   displayName: firstNameRef.current.value + " " + lastNameRef.current.value,
-      //   // photoURL: "https://example.com/jane-q-user/profile.jpg",
-      // });
-      return history.push(redirect);
-    } else {
-      let role_id, barangay_id;
-      querylist.then(
-        (result) => {
-          if (result.barangays[0]) {
-            result.barangays[0].map(
-              (barangay) => (barangay_id = barangay.barangay_id)
-            );
-            localStorage.setItem(AUTH_BARANGAY, barangay_id);
-            setBarangay(barangay_id);
-            result.members[0].map(
-              (member) => (role_id = member.barangay_member_id)
-            );
-            localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
-            setBarangayMemberList(role_id);
-            return history.push(redirect);
-          } else {
-            localStorage.setItem(AUTH_BARANGAY_LIST, null);
-            localStorage.setItem(AUTH_BARANGAY, null);
-            setBarangayMemberList(null);
-            setBarangay(null);
-            return history.push(PRE_PREFIX_PATH);
-          }
-        },
-        function (error) {
-          console.log("error" + error);
+  // getBase64FromUrl(currentUser?.photoURL).then((dataUrl) => {
+  const register = {
+    uuid: token,
+    email: currentUser?.email,
+    code: codeData,
+    user: currentUser?.displayName,
+    profile_url: currentUser?.photoURL,
+  };
+  console.log(currentUser?.photoURL, "photo");
+  console.log(currentUser?.displayName, "displayname");
+  // before adding add JWT here later
+  const querylist = axios
+    .post("/api/auth/register", register, header)
+    .then((res) => {
+      setIsLoading(false);
+      localStorage.setItem(ACCESS_TOKEN, res.data);
+      localStorage.setItem(SESSION_TOKEN, res.data);
+      let tmp = generateToken();
+      localStorage.setItem(ACCESS_TOKEN, tmp[0]);
+      return jwt_decode(res.data);
+    });
+  localStorage.removeItem(CODE_TOKEN);
+  localStorage.removeItem(PROFILE_URL);
+  if (!querylist) {
+    localStorage.setItem(AUTH_BARANGAY_LIST, null);
+    localStorage.setItem(AUTH_BARANGAY, null);
+    setBarangayMemberList(null);
+    setBarangay(null);
+    // user.updateProfile({
+    //   displayName: firstNameRef.current.value + " " + lastNameRef.current.value,
+    //   // photoURL: "https://example.com/jane-q-user/profile.jpg",
+    // });
+    return history.push(redirect);
+  } else {
+    let role_id, barangay_id;
+    querylist.then(
+      (result) => {
+        console.log(result);
+        localStorage.setItem(
+          PROFILE_URL,
+          JSON.stringify({
+            profile_data: currentUser?.photoURL,
+            profile_color: result.profileLogo,
+          })
+        );
+        if (result.barangays[0]) {
+          result.barangays[0].map(
+            (barangay) => (barangay_id = barangay.barangay_id)
+          );
+          localStorage.setItem(AUTH_BARANGAY, barangay_id);
+          setBarangay(barangay_id);
+          result.members[0].map(
+            (member) => (role_id = member.barangay_member_id)
+          );
+          localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
+          setBarangayMemberList(role_id);
+          return history.push(redirect);
+        } else {
+          localStorage.setItem(AUTH_BARANGAY_LIST, null);
+          localStorage.setItem(AUTH_BARANGAY, null);
+          setBarangayMemberList(null);
+          setBarangay(null);
+          return history.push(PRE_PREFIX_PATH);
         }
-      );
-    }
-  });
+      },
+      function (error) {
+        console.log("error" + error);
+      }
+    );
+  }
+  // });
 }
 
 const getBase64FromUrl = async (url) => {
