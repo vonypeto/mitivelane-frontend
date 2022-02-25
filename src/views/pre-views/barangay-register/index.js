@@ -6,7 +6,7 @@ import BarangayInfoForm from "views/pre-views/components/barangay-register-form/
 import { createBarangay } from "api/AuthController/PreRegisterController/PreRegisterController";
 import { Spin } from "antd";
 import Loading from "components/shared-components/Loading";
-import { Row, Col, Card, Form, Button } from "antd";
+import { Row, Col, Card, Form, Button, Input } from "antd";
 import axios from "axios";
 import {
   signIn,
@@ -192,6 +192,16 @@ const BarangayRegister = (props) => {
 
     console.log(testToken[1]);
   };
+
+  // const onTest = async (values) => {
+  //   console.log(values)
+
+  //   await axios.post("/api/app/test", { fname: values.fname }, generateToken()[1]).
+  //     then((res) => {
+  //       console.log(res)
+  //     })
+  // }
+
   return (
     <div className=" w-100">
       <HeaderNavRegister />
@@ -211,20 +221,18 @@ const BarangayRegister = (props) => {
           justify="center"
           className="barangay-register-container"
         >
-          <Col align="middle" justify="center">
+          <Col>
             {/* test
             <form onSubmit={onSubmit}>
               <button type="submit">refresh if remember</button>
-            </form> */}
-            {/* <Form onFinish={onAction}>
+            </form>
+            <Form onFinish={onTest}>
+              <Form.Item name="fname" initialValue={"0OnPWInM8gSt6RhRX4hTZ6CkLoD3"}>
+                <Input></Input>
+              </Form.Item>
               <Button htmlType="submit">action</Button>
             </Form> */}
-            <Form
-              layout="vertical"
-              initialValues={initialData}
-              ref={formRef}
-              onFinish={handleSubmit}
-            >
+            <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
               {firstTime ? (
                 <Card className="barangay-register-card">
                   <div style={{ textAlign: "center", margin: "auto 15%" }}>
