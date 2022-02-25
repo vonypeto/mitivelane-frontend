@@ -232,7 +232,13 @@ const BarangayRegister = (props) => {
               </Form.Item>
               <Button htmlType="submit">action</Button>
             </Form> */}
-            <Form layout="vertical" ref={formRef} onFinish={handleSubmit}>
+            <Form
+              layout="vertical"
+              initialValues={initialData}
+              ref={formRef}
+              onFinish={handleSubmit}
+            >
+              {" "}
               {firstTime ? (
                 <Card className="barangay-register-card">
                   <div style={{ textAlign: "center", margin: "auto 15%" }}>
@@ -247,7 +253,6 @@ const BarangayRegister = (props) => {
                   <UserInfoForm />
                 </Card>
               ) : null}
-
               <Card className="barangay-register-card">
                 <div style={{ textAlign: "center", margin: "auto 15%" }}>
                   <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
@@ -261,7 +266,6 @@ const BarangayRegister = (props) => {
 
                 <BarangayInfoForm />
               </Card>
-
               <Button
                 htmlType="submit"
                 type="primary"
