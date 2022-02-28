@@ -41,12 +41,9 @@ import { Dropdown } from "antd";
 import UserView from "./BlotterRequest";
 
 import {
-  sessionData,
-  sessionLabels,
-  conbinedSessionData,
-  sessionColor,
-  BlotterReportMost,
+  BlotterReportMost
 } from "./BlotterData";
+import { COLORS } from 'constants/ChartConstant';
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
@@ -65,6 +62,9 @@ const BlotterRecord = (props) => {
 
   const [blotterlist, setBlotterList] = useState([]);
   const [blotterlistLoading, setBlotterListLoading] = useState(true);
+
+  const [sessionData, setSessionData] = useState([0, 0, 0, 0])
+
 
   const [blotterlistrequest, setBlotterListRequest] = useState(
     BlotterListRequestData
@@ -103,7 +103,23 @@ const BlotterRecord = (props) => {
       message.error("Could not fetch the data in the server!")
     });
 
+    getRecordCases()
+
+
   }, [])
+
+  const getRecordCases = () => {
+    console.log("Get Record Cases")
+
+    axios.get("/api/blotter/record-cases/" + param_url, generateToken()[1]).then((response) => {
+      console.log(response.data)
+      setSessionData(response.data)
+    }).catch(() => {
+      console.log("Error")
+    });
+
+
+  }
 
   const BlotterDropdownMenu = (row) => (
     <Menu>
@@ -129,21 +145,51 @@ const BlotterRecord = (props) => {
   const AddResident = () => {
     history.push(`/app/${param_url}/records/blotter-record/add`);
   };
+
   const BlottereditwDetails = (row) => {
-    history.push(`/app/1002/records/blotter-record/${row.blotter_id}/edit`);
+    history.push(`/app/${param_url}/records/blotter-record/${row.blotter_id}/edit`);
   };
+
+  const deleteBlotter = (_ids) => {
+    axios.post("/api/blotter/delete-blotter", { _ids }, generateToken()[1]).then((response) => {
+      // message.destroy()
+      if (response.data == "Success") {
+        getRecordCases()
+        return message.success("Successfully Deleted");
+
+      } else {
+        return message.error("Error, please try again.")
+      }
+
+    }).catch(error => {
+      console.log(error)
+      // message.destroy()
+      message.error("The action can't be completed, please try again.")
+    });
+
+  }
+
   const BlotterDeleteRow = (row) => {
-    const objKey = "blotter_id";
+    const objKey = "_id";
     let data = blotterlist;
     if (selectedRowsBlotter.length > 1) {
       selectedRowsBlotter.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm.blotter_id);
+        data = utils.deleteArrayRow(data, objKey, elm._id);
         setBlotterList(data);
         setSelectedRowsBlotter([]);
       });
+
+      var _ids = []
+      selectedRowsBlotter.map(values => {
+        _ids.push(values._id)
+      })
+
+      deleteBlotter(_ids)
     } else {
-      data = utils.deleteArrayRow(data, objKey, row.blotter_id);
+      data = utils.deleteArrayRow(data, objKey, row._id);
       setBlotterList(data);
+
+      deleteBlotter([row._id])
     }
   };
   const BlotterRequestDeleteRow = (row) => {
@@ -183,18 +229,28 @@ const BlotterRecord = (props) => {
           </Avatar>
           <span className="ml-2">{"Test Name"}</span>
         </div>
-      ),
+      )
     },
 
     {
       title: "Date Occured",
       dataIndex: "date_of_incident",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+      render: (_, record) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">{new Date(record.date_of_incident).toDateString()}</span>
+        </div>
+      )
     },
     {
       title: "Date Reported",
       dataIndex: "createdAt",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+      render: (_, record) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">{new Date(record.createdAt).toDateString()}</span>
+        </div>
+      )
     },
     {
       title: "Location",
@@ -416,7 +472,25 @@ const BlotterRecord = (props) => {
     </Dropdown>
   );
 
-  //  RETURN
+  //  RECORD CASES
+  const sessionColor = [COLORS[0], COLORS[1], COLORS[3], COLORS[5]]
+  const sessionLabels = ['Settled', 'Scheduled', 'Unscheduled', 'Unsettled']
+  const jointSessionData = () => {
+    let arr = []
+    for (let i = 0; i < sessionData.length; i++) {
+      const data = sessionData[i];
+      const label = sessionLabels[i];
+      const color = sessionColor[i]
+      arr = [...arr, {
+        data: data,
+        label: label,
+        color: color
+      }]
+    }
+    return arr
+  }
+  const conbinedSessionData = jointSessionData()
+
   const RecordCases = () => (
     <DonutChartWidget
       series={sessionData}
@@ -540,7 +614,7 @@ const BlotterRecord = (props) => {
                     className="no-border-last"
                     columns={blotterdatacolumn}
                     dataSource={blotterlist}
-                    rowKey="blotter_id"
+                    rowKey="_id"
                     scroll={{ x: "max-content" }}
                     rowSelection={{
                       selectedRowKeys: selectedRowKeysBlotter,
