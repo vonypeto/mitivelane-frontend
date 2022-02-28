@@ -184,7 +184,10 @@ const Victim = (props) => {
           </Form.Item>
         </Card>
         <Card title="Settlement Status:">
-          <Form.Item name="settlement_status">
+          <Form.Item
+            name="settlement_status"
+            label="Status"
+            rules={[{ required: true }]}>
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>

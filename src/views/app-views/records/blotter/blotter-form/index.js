@@ -19,6 +19,9 @@ import { victim, resetVictim } from "./Victim";
 import { suspect, resetSuspect } from "./Suspect";
 import { respondent, resetRespondent } from "./Respondent";
 
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
+
 const { TabPane } = Tabs;
 
 const getBase64 = (img, callback) => {
@@ -32,6 +35,10 @@ const EDIT = "EDIT";
 const VIEW = "VIEW";
 
 const MainFormList = (props) => {
+  const {
+    generateToken
+  } = useAuth();
+
   const { id } = useParams();
   console.log("BLotter_ID: " + id);
   let history = useHistory();
@@ -106,17 +113,34 @@ const MainFormList = (props) => {
           setSubmitLoading(false);
           if (mode === ADD) {
             //Blotter ADD
-            values.reporter = reporter
-            values.victim = victim
-            values.suspect = suspect
-            values.respondent = respondent
+            values.barangay_id = param[0]
 
-            if(values.reporter.length == 0 || values.victim.length == 0 || values.suspect.length == 0 || values.respondent.length == 0){
-              message.error("Data Incomplete")
-            }else{
-            // Create Blotter
-            console.log("Blotter Data ", values)
-            message.success(`Added ${values.blotter_id} to Blotter list`);
+            values.reporters = reporter
+            values.victims = victim
+            values.suspects = suspect
+            values.respondents = respondent
+
+            if (values.reporters.length == 0 || values.victims.length == 0 || values.suspects.length == 0 || values.respondents.length == 0) {
+              message.error("Please enter all required field ");
+            } else {
+              // Create Blotter
+              console.log("Blotter Data ", values)
+              message.loading("Creating Blotter...", 0)
+
+              axios.post("/api/blotter/create-blotter", values, generateToken()[1]).then((response) => {
+                message.destroy()
+                if (response.data == "Success") {
+                  return message.success(`Added ${values.blotter_id} to Blotter list`);
+
+                } else {
+                  return message.error("Error, please try again.")
+                }
+
+              }).catch(error => {
+                console.log(error)
+                message.destroy()
+                message.error("The action can't be completed, please try again.")
+              });
             }
 
           }
@@ -158,8 +182,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Case"
                   : mode === EDIT
-                  ? `Edit Cases`
-                  : "View Cases"}{" "}
+                    ? `Edit Cases`
+                    : "View Cases"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Col,
   Card,
@@ -14,6 +14,7 @@ import {
   Tag,
   Avatar,
   List,
+  message
 } from "antd";
 import BlotterListData from "assets/data/blotter.data.json";
 import BlotterListRequestData from "assets/data/blotter-request.data.json";
@@ -46,13 +47,25 @@ import {
   sessionColor,
   BlotterReportMost,
 } from "./BlotterData";
+
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
+
 const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
+
 const BlotterRecord = (props) => {
+  const {
+    generateToken
+  } = useAuth();
+
   const { param_url } = props;
   console.log("List Second Loop: " + param_url);
   let history = useHistory();
-  const [blotterlist, setBlotterList] = useState(BlotterListData);
+
+  const [blotterlist, setBlotterList] = useState([]);
+  const [blotterlistLoading, setBlotterListLoading] = useState(true);
+
   const [blotterlistrequest, setBlotterListRequest] = useState(
     BlotterListRequestData
   );
@@ -81,15 +94,26 @@ const BlotterRecord = (props) => {
     SetSelectedUser(null);
   };
 
+  useEffect(() => {
+    axios.get("/api/blotter/get-blotters/" + param_url, generateToken()[1]).then((response) => {
+      console.log(response.data)
+      setBlotterList(response.data)
+      setBlotterListLoading(false)
+    }).catch(() => {
+      message.error("Could not fetch the data in the server!")
+    });
+
+  }, [])
+
   const BlotterDropdownMenu = (row) => (
     <Menu>
-      <Menu.Item onClick={() => BlottereditwDetails(row)}>
+      <Menu.Item key={1} onClick={() => BlottereditwDetails(row)}>
         <Flex alignItems="center">
           <EditOutlined />
           <span className="ml-2">Edit Details</span>
         </Flex>
       </Menu.Item>
-      <Menu.Item onClick={() => BlotterDeleteRow(row)}>
+      <Menu.Item key={2} onClick={() => BlotterDeleteRow(row)}>
         <Flex alignItems="center">
           <DeleteOutlined />
           <span className="ml-2">
@@ -145,62 +169,62 @@ const BlotterRecord = (props) => {
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
     {
-      title: "Reporter",
-      dataIndex: "reporter",
-      key: "reporter",
+      title: "Reporters",
+      dataIndex: "reporters",
+      key: "reporters",
       render: (text, record) => (
         <div className="d-flex align-items-center">
           <Avatar
             size={30}
             className="font-size-sm"
-            style={{ backgroundColor: "#" + record.avatarColor }}
+            style={{ backgroundColor: "#" + "04d182" }}
           >
-            {utils.getNameInitial(text)}
+            {utils.getNameInitial("Test Name")}
           </Avatar>
-          <span className="ml-2">{text}</span>
+          <span className="ml-2">{"Test Name"}</span>
         </div>
       ),
     },
 
     {
       title: "Date Occured",
-      dataIndex: "incidentdate",
+      dataIndex: "date_of_incident",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
     {
       title: "Date Reported",
-      dataIndex: "daterecorded",
+      dataIndex: "createdAt",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
     {
       title: "Location",
-      dataIndex: "incidentlocation",
+      dataIndex: "place_incident",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
     {
       title: "Classification",
-      dataIndex: "classification",
+      dataIndex: "incident_type",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
 
     {
       title: () => <div className="text-center">Case</div>,
-      key: "status",
+      key: "settlement_status",
       render: (_, record) => (
         <div className="text-center">
           <Tag
             className="mr-0"
             color={
-              record.status === "Settled"
+              record.settlement_status === "Settled"
                 ? "geekblue"
-                : record.status === "Unsettled"
-                ? "orange"
-                : record.status === "Scheduled"
-                ? "cyan"
-                : "gold"
+                : record.settlement_status === "Unsettled"
+                  ? "orange"
+                  : record.settlement_status === "Scheduled"
+                    ? "cyan"
+                    : "gold"
             }
           >
-            {record.status}
+            {record.settlement_status}
           </Tag>
         </div>
       ),
@@ -271,7 +295,7 @@ const BlotterRecord = (props) => {
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => {}}
+                onClick={() => { }}
                 size="small"
               />
             </Tooltip>
@@ -512,6 +536,7 @@ const BlotterRecord = (props) => {
 
                 <div className="table-responsive">
                   <Table
+                    loading={blotterlistLoading}
                     className="no-border-last"
                     columns={blotterdatacolumn}
                     dataSource={blotterlist}
