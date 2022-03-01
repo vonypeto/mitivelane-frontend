@@ -162,7 +162,10 @@ const ChildrenConflictWithLaw = (props) => {
           </Form.Item>
         </Card>
         <Card title="Settlement Status:">
-          <Form.Item name="settlement_status">
+          <Form.Item
+            name="settlement_status"
+            label="Status"
+            rules={[{ required: true }]}>
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
@@ -231,7 +234,7 @@ const ChildrenConflictWithLaw = (props) => {
               columns={tableResidentColumns}
               dataSource={residentlist}
               rowKey="resident_id"
-              scroll={{ x: 'max-content' }}  
+              scroll={{ x: 'max-content' }}
 
               rowSelection={{
                 selectedRowKeys: residentselectedRowKeys,

@@ -67,7 +67,10 @@ const Narrative = (props) => {
           </Form.Item>
         </Card>
         <Card title="Settlement Status:">
-          <Form.Item name="settlement_status">
+          <Form.Item
+            name="settlement_status"
+            label="Status"
+            rules={[{ required: true }]}>
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
@@ -78,18 +81,27 @@ const Narrative = (props) => {
           </Form.Item>
         </Card>
         <Card title="Incident Details">
-          <Form.Item name="incident_type" label="Type of Incident">
+          <Form.Item
+            name="incident_type"
+            label="Type of Incident"
+            rules={[{ required: true }]}>
             <Col xs={24} sm={24} md={24}>
               <Input placeholder="Incident Type" />
             </Col>
           </Form.Item>
-          <Form.Item name="time_of_incident" label="Time occured">
+          <Form.Item
+            name="time_of_incident"
+            label="Time occured"
+            rules={[{ required: true }]}>
             <TimePicker
               className="w-100"
               values={moment("12:08:23", "HH:mm:ss")}
             />
           </Form.Item>
-          <Form.Item name="date_of_incident" label="Date of Incident">
+          <Form.Item
+            name="date_of_incident"
+            label="Date of Incident"
+            rules={[{ required: true }]}>
             <DatePicker
               className="w-100"
               initialValues={moment(
@@ -100,7 +112,10 @@ const Narrative = (props) => {
               format={dateFormat}
             />
           </Form.Item>
-          <Form.Item name="place_incident" label="Place of Incident">
+          <Form.Item
+            name="place_incident"
+            label="Place of Incident"
+            rules={[{ required: true }]}>
             <Col xs={24} sm={24} md={24}>
               <Input placeholder="Place of incident" />
             </Col>
