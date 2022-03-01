@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, Dropdown, Avatar } from "antd";
 import { connect } from "react-redux";
 import {
@@ -39,7 +39,9 @@ const menuItem = [
 export const NavProfile = ({ signOut }) => {
   // let history = useHistory();
   const { currentUser, generateToken, currentPhoto } = useAuth();
-  const profile = JSON.parse(localStorage.getItem(PROFILE_URL) || "[]");
+  const [profile, setProfile] = useState(
+    JSON.parse(localStorage.getItem(PROFILE_URL) || "[]")
+  );
   // const profileImg = "/img/avatars/thumb-1.jpg";
   const user =
     currentUser?.displayName != null ? currentUser.displayName : "N/A";
@@ -47,17 +49,32 @@ export const NavProfile = ({ signOut }) => {
     logOut(signOut, generateToken);
     // signOut();
   };
+  useEffect(() => {
+    let mount = true;
+    if (mount) setProfile(currentPhoto);
+
+    return () => {
+      mount = false;
+    };
+  });
   const profileMenu = (
     <div className="nav-profile nav-dropdown">
       <div className="nav-profile-header">
         <div className="d-flex">
-          <Avatar
-            src={profile?.profile_data}
-            size={45}
-            style={{ backgroundColor: profile?.profile_color }}
-          >
-            <b> {utils.getNameInitial(user)} </b>{" "}
-          </Avatar>
+          {profile?.profile_data ? (
+            <Avatar src={profile?.profile_data} size={45}>
+              <b> {utils.getNameInitial(user)} </b>{" "}
+            </Avatar>
+          ) : (
+            <Avatar
+              src={profile?.profile_data}
+              size={45}
+              style={{ backgroundColor: profile?.profile_color }}
+            >
+              <b> {utils.getNameInitial(user)} </b>{" "}
+            </Avatar>
+          )}
+
           <div className="pl-3">
             <h4 className="mb-0">
               {" "}
@@ -95,12 +112,19 @@ export const NavProfile = ({ signOut }) => {
     <Dropdown placement="bottomRight" overlay={profileMenu} trigger={["click"]}>
       <Menu className="d-flex align-item-center" mode="horizontal">
         <Menu.Item key="profile">
-          <Avatar
-            src={profile?.profile_data}
-            style={{ backgroundColor: profile?.profile_color }}
-          >
-            <b> {utils.getNameInitial(user)} </b>
-          </Avatar>
+          {profile?.profile_data ? (
+            <Avatar src={profile?.profile_data} size={45}>
+              <b> {utils.getNameInitial(user)} </b>{" "}
+            </Avatar>
+          ) : (
+            <Avatar
+              src={profile?.profile_data}
+              size={45}
+              style={{ backgroundColor: profile?.profile_color }}
+            >
+              <b> {utils.getNameInitial(user)} </b>{" "}
+            </Avatar>
+          )}
         </Menu.Item>
       </Menu>
     </Dropdown>

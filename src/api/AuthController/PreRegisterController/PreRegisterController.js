@@ -64,7 +64,9 @@ export async function createBarangay(
       if (response.data.length > 0) {
         console.log(response.data);
         console.log(response.data[0].barangay_id);
-
+        currentUser.updateProfile({
+          displayName: values.first_name + " " + values.last_name,
+        });
         setBarangay(response.data[0].barangay_id);
         setBarangayMemberList(response.data[0].barangay_member_id);
         localStorage.setItem(

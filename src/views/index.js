@@ -68,10 +68,10 @@ export const Views = (props) => {
     setPhoto,
   } = useAuth();
   const currentAppLocale = AppLocale[locale];
+  const user = JSON.parse(localStorage.getItem(PROFILE_URL) || "[]");
 
   useBodyClass(`dir-${direction}`);
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem(PROFILE_URL) || "[]");
     //set GLobalContext When Refreshed
     setBarangay(localStorage.getItem(AUTH_BARANGAY));
     setBarangayMemberList(localStorage.getItem(AUTH_BARANGAY_LIST));

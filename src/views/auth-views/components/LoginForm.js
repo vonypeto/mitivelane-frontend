@@ -7,6 +7,11 @@ import PropTypes from "prop-types";
 import { GoogleSVG, FacebookSVG } from "assets/svg/icon";
 import CustomIcon from "components/util-components/CustomIcon";
 import Loading from "components/shared-components/Loading";
+import { useHistory } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuth } from "contexts/AuthContext";
+import { loginBarangay } from "api/AuthController/LoginController/LoginController";
+import platform from "platform";
 import {
   signIn,
   showLoading,
@@ -16,10 +21,7 @@ import {
   signInWithFacebook,
   signOut,
 } from "redux/actions/Auth";
-import { useHistory } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useAuth } from "contexts/AuthContext";
-import { loginBarangay } from "api/AuthController/LoginController/LoginController";
+
 export const LoginForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -27,6 +29,7 @@ export const LoginForm = (props) => {
     setBarangay,
     currentUser,
     generateToken,
+    setPhoto,
   } = useAuth();
   let history = useHistory();
   const {
@@ -85,7 +88,10 @@ export const LoginForm = (props) => {
           currentUser,
           generateToken,
           signOut,
-          setIsLoading
+          setIsLoading,
+          platform.os.family,
+          platform.name,
+          setPhoto
         );
       }
     }
@@ -98,7 +104,7 @@ export const LoginForm = (props) => {
       cancel = false;
     };
   }, []);
-
+  console.log(platform.name);
   const renderOtherSignIn = (
     <div>
       <Divider>

@@ -21,6 +21,7 @@ import {
 import AccountDetails from "./AccountDetails";
 import ConnectedAccount from "./ConnectedAccounts";
 import AccountDelete from "./AccountDelete";
+import AccountSesson from "./AccountSesson";
 
 const ManageTeam = (props) => {
   console.log(props);
@@ -48,6 +49,10 @@ const ManageTeam = (props) => {
         <Row gutter={16}>
           {" "}
           <ConnectedAccount />{" "}
+        </Row>{" "}
+        <Divider />
+        <Row gutter={16}>
+          <AccountSesson />{" "}
         </Row>
         <Divider />
         <Row gutter={16}>
