@@ -9,6 +9,7 @@ import { PRE_PREFIX_PATH } from "configs/AppConfig";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import sign from "jwt-encode";
+// import publicIp from "react-public-ip";
 
 export async function loginBarangay(
   token,
@@ -19,14 +20,21 @@ export async function loginBarangay(
   currentUser,
   generateToken,
   signOut,
-  setIsLoading
+  setIsLoading,
+  platform,
+  browser,
+  setPhoto
 ) {
   let role_id, barangay_id;
   const date = new Date().getTime() / 1000;
   const unix = Math.round(date);
+  // const ipv4 = (await publicIp.v4()) || "";
+  // console.log(ipv4 + 1);
+
   const data = {
     auth_id: token,
-    email: currentUser?.email,
+    platform: platform,
+    browser: browser,
     iat: unix,
     exp: unix + 60,
   };
@@ -46,23 +54,36 @@ export async function loginBarangay(
     profile_url: currentUser?.photoURL,
     user: currentUser?.displayName,
   };
+  // const res = await axios
+  //   .get("https://geolocation-db.com/json/")
+  //   .then((data) => {});
+
+  // const geo = geoip.lookup(ipv4 + 1);
+  // console.log(geo);
+
   axios
     .post("/api/auth/login/" + token, login, header)
     .then((res) => {
-      localStorage.setItem(ACCESS_TOKEN, res.data);
-      localStorage.setItem(SESSION_TOKEN, res.data);
+      localStorage.setItem(ACCESS_TOKEN, res.data.accessToken);
+      localStorage.setItem(SESSION_TOKEN, res.data.accessToken);
       setIsLoading(false);
       let tmp = generateToken();
       localStorage.setItem(ACCESS_TOKEN, tmp[0]);
 
-      let response = jwt_decode(res.data);
+      let response = jwt_decode(res.data.accessToken);
       localStorage.setItem(
         PROFILE_URL,
         JSON.stringify({
-          profile_data: currentUser?.photoURL,
+          profile_data: res.data?.profileUrl,
           profile_color: response.profileLogo,
         })
       );
+      // const user = JSON.parse(localStorage.getItem(PROFILE_URL) || "[]");
+
+      setPhoto({
+        profile_data: res.data?.profileUrl,
+        profile_color: response.profileLogo,
+      });
       if (response.barangays[0] && response.members[0]) {
         if (response.barangays[0].length > 0) {
           response.barangays[0].map(
@@ -94,22 +115,22 @@ export async function loginBarangay(
       console.log(error);
     });
 }
-function toDataURL(url, callback) {
-  var xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    var reader = new FileReader();
-    reader.onloadend = function () {
-      callback(reader.result);
-    };
-    reader.readAsDataURL(xhr.response);
-  };
+// function toDataURL(url, callback) {
+//   var xhr = new XMLHttpRequest();
+//   xhr.onload = function () {
+//     var reader = new FileReader();
+//     reader.onloadend = function () {
+//       callback(reader.result);
+//     };
+//     reader.readAsDataURL(xhr.response);
+//   };
 
-  xhr.open("GET", url);
-  xhr.responseType = "blob";
-  // xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  // xhr.setRequestHeader(
-  //   "Access-Control-Allow-Headers",
-  //   "Origin, X-Requested-With, Content-Type, Accept"
-  // );
-  xhr.send();
-}
+//   xhr.open("GET", url);
+//   xhr.responseType = "blob";
+//   // xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+//   // xhr.setRequestHeader(
+//   //   "Access-Control-Allow-Headers",
+//   //   "Origin, X-Requested-With, Content-Type, Accept"
+//   // );
+//   xhr.send();
+// }

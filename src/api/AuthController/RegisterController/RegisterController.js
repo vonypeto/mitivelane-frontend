@@ -19,14 +19,20 @@ export async function registerBarangay(
   history,
   currentUser,
   generateToken,
-  setIsLoading
+  setIsLoading,
+  platform,
+  browser,
+  setPhoto
 ) {
   let codeData = "";
+  let profileUrl = "";
   const date = new Date().getTime() / 1000;
   const unix = Math.round(date);
   const data = {
     auth_id: token,
     email: currentUser?.email,
+    platform: platform,
+    browser: browser,
     iat: unix,
     exp: unix + 60,
   };
@@ -65,15 +71,16 @@ export async function registerBarangay(
   const querylist = axios
     .post("/api/auth/register", register, header)
     .then((res) => {
-      setIsLoading(false);
-      localStorage.setItem(ACCESS_TOKEN, res.data);
-      localStorage.setItem(SESSION_TOKEN, res.data);
+      localStorage.setItem(ACCESS_TOKEN, res.data.accessToken);
+      localStorage.setItem(SESSION_TOKEN, res.data.accessToken);
       let tmp = generateToken();
       localStorage.setItem(ACCESS_TOKEN, tmp[0]);
-      return jwt_decode(res.data);
+      profileUrl = res.data.profileUrl;
+      return jwt_decode(res.data.accessToken);
     });
   localStorage.removeItem(CODE_TOKEN);
   localStorage.removeItem(PROFILE_URL);
+
   if (!querylist) {
     localStorage.setItem(AUTH_BARANGAY_LIST, null);
     localStorage.setItem(AUTH_BARANGAY, null);
@@ -83,6 +90,8 @@ export async function registerBarangay(
     //   displayName: firstNameRef.current.value + " " + lastNameRef.current.value,
     //   // photoURL: "https://example.com/jane-q-user/profile.jpg",
     // });
+    setIsLoading();
+
     return history.push(redirect);
   } else {
     let role_id, barangay_id;
@@ -92,10 +101,14 @@ export async function registerBarangay(
         localStorage.setItem(
           PROFILE_URL,
           JSON.stringify({
-            profile_data: currentUser?.photoURL,
+            profile_data: profileUrl,
             profile_color: result.profileLogo,
           })
         );
+        setPhoto({
+          profile_data: profileUrl,
+          profile_color: result.profileLogo,
+        });
         if (result.barangays[0]) {
           result.barangays[0].map(
             (barangay) => (barangay_id = barangay.barangay_id)
@@ -107,12 +120,15 @@ export async function registerBarangay(
           );
           localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
           setBarangayMemberList(role_id);
+          setIsLoading();
+
           return history.push(redirect);
         } else {
           localStorage.setItem(AUTH_BARANGAY_LIST, null);
           localStorage.setItem(AUTH_BARANGAY, null);
           setBarangayMemberList(null);
           setBarangay(null);
+
           return history.push(PRE_PREFIX_PATH);
         }
       },

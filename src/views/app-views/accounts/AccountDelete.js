@@ -26,9 +26,9 @@ const AccountDelete = () => {
     <>
       <Col xs={24} sm={24} md={8}>
         <div className="pl-1">
-          <h3>Delete Baranagay</h3>
+          <h3>Delete Account</h3>
           <p className="mt-1 text-sm text-gray-600">
-            Once the Barangay is deleted, all of its resources and data will be
+            Once the Account is deleted, all of its resources and data will be
             permanently deleted. Before deleting your account, please download
             any data or information that you wish to retain.
           </p>

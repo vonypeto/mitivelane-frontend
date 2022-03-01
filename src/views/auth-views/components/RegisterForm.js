@@ -2,14 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { LockOutlined, MailOutlined, NumberOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Alert, Divider, Row } from "antd";
-import {
-  signUp,
-  showAuthMessage,
-  showLoading,
-  hideAuthMessage,
-  signInWithGoogle,
-  signInWithFacebook,
-} from "redux/actions/Auth";
 import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "contexts/AuthContext";
@@ -19,6 +11,16 @@ import { GoogleSVG, FacebookSVG } from "assets/svg/icon";
 import Loading from "components/shared-components/Loading";
 import CustomIcon from "components/util-components/CustomIcon";
 import { CODE_TOKEN } from "redux/constants/Auth";
+import platform from "platform";
+import {
+  signUp,
+  showAuthMessage,
+  showLoading,
+  hideAuthMessage,
+  signInWithGoogle,
+  signInWithFacebook,
+} from "redux/actions/Auth";
+
 const rules = {
   email: [
     {
@@ -60,6 +62,7 @@ export const RegisterForm = (props) => {
     setBarangayMemberList,
     currentUser,
     generateToken,
+    setPhoto,
   } = useAuth();
   const codeRef = useRef();
   const {
@@ -83,6 +86,7 @@ export const RegisterForm = (props) => {
     if (codeRef.current.value)
       localStorage.setItem(CODE_TOKEN, String(codeRef.current.value));
     else localStorage.setItem(CODE_TOKEN, null);
+    setIsLoading(true);
 
     showLoading();
     signInWithGoogle();
@@ -97,8 +101,10 @@ export const RegisterForm = (props) => {
     // const datas = values.code;
     form.validateFields().then((values) => {
       showLoading();
+
       signUp(values);
     });
+    setIsLoading(true);
   };
 
   const renderOtherSignIn = (
@@ -131,8 +137,9 @@ export const RegisterForm = (props) => {
     // console.log("token", token, "allowredirect", allowRedirect);
     let cancel = true;
     if (token !== null) {
-      setIsLoading(true);
       if (cancel) {
+        setIsLoading(true);
+
         registerBarangay(
           token,
           setBarangay,
@@ -141,9 +148,11 @@ export const RegisterForm = (props) => {
           history,
           currentUser,
           generateToken,
-          setIsLoading
+          setIsLoading,
+          platform.os.family,
+          platform.name,
+          setPhoto
         );
-        setIsLoading(false);
       }
     }
     if (showMessage) {

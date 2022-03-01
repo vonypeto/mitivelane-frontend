@@ -19,6 +19,8 @@ import { HeaderNavRegister } from "components/layout-components/HeaderNavRegiste
 import { useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import sign from "jwt-encode";
+import platform from "platform";
+import publicIp from "react-public-ip";
 
 const BarangayRegister = (props) => {
   const {
@@ -36,6 +38,15 @@ const BarangayRegister = (props) => {
   const user_id = auth.token;
   const formRef = React.createRef();
   let history = useHistory();
+  const getIpv4 = async () => {
+    const ipv4 = (await publicIp.v4()) || "";
+    return ipv4;
+    // const data = ipv4.then(function (ipv4) {
+    //   return ipv4;
+    // });
+    // return data;
+  };
+
   // const getData = async () => {
   //   const res = await axios.get("https://geolocation-db.com/json/");
   //   console.log(res.data);
@@ -67,6 +78,8 @@ const BarangayRegister = (props) => {
   //   return header;
   // };
   useEffect(() => {
+    const getdata = getIpv4();
+
     let APIFetch = true;
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
@@ -222,6 +235,7 @@ const BarangayRegister = (props) => {
           className="barangay-register-container"
         >
           <Col>
+            {console.log(platform.os.family)}
             {/* test
             <form onSubmit={onSubmit}>
               <button type="submit">refresh if remember</button>

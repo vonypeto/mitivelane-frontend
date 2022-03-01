@@ -1,4 +1,4 @@
-import { React, useState, useRef } from "react";
+import { React, useState, useRef, useEffect } from "react";
 import {
   Button,
   Row,
@@ -9,49 +9,81 @@ import {
   Avatar,
   message,
   Upload,
+  // notification,
 } from "antd";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
-import FileBase64 from "react-file-base64";
+import notification from "components/shared-components/Notification";
 import { updateAccount } from "api/AppController/AccountsController/AccountDetailsController";
+import { useAuth } from "contexts/AuthContext";
+import { PROFILE_URL } from "redux/constants/Auth";
 
-const AccountDetails = (props) => {
+const AccountDetails = () => {
+  const { currentUser, setPhoto, currentPhoto } = useAuth();
   const hiddenFileInput = useRef(null);
-
+  const [fileLarge, setFileLarge] = useState(false);
   const [editBarangay, setEditBarangay] = useState(false);
   const [profileAvatar, setProfileAvatar] = useState(false);
+  const [displayName, setDisplayName] = useState(currentUser?.displayName);
 
+  useEffect(() => {
+    let mount = true;
+    // console.log(currentPhoto);
+    if (mount) {
+      let data = JSON.parse(localStorage.getItem(PROFILE_URL));
+      setProfileAvatar(data.profile_data);
+    }
+    return () => {
+      mount = false;
+    };
+  }, []);
   const onClickEdit = () => {
     setEditBarangay(!editBarangay);
   };
   const handleSubmitAccount = (value) => {
     if (editBarangay) {
       console.log(value);
-      updateAccount(value, profileAvatar);
+      updateAccount(
+        value,
+        profileAvatar,
+        currentUser,
+        setDisplayName,
+        setProfileAvatar,
+        setPhoto
+      );
     }
     setEditBarangay(!editBarangay);
   };
   const handleClick = (event) => {
+    setFileLarge(false);
     hiddenFileInput.current.click();
   };
 
   const convertBase64 = (file) => {
     console.log(file);
     if (file.size > 25000) {
-      alert("File is too big!");
+      // notification({
+      //   message: "Warning",
+      //   description: "File to large",
+      //   duration: 4,
+      // });
+      setFileLarge(true);
+      // alert("File is too big!");
+    } else {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
+
+        fileReader.onerror = (error) => {
+          reject(error);
+        };
+      });
     }
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
   };
+
   const handleChange = async (event) => {
     const fileUploaded = event.target.files[0];
     const base64 = await convertBase64(fileUploaded);
@@ -76,7 +108,10 @@ const AccountDetails = (props) => {
       </Col>
       <Col xs={24} sm={24} md={15} className="ant-body-pt">
         <Form
-          initialValues={{ email: "von.aralar@gmail.com", name: "Dr Hologram" }}
+          initialValues={{
+            email: currentUser?.email,
+            name: currentUser?.displayName,
+          }}
           onFinish={handleSubmitAccount}
         >
           <Card title="Account Details">
@@ -108,7 +143,6 @@ const AccountDetails = (props) => {
                       icon={<UserOutlined />}
                       src={profileAvatar}
                     />
-
                     {editBarangay ? (
                       <>
                         <Button
@@ -118,6 +152,11 @@ const AccountDetails = (props) => {
                         >
                           Upload image
                         </Button>{" "}
+                        {fileLarge ? (
+                          <span style={{ color: "red" }}>
+                            **File too large**
+                          </span>
+                        ) : null}
                         <div className="custom-file-upload">
                           <input
                             ref={hiddenFileInput}
@@ -154,7 +193,7 @@ const AccountDetails = (props) => {
                     {editBarangay ? (
                       <Input placeholder="" />
                     ) : (
-                      <div className="font-size-md">Dr Hologram</div>
+                      <div className="font-size-md">{displayName}</div>
                     )}
                   </Form.Item>
                 </Col>
@@ -182,7 +221,7 @@ const AccountDetails = (props) => {
                     {editBarangay ? (
                       <Input disabled placeholder="" />
                     ) : (
-                      <div className="font-size-md">von.aralar@gmail.com</div>
+                      <div className="font-size-md">{currentUser?.email}</div>
                     )}
                   </Form.Item>
                 </Col>

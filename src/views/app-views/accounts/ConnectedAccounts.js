@@ -7,8 +7,7 @@ import {
   CloseCircleFilled,
 } from "@ant-design/icons";
 import { FcGoogle } from "react-icons/fc";
-const ConnectedAccount = (props) => {
-  console.log(props);
+const ConnectedAccount = () => {
   const [editBarangay, setEditBarangay] = useState(false);
   const onClickEdit = () => {
     setEditBarangay(!editBarangay);

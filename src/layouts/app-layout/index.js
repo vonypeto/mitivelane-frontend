@@ -87,7 +87,7 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
               display={currentRouteInfo?.breadcrumb}
               title={currentRouteInfo?.title}
             />
-            {console.log(currentUser)}
+            {/* {console.log(currentUser)} */}
             {/* {localStorage.getItem("auth_barangay")} */}
             {/* {id} */}
             {/*
