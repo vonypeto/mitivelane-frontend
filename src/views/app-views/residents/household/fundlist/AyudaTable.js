@@ -30,6 +30,7 @@ const AyudaTable = () => {
                 className="no-border-last"
                 columns={HouseholdTableColumns}
                 dataSource={HouseholdTableData}
+                scroll={{ x: "max-content" }}
                 expandable={{
                     expandedRowRender: data => (
                         expandedRowRender(data.household_member_id)

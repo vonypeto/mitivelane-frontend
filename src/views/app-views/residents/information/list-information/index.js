@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Card, Table, Select, Input, Button, Menu, Space } from "antd";
 import ResidentListData from "assets/data/resident.data.json";
 import QueueAnim from "rc-queue-anim";
@@ -18,12 +18,18 @@ import Flex from "components/shared-components/Flex";
 import { useHistory } from "react-router-dom";
 import utils from "utils";
 import { Col, Dropdown } from "antd";
+import axios from 'axios'
+import { useAuth } from "contexts/AuthContext";
 
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
 
 const ListInformation = (props) => {
+  const {
+    generateToken,
+  } = useAuth();
+
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
   console.log("List Second Loop: " + param_url);
@@ -33,21 +39,31 @@ const ListInformation = (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   console.log(selectShow);
 
+  useEffect(() => {
+    axios.get("/api/resident/getAll", generateToken()[1])
+    .then((res) => {
+        console.log(res.data)
+        setList(res.data)
+      })
+
+  }, [])
+  
+
   const dropdownMenu = (row) => (
     <Menu>
-      <Menu.Item onClick={() => viewDetails(row)}>
+      <Menu.Item onClick={() => viewDetails(row)} key={1}>
         <Flex alignItems="center">
           <EyeOutlined />
           <span className="ml-2">View Details</span>
         </Flex>
       </Menu.Item>
-      <Menu.Item onClick={() => editDetails(row)}>
+      <Menu.Item onClick={() => editDetails(row)} key={2}>
         <Flex alignItems="center">
           <EditOutlined />
           <span className="ml-2">Edit Details</span>
         </Flex>
       </Menu.Item>
-      <Menu.Item onClick={() => deleteRow(row)}>
+      <Menu.Item onClick={() => deleteRow(row)} key={3}>
         <Flex alignItems="center">
           <DeleteOutlined />
           <span className="ml-2">
@@ -102,11 +118,6 @@ const ListInformation = (props) => {
 
   const tableColumns = [
     {
-      title: "ID",
-      dataIndex: "resident_id",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
-    },
-    {
       title: "Last Name",
       dataIndex: "lastname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
@@ -131,47 +142,12 @@ const ListInformation = (props) => {
       dataIndex: "civil_status",
       sorter: (a, b) => utils.antdTableSorter(a, b, "civil_status"),
     },
-    // {
-    // 	title: 'Product',
-    // 	dataIndex: 'name',
-    // 	render: (_, record) => (
-    // 		<div className="d-flex">
-    // 			<AvatarStatus size={60} type="square" src={record.image} name={record.name}/>
-    // 		</div>
-    // 	),
-    // 	sorter: (a, b) => utils.antdTableSorter(a, b, 'name')
-    // },
-    // {
-    // 	title: 'Category',
-    // 	dataIndex: 'category',
-    // 	sorter: (a, b) => utils.antdTableSorter(a, b, 'category')
-    // },
-    // {
-    // 	title: 'Price',
-    // 	dataIndex: 'price',
-    // 	render: price => (
-    // 		<div>
-    // 			<NumberFormat
-    // 				displayType={'text'}
-    // 				value={(Math.round(price * 100) / 100).toFixed(2)}
-    // 				prefix={'$'}
-    // 				thousandSeparator={true}
-    // 			/>
-    // 		</div>
-    // 	),
-    // 	sorter: (a, b) => utils.antdTableSorter(a, b, 'price')
-    // },
-    // {
-    // 	title: 'Stock',
-    // 	dataIndex: 'stock',
-    // 	sorter: (a, b) => utils.antdTableSorter(a, b, 'stock')
-    // },
-
     {
       title: "Actions",
       dataIndex: "actions",
       render: (_, elm) => (
         <div className="text-right">
+          {console.log("elm",elm)}
           <EllipsisDropdown menu={dropdownMenu(elm)} />
         </div>
       ),
@@ -301,6 +277,7 @@ const ListInformation = (props) => {
                 columns={tableColumns}
                 dataSource={list}
                 rowKey="resident_id"
+                scroll={{ x: "max-content" }}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
                   type: "checkbox",

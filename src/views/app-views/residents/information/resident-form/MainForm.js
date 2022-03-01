@@ -18,7 +18,7 @@ import CustomIcon from "components/util-components/CustomIcon";
 import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
 import moment from "moment";
 const current = new Date();
-const legthUnit = ["cm", "mm", "m"];
+const lengthUnit = ["cm", "mm", "m"];
 const weightUnit = ["kg", "g", "mg"];
 const dateFormat = "YYYY/MM/DD";
 const { Dragger } = Upload;
@@ -155,10 +155,11 @@ const MainForm = (props) => {
                       <Form.Item name="height" label="Height">
                         <Input
                           rules={rules.height}
+                          placeholder="Height"
                           addonAfter={
                             <Form.Item name="heightUnit" noStyle>
                               <Select style={{ minWidth: 70 }}>
-                                {legthUnit.map((unit) => (
+                                {lengthUnit.map((unit) => (
                                   <Option key={unit} value={unit}>
                                     {unit}
                                   </Option>
@@ -174,6 +175,7 @@ const MainForm = (props) => {
                       <Form.Item name="weight" label="Weight">
                         <Input
                           rules={rules.weight}
+                          placeholder="Weight"
                           addonAfter={
                             <Form.Item name="weightUnit" noStyle>
                               <Select style={{ minWidth: 70 }}>
@@ -214,6 +216,7 @@ const MainForm = (props) => {
                             `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                           }
                           parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                          placeholder="Age"
                         />
                       </Form.Item>
                     </Col>
@@ -278,12 +281,12 @@ const MainForm = (props) => {
                     </Col>
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item name="occupation" label="Occupation">
-                        <Input className="w-100" />
+                        <Input className="w-100" placeholder="Occupation"/>
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item name="religion" label="Religion">
-                        <Input placeholder="Christian" />
+                        <Input placeholder="Religion" />
                       </Form.Item>
                     </Col>
                   </Row>

@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 const Resident = props => {
   const { match } = props
   let { barangay_id } = useParams();
-  console.log("First Loop: "+barangay_id )
+  console.log("First Loop: " + barangay_id )
   
 	return (
 		<Switch>

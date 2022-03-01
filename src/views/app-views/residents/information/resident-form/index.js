@@ -9,10 +9,11 @@ import Address from './Address'
 import BlotterRecords from './BlotterRecords'
 import SocialWelfare from './SocialWelfare'
 import Account from './Account'
-import ResidentListData from "assets/data/resident.data.json"
 import moment from 'moment';
 import { useParams } from "react-router-dom";
 import QueueAnim from 'rc-queue-anim';
+import axios from 'axios'
+import { useAuth } from "contexts/AuthContext";
 
 const { TabPane } = Tabs;
 
@@ -27,9 +28,12 @@ const EDIT = 'EDIT'
 const VIEW = 'VIEW'
 
 const MainFormList = props => {
+	const { generateToken } = useAuth();
+
 	const { id } = useParams();
 	let history = useHistory();
 	const { mode = ADD, param } = props
+	const [residentList, setResidentList] = useState([]);
 	const [residentData, setResidentData] = useState([]);
 	const [residentFilter, setResidentFilter] = useState([])
 	const [form] = Form.useForm();
@@ -39,46 +43,50 @@ const MainFormList = props => {
 
 	useEffect(() => {
 		if (mode === EDIT || mode === VIEW) {
-			console.log('is edit & view')
+			(async () => {
+				const response = await axios.get("/api/resident/getAll", generateToken()[1])
+				const ResidentListData = response.data
 
-			console.log('props', props)
-			const residentID = parseInt(id)
-			console.log("EDIT BARANGAY: " + param)
-			setResidentFilter(residentID)
-			console.log("Resident: " + residentFilter)
-			const residentData = ResidentListData.filter(resident => resident.resident_id === residentID)
-			const resident = residentData[0]
-			console.log("Resident", resident)
-			setResidentData(residentData[0])
-			
-			form.setFieldsValue({
-				lastname: resident.lastname,
-				firstname: resident.firstname,
-				middlename: resident.middlename,
-				alias: resident.alias,
-				height: resident.height,
-				birthday: new moment(resident.birthday),
-				weight: resident.weight,
-				age: resident.age,
-				civil_status: resident.civil_status,
-				citizenship: resident.citizenship,
-				birth_of_place: resident.birth_of_place,
-				address_1: resident.address_1,
-				address_2: resident.address_2,
-				father: resident.father,
-				mother: resident.mother,
-				spouse: resident.spouse,
-				telephone: resident.telephone,
-				mobile_number: resident.mobile_number,
-				pag_ibig: resident.pag_ibig,
-				philhealth: resident.philhealth,
-				sss: resident.sss,
-				tin: resident.tin,
-			});
-			setImage(resident.image)
+				const residentID = id
+				setResidentFilter(residentID)
+				const residentData = ResidentListData.filter(resident => resident.resident_id === residentID)
+
+				const resident = residentData[0]
+				setResidentData(residentData[0])
+
+				form.setFieldsValue({
+					lastname: resident.lastname,
+					firstname: resident.firstname,
+					middlename: resident.middlename,
+					alias: resident.alias,
+					height: resident.height,
+					birthday: new moment(resident.birthday),
+					occupation: resident.occupation,
+					voter_status: resident.voter_status,
+					religion: resident.religion,
+					weight: resident.weight,
+					age: resident.age,
+					civil_status: resident.civil_status,
+					citizenship: resident.citizenship,
+					birth_of_place: resident.birth_of_place,
+					address_1: resident.address_1,
+					address_2: resident.address_2,
+					area: resident.area,
+					father: resident.father,
+					mother: resident.mother,
+					spouse: resident.spouse,
+					telephone: resident.telephone,
+					mobile_number: resident.mobile_number,
+					pag_ibig: resident.pag_ibig,
+					philhealth: resident.philhealth,
+					sss: resident.sss,
+					tin: resident.tin,
+				});
+				setImage(resident.image)
+			})()
+
 
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [form, mode, param, props]);
 
 	const handleUploadChange = info => {
@@ -94,6 +102,13 @@ const MainFormList = props => {
 		}
 	};
 
+	const onFinishAdd = async (values) => {
+		await axios.post("/api/resident/add", {values}, generateToken()[1])
+		.then ((res) => {
+			console.log(res.data)
+		})
+	}
+
 	const onFinish = (values) => {
 		console.log("values from form", values)
 		setSubmitLoading(true)
@@ -103,6 +118,7 @@ const MainFormList = props => {
 				if (mode === ADD) {
 					//RESIDENT INSERT ADD
 					message.success(`Added ${values.firstname} to Resident list`);
+					onFinishAdd(values);
 				}
 				if (mode === EDIT) {
 					//RESIDENT INSERT EDIT
