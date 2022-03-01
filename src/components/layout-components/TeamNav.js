@@ -64,12 +64,13 @@ const TeamNav = () => {
     setTimeout(() => {
       setVisible(!visible);
     }, 200);
-    setBarangay(split[1]);
-    setBarangayMemberList(split[0]);
-    localStorage.setItem(AUTH_BARANGAY, split[1]);
-    localStorage.setItem(AUTH_BARANGAY_LIST, split[0]);
+    console.log(e);
+    setBarangay(split[0]);
+    setBarangayMemberList(split[1]);
+    localStorage.setItem(AUTH_BARANGAY, split[0]);
+    localStorage.setItem(AUTH_BARANGAY_LIST, split[1]);
 
-    history.push(`/app/` + split[1] + `/dashboards/home`);
+    history.push(`/app/` + split[0] + `/dashboards/home`);
   };
   const RenderName = () => (
     <div className="nav-profile-header-n">
@@ -96,6 +97,7 @@ const TeamNav = () => {
                         Barangay {item?.barangay_name}
                       </span>
                     </div>
+                    {console.log(id, item?.barangay_id)}
                     {id === item?.barangay_id ? (
                       <CheckOutlined className="text-success" />
                     ) : null}
