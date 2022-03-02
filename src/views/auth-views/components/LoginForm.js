@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "contexts/AuthContext";
 import { loginBarangay } from "api/AuthController/LoginController/LoginController";
 import platform from "platform";
+import axios from "axios";
 import {
   signIn,
   showLoading,
@@ -71,9 +72,13 @@ export const LoginForm = (props) => {
     showLoading();
     signInWithFacebook();
   };
-
+  const getData = async () => {
+    const res = await axios.get("https://geolocation-db.com/json/");
+    console.log(res.data);
+  };
   useEffect(() => {
     let cancel = true;
+    getData();
     if (token !== null && allowRedirect) {
       // getBarangay(token);
 

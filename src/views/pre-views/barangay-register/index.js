@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
-import "./index.css";
-
 import UserInfoForm from "views/pre-views/components/barangay-register-form/UserInfoForm";
 import BarangayInfoForm from "views/pre-views/components/barangay-register-form/BarangayInfoForm";
 import { createBarangay } from "api/AuthController/PreRegisterController/PreRegisterController";
-import { Spin } from "antd";
 import Loading from "components/shared-components/Loading";
 import { Row, Col, Card, Form, Button, Input } from "antd";
 import axios from "axios";
-import {
-  signIn,
-  signInWithGoogle,
-  signInWithFacebook,
-} from "redux/actions/Auth";
 import { useAuth } from "contexts/AuthContext";
 import { connect } from "react-redux";
 import { HeaderNavRegister } from "components/layout-components/HeaderNavRegister";
@@ -21,6 +13,13 @@ import jwt_decode from "jwt-decode";
 import sign from "jwt-encode";
 import platform from "platform";
 import publicIp from "react-public-ip";
+import { Spin } from "antd";
+import "./index.css";
+import {
+  signIn,
+  signInWithGoogle,
+  signInWithFacebook,
+} from "redux/actions/Auth";
 
 const BarangayRegister = (props) => {
   const {
@@ -119,9 +118,6 @@ const BarangayRegister = (props) => {
       APIFetch = false;
       source.cancel();
     };
-    // return () => {
-    //   cleanup
-    // }
   }, []);
 
   const handleSubmit = async (values) => {
@@ -155,9 +151,7 @@ const BarangayRegister = (props) => {
       uuid: localStorage.getItem("auth_token"),
       token: localStorage.getItem("access_token"),
     };
-    console.log(process.env.REACT_APP_ACCESS_TOKEN_SECRET);
 
-    const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
     console.log(jwt);
 
     const header = {

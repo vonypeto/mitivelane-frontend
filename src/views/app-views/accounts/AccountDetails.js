@@ -24,11 +24,12 @@ const AccountDetails = () => {
   const [editBarangay, setEditBarangay] = useState(false);
   const [profileAvatar, setProfileAvatar] = useState(false);
   const [displayName, setDisplayName] = useState(currentUser?.displayName);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     let mount = true;
     // console.log(currentPhoto);
     if (mount) {
+      console.log(displayName);
       let data = JSON.parse(localStorage.getItem(PROFILE_URL));
       setProfileAvatar(data.profile_data);
     }
@@ -42,14 +43,17 @@ const AccountDetails = () => {
   const handleSubmitAccount = (value) => {
     if (editBarangay) {
       console.log(value);
+      setIsLoading(true);
       updateAccount(
         value,
         profileAvatar,
         currentUser,
         setDisplayName,
         setProfileAvatar,
-        setPhoto
+        setPhoto,
+        setIsLoading
       );
+      setDisplayName(value.name);
     }
     setEditBarangay(!editBarangay);
   };
@@ -110,7 +114,7 @@ const AccountDetails = () => {
         <Form
           initialValues={{
             email: currentUser?.email,
-            name: currentUser?.displayName,
+            name: displayName,
           }}
           onFinish={handleSubmitAccount}
         >
@@ -191,7 +195,7 @@ const AccountDetails = () => {
                 >
                   <Form.Item name="name">
                     {editBarangay ? (
-                      <Input placeholder="" />
+                      <Input placeholder="" maxLength="20" />
                     ) : (
                       <div className="font-size-md">{displayName}</div>
                     )}
@@ -260,7 +264,12 @@ const AccountDetails = () => {
                 <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
                   {editBarangay ? (
                     <>
-                      <Button className="mr-2" htmlType="submit" type="primary">
+                      <Button
+                        disabled={isLoading}
+                        className="mr-2"
+                        htmlType="submit"
+                        type="primary"
+                      >
                         Save
                       </Button>
                       <Button onClick={() => onClickEdit()}>Cancel</Button>
