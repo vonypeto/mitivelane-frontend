@@ -40,6 +40,8 @@ const MainFormList = (props) => {
   } = useAuth();
 
   const { id } = useParams();
+  const authToken = localStorage.getItem("auth_token");
+
   console.log("BLotter_ID: " + id);
   let history = useHistory();
   const { mode = ADD, param } = props;
@@ -49,6 +51,7 @@ const MainFormList = (props) => {
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+
   useEffect(() => {
     resetReporter()
     resetVictim()
@@ -58,37 +61,27 @@ const MainFormList = (props) => {
     console.log("Reset Data")
 
     if (mode === EDIT || mode === VIEW) {
-      console.log("is edit & view");
 
-      console.log("props", props);
-      const blotterID = parseInt(id);
-      console.log("EDIT BARANGAY: " + param);
-      setResidentFilter(blotterID);
-      console.log("Resident: " + residentFilter);
-      const blotterData = BlotterListData.filter(
-        (blotter) => blotter.blotter_id === blotterID
-      );
-      // const residentData = ResidentListData.filter( resident => resident.resident_id === residentID)
-      const blotter = blotterData[0];
-      setResidentData(residentData[0]);
-      console.log(blotter.daterecorded);
-      form.setFieldsValue({
-        //reference this rojhon: this data is from the narrative report
-        // pass the data from the child to parent to the form later cause it dont work on setstate in childform of form.item
-        date_of_incident: new moment(blotter.daterecorded),
-        // lastname: resident.lastname,
-        // firstname: resident.firstname,
-        // middlename: resident.middlename,
-        // alias: resident.alias,
-        // height: resident.height,
-        // birthday: new moment(resident.birthday),
-        // weight: resident.weight,
-        // age: resident.age,
-        // birth_of_place: resident.birth_of_place
+      axios.get("/api/blotter/get-blotter-initial-value/" + id, generateToken()[1]).then((response) => {
+        console.log(response.data)
+        form.setFieldsValue({
+          blotter_id: response.data.blotter_id,
+          settlement_status: response.data.settlement_status,
+          subject: response.data.subject,
+          incident_type: response.data.incident_type,
+          place_incident: response.data.place_incident,
+          time_of_incident: new moment(response.data.time_of_incident),
+          date_of_incident: new moment(response.data.date_of_incident),
+          time_schedule: new moment(response.data.time_schedule),
+          date_schedule: new moment(response.data.date_schedule)
       });
-      // setImage(resident.image)
+
+    }).catch(() => {
+      message.error("Could not fetch the data in the server!")
+    });
+
+    
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, mode, param, props]);
 
   const handleUploadChange = (info) => {
@@ -114,6 +107,7 @@ const MainFormList = (props) => {
           if (mode === ADD) {
             //Blotter ADD
             values.barangay_id = param[0]
+            values.uuid = authToken
 
             values.reporters = reporter
             values.victims = victim
@@ -146,7 +140,23 @@ const MainFormList = (props) => {
           }
           if (mode === EDIT) {
             //Blotter EDIT
-            message.success(`Case saved`);
+            console.log(values)
+            message.loading("Editing Blotter...", 0)
+
+            axios.post(`/api/blotter/edit-blotter/${id}`, values, generateToken()[1]).then((response) => {
+                message.destroy()
+                if (response.data == "Success") {
+                  message.success(`Edit Blotter saved`);
+                } else {
+                  return message.error("Error, please try again.")
+                }
+
+              }).catch(error => {
+                console.log(error)
+                message.destroy()
+                message.error("The action can't be completed, please try again.")
+              });
+
           }
         }, 1500);
       })

@@ -11,7 +11,7 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 const TableBlotterData = (props) => {
-  const { testout, barangay_id, blotterData } = props;
+  const { testout, barangay_id, blotterData, blotterlistLoading} = props;
   const [blotterlist, setBlotterListData] = useState(blotterData);
   const [selectShow, setShow] = useState(true);
   const [blotterselectedRows, setBlotterSelectedRows] = useState([]);
@@ -52,19 +52,19 @@ const TableBlotterData = (props) => {
     },
     {
       title: () => <div className="text-center">Cases</div>,
-      key: "arrival",
-      render: (_, data) => <div className="text-center">{data.classification}</div>,
+      key: "incident_type",
+      render: (_, data) => <div className="text-center">{data.incident_type}</div>,
     },
 
     {
       title: () => <div className="text-center">Location</div>,
-      key: "waiting",
-      render: (_, data) => <div className="text-center">{data.incidentlocation}</div>,
+      key: "place_incident",
+      render: (_, data) => <div className="text-center">{data.place_incident}</div>,
     },
     {
       title: () => <div className="text-center">Date Incident</div>,
-      key: "waiting",
-      render: (_, data) => <div className="text-center">{data.incidentdate}</div>,
+      key: "date_of_incident",
+      render: (_, data) => <div className="text-center">{new Date(data.date_of_incident).toDateString()}</div>,
     },
     {
       title: () => <div className="text-center"> Action</div>,
@@ -120,8 +120,9 @@ const TableBlotterData = (props) => {
                 <Button onClick={Onclick}> change</Button> */}
 
                 <Table
+                  loading={blotterlistLoading}
                   columns={Blottercolumns}
-                  dataSource={blotterlist}
+                  dataSource={blotterData}
                   scroll={{ x: "max-content" }}
                   rowKey="blotter_id"
                   //  rowSelection={{
