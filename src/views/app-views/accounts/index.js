@@ -1,31 +1,13 @@
 import { React, useState } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
-import {
-  Button,
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Avatar,
-  Divider,
-  Popconfirm,
-  message,
-} from "antd";
-import {
-  UserOutlined,
-  UploadOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+import { Row, Divider } from "antd";
 import AccountDetails from "./AccountDetails";
 import ConnectedAccount from "./ConnectedAccounts";
 import AccountDelete from "./AccountDelete";
-import AccountSesson from "./AccountSesson";
+import AccountSesson from "./AccountSession";
 
-const ManageTeam = (props) => {
-  console.log(props);
-
+const ManageAccount = (props) => {
   return (
     <div>
       <PageHeaderAlt className="padding-none border-bottom" overlap>
@@ -43,7 +25,7 @@ const ManageTeam = (props) => {
 
       <div className="container" style={{ marginTop: 95 }}>
         <Row gutter={16}>
-          <AccountDetails data={props} />
+          <AccountDetails />
         </Row>
         <Divider />
         <Row gutter={16}>
@@ -63,4 +45,4 @@ const ManageTeam = (props) => {
   );
 };
 
-export default ManageTeam;
+export default ManageAccount;

@@ -35,3 +35,26 @@ export async function updateAccount(
       console.log(error);
     });
 }
+export async function deleteSession(session_id, generateToken, setShowMessage) {
+  const data = {
+    session_id: session_id,
+  };
+  axios
+    .post("/api/app/user/sessions/delete", data, generateToken()[1])
+    .then((_) => {
+      return setShowMessage({
+        show: true,
+        message: "Delete sucessful",
+        type: "success",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+
+      return setShowMessage({
+        show: true,
+        message: "Delete unsucessful",
+        type: "error",
+      });
+    });
+}

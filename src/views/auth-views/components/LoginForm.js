@@ -60,7 +60,6 @@ export const LoginForm = (props) => {
   async function onLogin(values) {
     showLoading();
     signIn(values);
-    setIsLoading(true);
   }
 
   const onGoogleLogin = () => {
@@ -72,13 +71,10 @@ export const LoginForm = (props) => {
     showLoading();
     signInWithFacebook();
   };
-  const getData = async () => {
-    const res = await axios.get("https://geolocation-db.com/json/");
-    console.log(res.data);
-  };
+
   useEffect(() => {
     let cancel = true;
-    getData();
+    console.log(showMessage);
     if (token !== null && allowRedirect) {
       // getBarangay(token);
 
@@ -100,11 +96,13 @@ export const LoginForm = (props) => {
         );
       }
     }
+
     if (showMessage) {
       setTimeout(() => {
         hideAuthMessage();
       }, 3000);
     }
+
     return () => {
       cancel = false;
     };

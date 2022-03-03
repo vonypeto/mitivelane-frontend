@@ -29,7 +29,7 @@ const renderAvatar = (props) => {
 const timeSince = (date) => {
   var time = new Date(date);
   var seconds = Math.floor((new Date() - time) / 1000);
-  seconds -= +28800;
+  // seconds -= +28800;
   var interval = seconds / 31536000;
   if (interval > 1) {
     return Math.floor(interval) + " years";

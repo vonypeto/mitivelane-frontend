@@ -8,6 +8,7 @@ import {
   Input,
   Avatar,
   message,
+  Skeleton,
   Upload,
   // notification,
 } from "antd";
@@ -15,7 +16,8 @@ import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import notification from "components/shared-components/Notification";
 import { updateAccount } from "api/AppController/AccountsController/AccountDetailsController";
 import { useAuth } from "contexts/AuthContext";
-import { PROFILE_URL } from "redux/constants/Auth";
+import { PROFILE_URL, AUTH_TOKEN } from "redux/constants/Auth";
+import axios from "axios";
 
 const AccountDetails = () => {
   const { currentUser, setPhoto, currentPhoto } = useAuth();
@@ -23,15 +25,23 @@ const AccountDetails = () => {
   const [fileLarge, setFileLarge] = useState(false);
   const [editBarangay, setEditBarangay] = useState(false);
   const [profileAvatar, setProfileAvatar] = useState(false);
-  const [displayName, setDisplayName] = useState(currentUser?.displayName);
-  const [isLoading, setIsLoading] = useState(false);
+  const [displayName, setDisplayName] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const getData = async (_) => {
+    const data = {
+      auth_id: localStorage.getItem(AUTH_TOKEN),
+    };
+    await axios.post("/api/app/user/sessions", data).then((response) => {
+      setIsLoading(false);
+      setDisplayName(response.data.full_name);
+    });
+  };
   useEffect(() => {
     let mount = true;
-    // console.log(currentPhoto);
     if (mount) {
-      console.log(displayName);
       let data = JSON.parse(localStorage.getItem(PROFILE_URL));
       setProfileAvatar(data.profile_data);
+      getData();
     }
     return () => {
       mount = false;
@@ -100,17 +110,9 @@ const AccountDetails = () => {
     // }.bind(this);
     // console.log(url);
   };
-  return (
-    <>
-      <Col xs={24} sm={24} md={8}>
-        <div className="pl-1">
-          <h3>Manage Account</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Update MitiveLane Account password and avatar.
-          </p>
-        </div>
-      </Col>
-      <Col xs={24} sm={24} md={15} className="ant-body-pt">
+  const FormData = () => {
+    return (
+      <Skeleton loading={isLoading} active avatar>
         <Form
           initialValues={{
             email: currentUser?.email,
@@ -284,6 +286,21 @@ const AccountDetails = () => {
             </Col>
           </Card>
         </Form>
+      </Skeleton>
+    );
+  };
+  return (
+    <>
+      <Col xs={24} sm={24} md={8}>
+        <div className="pl-1">
+          <h3>Manage Account</h3>
+          <p className="mt-1 text-sm text-gray-600">
+            Update MitiveLane Account password and avatar.
+          </p>
+        </div>
+      </Col>
+      <Col xs={24} sm={24} md={15} className="ant-body-pt">
+        <FormData />
       </Col>
     </>
   );

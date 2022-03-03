@@ -104,7 +104,6 @@ export const RegisterForm = (props) => {
 
       signUp(values);
     });
-    setIsLoading(true);
   };
 
   const renderOtherSignIn = (
@@ -139,7 +138,7 @@ export const RegisterForm = (props) => {
     if (token !== null) {
       if (cancel) {
         setIsLoading(true);
-
+        cancel = false;
         registerBarangay(
           token,
           setBarangay,
@@ -163,7 +162,7 @@ export const RegisterForm = (props) => {
     return () => {
       cancel = false;
     };
-  });
+  }, []);
 
   return (
     <>
