@@ -49,62 +49,66 @@ export async function loginBarangay(
     },
   };
 
-  await axios.get("https://geolocation-db.com/json/").then((geo) => {
-    const login = {
-      auth_id: token,
-      email: currentUser?.email,
-      profile_url: currentUser?.photoURL,
-      user: currentUser?.displayName,
-      geo_data: geo.data,
-    };
-    axios
-      .post("/api/auth/login/" + token, login, header)
-      .then((res) => {
-        localStorage.setItem(ACCESS_TOKEN, res.data.accessToken);
-        localStorage.setItem(SESSION_TOKEN, res.data.accessToken);
-        setIsLoading(false);
-        let tmp = generateToken();
-        localStorage.setItem(ACCESS_TOKEN, tmp[0]);
-        let response = jwt_decode(res.data.accessToken);
-        localStorage.setItem(
-          PROFILE_URL,
-          JSON.stringify({
+  await axios
+    .get(
+      "https://geolocation-db.com/json/" + process.env.REACT_APP_REFRESH_GEO_ID
+    )
+    .then((geo) => {
+      const login = {
+        auth_id: token,
+        email: currentUser?.email,
+        profile_url: currentUser?.photoURL,
+        user: currentUser?.displayName,
+        geo_data: geo.data,
+      };
+      axios
+        .post("/api/auth/login/" + token, login, header)
+        .then((res) => {
+          localStorage.setItem(ACCESS_TOKEN, res.data.accessToken);
+          localStorage.setItem(SESSION_TOKEN, res.data.accessToken);
+          setIsLoading(false);
+          let tmp = generateToken();
+          localStorage.setItem(ACCESS_TOKEN, tmp[0]);
+          let response = jwt_decode(res.data.accessToken);
+          localStorage.setItem(
+            PROFILE_URL,
+            JSON.stringify({
+              profile_data: res.data?.profileUrl,
+              profile_color: response.profileLogo,
+            })
+          );
+          setPhoto({
             profile_data: res.data?.profileUrl,
             profile_color: response.profileLogo,
-          })
-        );
-        setPhoto({
-          profile_data: res.data?.profileUrl,
-          profile_color: response.profileLogo,
-        });
-        if (response.barangays[0] && response.members[0]) {
-          if (response.barangays[0].length > 0) {
-            response.barangays[0].map(
-              (barangay) => (barangay_id = barangay.barangay_id)
-            );
-            localStorage.setItem(AUTH_BARANGAY, barangay_id);
-            setBarangay(barangay_id);
-            console.log(response.barangays[0]);
-            response.members[0].map(
-              (member) => (role_id = member.barangay_member_id)
-            );
-            localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
-            setBarangayMemberList(role_id);
-            return history.push(redirect);
+          });
+          if (response.barangays[0] && response.members[0]) {
+            if (response.barangays[0].length > 0) {
+              response.barangays[0].map(
+                (barangay) => (barangay_id = barangay.barangay_id)
+              );
+              localStorage.setItem(AUTH_BARANGAY, barangay_id);
+              setBarangay(barangay_id);
+              console.log(response.barangays[0]);
+              response.members[0].map(
+                (member) => (role_id = member.barangay_member_id)
+              );
+              localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
+              setBarangayMemberList(role_id);
+              return history.push(redirect);
+            }
+          } else {
+            localStorage.setItem(AUTH_BARANGAY_LIST, null);
+            localStorage.setItem(AUTH_BARANGAY, null);
+            setBarangayMemberList(null);
+            setBarangay(null);
+            return history.push(PRE_PREFIX_PATH);
           }
-        } else {
-          localStorage.setItem(AUTH_BARANGAY_LIST, null);
-          localStorage.setItem(AUTH_BARANGAY, null);
-          setBarangayMemberList(null);
-          setBarangay(null);
-          return history.push(PRE_PREFIX_PATH);
-        }
-      })
-      .catch(async (error) => {
-        signOut();
-        console.log(error);
-      });
-  });
+        })
+        .catch(async (error) => {
+          signOut();
+          console.log(error);
+        });
+    });
 
   // const geo = geoip.lookup(ipv4 + 1);
   // console.log(geo);
