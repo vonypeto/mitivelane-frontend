@@ -97,7 +97,7 @@ const TeamNav = () => {
                         Barangay {item?.barangay_name}
                       </span>
                     </div>
-                    {console.log(id, item?.barangay_id)}
+                    {/* {console.log(id, item?.barangay_id)} */}
                     {id === item?.barangay_id ? (
                       <CheckOutlined className="text-success" />
                     ) : null}

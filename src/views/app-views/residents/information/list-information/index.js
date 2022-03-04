@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Table, Select, Input, Button, Menu, Space } from "antd";
 import ResidentListData from "assets/data/resident.data.json";
 import QueueAnim from "rc-queue-anim";
@@ -18,7 +18,7 @@ import Flex from "components/shared-components/Flex";
 import { useHistory } from "react-router-dom";
 import utils from "utils";
 import { Col, Dropdown } from "antd";
-import axios from 'axios'
+import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
 const { Option } = Select;
@@ -26,11 +26,9 @@ const { Option } = Select;
 const categories = [1, 2, 3, "Watches", "Devices"];
 
 const ListInformation = (props) => {
-  const {
-    generateToken,
-  } = useAuth();
+  const { generateToken, currentBarangay } = useAuth();
 
-  const barangay_id = localStorage.getItem("auth_barangay_list")
+  const barangay_id = currentBarangay;
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
   let history = useHistory();
@@ -39,13 +37,13 @@ const ListInformation = (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(() => {
-    axios.post("/api/resident/getAll", {barangay_id}, generateToken()[1])
-    .then((res) => {
-        setList(res.data)
-      })
+    axios
+      .post("/api/resident/getAll", { barangay_id }, generateToken()[1])
+      .then((res) => {
+        setList(res.data);
+      });
+  }, []);
 
-  }, [])
-  
   const dropdownMenu = (row) => (
     <Menu>
       <Menu.Item onClick={() => viewDetails(row)} key={1}>
@@ -99,9 +97,13 @@ const ListInformation = (props) => {
     }, 1000);
   };
 
-  const deleteRow = async(row) => {
-    const resident_id = row.resident_id
-    await axios.post("/api/resident/delete", {resident_id}, generateToken()[1])
+  const deleteRow = async (row) => {
+    const resident_id = row.resident_id;
+    await axios.post(
+      "/api/resident/delete",
+      { resident_id },
+      generateToken()[1]
+    );
 
     //deleting resident in table
     const objKey = "resident_id";
