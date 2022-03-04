@@ -85,9 +85,7 @@ const Narrative = (props) => {
             name="incident_type"
             label="Type of Incident"
             rules={[{ required: true }]}>
-            <Col xs={24} sm={24} md={24}>
               <Input placeholder="Incident Type" />
-            </Col>
           </Form.Item>
           <Form.Item
             name="time_of_incident"
@@ -116,9 +114,28 @@ const Narrative = (props) => {
             name="place_incident"
             label="Place of Incident"
             rules={[{ required: true }]}>
-            <Col xs={24} sm={24} md={24}>
               <Input placeholder="Place of incident" />
-            </Col>
+          </Form.Item>
+          <Form.Item
+            name="time_schedule"
+            label="Time Schedule">
+            <TimePicker
+              className="w-100"
+              values={moment("12:08:23", "HH:mm:ss")}
+            />
+          </Form.Item>
+          <Form.Item
+            name="date_schedule"
+            label="Date Schedule">
+            <DatePicker
+              className="w-100"
+              initialValues={moment(
+                `${current.getFullYear()}/${current.getMonth() + 1
+                }/${current.getDate()}`,
+                dateFormat
+              )}
+              format={dateFormat}
+            />
           </Form.Item>
         </Card>
       </Col>

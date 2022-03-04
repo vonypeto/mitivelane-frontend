@@ -61,6 +61,7 @@ const BlotterRecord = (props) => {
   let history = useHistory();
 
   const [blotterlist, setBlotterList] = useState([]);
+  const [blotterlistData, setBlotterlistData] = useState([])
   const [blotterlistLoading, setBlotterListLoading] = useState(true);
 
   const [sessionData, setSessionData] = useState([0, 0, 0, 0])
@@ -98,6 +99,7 @@ const BlotterRecord = (props) => {
     axios.get("/api/blotter/get-blotters/" + param_url, generateToken()[1]).then((response) => {
       console.log(response.data)
       setBlotterList(response.data)
+      setBlotterlistData(response.data)
       setBlotterListLoading(false)
     }).catch(() => {
       message.error("Could not fetch the data in the server!")
@@ -147,7 +149,7 @@ const BlotterRecord = (props) => {
   };
 
   const BlottereditwDetails = (row) => {
-    history.push(`/app/${param_url}/records/blotter-record/${row.blotter_id}/edit`);
+    history.push(`/app/${param_url}/records/blotter-record/${row._id}/edit`);
   };
 
   const deleteBlotter = (_ids) => {
@@ -434,7 +436,7 @@ const BlotterRecord = (props) => {
 
   const onBlotterSearch = (e) => {
     const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? blotterlist : BlotterListData;
+    const searchArray = e.currentTarget.value ? blotterlist : blotterlistData;
     const data = utils.wildCardSearch(searchArray, value);
     setBlotterList(data);
     setSelectedRowKeysBlotter([]);
@@ -452,11 +454,11 @@ const BlotterRecord = (props) => {
 
   const BlotterCases = (value) => {
     if (value !== "All") {
-      const key = "status";
-      const data = utils.filterArray(BlotterListData, key, value);
+      const key = "settlement_status";
+      const data = utils.filterArray(blotterlistData, key, value);
       setBlotterList(data);
     } else {
-      setBlotterList(BlotterListData);
+      setBlotterList(blotterlistData);
     }
   };
 
