@@ -31,6 +31,7 @@ const MainFormList = props => {
 	const { generateToken } = useAuth();
 
 	const { id } = useParams();
+	const barangay_id = localStorage.getItem("auth_barangay_list")
 	let history = useHistory();
 	const { mode = ADD, param } = props
 	const [residentList, setResidentList] = useState([]);
@@ -44,7 +45,7 @@ const MainFormList = props => {
 	useEffect(() => {
 		if (mode === EDIT || mode === VIEW) {
 			(async () => {
-				const response = await axios.get("/api/resident/getAll", generateToken()[1])
+				const response = await axios.post("/api/resident/getAll", {barangay_id}, generateToken()[1])
 				const ResidentListData = response.data
 
 				const residentID = id
@@ -103,7 +104,14 @@ const MainFormList = props => {
 	};
 
 	const onFinishAdd = async (values) => {
-		await axios.post("/api/resident/add", {values}, generateToken()[1])
+		await axios.post("/api/resident/add", {values, barangay_id}, generateToken()[1])
+		.then ((res) => {
+			console.log(res.data)
+		})
+	}
+
+	const onFinishUpdate = async (values) => {
+		await axios.post("/api/resident/update", {values, barangay_id, resident_id: id}, generateToken()[1])
 		.then ((res) => {
 			console.log(res.data)
 		})
@@ -122,6 +130,7 @@ const MainFormList = props => {
 				}
 				if (mode === EDIT) {
 					//RESIDENT INSERT EDIT
+					onFinishUpdate(values);
 					message.success(`Resident saved`);
 				}
 			}, 1500);
