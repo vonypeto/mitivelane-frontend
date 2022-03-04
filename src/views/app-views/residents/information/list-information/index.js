@@ -30,25 +30,22 @@ const ListInformation = (props) => {
     generateToken,
   } = useAuth();
 
+  const barangay_id = localStorage.getItem("auth_barangay_list")
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
-  console.log("List Second Loop: " + param_url);
   let history = useHistory();
   const [list, setList] = useState(ResidentListData);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  console.log(selectShow);
 
   useEffect(() => {
-    axios.get("/api/resident/getAll", generateToken()[1])
+    axios.post("/api/resident/getAll", {barangay_id}, generateToken()[1])
     .then((res) => {
-        console.log(res.data)
         setList(res.data)
       })
 
   }, [])
   
-
   const dropdownMenu = (row) => (
     <Menu>
       <Menu.Item onClick={() => viewDetails(row)} key={1}>
@@ -101,7 +98,12 @@ const ListInformation = (props) => {
       );
     }, 1000);
   };
-  const deleteRow = (row) => {
+
+  const deleteRow = async(row) => {
+    const resident_id = row.resident_id
+    await axios.post("/api/resident/delete", {resident_id}, generateToken()[1])
+
+    //deleting resident in table
     const objKey = "resident_id";
     let data = list;
     if (selectedRows.length > 1) {
@@ -147,7 +149,6 @@ const ListInformation = (props) => {
       dataIndex: "actions",
       render: (_, elm) => (
         <div className="text-right">
-          {console.log("elm",elm)}
           <EllipsisDropdown menu={dropdownMenu(elm)} />
         </div>
       ),
