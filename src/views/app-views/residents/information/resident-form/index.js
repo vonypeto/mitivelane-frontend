@@ -28,10 +28,10 @@ const EDIT = 'EDIT'
 const VIEW = 'VIEW'
 
 const MainFormList = props => {
-	const { generateToken } = useAuth();
+	const { generateToken, currentBarangay } = useAuth();
 
 	const { id } = useParams();
-	const barangay_id = localStorage.getItem("auth_barangay_list")
+	const barangay_id = currentBarangay
 	let history = useHistory();
 	const { mode = ADD, param } = props
 	const [residentList, setResidentList] = useState([]);

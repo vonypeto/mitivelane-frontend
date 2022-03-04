@@ -27,8 +27,8 @@ const categories = [1, 2, 3, "Watches", "Devices"];
 
 const ListInformation = (props) => {
   const { generateToken, currentBarangay } = useAuth();
-
   const barangay_id = currentBarangay;
+  console.log(barangay_id)
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
   let history = useHistory();
