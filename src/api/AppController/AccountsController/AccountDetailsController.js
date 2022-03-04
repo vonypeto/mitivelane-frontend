@@ -6,9 +6,7 @@ export async function updateAccount(
   profileAvatar,
   currentUser,
   setDisplayName,
-  setProfileAvatar,
-  setPhoto,
-  setIsLoading
+  setProfileAvatar
 ) {
   const data = {
     full_name: values.name,
@@ -23,8 +21,8 @@ export async function updateAccount(
       data.profile_data = response.data.profile_url;
       // localStorage.setitem(PROFILE_URL, JSON.stringify(data));
       setProfileAvatar(response.data?.profile_url);
-      setPhoto(data);
-      setIsLoading(false);
+      // setPhoto(data);
+      // setIsLoading(false);
       setDisplayName(response.data?.full_name);
       localStorage.setItem(PROFILE_URL, JSON.stringify(data));
       currentUser.updateProfile({

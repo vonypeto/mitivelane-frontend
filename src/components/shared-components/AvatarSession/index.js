@@ -2,28 +2,29 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Avatar, Tooltip } from "antd";
 import { FcPhoneAndroid, FcIphone, FcLinux } from "react-icons/fc";
-import { AiFillWindows, AiFillTablet } from "react-icons/ai";
 import { MdOutlineDevices } from "react-icons/md";
-
+import { AiFillWindows } from "react-icons/ai";
 const renderAvatar = (props) => {
   const { os } = props;
   let icon;
   if (os == "Android") {
-    icon = <FcPhoneAndroid size="40" />;
+    icon = <FcPhoneAndroid className="anticon" size="40" />;
   } else if (os == "Linux") {
-    icon = <FcLinux size="40" />;
+    icon = <FcLinux className="anticon" size="40" />;
   } else if (os == "Windows") {
-    icon = <AiFillWindows size="40" />;
+    icon = (
+      <AiFillWindows
+        size="39"
+        className="anticon"
+        style={{ color: "#0979D9" }}
+      />
+    );
   } else if (os == "Iphone") {
-    icon = <FcIphone size="40" />;
+    icon = <FcIphone className="anticon" size="40" />;
   } else {
-    icon = <MdOutlineDevices size="40" />;
+    icon = <MdOutlineDevices className="anticon" size="40" />;
   }
-  return (
-    <Avatar icon={icon} style={{ backgroundColor: "white" }}>
-      {" "}
-    </Avatar>
-  );
+  return <Avatar icon={icon} style={{ backgroundColor: "white" }}></Avatar>;
 };
 
 const timeSince = (date) => {
@@ -58,13 +59,8 @@ export const AvatarSession = (props) => {
     suffix,
     subTitle,
     id,
-    type,
     src,
     icon,
-    size,
-    shape,
-    gap,
-    text,
     ip,
     checkActive,
     active,

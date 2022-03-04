@@ -51,12 +51,13 @@ export const NavProfile = ({ signOut }) => {
   };
   useEffect(() => {
     let mount = true;
-    if (mount) setProfile(currentPhoto);
+    if (mount)
+      setProfile(JSON.parse(localStorage.getItem(PROFILE_URL) || "[]"));
 
     return () => {
       mount = false;
     };
-  });
+  }, [localStorage.getItem(PROFILE_URL)]);
   const profileMenu = (
     <div className="nav-profile nav-dropdown">
       <div className="nav-profile-header">

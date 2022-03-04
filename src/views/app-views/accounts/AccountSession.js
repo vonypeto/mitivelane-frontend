@@ -1,6 +1,16 @@
 import { React, useState, useEffect } from "react";
 import Flex from "components/shared-components/Flex";
-import { Row, Col, Card, Dropdown, Menu, Alert } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Dropdown,
+  Menu,
+  Alert,
+  Skeleton,
+  Button,
+  Empty,
+} from "antd";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import utils from "utils";
@@ -18,15 +28,39 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 const AccountSession = () => {
+  const postsPerPage = 3;
+  let arrayForHoldingSession = [];
   const { generateToken } = useAuth();
   const [sessionData, setSessionData] = useState([]);
+  const [sessionDataAll, setSessionDataAll] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [nextPageLoad, setNextPageLoad] = useState(false);
+  const [totalSession, setTotalSession] = useState(false);
+  const [next, setNext] = useState(3);
   const [showMessage, setShowMessage] = useState({
     show: false,
-    message: "test",
-    type: "success",
+    message: "",
+    type: "",
   });
 
+  const loopWithSlice = (start, end, data) => {
+    setTimeout(() => {
+      setTotalSession(data.length);
+      const slicedSession = data.slice(start, end);
+      arrayForHoldingSession = [...arrayForHoldingSession, ...slicedSession];
+      setSessionData(arrayForHoldingSession);
+      setNextPageLoad(false);
+    }, 1000);
+  };
+  const handleShowMoreSession = (data) => {
+    setNextPageLoad(true);
+
+    loopWithSlice(0, next + postsPerPage, data);
+    console.log(next + postsPerPage);
+    setNext(next + postsPerPage);
+    console.log(next);
+  };
   const deleteRow = (row) => {
     const objKey = "_id";
     console.log(row._id);
@@ -34,36 +68,51 @@ const AccountSession = () => {
     if (selectedRows.length > 1) {
       selectedRows.forEach((elm) => {
         data = utils.deleteArrayRow(data, objKey, elm._id);
-        setSessionData(data.reverse());
+        setSessionData(data);
         deleteSession(row._id, generateToken, setShowMessage);
       });
+      setSelectedRows([]);
     } else {
       data = utils.deleteArrayRow(data, objKey, row._id);
-      setSessionData(data.reverse());
+      setSessionData(data);
       deleteSession(row._id, generateToken, setShowMessage);
     }
   };
-
+  const getData = async () => {
+    const data = {
+      auth_id: localStorage.getItem(AUTH_TOKEN),
+    };
+    axios
+      .post("/api/app/user/sessions", data)
+      .then((response) => {
+        setIsLoading(false);
+        console.log("s");
+        setSessionDataAll(response.data.session);
+        setTotalSession(response.data.session.length);
+        loopWithSlice(0, postsPerPage, response.data.session);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   useEffect(() => {
-    let mount = true;
-    // console.log(currentPhoto);
     if (showMessage)
       setTimeout(() => {
         setShowMessage(!showMessage);
       }, 3000);
+  }, [showMessage]);
+  useEffect(() => {
+    let mount = true;
+    // console.log(currentPhoto);
+
     if (mount) {
-      const data = {
-        auth_id: localStorage.getItem(AUTH_TOKEN),
-      };
-      axios.post("/api/app/user/sessions", data).then((response) => {
-        setSessionData(response.data.session);
-      });
+      getData();
     }
     return () => {
       mount = false;
     };
-  }, [showMessage]);
-
+  }, []);
+  //Data Dropdown
   const newJoinMemberOption = (
     <Menu>
       <Menu.Item key="0">
@@ -76,6 +125,7 @@ const AccountSession = () => {
       </Menu.Item>
     </Menu>
   );
+  //DropDown for Single Delete and Not you
   const dropdownMenu = (data) => (
     <Menu>
       <Menu.Item key="0" onClick={() => {}}>
@@ -97,6 +147,7 @@ const AccountSession = () => {
       </Menu.Item>
     </Menu>
   );
+  //DropDown for Delete All
   const cardDropdown = (menu) => (
     <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
       <a
@@ -108,6 +159,55 @@ const AccountSession = () => {
       </a>
     </Dropdown>
   );
+  const SessionRender = (props) => {
+    return (
+      <>
+        <Skeleton loading={isLoading} active avatar>
+          {" "}
+          <div className="mt-3">
+            {props.sessionRender.map((elm, i) => (
+              <div
+                key={i}
+                className={`d-flex align-items-center justify-content-between mb-4`}
+              >
+                <AvatarSession
+                  id={i}
+                  // icon={<FcLinux size={40} className="anticon" />}
+                  os={elm.os}
+                  name={elm.city + ", " + elm.country}
+                  subTitle={elm.browser}
+                  ip={elm.host}
+                  active={elm.active}
+                  checkActive={localStorage.getItem(SESSION_TOKEN)}
+                  date={elm.date}
+                />
+
+                <div>
+                  <EllipsisDropdown menu={dropdownMenu(elm)} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Skeleton>
+        <Skeleton
+          loading={nextPageLoad}
+          active
+          avatar
+          size={10}
+          paragraph={{ rows: 1 }}
+        >
+          {" "}
+          <div className="mt-3">
+            <div
+              className={`d-flex align-items-center justify-content-between mb-4`}
+            >
+              <div></div>
+            </div>
+          </div>
+        </Skeleton>
+      </>
+    );
+  };
   return (
     <>
       <Col xs={24} sm={24} md={8}>
@@ -133,28 +233,17 @@ const AccountSession = () => {
                     closable
                   />
                 ) : null}
-                <div className="mt-3">
-                  {sessionData.reverse().map((elm, i) => (
-                    <div
-                      key={i}
-                      className={`d-flex align-items-center justify-content-between mb-4`}
+                <SessionRender sessionRender={sessionData} />
+                <div className="text-center">
+                  {totalSession > next ? (
+                    <Button
+                      onClick={() => handleShowMoreSession(sessionDataAll)}
                     >
-                      <AvatarSession
-                        id={i}
-                        // icon={<FcLinux size={40} className="anticon" />}
-                        os={elm.os}
-                        name={elm.city + ", " + elm.country}
-                        subTitle={elm.browser}
-                        ip={elm.host}
-                        active={elm.active}
-                        checkActive={localStorage.getItem(SESSION_TOKEN)}
-                        date={elm.date}
-                      />
-                      <div>
-                        <EllipsisDropdown menu={dropdownMenu(elm)} />
-                      </div>
-                    </div>
-                  ))}
+                      Load More
+                    </Button>
+                  ) : (
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  )}
                 </div>
               </Col>
             </Row>

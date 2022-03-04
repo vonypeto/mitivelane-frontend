@@ -41,6 +41,7 @@ const AccountDetails = () => {
     if (mount) {
       let data = JSON.parse(localStorage.getItem(PROFILE_URL));
       setProfileAvatar(data.profile_data);
+
       getData();
     }
     return () => {
@@ -53,15 +54,12 @@ const AccountDetails = () => {
   const handleSubmitAccount = (value) => {
     if (editBarangay) {
       console.log(value);
-      setIsLoading(true);
       updateAccount(
         value,
         profileAvatar,
         currentUser,
         setDisplayName,
-        setProfileAvatar,
-        setPhoto,
-        setIsLoading
+        setProfileAvatar
       );
       setDisplayName(value.name);
     }

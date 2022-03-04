@@ -107,7 +107,7 @@ export const LoginForm = (props) => {
       cancel = false;
     };
   }, []);
-  console.log(platform.name);
+  console.log(platform.os.family);
   const renderOtherSignIn = (
     <div>
       <Divider>
