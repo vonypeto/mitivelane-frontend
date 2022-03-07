@@ -53,11 +53,11 @@ const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
 
 const BlotterRecord = (props) => {
   const {
+    currentBarangay,
     generateToken
   } = useAuth();
 
   const { param_url } = props;
-  console.log("List Second Loop: " + param_url);
   let history = useHistory();
 
   const [blotterlist, setBlotterList] = useState([]);
@@ -96,25 +96,24 @@ const BlotterRecord = (props) => {
   };
 
   useEffect(() => {
-    axios.get("/api/blotter/get-blotters/" + param_url, generateToken()[1]).then((response) => {
-      console.log(response.data)
+    getBlotters()
+    getRecordCases()
+  }, [])
+
+  const getBlotters = () => {
+    axios.get("/api/blotter/get-blotters/" + currentBarangay, generateToken()[1]).then((response) => {
+      console.log("Blotters ", response.data)
       setBlotterList(response.data)
       setBlotterlistData(response.data)
       setBlotterListLoading(false)
     }).catch(() => {
       message.error("Could not fetch the data in the server!")
     });
-
-    getRecordCases()
-
-
-  }, [])
+  }
 
   const getRecordCases = () => {
-    console.log("Get Record Cases")
-
-    axios.get("/api/blotter/record-cases/" + param_url, generateToken()[1]).then((response) => {
-      console.log(response.data)
+    axios.get("/api/blotter/record-cases/" + currentBarangay, generateToken()[1]).then((response) => {
+      console.log("Record Cases", response.data)
       setSessionData(response.data)
     }).catch(() => {
       console.log("Error")
@@ -145,11 +144,11 @@ const BlotterRecord = (props) => {
   );
 
   const AddResident = () => {
-    history.push(`/app/${param_url}/records/blotter-record/add`);
+    history.push(`/app/${currentBarangay}/records/blotter-record/add`);
   };
 
   const BlottereditwDetails = (row) => {
-    history.push(`/app/${param_url}/records/blotter-record/${row._id}/edit`);
+    history.push(`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`);
   };
 
   const deleteBlotter = (_ids) => {
@@ -227,9 +226,9 @@ const BlotterRecord = (props) => {
             className="font-size-sm"
             style={{ backgroundColor: "#" + "04d182" }}
           >
-            {utils.getNameInitial("Test Name")}
+            {utils.getNameInitial(`${record.reporters[0].firstname} ${record.reporters[0].lastname}`)}
           </Avatar>
-          <span className="ml-2">{"Test Name"}</span>
+          <span className="ml-2">{`${record.reporters[0].firstname} ${record.reporters[0].lastname}`}</span>
         </div>
       )
     },
@@ -347,7 +346,6 @@ const BlotterRecord = (props) => {
       dataIndex: "actions",
       render: (_, elm) => (
         <div className="text-right">
-          {/* {console.log("actio9n" + elm.blotter_id)} */}
           <div className="text-right d-flex justify-content-end">
             <Tooltip title="Approve">
               <Button

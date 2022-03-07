@@ -5,7 +5,6 @@ import BlotterForm from '../blotter-form';
 
 const AddBlotter = (props) => {
 	const {param_url} = props;
-	console.log("Add Second Loop: "+ param_url);
 	return (
 		<div>
 			

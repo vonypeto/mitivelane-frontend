@@ -36,7 +36,8 @@ export const resetVictim = (() => {
 })
 
 const Victim = (props) => {
-  const [residentlist, setResidentList] = useState(ResidentListData);
+  const { residentlist, residentlistLoading} = props;
+  // const [residentlist, setResidentList] = useState(ResidentListData);
   const [residentpick, setResidentPick] = useState([]);
 
   const [residentselectedRows, setResidentSelectedRows] = useState([]);
@@ -71,10 +72,10 @@ const Victim = (props) => {
   };
 
   const tableResidentColumns = [
-    {
-      title: "ID",
-      dataIndex: "resident_id",
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "resident_id",
+    // },
     {
       title: "Last Name",
       dataIndex: "lastname",
@@ -106,7 +107,7 @@ const Victim = (props) => {
     const value = e.currentTarget.value;
     const searchArray = e.currentTarget.value ? residentlist : ResidentListData;
     const data = utils.wildCardSearch(searchArray, value);
-    setResidentList(data);
+    // setResidentList(data);
     setResidentSelectedRowKeys([]);
   };
 

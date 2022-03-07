@@ -26,7 +26,6 @@ const BlotterRequest = (props) => {
 
   let countercolor = 0;
   let initial = data?.reporter === undefined ? "NULL" : data?.reporter;
-  console.log(victim);
   const colortag = ["blue", "geekblue", "lime", "green"];
   const colortag2 = ["volcano", "orange", "gold", "lime"];
 
