@@ -47,6 +47,8 @@ const MainFormList = (props) => {
   let history = useHistory();
   const { mode = ADD, param } = props;
   const [residentlist, setResidentlist] = useState([]);
+  const [residentlistLoading, setResidentlistLoading] = useState(true);
+
   const [residentFilter, setResidentFilter] = useState([]);
   const [form] = Form.useForm();
   const [uploadedImg, setImage] = useState("");
@@ -89,10 +91,41 @@ const MainFormList = (props) => {
     }
   }, [form, mode, param, props]);
 
+  const FormTabs = () => {
+    return (
+      <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
+        <TabPane tab="Reporter Data" key="1">
+          <Reporter residentlist={residentlist} residentlistLoading={residentlistLoading}/>
+        </TabPane>
+        <TabPane tab="Victim Data" key="2">
+          <Victim residentlist={residentlist} />
+        </TabPane>
+        <TabPane tab="Suspect Data" key="3">
+          <Suspect residentlist={residentlist} />
+        </TabPane>
+        <TabPane tab="Respondent Data" key="4">
+          <Respondent residentlist={residentlist} />
+        </TabPane>
+
+        <TabPane tab="Child Conflict with Law" key="5">
+          <ChildrenConflictWithLaw />
+        </TabPane>
+        <TabPane tab="Narrative Report" key="6">
+          <NarrativeReport />
+        </TabPane>
+        <TabPane tab="Record Transaction Receipt" key="7">
+          <Receipt />
+        </TabPane>
+      </Tabs>
+    );
+  }
+
   const getResidents = () => {
     axios.post("/api/resident/getAll", { barangay_id: currentBarangay }, generateToken()[1]).then((response) => {
       console.log("Residents ", response.data)
       setResidentlist(response.data)
+      setResidentlistLoading(false)
+      
     }).catch(() => {
       message.error("Could not fetch the data in the server!")
     });
@@ -230,30 +263,7 @@ const MainFormList = (props) => {
         </PageHeaderAlt>
         {mode === ADD || mode === EDIT ? (
           <div className="container">
-            <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
-              <TabPane tab="Reporter Data" key="1">
-                <Reporter residentlist={residentlist} />
-              </TabPane>
-              <TabPane tab="Victim Data" key="2">
-                <Victim residentlist={residentlist} />
-              </TabPane>
-              <TabPane tab="Suspect Data" key="3">
-                <Suspect residentlist={residentlist} />
-              </TabPane>
-              <TabPane tab="Respondent Data" key="4">
-                <Respondent residentlist={residentlist} />
-              </TabPane>
-
-              <TabPane tab="Child Conflict with Law" key="5">
-                <ChildrenConflictWithLaw />
-              </TabPane>
-              <TabPane tab="Narrative Report" key="6">
-                <NarrativeReport />
-              </TabPane>
-              <TabPane tab="Record Transaction Receipt" key="7">
-                <Receipt />
-              </TabPane>
-            </Tabs>
+            <FormTabs></FormTabs>
           </div>
         ) : mode === "VIEW" ? (
           <div className="container">

@@ -48,9 +48,13 @@ const Reporter = (props) => {
   const [test, setTest] = useState([])
 
   useEffect(() => {
+    if(residentlistLoading == false){
       setTest(residentlist)
       console.log("Resident List ", residentlist)
       console.log("Test works? ", test)
+
+    }
+      
   }, [residentlist, props])
 
   const rowSelectionResident = {
