@@ -7,7 +7,6 @@ import DynamicCases from "./DynamicCases";
 const { TabPane } = Tabs;
 const index = (props) => {
   const { param_url } = props;
-  console.log("List Second Loop: " + param_url);
   return (
     <>
       <PageHeaderAlt className="border-bottom" overlap>

@@ -36,6 +36,7 @@ const VIEW = "VIEW";
 
 const MainFormList = (props) => {
   const {
+    currentBarangay,
     generateToken
   } = useAuth();
 
@@ -45,12 +46,14 @@ const MainFormList = (props) => {
   console.log("BLotter_ID: " + id);
   let history = useHistory();
   const { mode = ADD, param } = props;
-  const [residentData, setResidentData] = useState([]);
+  const [residentlist, setResidentlist] = useState([]);
   const [residentFilter, setResidentFilter] = useState([]);
   const [form] = Form.useForm();
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+
+  const [initialReporters, setInitialReporters] = useState([])
 
   useEffect(() => {
     resetReporter()
@@ -58,12 +61,14 @@ const MainFormList = (props) => {
     resetSuspect()
     resetRespondent()
 
+    getResidents()
+
     console.log("Reset Data")
 
     if (mode === EDIT || mode === VIEW) {
 
       axios.get("/api/blotter/get-blotter-initial-value/" + id, generateToken()[1]).then((response) => {
-        console.log(response.data)
+        console.log("Blotter Initial Data", response.data)
         form.setFieldsValue({
           blotter_id: response.data.blotter_id,
           settlement_status: response.data.settlement_status,
@@ -74,15 +79,25 @@ const MainFormList = (props) => {
           date_of_incident: new moment(response.data.date_of_incident),
           time_schedule: new moment(response.data.time_schedule),
           date_schedule: new moment(response.data.date_schedule)
+        });
+
+      }).catch(() => {
+        message.error("Could not fetch the data in the server!")
       });
 
+
+    }
+  }, [form, mode, param, props]);
+
+  const getResidents = () => {
+    axios.post("/api/resident/getAll", { barangay_id: currentBarangay }, generateToken()[1]).then((response) => {
+      console.log("Residents ", response.data)
+      setResidentlist(response.data)
     }).catch(() => {
       message.error("Could not fetch the data in the server!")
     });
 
-    
-    }
-  }, [form, mode, param, props]);
+  }
 
   const handleUploadChange = (info) => {
     if (info.file.status === "uploading") {
@@ -106,7 +121,7 @@ const MainFormList = (props) => {
           setSubmitLoading(false);
           if (mode === ADD) {
             //Blotter ADD
-            values.barangay_id = param[0]
+            values.barangay_id = currentBarangay
             values.uuid = authToken
 
             values.reporters = reporter
@@ -144,18 +159,18 @@ const MainFormList = (props) => {
             message.loading("Editing Blotter...", 0)
 
             axios.post(`/api/blotter/edit-blotter/${id}`, values, generateToken()[1]).then((response) => {
-                message.destroy()
-                if (response.data == "Success") {
-                  message.success(`Edit Blotter saved`);
-                } else {
-                  return message.error("Error, please try again.")
-                }
+              message.destroy()
+              if (response.data == "Success") {
+                message.success(`Edit Blotter saved`);
+              } else {
+                return message.error("Error, please try again.")
+              }
 
-              }).catch(error => {
-                console.log(error)
-                message.destroy()
-                message.error("The action can't be completed, please try again.")
-              });
+            }).catch(error => {
+              console.log(error)
+              message.destroy()
+              message.error("The action can't be completed, please try again.")
+            });
 
           }
         }, 1500);
@@ -215,18 +230,18 @@ const MainFormList = (props) => {
         </PageHeaderAlt>
         {mode === ADD || mode === EDIT ? (
           <div className="container">
-            <Tabs defaultActiveKey="6" style={{ marginTop: 30 }}>
+            <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
               <TabPane tab="Reporter Data" key="1">
-                <Reporter />
+                <Reporter residentlist={residentlist} />
               </TabPane>
               <TabPane tab="Victim Data" key="2">
-                <Victim />
+                <Victim residentlist={residentlist} />
               </TabPane>
               <TabPane tab="Suspect Data" key="3">
-                <Suspect />
+                <Suspect residentlist={residentlist} />
               </TabPane>
               <TabPane tab="Respondent Data" key="4">
-                <Respondent />
+                <Respondent residentlist={residentlist} />
               </TabPane>
 
               <TabPane tab="Child Conflict with Law" key="5">

@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import {
   Tag,
   Button,
@@ -37,11 +37,21 @@ export const resetReporter = (() => {
 })
 
 const Reporter = (props) => {
-  const [residentlist, setResidentList] = useState(ResidentListData);
+  const { residentlist, residentlistLoading } = props;
+
+  // const [residentlist, setResidentList] = useState(ResidentListData);
   const [residentpick, setResidentPick] = useState([]);
 
   const [residentselectedRows, setResidentSelectedRows] = useState([]);
   const [residentselectedRowKeys, setResidentSelectedRowKeys] = useState([]);
+
+  const [test, setTest] = useState([])
+
+  useEffect(() => {
+      setTest(residentlist)
+      console.log("Resident List ", residentlist)
+      console.log("Test works? ", test)
+  }, [residentlist, props])
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -72,10 +82,10 @@ const Reporter = (props) => {
   };
 
   const tableResidentColumns = [
-    {
-      title: "ID",
-      dataIndex: "resident_id",
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "resident_id",
+    // },
     {
       title: "Last Name",
       dataIndex: "lastname",
@@ -107,7 +117,7 @@ const Reporter = (props) => {
     const value = e.currentTarget.value;
     const searchArray = e.currentTarget.value ? residentlist : ResidentListData;
     const data = utils.wildCardSearch(searchArray, value);
-    setResidentList(data);
+    // setResidentList(data);
     setResidentSelectedRowKeys([]);
   };
 
