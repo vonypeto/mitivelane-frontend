@@ -72,6 +72,18 @@ export function AuthProvider({ children }) {
     };
     return [jwt, header];
   }
+  function resetEmailPassword(email) {
+    return firebase
+      .auth()
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        console.log(email);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   useEffect(() => {
     const listener = window.addEventListener("storage", checkUserBarangay);
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -96,6 +108,7 @@ export function AuthProvider({ children }) {
     authorizationConfig,
     authorization,
     generateToken,
+    resetEmailPassword,
   };
   return (
     <AuthContext.Provider value={value}>

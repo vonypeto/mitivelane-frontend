@@ -125,7 +125,6 @@ export async function registerBarangay(
               );
               localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
               setBarangayMemberList(role_id);
-              setIsLoading();
               return history.push(redirect);
             } else {
               localStorage.setItem(AUTH_BARANGAY_LIST, null);

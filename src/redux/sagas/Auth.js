@@ -32,6 +32,8 @@ export function* signInWithFBEmail() {
         email,
         password
       );
+      console.log(user.message);
+
       if (user.message) {
         yield put(showAuthMessage(user.message));
       } else {
@@ -40,6 +42,8 @@ export function* signInWithFBEmail() {
         yield put(authenticated(user.user.uid));
       }
     } catch (err) {
+      console.log(error);
+
       yield put(showAuthMessage(err));
     }
   });
@@ -58,9 +62,13 @@ export function* signOut() {
         localStorage.removeItem(PROFILE_URL);
         yield put(signOutSuccess(signOutUser));
       } else {
+        console.log(error);
+
         yield put(showAuthMessage(signOutUser.message));
       }
     } catch (err) {
+      console.log(error);
+
       yield put(showAuthMessage(err));
     }
   });
@@ -75,6 +83,7 @@ export function* signUpWithFBEmail() {
         email,
         password
       );
+
       if (user.message) {
         yield put(showAuthMessage(user.message));
       } else {
@@ -82,6 +91,8 @@ export function* signUpWithFBEmail() {
         yield put(signUpSuccess(user.user.uid));
       }
     } catch (error) {
+      console.log(error);
+
       yield put(showAuthMessage(error));
     }
   });
@@ -98,6 +109,8 @@ export function* signInWithFBGoogle() {
         yield put(signInWithGoogleAuthenticated(user.user.uid));
       }
     } catch (error) {
+      console.log(error);
+
       yield put(showAuthMessage(error));
     }
   });
@@ -114,6 +127,8 @@ export function* signInWithFacebook() {
         yield put(signInWithFacebookAuthenticated(user.user.uid));
       }
     } catch (error) {
+      console.log(error);
+
       yield put(showAuthMessage(error));
     }
   });

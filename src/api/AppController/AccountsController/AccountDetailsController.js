@@ -6,7 +6,9 @@ export async function updateAccount(
   profileAvatar,
   currentUser,
   setDisplayName,
-  setProfileAvatar
+  setProfileAvatar,
+  setEditBarangay,
+  setLoadingButton
 ) {
   const data = {
     full_name: values.name,
@@ -16,18 +18,22 @@ export async function updateAccount(
   await axios
     .post("/api/app/user/update", data)
     .then((response) => {
-      console.log(response.data.profile_url);
-      let data = JSON.parse(localStorage.getItem(PROFILE_URL));
-      data.profile_data = response.data.profile_url;
-      // localStorage.setitem(PROFILE_URL, JSON.stringify(data));
-      setProfileAvatar(response.data?.profile_url);
-      // setPhoto(data);
-      // setIsLoading(false);
-      setDisplayName(response.data?.full_name);
-      localStorage.setItem(PROFILE_URL, JSON.stringify(data));
-      currentUser.updateProfile({
-        displayName: response.data?.full_name,
-      });
+      setTimeout(() => {
+        console.log(response.data.profile_url);
+        let data = JSON.parse(localStorage.getItem(PROFILE_URL));
+        data.profile_data = response.data.profile_url;
+        // localStorage.setitem(PROFILE_URL, JSON.stringify(data));
+        setProfileAvatar(response.data?.profile_url);
+        // setPhoto(data);
+        // setIsLoading(false);
+        setDisplayName(response.data?.full_name);
+        localStorage.setItem(PROFILE_URL, JSON.stringify(data));
+        currentUser.updateProfile({
+          displayName: response.data?.full_name,
+        });
+        setLoadingButton(false);
+        setEditBarangay(false);
+      }, 1000);
     })
     .catch((error) => {
       console.log(error);

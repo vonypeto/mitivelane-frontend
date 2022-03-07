@@ -1,4 +1,4 @@
-import { React, useState, useRef, useEffect } from "react";
+import { React, useState, useRef, useEffect, useForm } from "react";
 import {
   Button,
   Row,
@@ -7,9 +7,6 @@ import {
   Form,
   Input,
   Avatar,
-  message,
-  Skeleton,
-  Upload,
   // notification,
 } from "antd";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
@@ -20,56 +17,98 @@ import { PROFILE_URL, AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 
 const AccountDetails = () => {
-  const { currentUser, setPhoto, currentPhoto } = useAuth();
+  const { currentUser, setPhoto, currentPhoto, resetEmailPassword } = useAuth();
+  const [form] = Form.useForm();
+  const formRef = useRef();
+  const [initialVal, setInitialVal] = useState({});
   const hiddenFileInput = useRef(null);
   const [fileLarge, setFileLarge] = useState(false);
   const [editBarangay, setEditBarangay] = useState(false);
   const [profileAvatar, setProfileAvatar] = useState(false);
   const [displayName, setDisplayName] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingButton, setLoadingButton] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+
+  //get Details
   const getData = async (_) => {
     const data = {
       auth_id: localStorage.getItem(AUTH_TOKEN),
     };
-    await axios.post("/api/app/user/sessions", data).then((response) => {
+    await axios.post("/api/app/user/details", data).then((response) => {
       setIsLoading(false);
       setDisplayName(response.data.full_name);
+      // setInitialVal({
+      //   email: currentUser?.email,
+      //   name: response.data.full_name,
+      // });
+      form.setFieldsValue({
+        email: currentUser?.email,
+        name: response.data.full_name,
+      });
     });
   };
+  //mount data
+  // useEffect(() => {
+  //   form.resetFields();
+  // }, [initialVal, form]);
+  useEffect(() => {
+    let mount = true;
+    if (showResetPassword)
+      setTimeout(() => {
+        setShowResetPassword(false);
+      }, 3000);
+    return () => {
+      mount = false;
+    };
+  }, [showResetPassword]);
   useEffect(() => {
     let mount = true;
     if (mount) {
       let data = JSON.parse(localStorage.getItem(PROFILE_URL));
       setProfileAvatar(data.profile_data);
-
+      form.resetFields();
       getData();
     }
     return () => {
       mount = false;
     };
-  }, []);
+  }, [form, initialVal]);
+  //cancel edit
   const onClickEdit = () => {
     setEditBarangay(!editBarangay);
   };
-  const handleSubmitAccount = (value) => {
+  //submit edit
+  const handleSubmitAccount = () => {
     if (editBarangay) {
+      setLoadingButton(true);
+      form
+        .validateFields()
+        .then((values) => {
+          updateAccount(
+            values,
+            profileAvatar,
+            currentUser,
+            setDisplayName,
+            setProfileAvatar,
+            setEditBarangay,
+            setLoadingButton
+          );
+        })
+        .catch((errorInfo) => {
+          console.log(errorInfo);
+        });
       console.log(value);
-      updateAccount(
-        value,
-        profileAvatar,
-        currentUser,
-        setDisplayName,
-        setProfileAvatar
-      );
-      setDisplayName(value.name);
     }
-    setEditBarangay(!editBarangay);
+
+    if (!editBarangay) setEditBarangay(!editBarangay);
   };
-  const handleClick = (event) => {
+  //hidden file set upload
+  const handleClick = (_) => {
     setFileLarge(false);
     hiddenFileInput.current.click();
   };
-
+  //convert profile
   const convertBase64 = (file) => {
     console.log(file);
     if (file.size > 25000) {
@@ -95,196 +134,209 @@ const AccountDetails = () => {
       });
     }
   };
-
+  //handle upload image
   const handleChange = async (event) => {
     const fileUploaded = event.target.files[0];
     const base64 = await convertBase64(fileUploaded);
     setProfileAvatar(base64);
-
-    // var reader = new FileReader();
-    // var url = reader.readAsDataURL(fileUploaded);
-    // reader.onloadend = function (e) {
-    //   setProfileAvatar(reader.result);
-    // }.bind(this);
-    // console.log(url);
+  };
+  //handle reset password
+  const handleResetPassword = async () => {
+    await resetEmailPassword(currentUser?.email)
+      .then((_) => {
+        setShowResetPassword(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   const FormData = () => {
     return (
-      <Skeleton loading={isLoading} active avatar>
-        <Form
-          initialValues={{
-            email: currentUser?.email,
-            name: displayName,
-          }}
-          onFinish={handleSubmitAccount}
-        >
-          <Card title="Account Details">
-            <Col xs={24} sm={24} md={24} className="w-100">
-              {" "}
-              <Row className="pt-2 border-top">
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={6}
-                  xl={4}
-                  className="pt-4 text-left "
-                >
-                  <h5 className=" font-weight-bold">Avatar:</h5>
-                </Col>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={18}
-                  xl={20}
-                  className="text-left form-input-mb"
-                >
-                  <Form.Item>
-                    <Avatar
-                      className="mt-2 mr-2 rounded"
-                      size={50}
-                      icon={<UserOutlined />}
-                      src={profileAvatar}
-                    />
-                    {editBarangay ? (
-                      <>
-                        <Button
-                          icon={<UploadOutlined />}
-                          onClick={handleClick}
-                          size="medium"
-                        >
-                          Upload image
-                        </Button>{" "}
-                        {fileLarge ? (
-                          <span style={{ color: "red" }}>
-                            **File too large**
-                          </span>
-                        ) : null}
-                        <div className="custom-file-upload">
-                          <input
-                            ref={hiddenFileInput}
-                            type="file"
-                            onChange={handleChange}
-                            style={{ display: "none" }}
-                          />
-                        </div>
-                      </>
-                    ) : null}
-                  </Form.Item>
-                </Col>
-              </Row>{" "}
-              <Row className="pt-2 ">
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={6}
-                  xl={4}
-                  className="pt-2 text-left "
-                >
-                  <h5 className=" font-weight-bold"> Name:</h5>
-                </Col>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={18}
-                  xl={20}
-                  className="text-left form-input-mb"
-                >
-                  <Form.Item name="name">
-                    {editBarangay ? (
-                      <Input placeholder="" maxLength="20" />
-                    ) : (
-                      <div className="font-size-md">{displayName}</div>
-                    )}
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row className="pt-2 ">
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={6}
-                  xl={4}
-                  className="pt-2 text-left "
-                >
-                  <h5 className=" font-weight-bold">Email:</h5>
-                </Col>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={18}
-                  xl={20}
-                  className="text-left form-input-mb"
-                >
-                  <Form.Item name="email">
-                    {editBarangay ? (
-                      <Input disabled placeholder="" />
-                    ) : (
-                      <div className="font-size-md">{currentUser?.email}</div>
-                    )}
-                  </Form.Item>
-                </Col>
-              </Row>{" "}
-              <Row className="pt-2 ">
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={6}
-                  xl={4}
-                  className="pt-2 text-left "
-                >
-                  <h5 className=" font-weight-bold">Password:</h5>
-                </Col>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={18}
-                  xl={20}
-                  className="text-left form-input-mb"
-                >
-                  <Form.Item>
-                    {editBarangay ? (
-                      <Button size="medium">
-                        Reset your password by email
-                      </Button>
-                    ) : (
-                      <div className="font-size-md">*************</div>
-                    )}
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
+      <Form
+        initialValues={initialVal}
+        form={form}
+        ref={formRef}
+        onFinish={handleSubmitAccount}
+      >
+        {" "}
+        <Card loading={isLoading} title="Account Details">
+          <Col xs={24} sm={24} md={24} className="w-100">
+            {" "}
+            <Row className="pt-2 border-top">
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={6}
+                xl={4}
+                className="pt-4 text-left "
+              >
+                <h5 className=" font-weight-bold">Avatar:</h5>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={18}
+                xl={20}
+                className="text-left form-input-mb"
+              >
+                <Form.Item>
+                  <Avatar
+                    className="mt-2 mr-2 rounded"
+                    size={50}
+                    icon={<UserOutlined />}
+                    src={profileAvatar}
+                  />
                   {editBarangay ? (
                     <>
                       <Button
-                        disabled={isLoading}
-                        className="mr-2"
-                        htmlType="submit"
-                        type="primary"
+                        icon={<UploadOutlined />}
+                        onClick={handleClick}
+                        size="medium"
                       >
-                        Save
+                        Upload image
+                      </Button>{" "}
+                      {fileLarge ? (
+                        <span style={{ color: "red" }}>**File too large**</span>
+                      ) : null}
+                      <div className="custom-file-upload">
+                        <input
+                          ref={hiddenFileInput}
+                          type="file"
+                          onChange={handleChange}
+                          style={{ display: "none" }}
+                        />
+                      </div>
+                    </>
+                  ) : null}
+                </Form.Item>
+              </Col>
+            </Row>{" "}
+            <Row className="pt-2 ">
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={6}
+                xl={4}
+                className="pt-2 text-left "
+              >
+                <h5 className=" font-weight-bold"> Name:</h5>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={18}
+                xl={20}
+                className="text-left form-input-mb"
+              >
+                <Form.Item name="name">
+                  {editBarangay ? (
+                    <Input placeholder="" maxLength="20" />
+                  ) : (
+                    <div className="font-size-md">{displayName}</div>
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row className="pt-2 ">
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={6}
+                xl={4}
+                className="pt-2 text-left "
+              >
+                <h5 className=" font-weight-bold">Email:</h5>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={18}
+                xl={20}
+                className="text-left form-input-mb"
+              >
+                <Form.Item name="email">
+                  {editBarangay ? (
+                    <Input disabled placeholder="" />
+                  ) : (
+                    <div className="font-size-md">{currentUser?.email}</div>
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>{" "}
+            <Row className="pt-2 ">
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={6}
+                xl={4}
+                className="pt-2 text-left "
+              >
+                <h5 className=" font-weight-bold">Password:</h5>
+              </Col>
+              <Col
+                xs={24}
+                sm={24}
+                md={24}
+                lg={18}
+                xl={20}
+                className="text-left form-input-mb"
+              >
+                <Form.Item>
+                  {editBarangay ? (
+                    <>
+                      {" "}
+                      <Button
+                        size="medium"
+                        loading={showResetPassword}
+                        onClick={() => {
+                          handleResetPassword();
+                        }}
+                      >
+                        Reset your password by email
                       </Button>
-                      <Button onClick={() => onClickEdit()}>Cancel</Button>
+                      {showResetPassword ? (
+                        <span style={{ paddingLeft: "2px", color: "green" }}>
+                          **reset password sent**
+                        </span>
+                      ) : null}
                     </>
                   ) : (
-                    <Button htmlType="submit" type="primary">
-                      Edit Information
-                    </Button>
+                    <div className="font-size-md">*************</div>
                   )}
-                </Col>
-              </Row>
-            </Col>
-          </Card>
-        </Form>
-      </Skeleton>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
+                {editBarangay ? (
+                  <>
+                    <Button
+                      loading={loadingButton}
+                      className="mr-2"
+                      htmlType="submit"
+                      type="primary"
+                    >
+                      Save
+                    </Button>
+                    <Button onClick={() => onClickEdit()}>Cancel</Button>
+                  </>
+                ) : (
+                  <Button htmlType="submit" type="primary">
+                    Edit Information
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          </Col>
+        </Card>{" "}
+      </Form>
     );
   };
   return (

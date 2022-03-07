@@ -95,7 +95,7 @@ export const AvatarSession = (props) => {
               <span style={{ color: "green" }}> Active Now</span>
             </>
           ) : (
-            <> {timeSince(date)}</>
+            <> Last {timeSince(date)}</>
           )}
         </div>
       </div>

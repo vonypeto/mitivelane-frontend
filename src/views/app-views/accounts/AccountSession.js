@@ -37,6 +37,8 @@ const AccountSession = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [nextPageLoad, setNextPageLoad] = useState(false);
   const [totalSession, setTotalSession] = useState(false);
+  const [currentSession, setCurrentSession] = useState(false);
+
   const [next, setNext] = useState(3);
   const [showMessage, setShowMessage] = useState({
     show: false,
@@ -45,6 +47,12 @@ const AccountSession = () => {
   });
 
   const loopWithSlice = (start, end, data) => {
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].active === localStorage.getItem(SESSION_TOKEN)) {
+        setCurrentSession(data[i]);
+        data.splice(i, 1);
+      }
+    }
     setTimeout(() => {
       setTotalSession(data.length);
       const slicedSession = data.slice(start, end);
@@ -54,12 +62,9 @@ const AccountSession = () => {
     }, 1000);
   };
   const handleShowMoreSession = (data) => {
-    setNextPageLoad(true);
-
     loopWithSlice(0, next + postsPerPage, data);
-    console.log(next + postsPerPage);
     setNext(next + postsPerPage);
-    console.log(next);
+    setNextPageLoad(true);
   };
   const deleteRow = (row) => {
     const objKey = "_id";
@@ -86,7 +91,6 @@ const AccountSession = () => {
       .post("/api/app/user/sessions", data)
       .then((response) => {
         setIsLoading(false);
-        console.log("s");
         setSessionDataAll(response.data.session);
         setTotalSession(response.data.session.length);
         loopWithSlice(0, postsPerPage, response.data.session);
@@ -160,11 +164,31 @@ const AccountSession = () => {
     </Dropdown>
   );
   const SessionRender = (props) => {
+    const { currentSessionRender } = props;
     return (
       <>
         <Skeleton loading={isLoading} active avatar>
           {" "}
           <div className="mt-3">
+            <div
+              className={`d-flex align-items-center justify-content-between mb-4`}
+            >
+              <AvatarSession
+                // icon={<FcLinux size={40} className="anticon" />}
+                os={currentSessionRender.os}
+                name={
+                  currentSessionRender.city +
+                  ", " +
+                  currentSessionRender.country
+                }
+                subTitle={currentSessionRender.browser}
+                ip={currentSessionRender.host}
+                active={currentSessionRender.active}
+                checkActive={localStorage.getItem(SESSION_TOKEN)}
+                date={currentSessionRender.date}
+              />
+            </div>
+
             {props.sessionRender.map((elm, i) => (
               <div
                 key={i}
@@ -233,17 +257,18 @@ const AccountSession = () => {
                     closable
                   />
                 ) : null}
-                <SessionRender sessionRender={sessionData} />
+                <SessionRender
+                  sessionRender={sessionData}
+                  currentSessionRender={currentSession}
+                />
                 <div className="text-center">
-                  {totalSession > next ? (
+                  {totalSession >= next ? (
                     <Button
                       onClick={() => handleShowMoreSession(sessionDataAll)}
                     >
                       Load More
                     </Button>
-                  ) : (
-                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                  )}
+                  ) : null}
                 </div>
               </Col>
             </Row>

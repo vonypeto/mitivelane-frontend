@@ -6,13 +6,15 @@ import {
   QuestionCircleOutlined,
   CloseCircleFilled,
 } from "@ant-design/icons";
+import { useAuth } from "contexts/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 const ConnectedAccount = () => {
+  const { currentUser } = useAuth();
   const [editBarangay, setEditBarangay] = useState(false);
   const onClickEdit = () => {
     setEditBarangay(!editBarangay);
   };
-
+  console.log(currentUser);
   return (
     <>
       <Col xs={24} sm={24} md={8}>
@@ -29,7 +31,7 @@ const ConnectedAccount = () => {
           <Card title="Account Connections">
             <Col xs={24} sm={24} md={24} className="w-100">
               {" "}
-              <Row className="pt-2  border-top">
+              <Row className="pt-2 border-top">
                 <Col
                   xs={24}
                   sm={24}
@@ -38,7 +40,7 @@ const ConnectedAccount = () => {
                   xl={4}
                   className="pt-2 text-left "
                 >
-                  <h5 className=" font-weight-bold  ">
+                  <h5 className=" font-weight-bold">
                     {" "}
                     <span style={{ color: "#2EA1F5", fontSize: "20px" }}>
                       {" "}
@@ -69,7 +71,7 @@ const ConnectedAccount = () => {
                   </Form.Item>
                 </Col>
               </Row>{" "}
-              <Row className="pt-2  border-top">
+              <Row className="pt-2 border-top">
                 <Col
                   xs={24}
                   sm={24}
@@ -78,7 +80,7 @@ const ConnectedAccount = () => {
                   xl={4}
                   className="pt-2 text-left "
                 >
-                  <h5 className=" font-weight-bold  ">
+                  <h5 className=" font-weight-bold">
                     {" "}
                     <span style={{ fontSize: "20px" }}>
                       {" "}

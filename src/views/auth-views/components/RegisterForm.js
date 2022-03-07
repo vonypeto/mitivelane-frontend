@@ -86,7 +86,6 @@ export const RegisterForm = (props) => {
     if (codeRef.current.value)
       localStorage.setItem(CODE_TOKEN, String(codeRef.current.value));
     else localStorage.setItem(CODE_TOKEN, null);
-    setIsLoading(true);
 
     showLoading();
     signInWithGoogle();

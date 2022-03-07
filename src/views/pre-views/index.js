@@ -10,6 +10,10 @@ export const PreViews = () => {
         <Route
           path={`${PRE_PREFIX_PATH}/create-barangay`}
           component={lazy(() => import(`./barangay-register`))}
+        />{" "}
+        <Route
+          path={`${PRE_PREFIX_PATH}/help-center`}
+          component={lazy(() => import(`./help-center`))}
         />
         {/* <Route
           path={`${PRE_PREFIX_PATH}/test`}
