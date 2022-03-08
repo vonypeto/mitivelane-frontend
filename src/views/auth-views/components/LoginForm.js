@@ -78,7 +78,7 @@ export const LoginForm = (props) => {
     if (token !== null && allowRedirect) {
       // getBarangay(token);
 
-      setIsLoading(true);
+      // setIsLoading(true);
       if (cancel) {
         loginBarangay(
           token,
