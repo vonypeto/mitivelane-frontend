@@ -32,9 +32,9 @@ let countercolor = 0;
 
 export var reporter = [];
 
-export const resetReporter = (() => {
-  reporter = []
-})
+export const resetReporter = () => {
+  reporter = [];
+};
 
 const Reporter = (props) => {
   const { residentlist, residentlistLoading } = props;
@@ -45,24 +45,22 @@ const Reporter = (props) => {
   const [residentselectedRows, setResidentSelectedRows] = useState([]);
   const [residentselectedRowKeys, setResidentSelectedRowKeys] = useState([]);
 
-  const [test, setTest] = useState([])
+  const [test, setTest] = useState([]);
 
   useEffect(() => {
-    if(residentlistLoading == false){
-      setTest(residentlist)
-      console.log("Resident List ", residentlist)
-      console.log("Test works? ", test)
-
+    if (residentlistLoading == false) {
+      setTest(residentlist);
+      console.log("Resident List ", residentlist);
+      console.log("Test works? ", test);
     }
-      
-  }, [residentlist, props])
+  }, [test]);
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
       setResidentSelectedRows(rows);
       setResidentSelectedRowKeys(key);
 
-      var residentIds = []
+      var residentIds = [];
       // console.log(rows)
 
       rows.map((elm) => {
@@ -70,14 +68,14 @@ const Reporter = (props) => {
         tags.push([
           { label: fullname, value: DataColor[(countercolor += 1) % 4] },
         ]);
-        residentIds.push(elm.resident_id)
+        residentIds.push(elm.resident_id);
         return [tags];
       });
 
       final = [].concat.apply([], tags);
       reporter = residentIds;
 
-      console.log("Reporter ", reporter)
+      console.log("Reporter ", reporter);
 
       setResidentPick(final);
       tags = [];
@@ -137,10 +135,10 @@ const Reporter = (props) => {
     };
 
     const onClose = () => {
-      reporter = []
-      setResidentSelectedRowKeys([])
-      console.log("Reporter Tag Close ", reporter)
-    }
+      reporter = [];
+      setResidentSelectedRowKeys([]);
+      console.log("Reporter Tag Close ", reporter);
+    };
     return (
       <Tag
         color={value}
@@ -214,7 +212,8 @@ const Reporter = (props) => {
           <Form.Item
             name="settlement_status"
             label="Status"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+          >
             <Select className="w-100" placeholder="Settled">
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>

@@ -35,10 +35,7 @@ const EDIT = "EDIT";
 const VIEW = "VIEW";
 
 const MainFormList = (props) => {
-  const {
-    currentBarangay,
-    generateToken
-  } = useAuth();
+  const { currentBarangay, generateToken } = useAuth();
 
   const { id } = useParams();
   const authToken = localStorage.getItem("auth_token");
@@ -48,46 +45,43 @@ const MainFormList = (props) => {
   const { mode = ADD, param } = props;
   const [residentlist, setResidentlist] = useState([]);
   const [residentlistLoading, setResidentlistLoading] = useState(true);
-
   const [residentFilter, setResidentFilter] = useState([]);
   const [form] = Form.useForm();
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-
-  const [initialReporters, setInitialReporters] = useState([])
+  const [initialReporters, setInitialReporters] = useState([]);
 
   useEffect(() => {
-    resetReporter()
-    resetVictim()
-    resetSuspect()
-    resetRespondent()
+    resetReporter();
+    resetVictim();
+    resetSuspect();
+    resetRespondent();
 
-    getResidents()
+    getResidents();
 
-    console.log("Reset Data")
+    console.log("Reset Data");
 
     if (mode === EDIT || mode === VIEW) {
-
-      axios.get("/api/blotter/get-blotter-initial-value/" + id, generateToken()[1]).then((response) => {
-        console.log("Blotter Initial Data", response.data)
-        form.setFieldsValue({
-          blotter_id: response.data.blotter_id,
-          settlement_status: response.data.settlement_status,
-          subject: response.data.subject,
-          incident_type: response.data.incident_type,
-          place_incident: response.data.place_incident,
-          time_of_incident: new moment(response.data.time_of_incident),
-          date_of_incident: new moment(response.data.date_of_incident),
-          time_schedule: new moment(response.data.time_schedule),
-          date_schedule: new moment(response.data.date_schedule)
+      axios
+        .get("/api/blotter/get-blotter-initial-value/" + id, generateToken()[1])
+        .then((response) => {
+          console.log("Blotter Initial Data", response.data);
+          form.setFieldsValue({
+            blotter_id: response.data.blotter_id,
+            settlement_status: response.data.settlement_status,
+            subject: response.data.subject,
+            incident_type: response.data.incident_type,
+            place_incident: response.data.place_incident,
+            time_of_incident: new moment(response.data.time_of_incident),
+            date_of_incident: new moment(response.data.date_of_incident),
+            time_schedule: new moment(response.data.time_schedule),
+            date_schedule: new moment(response.data.date_schedule),
+          });
+        })
+        .catch(() => {
+          message.error("Could not fetch the data in the server!");
         });
-
-      }).catch(() => {
-        message.error("Could not fetch the data in the server!")
-      });
-
-
     }
   }, [form, mode, param, props]);
 
@@ -95,7 +89,10 @@ const MainFormList = (props) => {
     return (
       <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
         <TabPane tab="Reporter Data" key="1">
-          <Reporter residentlist={residentlist} residentlistLoading={residentlistLoading}/>
+          <Reporter
+            residentlist={residentlist}
+            residentlistLoading={residentlistLoading}
+          />
         </TabPane>
         <TabPane tab="Victim Data" key="2">
           <Victim residentlist={residentlist} />
@@ -118,19 +115,24 @@ const MainFormList = (props) => {
         </TabPane>
       </Tabs>
     );
-  }
+  };
 
   const getResidents = () => {
-    axios.post("/api/resident/getAll", { barangay_id: currentBarangay }, generateToken()[1]).then((response) => {
-      console.log("Residents ", response.data)
-      setResidentlist(response.data)
-      setResidentlistLoading(false)
-      
-    }).catch(() => {
-      message.error("Could not fetch the data in the server!")
-    });
-
-  }
+    axios
+      .post(
+        "/api/resident/getAll",
+        { barangay_id: currentBarangay },
+        generateToken()[1]
+      )
+      .then((response) => {
+        console.log("Residents ", response.data);
+        setResidentlist(response.data);
+        setResidentlistLoading(false);
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+  };
 
   const handleUploadChange = (info) => {
     if (info.file.status === "uploading") {
@@ -154,57 +156,73 @@ const MainFormList = (props) => {
           setSubmitLoading(false);
           if (mode === ADD) {
             //Blotter ADD
-            values.barangay_id = currentBarangay
-            values.uuid = authToken
+            values.barangay_id = currentBarangay;
+            values.uuid = authToken;
 
-            values.reporters = reporter
-            values.victims = victim
-            values.suspects = suspect
-            values.respondents = respondent
+            values.reporters = reporter;
+            values.victims = victim;
+            values.suspects = suspect;
+            values.respondents = respondent;
 
-            if (values.reporters.length == 0 || values.victims.length == 0 || values.suspects.length == 0 || values.respondents.length == 0) {
+            if (
+              values.reporters.length == 0 ||
+              values.victims.length == 0 ||
+              values.suspects.length == 0 ||
+              values.respondents.length == 0
+            ) {
               message.error("Please enter all required field ");
             } else {
               // Create Blotter
-              console.log("Blotter Data ", values)
-              message.loading("Creating Blotter...", 0)
+              console.log("Blotter Data ", values);
+              message.loading("Creating Blotter...", 0);
 
-              axios.post("/api/blotter/create-blotter", values, generateToken()[1]).then((response) => {
-                message.destroy()
-                if (response.data == "Success") {
-                  return message.success(`Added ${values.blotter_id} to Blotter list`);
-
-                } else {
-                  return message.error("Error, please try again.")
-                }
-
-              }).catch(error => {
-                console.log(error)
-                message.destroy()
-                message.error("The action can't be completed, please try again.")
-              });
+              axios
+                .post("/api/blotter/create-blotter", values, generateToken()[1])
+                .then((response) => {
+                  message.destroy();
+                  if (response.data == "Success") {
+                    return message.success(
+                      `Added ${values.blotter_id} to Blotter list`
+                    );
+                  } else {
+                    return message.error("Error, please try again.");
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                  message.destroy();
+                  message.error(
+                    "The action can't be completed, please try again."
+                  );
+                });
             }
-
           }
           if (mode === EDIT) {
             //Blotter EDIT
-            console.log(values)
-            message.loading("Editing Blotter...", 0)
+            console.log(values);
+            message.loading("Editing Blotter...", 0);
 
-            axios.post(`/api/blotter/edit-blotter/${id}`, values, generateToken()[1]).then((response) => {
-              message.destroy()
-              if (response.data == "Success") {
-                message.success(`Edit Blotter saved`);
-              } else {
-                return message.error("Error, please try again.")
-              }
-
-            }).catch(error => {
-              console.log(error)
-              message.destroy()
-              message.error("The action can't be completed, please try again.")
-            });
-
+            axios
+              .post(
+                `/api/blotter/edit-blotter/${id}`,
+                values,
+                generateToken()[1]
+              )
+              .then((response) => {
+                message.destroy();
+                if (response.data == "Success") {
+                  message.success(`Edit Blotter saved`);
+                } else {
+                  return message.error("Error, please try again.");
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+                message.destroy();
+                message.error(
+                  "The action can't be completed, please try again."
+                );
+              });
           }
         }, 1500);
       })
@@ -240,8 +258,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Case"
                   : mode === EDIT
-                    ? `Edit Cases`
-                    : "View Cases"}{" "}
+                  ? `Edit Cases`
+                  : "View Cases"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">
@@ -263,7 +281,7 @@ const MainFormList = (props) => {
         </PageHeaderAlt>
         {mode === ADD || mode === EDIT ? (
           <div className="container">
-            <FormTabs></FormTabs>
+            <FormTabs />
           </div>
         ) : mode === "VIEW" ? (
           <div className="container">

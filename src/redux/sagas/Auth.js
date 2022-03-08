@@ -120,6 +120,7 @@ export function* signInWithFacebook() {
   yield takeEvery(SIGNIN_WITH_FACEBOOK, function* () {
     try {
       const user = yield call(FirebaseService.signInFacebookRequest);
+      console.log(user);
       if (user.message) {
         yield put(showAuthMessage(user.message));
       } else {

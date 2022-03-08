@@ -48,7 +48,7 @@ export async function loginBarangay(
         " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
     },
   };
-
+  console.log(currentUser.email);
   await axios
     .get(
       "https://geolocation-db.com/json/" + process.env.REACT_APP_REFRESH_GEO_ID
