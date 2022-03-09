@@ -6,7 +6,7 @@ import {
   MenuUnfoldOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import Logo from "./Logo";
+import Logo from "./Logo2";
 import NavNotification from "./NavNotification";
 import NavProfile from "./NavProfile";
 import NavLanguage from "./NavLanguage";
