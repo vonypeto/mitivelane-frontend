@@ -28,6 +28,8 @@ const EDIT = "EDIT";
 const VIEW = "VIEW";
 
 const MainFormList = (props) => {
+  const source = axios.CancelToken.source();
+  const cancelToken = source.token;
   const { generateToken, currentBarangay } = useAuth();
 
   const { id } = useParams();
@@ -48,8 +50,10 @@ const MainFormList = (props) => {
         const response = await axios.post(
           "/api/resident/getAll",
           { barangay_id },
-          generateToken()[1]
+          generateToken()[1],
+          { cancelToken }
         );
+
         const ResidentListData = response.data;
 
         const residentID = id;

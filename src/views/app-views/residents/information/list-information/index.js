@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Card, Table, Select, Input, Button, Menu, Space } from "antd";
-import ResidentListData from "assets/data/resident.data.json";
 import QueueAnim from "rc-queue-anim";
 import {
   EyeOutlined,
@@ -26,23 +25,34 @@ const { Option } = Select;
 const categories = [1, 2, 3, "Watches", "Devices"];
 
 const ListInformation = (props) => {
+  const source = axios.CancelToken.source();
+  const cancelToken = source.token;
+
   const { generateToken, currentBarangay } = useAuth();
   const barangay_id = currentBarangay;
   console.log(barangay_id)
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
   let history = useHistory();
-  const [list, setList] = useState(ResidentListData);
+  const [list, setList] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(() => {
-    axios
-      .post("/api/resident/getAll", { barangay_id }, generateToken()[1])
+    getAllResident()
+  }, []);
+
+  const getAllResident = async () => {
+    await axios
+      .post("/api/resident/getAll", { barangay_id }, generateToken()[1], { cancelToken })
       .then((res) => {
         setList(res.data);
       });
-  }, []);
+
+    return () => {
+      source.cancel();
+    };
+  }
 
   const dropdownMenu = (row) => (
     <Menu>
