@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import {
   Tag,
   Button,
@@ -36,13 +36,30 @@ export const resetSuspect = (() => {
 })
 
 const Suspect = (props) => {
-  const { residentlist, residentlistLoading} = props;
+  const { residentlists, residentlistLoading, initialSuspects } = props;
 
-  // const [residentlist, setResidentList] = useState(ResidentListData);
+  const [residentlist, setResidentList] = useState([]);
+  const [residentlistData, setResidentListData] = useState([]);
+
   const [residentpick, setResidentPick] = useState([]);
 
   const [residentselectedRows, setResidentSelectedRows] = useState([]);
   const [residentselectedRowKeys, setResidentSelectedRowKeys] = useState([]);
+
+  const [initialValues, setInitialValues] = useState([])
+
+  useEffect(() => {
+    setResidentList(residentlists)
+    setResidentListData(residentlists)
+
+  }, [residentlists, residentlistData])
+
+  useEffect(() => {
+    setInitialValues(initialSuspects)
+    setResidentSelectedRowKeys(initialSuspects)
+    suspect = initialSuspects
+
+  }, [initialSuspects, initialValues])
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -106,10 +123,9 @@ const Suspect = (props) => {
 
   const onSearch = (e) => {
     const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? residentlist : ResidentListData;
+    const searchArray = e.currentTarget.value ? residentlist : residentlistData;
     const data = utils.wildCardSearch(searchArray, value);
-    // setResidentList(data);
-    setResidentSelectedRowKeys([]);
+    setResidentList(data);
   };
 
   const onResidentReporter = (value) => {
@@ -152,6 +168,7 @@ const Suspect = (props) => {
           </Flex>
           <div className="table-responsive">
             <Table
+              loading={residentlistLoading}
               columns={tableResidentColumns}
               dataSource={residentlist}
               scroll={{ x: "max-content" }}

@@ -66,7 +66,6 @@ const BlotterRecord = (props) => {
 
   const [sessionData, setSessionData] = useState([0, 0, 0, 0])
 
-
   const [blotterlistrequest, setBlotterListRequest] = useState(
     BlotterListRequestData
   );
@@ -85,22 +84,12 @@ const BlotterRecord = (props) => {
   const [userProfileVisible, SetUserProfileVisible] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
 
-  const showUserProfile = (UserList) => {
-    SetUserProfileVisible(true);
-    SetSelectedUser(UserList);
-  };
-
-  const closeUserProfile = () => {
-    SetUserProfileVisible(false);
-    SetSelectedUser(null);
-  };
-
   useEffect(() => {
-    getBlotters()
-    getRecordCases()
+    getBlotters(currentBarangay)
+    getRecordCases(currentBarangay)
   }, [])
 
-  const getBlotters = () => {
+  const getBlotters = (currentBarangay) => {
     axios.get("/api/blotter/get-blotters/" + currentBarangay, generateToken()[1]).then((response) => {
       console.log("Blotters ", response.data)
       setBlotterList(response.data)
@@ -111,16 +100,42 @@ const BlotterRecord = (props) => {
     });
   }
 
-  const getRecordCases = () => {
+  const getRecordCases = (currentBarangay) => {
     axios.get("/api/blotter/record-cases/" + currentBarangay, generateToken()[1]).then((response) => {
       console.log("Record Cases", response.data)
       setSessionData(response.data)
     }).catch(() => {
       console.log("Error")
     });
-
-
   }
+
+  const deleteBlotter = (_ids) => {
+    axios.post("/api/blotter/delete-blotter", { _ids }, generateToken()[1]).then((response) => {
+      // message.destroy()
+      if (response.data == "Success") {
+        getRecordCases(currentBarangay)
+        return message.success("Successfully Deleted");
+
+      } else {
+        return message.error("Error, please try again.")
+      }
+
+    }).catch(error => {
+      console.log(error)
+      // message.destroy()
+      message.error("The action can't be completed, please try again.")
+    });
+  }
+
+  const showUserProfile = (UserList) => {
+    SetUserProfileVisible(true);
+    SetSelectedUser(UserList);
+  };
+
+  const closeUserProfile = () => {
+    SetUserProfileVisible(false);
+    SetSelectedUser(null);
+  };
 
   const BlotterDropdownMenu = (row) => (
     <Menu>
@@ -151,24 +166,7 @@ const BlotterRecord = (props) => {
     history.push(`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`);
   };
 
-  const deleteBlotter = (_ids) => {
-    axios.post("/api/blotter/delete-blotter", { _ids }, generateToken()[1]).then((response) => {
-      // message.destroy()
-      if (response.data == "Success") {
-        getRecordCases()
-        return message.success("Successfully Deleted");
 
-      } else {
-        return message.error("Error, please try again.")
-      }
-
-    }).catch(error => {
-      console.log(error)
-      // message.destroy()
-      message.error("The action can't be completed, please try again.")
-    });
-
-  }
 
   const BlotterDeleteRow = (row) => {
     const objKey = "_id";
@@ -559,7 +557,7 @@ const BlotterRecord = (props) => {
             <Col xs={24} sm={24} md={24} lg={24}>
               <Card
                 title="Blotter Records"
-                extra={cardDropdown(BlotterListData)}
+                extra={cardDropdown(BlotterRequestList)}
               >
                 <Flex
                   alignItems="center"

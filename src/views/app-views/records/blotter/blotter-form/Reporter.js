@@ -37,25 +37,30 @@ export const resetReporter = (() => {
 })
 
 const Reporter = (props) => {
-  const { residentlist, residentlistLoading } = props;
+  const { residentlists, residentlistLoading, initialReporters } = props;
 
-  // const [residentlist, setResidentList] = useState(ResidentListData);
+  const [residentlist, setResidentList] = useState([]);
+  const [residentlistData, setResidentListData] = useState([]);
+
   const [residentpick, setResidentPick] = useState([]);
 
   const [residentselectedRows, setResidentSelectedRows] = useState([]);
   const [residentselectedRowKeys, setResidentSelectedRowKeys] = useState([]);
 
-  const [test, setTest] = useState([])
+  const [initialValues, setInitialValues] = useState([])
 
   useEffect(() => {
-    if(residentlistLoading == false){
-      setTest(residentlist)
-      console.log("Resident List ", residentlist)
-      console.log("Test works? ", test)
+    setResidentList(residentlists)
+    setResidentListData(residentlists)
 
-    }
-      
-  }, [residentlist, props])
+  }, [residentlists, residentlistData])
+
+  useEffect(() => {
+    setInitialValues(initialReporters)
+    setResidentSelectedRowKeys(initialReporters)
+    reporter = initialReporters
+
+  }, [initialReporters, initialValues])
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -119,10 +124,9 @@ const Reporter = (props) => {
 
   const onSearch = (e) => {
     const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? residentlist : ResidentListData;
+    const searchArray = e.currentTarget.value ? residentlist : residentlistData;
     const data = utils.wildCardSearch(searchArray, value);
-    // setResidentList(data);
-    setResidentSelectedRowKeys([]);
+    setResidentList(data);
   };
 
   const onResidentReporter = (value) => {
@@ -184,6 +188,7 @@ const Reporter = (props) => {
             <Table
               columns={tableResidentColumns}
               dataSource={residentlist}
+              loading={residentlistLoading}
               rowKey="resident_id"
               scroll={{ x: "max-content" }}
               rowSelection={{

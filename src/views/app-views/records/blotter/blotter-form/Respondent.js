@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Tag, Button, Table, Input, Row, Col, Card, Form, Select } from "antd";
 import ResidentListData from "assets/data/resident.data.json";
 import Flex from "components/shared-components/Flex";
@@ -19,13 +19,30 @@ export const resetRespondent = (() => {
 })
 
 const Respondent = (props) => {
-  const { residentlist, residentlistLoading} = props;
+  const { residentlists, residentlistLoading, initialRespondents } = props;
 
-  // const [residentlist, setResidentList] = useState(ResidentListData);
+  const [residentlist, setResidentList] = useState([]);
+  const [residentlistData, setResidentListData] = useState([]);
+
   const [residentpick, setResidentPick] = useState([]);
 
   const [residentselectedRows, setResidentSelectedRows] = useState([]);
   const [residentselectedRowKeys, setResidentSelectedRowKeys] = useState([]);
+
+  const [initialValues, setInitialValues] = useState([])
+
+  useEffect(() => {
+      setResidentList(residentlists)
+      setResidentListData(residentlists)
+
+  }, [residentlists, residentlistData])
+
+  useEffect(() => {
+    setInitialValues(initialRespondents)
+    setResidentSelectedRowKeys(initialRespondents)
+    respondent = initialRespondents
+
+  }, [initialRespondents, initialValues])
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -89,10 +106,9 @@ const Respondent = (props) => {
 
   const onSearch = (e) => {
     const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? residentlist : ResidentListData;
+    const searchArray = e.currentTarget.value ? residentlist : residentlistData;
     const data = utils.wildCardSearch(searchArray, value);
-    // setResidentList(data);
-    setResidentSelectedRowKeys([]);
+    setResidentList(data);
   };
 
   const onResidentReporter = (value) => {
@@ -139,6 +155,7 @@ const Respondent = (props) => {
           </Flex>
           <div className="table-responsive">
             <Table
+              loading={residentlistLoading}
               columns={tableResidentColumns}
               dataSource={residentlist}
               rowKey="resident_id"
