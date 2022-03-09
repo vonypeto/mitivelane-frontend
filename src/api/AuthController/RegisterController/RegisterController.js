@@ -33,7 +33,7 @@ export async function registerBarangay(
   await axios
     .get(
       "https://geolocation-db.com/json/" +
-        process.env.REACT_APP_REFRESH_GEO_ID +
+        process.env.REACT_APP_REFRESH_GEO_ID + "/"+
         (ipv4 + 1)
     )
     .then((geo) => {
