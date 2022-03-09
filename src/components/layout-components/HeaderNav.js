@@ -6,7 +6,7 @@ import {
   MenuUnfoldOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import Logo from "./Logo2";
+import Logo from "./Logo";
 import NavNotification from "./NavNotification";
 import NavProfile from "./NavProfile";
 import NavLanguage from "./NavLanguage";
@@ -123,7 +123,6 @@ export const HeaderNav = (props) => {
             <NavLanguage />
             <NavPanel direction={direction} /> <NavProfile />
           </div>
-          <NavSearch active={searchActive} close={onSearchClose} />
         </div>
       </div>
     </Header>

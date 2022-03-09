@@ -75,10 +75,13 @@ export const HeaderNavRegister = (props) => {
       className={`app-header ${navMode}`}
       style={{ backgroundColor: headerNavColor }}
     >
-      <div className={`app-header-wrapper  layout-top-nav`}>
-        <Logo logoType={navMode} />
-        <div className="nav-right">
-          <NavProfile />
+      {" "}
+      <div className="nav" style={{ width: `calc(100%)` }}>
+        <div className={`app-header-wrapper  layout-top-nav`}>
+          <Logo logoType={navMode} />
+          <div className="nav-right">
+            <NavProfile />
+          </div>
         </div>
       </div>
     </Header>
