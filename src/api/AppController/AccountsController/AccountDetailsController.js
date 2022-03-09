@@ -8,7 +8,8 @@ export async function updateAccount(
   setDisplayName,
   setProfileAvatar,
   setEditBarangay,
-  setLoadingButton
+  setLoadingButton,
+  generateToken
 ) {
   const data = {
     full_name: values.name,
@@ -16,7 +17,7 @@ export async function updateAccount(
   };
 
   await axios
-    .post("/api/app/user/update", data)
+    .post("/api/app/user/update", data, generateToken()[1])
     .then((response) => {
       setTimeout(() => {
         console.log(response.data.profile_url);

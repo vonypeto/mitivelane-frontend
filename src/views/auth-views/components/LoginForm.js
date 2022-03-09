@@ -78,7 +78,7 @@ export const LoginForm = (props) => {
     if (token !== null && allowRedirect) {
       // getBarangay(token);
 
-      // setIsLoading(true);
+      setIsLoading(true);
       if (cancel) {
         loginBarangay(
           token,
@@ -107,7 +107,6 @@ export const LoginForm = (props) => {
       cancel = false;
     };
   }, []);
-  console.log(platform.os.family);
   const renderOtherSignIn = (
     <div>
       <Divider>

@@ -17,7 +17,13 @@ import { PROFILE_URL, AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 
 const AccountDetails = () => {
-  const { currentUser, setPhoto, currentPhoto, resetEmailPassword } = useAuth();
+  const {
+    currentUser,
+    setPhoto,
+    currentPhoto,
+    generateToken,
+    resetEmailPassword,
+  } = useAuth();
   const [form] = Form.useForm();
   const formRef = useRef();
   const [initialVal, setInitialVal] = useState({});
@@ -53,14 +59,11 @@ const AccountDetails = () => {
   //   form.resetFields();
   // }, [initialVal, form]);
   useEffect(() => {
-    let mount = true;
     if (showResetPassword)
       setTimeout(() => {
         setShowResetPassword(false);
+        setEditBarangay(false);
       }, 3000);
-    return () => {
-      mount = false;
-    };
   }, [showResetPassword]);
   useEffect(() => {
     let mount = true;
@@ -92,13 +95,13 @@ const AccountDetails = () => {
             setDisplayName,
             setProfileAvatar,
             setEditBarangay,
-            setLoadingButton
+            setLoadingButton,
+            generateToken
           );
         })
         .catch((errorInfo) => {
           console.log(errorInfo);
         });
-      console.log(value);
     }
 
     if (!editBarangay) setEditBarangay(!editBarangay);

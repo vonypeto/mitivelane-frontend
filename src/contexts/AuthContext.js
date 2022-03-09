@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import firebase from "firebase/app";
-import { auth, deleteUser } from "auth/FirebaseAuth";
+import { auth } from "auth/FirebaseAuth";
 import {
   AUTH_BARANGAY,
   AUTH_BARANGAY_LIST,
