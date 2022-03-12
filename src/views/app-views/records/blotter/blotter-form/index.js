@@ -100,6 +100,7 @@ const MainFormList = (props) => {
           blotter_id: response.data.blotter_id,
           settlement_status: response.data.settlement_status,
           subject: response.data.subject,
+          narrative: response.data.narrative,
           incident_type: response.data.incident_type,
           place_incident: response.data.place_incident,
           time_of_incident: new moment(response.data.time_of_incident),

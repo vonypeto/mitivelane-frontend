@@ -47,11 +47,14 @@ const Narrative = (props) => {
           <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
             <Flex className="mb-1" mobileFlex={false}>
               <div className="">
-                <Editor
-                  toolbarClassName="toolbarClassName"
-                  wrapperClassName="wrapperClassName"
-                  editorClassName="editorClassName"
-                />
+                <Form.Item
+                  name="narrative">
+                  <Editor
+                    toolbarClassName="toolbarClassName"
+                    wrapperClassName="wrapperClassName"
+                    editorClassName="editorClassName"
+                  />
+                </Form.Item>
               </div>
             </Flex>
           </Flex>
@@ -85,7 +88,7 @@ const Narrative = (props) => {
             name="incident_type"
             label="Type of Incident"
             rules={[{ required: true }]}>
-              <Input placeholder="Incident Type" />
+            <Input placeholder="Incident Type" />
           </Form.Item>
           <Form.Item
             name="time_of_incident"
@@ -114,7 +117,7 @@ const Narrative = (props) => {
             name="place_incident"
             label="Place of Incident"
             rules={[{ required: true }]}>
-              <Input placeholder="Place of incident" />
+            <Input placeholder="Place of incident" />
           </Form.Item>
           <Form.Item
             name="time_schedule"

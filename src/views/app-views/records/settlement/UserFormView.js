@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Upload,
   message,
@@ -22,18 +22,85 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import utils from "utils";
+import moment from "moment";
 import { Editor } from "react-draft-wysiwyg";
 const { Option } = Select;
-const caseData = ["Settled", "Scheduled"];
+const caseData = ['Settled', 'Scheduled', 'Unscheduled', 'Unsettled']
+
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
+
 const UserFormView = (props) => {
-  const { selectOutShow } = props;
+  const { currentBarangay, generateToken } = useAuth();
+  const { selectOutShow, initialData } = props;
+  const [form] = Form.useForm();
+
+  const reporters = initialData.reporters
+  const victims = initialData.victims
+  const suspects = initialData.suspects
+  const respondents = initialData.respondents
+
+  const editorState = {
+    entityMap: {},
+    blocks: initialData.narrative.blocks
+  }
+
+  const _id = initialData._id
+
+  useEffect(() => {
+    initialData.date_of_incident = new moment(initialData.date_of_incident)
+    initialData.time_of_incident = new moment(initialData.time_of_incident)
+    initialData.createdAt = new moment(initialData.createdAt)
+    form.setFieldsValue(initialData)
+  }, [])
+
+  const editBlotter = (values) => {
+    message.loading("Editing Blotter...", 0);
+
+    // console.log("Blotter Data ", values)
+
+    axios
+      .post(`/api/blotter/edit-blotter/${_id}`, values, generateToken()[1])
+      .then((response) => {
+        message.destroy();
+        if (response.data == "Success") {
+          message.success(`Saved`);
+        } else {
+          return message.error("Error, please try again.");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        message.destroy();
+        message.error("The action can't be completed, please try again.");
+      });
+  };
+
   const onChangeData = (e) => {
     e.preventDefault();
     selectOutShow(true);
   };
-  const onSettingCLlick = (e) => {
-    console.log("test");
+  const onBackClick = (e) => {
+    console.log("Back");
+    console.log(form, " Form")
     onChangeData(e);
+  };
+
+  const onEditClick = (e) => {
+    console.log("Edit")
+    form
+      .validateFields()
+      .then((values) => {
+        setTimeout(() => {
+          delete values.createdAt
+          console.log(values)
+          editBlotter(values)
+        }, 1500);
+      })
+      .catch((info) => {
+        console.log("info", info);
+        // message.error("Please enter all required field ");
+      });
   };
 
   const uploadProps = {
@@ -56,26 +123,27 @@ const UserFormView = (props) => {
       format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
     },
   };
+
   return (
     <div style={{ fontSize: "16px !important" }}>
       <Row>
         <Col xs={24} sm={24} md={24}>
           <Card
             actions={[
-              <RollbackOutlined onClick={onSettingCLlick} key="back" />,
-              <EditOutlined key="edit" />,
+              <RollbackOutlined onClick={onBackClick} key="back" />,
+              <EditOutlined onClick={onEditClick} key="edit" />,
               <PrinterOutlined key="summon" />,
             ]}
             title={"Blotter No: 1212"}
           >
-            <Form size="default">
+            <Form size="default" form={form}>
               <Row gutter={16}>
                 <Col xs={24} sm={24} md={16}>
                   <Card>
                     <Row gutter={16}>
                       <Col xs={24} sm={24} md={15}>
                         <Form.Item
-                          name="case"
+                          name="incident_type"
                           label="Summon Case For:"
                           labelCol={{ span: 24 }}
                         >
@@ -84,7 +152,7 @@ const UserFormView = (props) => {
                       </Col>
                       <Col xs={24} sm={24} md={5}>
                         <Form.Item
-                          name="status"
+                          name="settlement_status"
                           labelCol={{ span: 24 }}
                           label="Case Status"
                         >
@@ -99,36 +167,25 @@ const UserFormView = (props) => {
                       </Col>
 
                       <Col xs={24} sm={24} md={20}>
-                        <Form.Item
-                          labelCol={{ span: 24 }}
-                          name="subject"
-                          label="Narrative Body"
-                        >
-                          <div className="mb-4">
+                        <div className="mb-4">
+                          <Form.Item name="narrative">
                             <Editor
+                              // editorState={editorState}
+                              // onEditorStateChange={editorState}
                               toolbarClassName="toolbarClassName"
                               wrapperClassName="wrapperClassName"
                               editorClassName="editorClassName"
                             />
-                          </div>
-                        </Form.Item>
+                          </Form.Item>
+                        </div>
                       </Col>
                       <Col xs={24} sm={24} md={20}>
                         <Row gutter={16}>
                           <Col xs={24} sm={24} md={9}>
                             <Form.Item
                               labelCol={{ span: 24 }}
-                              name="dateoficident"
+                              name="date_of_incident"
                               label="Date of Issue"
-                            >
-                              <DatePicker className="w-100" />
-                            </Form.Item>
-                          </Col>
-                          <Col xs={24} sm={24} md={9}>
-                            <Form.Item
-                              labelCol={{ span: 24 }}
-                              name="daterecord"
-                              label="Date Recorded"
                             >
                               <DatePicker className="w-100" />
                             </Form.Item>
@@ -136,10 +193,30 @@ const UserFormView = (props) => {
                           <Col xs={24} sm={24} md={6}>
                             <Form.Item
                               labelCol={{ span: 24 }}
-                              name="timerecorder"
-                              label="Time Recorded"
+                              name="time_of_incident"
+                              label="Time of Issue"
                             >
                               <TimePicker className="w-100" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col xs={24} sm={24} md={9}>
+                            <Form.Item
+                              labelCol={{ span: 24 }}
+                              name="createdAt"
+                              label="Date Recorded"
+                            >
+                              <DatePicker className="w-100" disabled />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24} sm={24} md={6}>
+                            <Form.Item
+                              labelCol={{ span: 24 }}
+                              name="createdAt"
+                              label="Time Recorded"
+                            >
+                              <TimePicker className="w-100" disabled />
                             </Form.Item>
                           </Col>
                         </Row>
@@ -159,7 +236,7 @@ const UserFormView = (props) => {
                           label="File Upload"
                           labelCol={{ span: 24 }}
                         >
-                          <Upload {...uploadProps}>
+                          <Upload {...uploadProps} fileList={[]}>
                             <Button icon={<UploadOutlined />}>
                               Click to Upload
                             </Button>
@@ -175,79 +252,120 @@ const UserFormView = (props) => {
                       <Card title="Reporter">
                         <div className="mt-1">
                           <hr />
-                          <div className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                            <div>
-                              <Avatar
-                                size={40}
-                                className="font-size-sm"
-                                style={{ backgroundColor: "red" }}
-                              >
-                                {utils.getNameInitial("Von Maniquis")}
-                              </Avatar>
-                              <span className="ml-2">Von Maniquis</span>
-                            </div>
-                            <div>
-                              {" "}
-                              <Button
-                                icon={<InfoCircleOutlined />}
-                                type="default"
-                                size="small"
-                                className="w-100"
-                              >
-                                Details
-                              </Button>
-                            </div>
-                          </div>
+                          {
+                            reporters.map((values, i) =>
+                              <div key={i} className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar
+                                    size={40}
+                                    className="font-size-sm"
+                                    style={{ backgroundColor: "red" }}
+                                  >
+                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
+                                  </Avatar>
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button
+                                  icon={<InfoCircleOutlined />}
+                                  type="default"
+                                  size="small"
+                                >
+                                  Details
+                                </Button>
+                              </div>
+                            )
+                          }
+
                         </div>
                       </Card>
 
-                      <Card title="Respondent">
+                      <Card title="Victim">
                         <div className="mt-1">
                           <hr />
-                          <div className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                            <div>
-                              <Avatar
-                                size={40}
-                                className="font-size-sm"
-                                style={{ backgroundColor: "red" }}
-                              >
-                                {utils.getNameInitial("Von Maniquis")}
-                              </Avatar>
-                              <span className="ml-2">Von Maniquis</span>
-                            </div>
-                            <Button
-                              icon={<InfoCircleOutlined />}
-                              type="default"
-                              size="small"
-                            >
-                              Details
-                            </Button>
-                          </div>
+                          {
+                            victims.map((values, i) =>
+                              <div key={i} className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar
+                                    size={40}
+                                    className="font-size-sm"
+                                    style={{ backgroundColor: "red" }}
+                                  >
+                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
+                                  </Avatar>
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button
+                                  icon={<InfoCircleOutlined />}
+                                  type="default"
+                                  size="small"
+                                >
+                                  Details
+                                </Button>
+                              </div>
+                            )
+                          }
+
                         </div>
                       </Card>
 
                       <Card title="Suspect">
                         <div className="mt-1">
                           <hr />
-                          <div className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                            <div>
-                              <Avatar
-                                size={40}
-                                className="font-size-sm"
-                                style={{ backgroundColor: "red" }}
-                              >
-                                {utils.getNameInitial("Von Maniquis")}
-                              </Avatar>
-                              <span className="ml-2">Von Maniquis</span>
-                            </div>
-                            <Button
-                              icon={<InfoCircleOutlined />}
-                              type="default"
-                              size="small"
-                            >
-                              Details
-                            </Button>
-                          </div>
+                          {
+                            suspects.map((values, i) =>
+                              <div key={i} className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar
+                                    size={40}
+                                    className="font-size-sm"
+                                    style={{ backgroundColor: "red" }}
+                                  >
+                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
+                                  </Avatar>
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button
+                                  icon={<InfoCircleOutlined />}
+                                  type="default"
+                                  size="small"
+                                >
+                                  Details
+                                </Button>
+                              </div>
+                            )
+                          }
+
+                        </div>
+                      </Card>
+
+                      <Card title="Respondent">
+                        <div className="mt-1">
+                          <hr />
+                          {
+                            respondents.map((values, i) =>
+                              <div key={i} className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar
+                                    size={40}
+                                    className="font-size-sm"
+                                    style={{ backgroundColor: "red" }}
+                                  >
+                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
+                                  </Avatar>
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button
+                                  icon={<InfoCircleOutlined />}
+                                  type="default"
+                                  size="small"
+                                >
+                                  Details
+                                </Button>
+                              </div>
+                            )
+                          }
+
                         </div>
                       </Card>
                     </Col>
