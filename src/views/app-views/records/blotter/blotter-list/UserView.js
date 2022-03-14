@@ -30,6 +30,22 @@ const UserView = (props) => {
   let initial = data?.reporter === undefined ? "NULL" : data?.reporter;
   const colortag = ["blue", "geekblue", "lime", "green"];
   const colortag2 = ["volcano", "orange", "gold", "lime"];
+  
+  const tagStatusColor = (settlementStatus) => {
+	  if(settlementStatus === "Settled"){
+		  return "geekblue"
+	  }
+	  else if(settlementStatus == "Unsettled"){
+		  return "orange"
+	  }
+	  else if(settlementStatus == "Scheduled"){
+		  return "cyan"
+	  }
+	  else{
+		  return "gold"
+		  
+	  }
+  }
 
 
   return (
@@ -52,8 +68,8 @@ const UserView = (props) => {
         <span className="text-muted">{data?.reporters[0].address_1}</span>
       </div>
       <div className="pt-1 text-center">
-        <Tag className="mr-0 font-size-md" color="cyan">
-          {data?.status}
+        <Tag className="mr-0 font-size-md" color={tagStatusColor(data?.settlement_status)}>
+          {data?.settlement_status}
         </Tag>
       </div>
 
@@ -63,12 +79,12 @@ const UserView = (props) => {
             <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <span className=" font-weight-bold text-muted-resident">
-                  Subject: {data?.subject}
+                  Subject:
                 </span>
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 font-weight-bold">
-                  {data?.classification}
+                  {data?.subject}
                 </span>
               </Col>
             </Row>

@@ -26,7 +26,7 @@ const DynamicCases = (props) => {
   }, [])
 
   const getBlotters = (barangayId) => {
-    axios.get("/api/settlement/get-blotters/" + barangayId, generateToken()[1]).then((response) => {
+    axios.get("/api/blotter/get-blotters/" + barangayId, generateToken()[1]).then((response) => {
       console.log(response.data)
       setBlotterList(response.data)
       setBlotterlistData(response.data)
