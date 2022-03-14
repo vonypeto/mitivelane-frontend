@@ -140,6 +140,7 @@ const MainFormList = (props) => {
         .then((response) => {
           message.destroy();
           if (response.data == "Success") {
+            history.goBack()
             return message.success(
               `Added ${values.blotter_id} to Blotter list`
             );
@@ -183,6 +184,7 @@ const MainFormList = (props) => {
         message.destroy();
         if (response.data == "Success") {
           message.success(`Edit Blotter saved`);
+          history.goBack()
         } else {
           return message.error("Error, please try again.");
         }
@@ -254,8 +256,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Case"
                   : mode === EDIT
-                  ? `Edit Cases`
-                  : "View Cases"}{" "}
+                    ? `Edit Cases`
+                    : "View Cases"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">

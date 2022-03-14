@@ -19,7 +19,6 @@ const TableBlotterData = (props) => {
   const [selectedUserData, setSelectedUserData] = useState({});
 
   const selectOutShow = (event) => {
-    console.log("test");
     return setShow(event);
   };
 
@@ -41,7 +40,7 @@ const TableBlotterData = (props) => {
   };
 
   const Onclick = () => {
-    testout("test");
+    // testout("test");
   };
 
   const Blottercolumns = [

@@ -38,7 +38,7 @@ import Flex from "components/shared-components/Flex";
 import { useHistory } from "react-router-dom";
 import utils from "utils";
 import { Dropdown } from "antd";
-import UserView from "./BlotterRequest";
+import UserView from "./UserView";
 
 import {
   BlotterReportMost
@@ -139,6 +139,12 @@ const BlotterRecord = (props) => {
 
   const BlotterDropdownMenu = (row) => (
     <Menu>
+	<Menu.Item key={0} onClick={() => showUserProfile(row)}>
+        <Flex alignItems="center">
+          <EyeOutlined />
+          <span className="ml-2">View</span>
+        </Flex>
+      </Menu.Item>
       <Menu.Item key={1} onClick={() => BlottereditwDetails(row)}>
         <Flex alignItems="center">
           <EditOutlined />
@@ -159,11 +165,16 @@ const BlotterRecord = (props) => {
   );
 
   const AddResident = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-record/add`);
+    history.push({pathname:`/app/${currentBarangay}/records/blotter-record/add`, current: "ADD"});
   };
 
   const BlottereditwDetails = (row) => {
-    history.push(`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`);
+    history.push(
+	{ 
+	pathname:`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`,
+	data: row,
+	current: "EDIT"
+	});
   };
 
 

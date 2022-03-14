@@ -1,4 +1,5 @@
-import { React } from "react";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import {
   Tag,
   Button,
@@ -17,6 +18,7 @@ import {
 } from "antd";
 import Flex from "components/shared-components/Flex";
 import { Editor } from "react-draft-wysiwyg";
+import { convertFromRaw, EditorState } from "draft-js";
 import { SettlementData } from "./BlotterData";
 import moment from "moment";
 
@@ -25,6 +27,19 @@ const dateFormat = "YYYY/MM/DD";
 const { Option } = Select;
 
 const Narrative = (props) => {
+  const location = useLocation();
+  const initialData = (location.current == "EDIT") ? location.data : { narrative: null }
+
+  const content = {
+    entityMap: {},
+    blocks: (initialData.narrative != null)
+      ? initialData.narrative.blocks
+      : []
+  }
+
+  const contentState = convertFromRaw(content);
+  const editorState = EditorState.createWithContent(contentState);
+
   return (
     <Row gutter={16}>
       <Col xs={24} sm={24} md={17}>
@@ -50,6 +65,7 @@ const Narrative = (props) => {
                 <Form.Item
                   name="narrative">
                   <Editor
+                    defaultEditorState={editorState}
                     toolbarClassName="toolbarClassName"
                     wrapperClassName="wrapperClassName"
                     editorClassName="editorClassName"
