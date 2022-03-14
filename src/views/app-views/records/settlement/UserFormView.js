@@ -44,10 +44,10 @@ const UserFormView = (props) => {
   const content = {
     entityMap: {},
     blocks: (initialData.narrative != null)
-	? initialData.narrative.blocks
-	: []
+      ? initialData.narrative.blocks
+      : []
   }
-  
+
   const contentState = convertFromRaw(content);
   const editorState = EditorState.createWithContent(contentState);
 
@@ -101,7 +101,7 @@ const UserFormView = (props) => {
           delete values.createdAt
           console.log(values)
           editBlotter(values)
-		  onChangeData(e);
+          onChangeData(e);
         }, 1500);
       })
       .catch((info) => {
@@ -133,309 +133,309 @@ const UserFormView = (props) => {
 
   return (
     <div style={{
-     fontSize:"16px !important"
-     }}>
-<Row>
-	<Col xs={24}
-	     sm={24}
-	     md={24}>
-	<Card
-	      actions={[
-	<RollbackOutlined
-	                  onClick={onBackClick}
-	                  key="back"/>,
+      fontSize: "16px !important"
+    }}>
+      <Row>
+        <Col xs={24}
+          sm={24}
+          md={24}>
+          <Card
+            actions={[
+              <RollbackOutlined
+                onClick={onBackClick}
+                key="back" />,
               <EditOutlined onClick={onEditClick}
-	              key="edit"/>,
-              <PrinterOutlined key="summon"/>,
+                key="edit" />,
+              <PrinterOutlined key="summon" />,
             ]}
             title={"Blotter No: 1212"}
           >
             <Form size="default"
-	      form={form}>
-	<Row
-	     gutter={16}>
-	<Col
-	     xs={24}
-	     sm={24}
-	     md={16}>
-	<Card>
-		<Row gutter={16}>
-		<Col
-		     xs={24}
-		     sm={24}
-		     md={15}>
-		<Form.Item
-		           name="incident_type"
-		           label="Summon Case For:"
-		           labelCol={{
-		           span:
-		           24
-		           }}>
-			<Input placeholder="Case Type"/>
-		</Form.Item>
-	</Col>
-	<Col xs={24}
-	     sm={24}
-	     md={5}>
-	<Form.Item
-	           name="settlement_status"
-	           labelCol={{
-	           span:
-	           24
-	           }}
-	           label="Case Status">
-		<Select className="w-100"
-		        placeholder="Case Status">
+              form={form}>
+              <Row
+                gutter={16}>
+                <Col
+                  xs={24}
+                  sm={24}
+                  md={16}>
+                  <Card>
+                    <Row gutter={16}>
+                      <Col
+                        xs={24}
+                        sm={24}
+                        md={15}>
+                        <Form.Item
+                          name="incident_type"
+                          label="Summon Case For:"
+                          labelCol={{
+                            span:
+                              24
+                          }}>
+                          <Input placeholder="Case Type" />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24}
+                        sm={24}
+                        md={5}>
+                        <Form.Item
+                          name="settlement_status"
+                          labelCol={{
+                            span:
+                              24
+                          }}
+                          label="Case Status">
+                          <Select className="w-100"
+                            placeholder="Case Status">
                             {caseData.map((elm) => (
                               <Option key={elm}
-			        value={elm}>
-			        {elm}
-		</Option>
+                                value={elm}>
+                                {elm}
+                              </Option>
                             ))}
                           </Select>
-</Form.Item>
-</Col>
-<Col
-     xs={24}
-     sm={24}
-     md={20}>
-<div
-     className="mb-4">
-	<Form.Item name="narrative">
-		<Editor 
-				defaultEditorState={editorState}
-		        toolbarClassName="toolbarClassName"
-		        wrapperClassName="wrapperClassName"
-		        editorClassName="editorClassName"/>
-	</Form.Item>
-</div>
-</Col>
-<Col xs={24}
-     sm={24}
-     md={20}>
-<Row
-     gutter={16}>
-<Col
-     xs={24}
-     sm={24}
-     md={9}>
-<Form.Item
-           labelCol={{
-           span:
-           24
-           }}
-           name="date_of_incident"
-           label="Date of Issue">
-	<DatePicker className="w-100"/>
-</Form.Item>
-</Col>
-<Col xs={24}
-     sm={24}
-     md={6}>
-<Form.Item
-           labelCol={{
-           span:
-           24
-           }}
-           name="time_of_incident"
-           label="Time of Issue">
-	<TimePicker className="w-100"/>
-</Form.Item>
-</Col>
-</Row>
-<Row gutter={16}>
-<Col
-     xs={24}
-     sm={24}
-     md={9}>
-<Form.Item
-           labelCol={{
-           span:
-           24
-           }}
-           name="createdAt"
-           label="Date Recorded">
-	<DatePicker className="w-100"
-	            disabled/>
-</Form.Item>
-</Col>
-<Col xs={24}
-     sm={24}
-     md={6}>
-<Form.Item
-           labelCol={{
-           span:
-           24
-           }}
-           name="createdAt"
-           label="Time Recorded">
-	<TimePicker className="w-100"
-	            disabled/>
-</Form.Item>
-</Col>
-</Row>
-</Col>
-<Col xs={24}
-     sm={24}
-     md={20}>
-<Form.Item
-           name="PNP"
-           label="Document Copy to PNP"
-           labelCol={{
-           span:
-           24
-           }}>
-	<Input placeholder="Documents Copy"/>
-</Form.Item>
-</Col>
-<Col xs={24}
-     sm={24}
-     md={20}>
-<Form.Item
-           name="file_id"
-           label="File Upload"
-           labelCol={{
-           span:
-           24
-           }}>
-	<Upload {...uploadProps}
-	        fileList={[]}>
-	<Button
-	        icon={<UploadOutlined/>}>
+                        </Form.Item>
+                      </Col>
+                      <Col
+                        xs={24}
+                        sm={24}
+                        md={20}>
+                        <div
+                          className="mb-4">
+                          <Form.Item name="narrative">
+                            <Editor
+                              defaultEditorState={editorState}
+                              toolbarClassName="toolbarClassName"
+                              wrapperClassName="wrapperClassName"
+                              editorClassName="editorClassName" />
+                          </Form.Item>
+                        </div>
+                      </Col>
+                      <Col xs={24}
+                        sm={24}
+                        md={20}>
+                        <Row
+                          gutter={16}>
+                          <Col
+                            xs={24}
+                            sm={24}
+                            md={9}>
+                            <Form.Item
+                              labelCol={{
+                                span:
+                                  24
+                              }}
+                              name="date_of_incident"
+                              label="Date of Issue">
+                              <DatePicker className="w-100" />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24}
+                            sm={24}
+                            md={6}>
+                            <Form.Item
+                              labelCol={{
+                                span:
+                                  24
+                              }}
+                              name="time_of_incident"
+                              label="Time of Issue">
+                              <TimePicker className="w-100" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row gutter={16}>
+                          <Col
+                            xs={24}
+                            sm={24}
+                            md={9}>
+                            <Form.Item
+                              labelCol={{
+                                span:
+                                  24
+                              }}
+                              name="createdAt"
+                              label="Date Recorded">
+                              <DatePicker className="w-100"
+                                disabled />
+                            </Form.Item>
+                          </Col>
+                          <Col xs={24}
+                            sm={24}
+                            md={6}>
+                            <Form.Item
+                              labelCol={{
+                                span:
+                                  24
+                              }}
+                              name="createdAt"
+                              label="Time Recorded">
+                              <TimePicker className="w-100"
+                                disabled />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col xs={24}
+                        sm={24}
+                        md={20}>
+                        <Form.Item
+                          name="PNP"
+                          label="Document Copy to PNP"
+                          labelCol={{
+                            span:
+                              24
+                          }}>
+                          <Input placeholder="Documents Copy" />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24}
+                        sm={24}
+                        md={20}>
+                        <Form.Item
+                          name="file_id"
+                          label="File Upload"
+                          labelCol={{
+                            span:
+                              24
+                          }}>
+                          <Upload {...uploadProps}
+                            fileList={[]}>
+                            <Button
+                              icon={<UploadOutlined />}>
                               Click to Upload
                             </Button>
-</Upload>
-</Form.Item>
-</Col>
-</Row>
-</Card>
-</Col>
-<Col xs={24}
-     sm={24}
-     md={8}>
-<Row>
-	<Col xs={24}
-	     sm={24}
-	     md={24}>
-	<Card
-	      title="Reporter">
-		<div className="mt-1">
-			<hr/>
+                          </Upload>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
+                <Col xs={24}
+                  sm={24}
+                  md={8}>
+                  <Row>
+                    <Col xs={24}
+                      sm={24}
+                      md={24}>
+                      <Card
+                        title="Reporter">
+                        <div className="mt-1">
+                          <hr />
                           {
                             reporters.map((values, i) =>
                               <div key={i}
-			     className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-				<div>
-					<Avatar size={40}
-					        className="font-size-sm"
-					        style={{
-					        backgroundColor:"red"
-					        }}>
+                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar size={40}
+                                    className="font-size-sm"
+                                    style={{
+                                      backgroundColor: "red"
+                                    }}>
                                     {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
                                   </Avatar>
-					<span className="ml-2">{values.firstname} {values.lastname}</span>
-				</div>
-				<Button icon={<InfoCircleOutlined/>}
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button icon={<InfoCircleOutlined />}
                                   type="default"
                                   size="small"
                                 >
                                   Details
                                 </Button>
-		</div>
+                              </div>
                             )
                           }
 
                         </div>
-</Card>
-<Card title="Victim">
-	<div className="mt-1">
-		<hr/>
+                      </Card>
+                      <Card title="Victim">
+                        <div className="mt-1">
+                          <hr />
                           {
                             victims.map((values, i) =>
                               <div key={i}
-		     className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-			<div>
-				<Avatar size={40}
-				        className="font-size-sm"
-				        style={{
-				        backgroundColor:"red"
-				        }}>
+                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar size={40}
+                                    className="font-size-sm"
+                                    style={{
+                                      backgroundColor: "red"
+                                    }}>
                                     {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
                                   </Avatar>
-				<span className="ml-2">{values.firstname} {values.lastname}</span>
-			</div>
-			<Button icon={<InfoCircleOutlined/>}
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button icon={<InfoCircleOutlined />}
                                   type="default"
                                   size="small"
                                 >
                                   Details
                                 </Button>
-	</div>
+                              </div>
                             )
                           }
 
                         </div>
-</Card>
-<Card title="Suspect">
-	<div className="mt-1">
-		<hr/>
+                      </Card>
+                      <Card title="Suspect">
+                        <div className="mt-1">
+                          <hr />
                           {
                             suspects.map((values, i) =>
                               <div key={i}
-		     className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-			<div>
-				<Avatar size={40}
-				        className="font-size-sm"
-				        style={{
-				        backgroundColor:"red"
-				        }}>
+                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar size={40}
+                                    className="font-size-sm"
+                                    style={{
+                                      backgroundColor: "red"
+                                    }}>
                                     {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
                                   </Avatar>
-				<span className="ml-2">{values.firstname} {values.lastname}</span>
-			</div>
-			<Button icon={<InfoCircleOutlined/>}
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button icon={<InfoCircleOutlined />}
                                   type="default"
                                   size="small"
                                 >
                                   Details
                                 </Button>
-	</div>
+                              </div>
                             )
                           }
 
                         </div>
-</Card>
-<Card title="Respondent">
-	<div className="mt-1">
-		<hr/>
+                      </Card>
+                      <Card title="Respondent">
+                        <div className="mt-1">
+                          <hr />
                           {
                             respondents.map((values, i) =>
                               <div key={i}
-		     className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-			<div>
-				<Avatar size={40}
-				        className="font-size-sm"
-				        style={{
-				        backgroundColor:"red"
-				        }}>
+                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                                <div>
+                                  <Avatar size={40}
+                                    className="font-size-sm"
+                                    style={{
+                                      backgroundColor: "red"
+                                    }}>
                                     {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
                                   </Avatar>
-				<span className="ml-2">{values.firstname} {values.lastname}</span>
-			</div>
-			<Button icon={<InfoCircleOutlined/>}
+                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                                </div>
+                                <Button icon={<InfoCircleOutlined />}
                                   type="default"
                                   size="small"
                                 >
                                   Details
                                 </Button>
-	</div>
+                              </div>
                             )
                           }
 
                         </div>
-</Card>
-</Col>
-</Row>
+                      </Card>
+                    </Col>
+                  </Row>
 
                   {/* <div className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
 	<Avatar size={30}
@@ -449,12 +449,12 @@ const UserFormView = (props) => {
       className="ml-2">Von Maniquis</span>
 </div> */}
                 </Col>
-</Row>
-</Form>
-</Card>
-</Col>
-</Row>
-</div>
+              </Row>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 };
 
