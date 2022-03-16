@@ -190,53 +190,6 @@ export const ResidentTableData = [
   },
 ];
 
-export const HouseholdTableColumns = [
-  {
-    title: "Household Number",
-    dataIndex: "household_number",
-    key: "household_number",
-  },
-  {
-    title: "Household Name",
-    dataIndex: "househole_name",
-    key: "househole_name",
-  },
-  {
-    title: "Purok",
-    dataIndex: "purok",
-    key: "purok",
-  },
-  {
-    title: "House Status",
-    dataIndex: "house_status",
-    key: "house_status",
-  },
-  {
-    title: "Family Planning",
-    dataIndex: "family_planning",
-    key: "family_planning",
-  },
-  {
-    title: "Ayuda",
-    dataIndex: "ayuda",
-    key: "ayuda",
-  },
-  {
-    title: "Water Source",
-    dataIndex: "water_source",
-    key: "water_source",
-  },
-  {
-    title: "Toilet Type",
-    dataIndex: "toilet_type",
-    key: "toilet_type",
-  },
-  {
-    title: "Waste Management",
-    dataIndex: "waste_management",
-    key: "waste_management",
-  },
-];
 
 export const ResidentTableColumns = [
   {
