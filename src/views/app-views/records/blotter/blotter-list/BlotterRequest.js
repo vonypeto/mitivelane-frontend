@@ -1,12 +1,38 @@
-import React from "react";
-import { Avatar, Tag, Row, Col, Drawer, Divider } from "antd";
-
+import React, { useState, useEffect } from "react";
+import { Avatar, Tag, Row, Col, Drawer, Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import utils from "utils";
 import VictimRequest from "assets/data/victim-request.data.json";
 import SubjectRequest from "assets/data/subjected-request.data.json";
 import RespondentRequest from "assets/data/respondent-request.data.json";
 
 const BlotterRequest = (props) => {
+  const [width, setWidth] = useState(0);
+  const [drawerWidth, setDrawerWidth] = useState(400);
+
+  const [height, setHeight] = useState(0);
+  const updateWindowDimensions = () => {
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
+  };
+  useEffect(
+    () => {
+      const listener = window.addEventListener(
+        "resize",
+        updateWindowDimensions
+      );
+      updateWindowDimensions();
+      if (drawerWidth < width) {
+        setDrawerWidth(drawerWidth);
+      } else if (385 > width) {
+        setDrawerWidth(width);
+      }
+
+      return listener;
+    },
+    [height],
+    [width]
+  );
   const { data, visible, close } = props;
   const victim = VictimRequest.filter(
     (victimdata) =>
@@ -30,190 +56,194 @@ const BlotterRequest = (props) => {
   const colortag2 = ["volcano", "orange", "gold", "lime"];
 
   return (
-    <Drawer
-      width={500}
-      placement="right"
-      onClose={close}
-      closable={false}
-      visible={visible}
-    >
-      <div className="mt-3 text-center">
-        <Avatar
-          size={80}
-          className="font-size-sm"
-          style={{ backgroundColor: "#" + data?.avatarColor }}
-        >
-          <div className="font-size-lg">{utils.getNameInitial(initial)}</div>
-        </Avatar>
-        <h3 className="mt-2 mb-0">{data?.reporter}</h3>
-        <span className="text-muted">656 Tantiongco St Morong Rizal</span>
-      </div>
-      <div className="pt-1 text-center">
-        <Tag className="mr-0 font-size-md" color="cyan">
-          {data?.status}
-        </Tag>
-      </div>
-
-      <Row>
-        <Col xs={24} sm={24} md={24}>
-          <Col xs={24} sm={24} md={24} className="w-100">
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Subject:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <span className="ml-5 font-weight-bold">
-                  {data?.classification}
-                </span>
-              </Col>
-            </Row>
-
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Subjected Persons:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                {subject.map((item, key) => {
-                  return (
-                    <div key={key} gutter={16} className="m-1">
-                      <Tag
-                        className="mr-0 font-size-sm"
-                        color={colortag2[(countercolor += 1) % 4]}
-                      >
-                        {item.subjectname}
-                      </Tag>
-                    </div>
-                  );
-                })}
-              </Col>
-            </Row>
-
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Victims:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                {victim.map((item, key) => {
-                  return (
-                    <div key={key} gutter={16} className="m-1">
-                      <Tag
-                        className="mr-0 font-size-sm"
-                        color={colortag[(countercolor += 1) % 4]}
-                      >
-                        {item.victimname}
-                      </Tag>
-                    </div>
-                  );
-                })}
-              </Col>
-            </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Respondent:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                {respondent.map((item, key) => {
-                  return (
-                    <div key={key} gutter={16} className="m-1">
-                      <Tag
-                        className="mr-0 font-size-sm"
-                        color={colortag[(countercolor += 1) % 4]}
-                      >
-                        {item.respondentname}
-                      </Tag>
-                    </div>
-                  );
-                })}
-              </Col>
-            </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Date Filed Report:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <span className="ml-5 font-weight-bold">
-                  {data?.daterecorded}
-                </span>
-              </Col>
-            </Row>
-
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Time Occured:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <span className="ml-5 font-weight-bold">
-                  {data?.incidenttime}
-                </span>
-              </Col>
-            </Row>
-
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Date Occured:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <span className="ml-5 font-weight-bold">asdad</span>
-              </Col>
-            </Row>
-
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Location:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <span className="ml-5 font-weight-bold">
-                  {data?.incidentlocation}
-                </span>
-              </Col>
-            </Row>
-
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Description:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <div className="text-right">
-                  <span className="ml-5 font-weight-bold">
-                    {data?.description}
+    <>
+      {" "}
+      <Drawer
+        title="Blotter Request"
+        width={500 > width ? width : 500}
+        placement="right"
+        onClose={close}
+        closable={true}
+        visible={visible}
+      >
+        {" "}
+        <div className="mt-3 text-center">
+          <Avatar
+            size={80}
+            className="font-size-sm"
+            style={{ backgroundColor: "#" + data?.avatarColor }}
+          >
+            <div className="font-size-lg">{utils.getNameInitial(initial)}</div>
+          </Avatar>
+          <h3 className="mt-2 mb-0">{data?.reporter}</h3>
+          <span className="text-muted">656 Tantiongco St Morong Rizal</span>
+        </div>
+        <div className="pt-1 text-center">
+          <Tag className="mr-0 font-size-md" color="cyan">
+            {data?.status}
+          </Tag>
+        </div>
+        <Row>
+          <Col xs={24} sm={24} md={24}>
+            <Col xs={24} sm={24} md={24} className="w-100">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Subject:
                   </span>
-                </div>
-              </Col>
-            </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
-              <Col xs={12} sm={12} md={9} className="text-left">
-                <span className=" font-weight-bold text-muted-resident">
-                  Attaches file:
-                </span>
-              </Col>
-              <Col xs={12} sm={12} md={15} className="text-right">
-                <div className="text-right">
-                  <span className="ml-5 font-weight-bold">evidence.mp4</span>
-                </div>
-              </Col>
-            </Row>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <span className="ml-5 font-weight-bold">
+                    {data?.classification}
+                  </span>
+                </Col>
+              </Row>
+
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Subjected Persons:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  {subject.map((item, key) => {
+                    return (
+                      <div key={key} gutter={16} className="m-1">
+                        <Tag
+                          className="mr-0 font-size-sm"
+                          color={colortag2[(countercolor += 1) % 4]}
+                        >
+                          {item.subjectname}
+                        </Tag>
+                      </div>
+                    );
+                  })}
+                </Col>
+              </Row>
+
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Victims:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  {victim.map((item, key) => {
+                    return (
+                      <div key={key} gutter={16} className="m-1">
+                        <Tag
+                          className="mr-0 font-size-sm"
+                          color={colortag[(countercolor += 1) % 4]}
+                        >
+                          {item.victimname}
+                        </Tag>
+                      </div>
+                    );
+                  })}
+                </Col>
+              </Row>
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Respondent:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  {respondent.map((item, key) => {
+                    return (
+                      <div key={key} gutter={16} className="m-1">
+                        <Tag
+                          className="mr-0 font-size-sm"
+                          color={colortag[(countercolor += 1) % 4]}
+                        >
+                          {item.respondentname}
+                        </Tag>
+                      </div>
+                    );
+                  })}
+                </Col>
+              </Row>
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Date Filed Report:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <span className="ml-5 font-weight-bold">
+                    {data?.daterecorded}
+                  </span>
+                </Col>
+              </Row>
+
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Time Occured:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <span className="ml-5 font-weight-bold">
+                    {data?.incidenttime}
+                  </span>
+                </Col>
+              </Row>
+
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Date Occured:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <span className="ml-5 font-weight-bold">asdad</span>
+                </Col>
+              </Row>
+
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Location:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <span className="ml-5 font-weight-bold">
+                    {data?.incidentlocation}
+                  </span>
+                </Col>
+              </Row>
+
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Description:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <div className="text-right">
+                    <span className="ml-5 font-weight-bold">
+                      {data?.description}
+                    </span>
+                  </div>
+                </Col>
+              </Row>
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top ">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <span className=" font-weight-bold text-muted-resident">
+                    Attaches file:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <div className="text-right">
+                    <span className="ml-5 font-weight-bold">evidence.mp4</span>
+                  </div>
+                </Col>
+              </Row>
+            </Col>
           </Col>
-        </Col>
-      </Row>
-    </Drawer>
+        </Row>
+      </Drawer>
+    </>
   );
 };
 

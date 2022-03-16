@@ -30,6 +30,8 @@
 
   "sidenav.reports.settlement": "Settlement Case",
 
+  "sidenav.reports.certificate": "Certificates",
+
   "sidenav.settings": "Settings",
   "sidenav.setting.audit": "Audit Setting",
   "sidenav.setting.billing": "Billing Setting",

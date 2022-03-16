@@ -15,9 +15,13 @@ const ConnectedAccount = () => {
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const facebookProvider = new firebase.auth.FacebookAuthProvider();
   const [isLoading, setIsLoading] = useState(true);
+  const [connectAccount, setConnectAccount] = useState(false);
   const [getGoogleProvider, setGoogleProvider] = useState();
   const [getFaceBookProvider, setFaceBookProvider] = useState();
   const [currentDataUser, setCurrentDataUser] = useState(auth.currentUser);
+  // useEffect(() => {
+  //   if (connectAccount) setConnectAccount(!connectAccount);
+  // }, [connectAccount]);
   useEffect(() => {
     setGoogleProvider(
       currentDataUser.providerData.filter(
@@ -54,6 +58,7 @@ const ConnectedAccount = () => {
 
   // Same code as above except it's for merging with a Google account
   const mergeAndUnmergeWithGoogle = () => {
+    setConnectAccount(true);
     setIsLoading(true);
     const user = auth.currentUser;
     setTimeout(() => {
@@ -72,25 +77,31 @@ const ConnectedAccount = () => {
     user
       .unlink(user.providerData[providerIndex].providerId)
       .then(() => {
-        setCurrentDataUser(user);
-
-        setGoogleProvider(
-          user.providerData.filter(
-            (provider) => provider.providerId === "google.com"
-          )
-        );
-        setFaceBookProvider(
-          user.providerData.filter(
-            (provider) => provider.providerId === "facebook.com"
-          )
-        );
-        setEditBarangay(false);
-        setIsLoading(false);
-
-        console.log("Unlinked successfully!");
+        setTimeout(() => {
+          setCurrentDataUser(user);
+          setConnectAccount(false);
+          setGoogleProvider(
+            user.providerData.filter(
+              (provider) => provider.providerId === "google.com"
+            )
+          );
+          setFaceBookProvider(
+            user.providerData.filter(
+              (provider) => provider.providerId === "facebook.com"
+            )
+          );
+          setEditBarangay(false);
+          setIsLoading(false);
+          console.log("Unlinked successfully!");
+        }, 1000);
       })
       .catch((error) => {
         console.error(error);
+        setTimeout(() => {
+          setConnectAccount(false);
+          setEditBarangay(false);
+          setIsLoading(false);
+        }, 1000);
       });
   };
 
@@ -109,28 +120,37 @@ const ConnectedAccount = () => {
     previousUser
       .linkWithPopup(provider)
       .then((result) => {
+        setConnectAccount(false);
+
+        setTimeout(() => {
+          setCurrentDataUser(result.user);
+          setGoogleProvider(
+            result.user.providerData.filter(
+              (provider) => provider.providerId === "google.com"
+            )
+          );
+          setFaceBookProvider(
+            result.user.providerData.filter(
+              (provider) => provider.providerId === "facebook.com"
+            )
+          );
+          setEditBarangay(false);
+          setIsLoading(false);
+
+          console.log("Accounts linked successfully!");
+        }, 1000);
         // Accounts successfully linked.
-        const secondAccountCred = result.credential;
+        // const secondAccountCred = result.credential;
         // previousUser.linkWithCredential(secondAccountCred);
         // auth.signInWithCredential(secondAccountCred);
-        setCurrentDataUser(result.user);
-        setGoogleProvider(
-          result.user.providerData.filter(
-            (provider) => provider.providerId === "google.com"
-          )
-        );
-        setFaceBookProvider(
-          result.user.providerData.filter(
-            (provider) => provider.providerId === "facebook.com"
-          )
-        );
-        setEditBarangay(false);
-        setIsLoading(false);
-
-        console.log("Accounts linked successfully!");
       })
       .catch((error) => {
         console.log(error);
+        setTimeout(() => {
+          setConnectAccount(false);
+          setEditBarangay(false);
+          setIsLoading(false);
+        }, 1000);
       });
   };
   const onClickEdit = () => {
@@ -174,7 +194,7 @@ const ConnectedAccount = () => {
                     <>
                       <Button size="medium">Connected</Button>{" "}
                       <Button
-                        loading={isLoading}
+                        loading={connectAccount}
                         size="medium"
                         onClick={() => {
                           mergeAndUnmergeWithFacebook();
@@ -186,13 +206,13 @@ const ConnectedAccount = () => {
                   ) : (
                     <>
                       <Button
-                        loading={isLoading}
+                        loading={connectAccount}
                         size="medium"
                         onClick={() => {
                           mergeAndUnmergeWithFacebook();
                         }}
                       >
-                        {isLoading ? "Connecting..." : "Connect"}
+                        {connectAccount ? "Connecting..." : "Connect"}
                       </Button>{" "}
                     </>
                   )}
@@ -240,7 +260,7 @@ const ConnectedAccount = () => {
                     <>
                       <Button size="medium">Connected</Button>{" "}
                       <Button
-                        loading={isLoading}
+                        loading={connectAccount}
                         size="medium"
                         onClick={() => mergeAndUnmergeWithGoogle()}
                       >
@@ -250,11 +270,11 @@ const ConnectedAccount = () => {
                   ) : (
                     <>
                       <Button
-                        loading={isLoading}
+                        loading={connectAccount}
                         size="medium"
                         onClick={() => mergeAndUnmergeWithGoogle()}
                       >
-                        {isLoading ? "Connecting..." : "Connect"}{" "}
+                        {connectAccount ? "Connecting..." : "Connect"}{" "}
                       </Button>{" "}
                     </>
                   )}

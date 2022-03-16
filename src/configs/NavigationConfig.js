@@ -9,6 +9,7 @@ import {
   ShopOutlined,
   ReconciliationOutlined,
   DollarCircleOutlined,
+  ContainerOutlined,
 } from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
@@ -124,6 +125,14 @@ const blotterNavTree = [
         path: `${APP_PREFIX_PATH}//records/settlement`,
         title: "sidenav.reports.settlement",
         icon: ReconciliationOutlined,
+        breadcrumb: false,
+        submenu: [],
+      },
+      {
+        key: "certificate-list",
+        path: `${APP_PREFIX_PATH}//cert-display/list`,
+        title: "sidenav.reports.certificate",
+        icon: ContainerOutlined,
         breadcrumb: false,
         submenu: [],
       },

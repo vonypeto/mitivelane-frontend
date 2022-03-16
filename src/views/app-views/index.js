@@ -34,6 +34,10 @@ export const AppViews = () => {
           component={lazy(() => import(`./components`))}
         />{" "}
         <Route
+          path={`${APP_PREFIX_PATH}/:barangay_id/cert-display`}
+          component={lazy(() => import(`./certificates`))}
+        />
+        <Route
           path={`${APP_PREFIX_PATH}/user/profile`}
           component={lazy(() => import(`./accounts`))}
         />

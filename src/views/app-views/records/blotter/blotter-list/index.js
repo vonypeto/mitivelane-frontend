@@ -14,7 +14,7 @@ import {
   Tag,
   Avatar,
   List,
-  message
+  message,
 } from "antd";
 import BlotterListData from "assets/data/blotter.data.json";
 import BlotterListRequestData from "assets/data/blotter-request.data.json";
@@ -40,10 +40,8 @@ import utils from "utils";
 import { Dropdown } from "antd";
 import UserView from "./BlotterRequest";
 
-import {
-  BlotterReportMost
-} from "./BlotterData";
-import { COLORS } from 'constants/ChartConstant';
+import { BlotterReportMost } from "./BlotterData";
+import { COLORS } from "constants/ChartConstant";
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
@@ -52,19 +50,16 @@ const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
 
 const BlotterRecord = (props) => {
-  const {
-    currentBarangay,
-    generateToken
-  } = useAuth();
+  const { currentBarangay, generateToken } = useAuth();
 
   const { param_url } = props;
   let history = useHistory();
 
   const [blotterlist, setBlotterList] = useState([]);
-  const [blotterlistData, setBlotterlistData] = useState([])
+  const [blotterlistData, setBlotterlistData] = useState([]);
   const [blotterlistLoading, setBlotterListLoading] = useState(true);
 
-  const [sessionData, setSessionData] = useState([0, 0, 0, 0])
+  const [sessionData, setSessionData] = useState([0, 0, 0, 0]);
 
   const [blotterlistrequest, setBlotterListRequest] = useState(
     BlotterListRequestData
@@ -85,47 +80,54 @@ const BlotterRecord = (props) => {
   const [selectedUser, SetSelectedUser] = useState(null);
 
   useEffect(() => {
-    getBlotters(currentBarangay)
-    getRecordCases(currentBarangay)
-  }, [])
+    getBlotters(currentBarangay);
+    getRecordCases(currentBarangay);
+  }, []);
 
   const getBlotters = (currentBarangay) => {
-    axios.get("/api/blotter/get-blotters/" + currentBarangay, generateToken()[1]).then((response) => {
-      console.log("Blotters ", response.data)
-      setBlotterList(response.data)
-      setBlotterlistData(response.data)
-      setBlotterListLoading(false)
-    }).catch(() => {
-      message.error("Could not fetch the data in the server!")
-    });
-  }
+    axios
+      .get("/api/blotter/get-blotters/" + currentBarangay, generateToken()[1])
+      .then((response) => {
+        console.log("Blotters ", response.data);
+        setBlotterList(response.data);
+        setBlotterlistData(response.data);
+        setBlotterListLoading(false);
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+  };
 
   const getRecordCases = (currentBarangay) => {
-    axios.get("/api/blotter/record-cases/" + currentBarangay, generateToken()[1]).then((response) => {
-      console.log("Record Cases", response.data)
-      setSessionData(response.data)
-    }).catch(() => {
-      console.log("Error")
-    });
-  }
+    axios
+      .get("/api/blotter/record-cases/" + currentBarangay, generateToken()[1])
+      .then((response) => {
+        console.log("Record Cases", response.data);
+        setSessionData(response.data);
+      })
+      .catch(() => {
+        console.log("Error");
+      });
+  };
 
   const deleteBlotter = (_ids) => {
-    axios.post("/api/blotter/delete-blotter", { _ids }, generateToken()[1]).then((response) => {
-      // message.destroy()
-      if (response.data == "Success") {
-        getRecordCases(currentBarangay)
-        return message.success("Successfully Deleted");
-
-      } else {
-        return message.error("Error, please try again.")
-      }
-
-    }).catch(error => {
-      console.log(error)
-      // message.destroy()
-      message.error("The action can't be completed, please try again.")
-    });
-  }
+    axios
+      .post("/api/blotter/delete-blotter", { _ids }, generateToken()[1])
+      .then((response) => {
+        // message.destroy()
+        if (response.data == "Success") {
+          getRecordCases(currentBarangay);
+          return message.success("Successfully Deleted");
+        } else {
+          return message.error("Error, please try again.");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        // message.destroy()
+        message.error("The action can't be completed, please try again.");
+      });
+  };
 
   const showUserProfile = (UserList) => {
     SetUserProfileVisible(true);
@@ -163,10 +165,10 @@ const BlotterRecord = (props) => {
   };
 
   const BlottereditwDetails = (row) => {
-    history.push(`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`);
+    history.push(
+      `/app/${currentBarangay}/records/blotter-record/${row._id}/edit`
+    );
   };
-
-
 
   const BlotterDeleteRow = (row) => {
     const objKey = "_id";
@@ -178,17 +180,17 @@ const BlotterRecord = (props) => {
         setSelectedRowsBlotter([]);
       });
 
-      var _ids = []
-      selectedRowsBlotter.map(values => {
-        _ids.push(values._id)
-      })
+      var _ids = [];
+      selectedRowsBlotter.map((values) => {
+        _ids.push(values._id);
+      });
 
-      deleteBlotter(_ids)
+      deleteBlotter(_ids);
     } else {
       data = utils.deleteArrayRow(data, objKey, row._id);
       setBlotterList(data);
 
-      deleteBlotter([row._id])
+      deleteBlotter([row._id]);
     }
   };
   const BlotterRequestDeleteRow = (row) => {
@@ -224,11 +226,13 @@ const BlotterRecord = (props) => {
             className="font-size-sm"
             style={{ backgroundColor: "#" + "04d182" }}
           >
-            {utils.getNameInitial(`${record.reporters[0].firstname} ${record.reporters[0].lastname}`)}
+            {utils.getNameInitial(
+              `${record.reporters[0].firstname} ${record.reporters[0].lastname}`
+            )}
           </Avatar>
           <span className="ml-2">{`${record.reporters[0].firstname} ${record.reporters[0].lastname}`}</span>
         </div>
-      )
+      ),
     },
 
     {
@@ -237,9 +241,11 @@ const BlotterRecord = (props) => {
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
       render: (_, record) => (
         <div className="d-flex align-items-center">
-          <span className="ml-2">{new Date(record.date_of_incident).toDateString()}</span>
+          <span className="ml-2">
+            {new Date(record.date_of_incident).toDateString()}
+          </span>
         </div>
-      )
+      ),
     },
     {
       title: "Date Reported",
@@ -247,9 +253,11 @@ const BlotterRecord = (props) => {
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
       render: (_, record) => (
         <div className="d-flex align-items-center">
-          <span className="ml-2">{new Date(record.createdAt).toDateString()}</span>
+          <span className="ml-2">
+            {new Date(record.createdAt).toDateString()}
+          </span>
         </div>
-      )
+      ),
     },
     {
       title: "Location",
@@ -273,10 +281,10 @@ const BlotterRecord = (props) => {
               record.settlement_status === "Settled"
                 ? "geekblue"
                 : record.settlement_status === "Unsettled"
-                  ? "orange"
-                  : record.settlement_status === "Scheduled"
-                    ? "cyan"
-                    : "gold"
+                ? "orange"
+                : record.settlement_status === "Scheduled"
+                ? "cyan"
+                : "gold"
             }
           >
             {record.settlement_status}
@@ -349,7 +357,7 @@ const BlotterRecord = (props) => {
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => { }}
+                onClick={() => {}}
                 size="small"
               />
             </Tooltip>
@@ -471,23 +479,26 @@ const BlotterRecord = (props) => {
   );
 
   //  RECORD CASES
-  const sessionColor = [COLORS[0], COLORS[1], COLORS[3], COLORS[5]]
-  const sessionLabels = ['Settled', 'Scheduled', 'Unscheduled', 'Unsettled']
+  const sessionColor = [COLORS[0], COLORS[1], COLORS[3], COLORS[5]];
+  const sessionLabels = ["Settled", "Scheduled", "Unscheduled", "Unsettled"];
   const jointSessionData = () => {
-    let arr = []
+    let arr = [];
     for (let i = 0; i < sessionData.length; i++) {
       const data = sessionData[i];
       const label = sessionLabels[i];
-      const color = sessionColor[i]
-      arr = [...arr, {
-        data: data,
-        label: label,
-        color: color
-      }]
+      const color = sessionColor[i];
+      arr = [
+        ...arr,
+        {
+          data: data,
+          label: label,
+          color: color,
+        },
+      ];
     }
-    return arr
-  }
-  const conbinedSessionData = jointSessionData()
+    return arr;
+  };
+  const conbinedSessionData = jointSessionData();
 
   const RecordCases = () => (
     <DonutChartWidget
