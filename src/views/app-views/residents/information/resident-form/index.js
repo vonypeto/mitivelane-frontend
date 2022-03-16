@@ -112,27 +112,46 @@ const MainFormList = (props) => {
   };
 
   const onFinishAdd = async (values) => {
-    await axios
-      .post("/api/resident/add", { values, barangay_id }, generateToken()[1])
-      .then((res) => {
-        console.log(res.data);
-      });
+    try {
+      await axios
+        .post("/api/resident/add", { values, barangay_id }, generateToken()[1])
+        .then((res) => {
+          console.log(res.data);
+        });
+    } catch (error) {
+      console.log(error)
+      message.error(`Error occurred, please try again later!`);
+      return
+    }
+
+    message.success(`Added ${values.firstname} to Resident list`);
+    setTimeout(() => {
+      history.goBack()
+    }, 2000);
   };
 
   const onFinishUpdate = async (values) => {
-    await axios
-      .post(
-        "/api/resident/update",
-        { values, barangay_id, resident_id: id },
-        generateToken()[1]
-      )
-      .then((res) => {
-        console.log(res.data);
-      });
+    try {
+      await axios
+        .post(
+          "/api/resident/update",
+          { values, barangay_id, resident_id: id },
+          generateToken()[1]
+        )
+        .then((res) => {
+          console.log(res.data);
+        });
+    } catch (error) {
+      console.log(error)
+      message.error(`Error occurred, please try again later!`);
+      return
+    }
+
+    message.success(`Resident information has been updated`);
+
   };
 
   const onFinish = (values) => {
-    console.log("values from form", values);
     setSubmitLoading(true);
     form
       .validateFields()
@@ -141,13 +160,11 @@ const MainFormList = (props) => {
           setSubmitLoading(false);
           if (mode === ADD) {
             //RESIDENT INSERT ADD
-            message.success(`Added ${values.firstname} to Resident list`);
             onFinishAdd(values);
           }
           if (mode === EDIT) {
             //RESIDENT INSERT EDIT
             onFinishUpdate(values);
-            message.success(`Resident saved`);
           }
         }, 1500);
       })
@@ -184,8 +201,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Resident"
                   : mode === EDIT
-                  ? `Edit Resident`
-                  : "View Resident"}{" "}
+                    ? `Edit Resident`
+                    : "View Resident"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">

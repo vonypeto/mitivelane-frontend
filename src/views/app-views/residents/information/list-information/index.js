@@ -30,13 +30,14 @@ const ListInformation = (props) => {
 
   const { generateToken, currentBarangay } = useAuth();
   const barangay_id = currentBarangay;
-  console.log(barangay_id)
+
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
   let history = useHistory();
   const [list, setList] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isResidentLoading, setIsResidentLoading] = useState(true);
 
   useEffect(() => {
     getAllResident()
@@ -47,6 +48,7 @@ const ListInformation = (props) => {
       .post("/api/resident/getAll", { barangay_id }, generateToken()[1], { cancelToken })
       .then((res) => {
         setList(res.data);
+        setIsResidentLoading(false)
       });
 
     return () => {
@@ -237,7 +239,7 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={cardDropdown(ResidentList)}>
+          <Card title="Resident Master List" extra={cardDropdown(ResidentList)} loading={isResidentLoading}>
             <Flex
               alignItems="center"
               className=""
