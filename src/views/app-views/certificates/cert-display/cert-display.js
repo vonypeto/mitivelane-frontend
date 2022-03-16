@@ -15,6 +15,13 @@ const CertDisplay = (props) => {
         lg={18}
         xl={18}
       >
+        {" "}
+        <PDFDownloadLink
+          document={<BasicDocument />}
+          fileName="fee_acceptance.pdf"
+        >
+          dasd
+        </PDFDownloadLink>{" "}
         <Card
           className="text-center pdf-template-border"
           style={{
@@ -87,12 +94,6 @@ const CertDisplay = (props) => {
               />
             </Col>
           </Row>
-          <PDFDownloadLink
-            document={<BasicDocument />}
-            fileName="fee_acceptance.pdf"
-          >
-            dasd
-          </PDFDownloadLink>{" "}
         </Card>
       </Col>
     </Row>

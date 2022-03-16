@@ -87,8 +87,8 @@ const AccountSession = () => {
     const data = {
       auth_id: localStorage.getItem(AUTH_TOKEN),
     };
-    axios
-      .post("/api/app/user/sessions", data)
+    await axios
+      .post("/api/app/user/sessions", data, generateToken()[1])
       .then((response) => {
         setIsLoading(false);
         setSessionDataAll(response.data.session);

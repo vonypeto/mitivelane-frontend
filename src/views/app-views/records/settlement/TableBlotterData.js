@@ -1,5 +1,5 @@
-import { React, useState } from "react";
-import { Row, Col ,Table, Input, Button, Tooltip, Card } from "antd";
+import { React, useState, useEffect } from "react";
+import { Row, Col, Table, Input, Button, Tooltip, Card } from "antd";
 import QueueAnim from "rc-queue-anim";
 import Userview from "./UserFormView";
 import Flex from "components/shared-components/Flex";
@@ -11,15 +11,21 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 const TableBlotterData = (props) => {
-  const { testout, barangay_id, blotterData, blotterlistLoading} = props;
-  const [blotterlist, setBlotterListData] = useState(blotterData);
+  const { testout, barangay_id, blotterData, blotterlistLoading } = props;
+  const [blotterlist, setBlotterList] = useState(blotterData);
+  const [blotterlistData, setBlotterListData] = useState(blotterData);
   const [selectShow, setShow] = useState(true);
   const [blotterselectedRows, setBlotterSelectedRows] = useState([]);
   const [blotterselectedRowKeys, setBlotterSelectedRowKeys] = useState([]);
-  const [selectedUser, setSelectedUser] = useState([]);
+  const [selectedUserData, setSelectedUserData] = useState({});
+  
+  useEffect(() => {
+	  setBlotterList(blotterData)
+	  setBlotterListData(blotterData)
+	  
+  }, [blotterData, blotterlistData])
 
   const selectOutShow = (event) => {
-    console.log("test");
     return setShow(event);
   };
 
@@ -35,13 +41,13 @@ const TableBlotterData = (props) => {
     const value = e.currentTarget.value;
     const searchArray = e.currentTarget.value ? blotterlist : blotterData;
     const data = utils.wildCardSearch(searchArray, value);
-    setBlotterListData(data);
+    setBlotterList(data);
     setBlotterSelectedRowKeys([]);
-    console.log(e.currentTarget.value);
+    // console.log(e.currentTarget.value);
   };
 
   const Onclick = () => {
-    testout("test");
+    // testout("test");
   };
 
   const Blottercolumns = [
@@ -78,19 +84,19 @@ const TableBlotterData = (props) => {
   ];
 
   const renderData = (e) => {
+    const data = e.row
     setShow(!selectShow);
-    console.log(e.row.blotter_id);
-    // setSelectedUser(e.blotter_id);
 
+    console.log("Data ", data)
+    setSelectedUserData(data);
 
-    
   };
 
   const ViewDetails = (data) => {
     return (
       <>
         <Tooltip>
-          <Button onClick={() =>  renderData(data)}>Details</Button>
+          <Button onClick={() => renderData(data)}>Details</Button>
         </Tooltip>
       </>
     );
@@ -104,37 +110,37 @@ const TableBlotterData = (props) => {
       >
         {selectShow ? (
           <div key="a">
-              <Row>
-        <Col xs={24} sm={24} md={24}>
-            <Card>
-              <div className="mb-3 ">
-                <Input
-                  placeholder="Search"
-                  prefix={<SearchOutlined />}
-                  onChange={(e) => onSearch(e)}
-                />
-              </div>
+            <Row>
+              <Col xs={24} sm={24} md={24}>
+                <Card>
+                  <div className="mb-3 ">
+                    <Input
+                      placeholder="Search"
+                      prefix={<SearchOutlined />}
+                      onChange={(e) => onSearch(e)}
+                    />
+                  </div>
 
-              <div className="table-responsive">
-                {/* {barangay_id}
+                  <div className="table-responsive">
+                    {/* {barangay_id}
                 <Button onClick={Onclick}> change</Button> */}
 
-                <Table
-                  loading={blotterlistLoading}
-                  columns={Blottercolumns}
-                  dataSource={blotterData}
-                  scroll={{ x: "max-content" }}
-                  rowKey="blotter_id"
-                  //  rowSelection={{
-                  //  selectedRowKeys: blotterselectedRowKeys,
-                  //  type: 'checkbox',
-                  //  preserveSelectedRowKeys: false,
-                  //  ...rowSelectioBlotter,
-                  //  }}
-                />
-              </div>
-            </Card>
-            </Col>
+                    <Table
+                      loading={blotterlistLoading}
+                      columns={Blottercolumns}
+                      dataSource={blotterlist}
+                      scroll={{ x: "max-content" }}
+                      rowKey="_id"
+                    //  rowSelection={{
+                    //  selectedRowKeys: blotterselectedRowKeys,
+                    //  type: 'checkbox',
+                    //  preserveSelectedRowKeys: false,
+                    //  ...rowSelectioBlotter,
+                    //  }}
+                    />
+                  </div>
+                </Card>
+              </Col>
             </Row>
           </div>
         ) : (
@@ -147,7 +153,7 @@ const TableBlotterData = (props) => {
             >
               {!selectShow ? (
                 <div key="c">
-                  <Userview selectOutShow={selectOutShow.bind(this)} />
+                  <Userview selectOutShow={selectOutShow.bind(this)} initialData={selectedUserData}/>
                 </div>
               ) : null}
             </QueueAnim>

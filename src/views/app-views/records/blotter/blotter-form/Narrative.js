@@ -1,4 +1,5 @@
-import { React } from "react";
+import React from "react";
+import { useLocation } from "react-router-dom";
 import {
   Tag,
   Button,
@@ -17,6 +18,7 @@ import {
 } from "antd";
 import Flex from "components/shared-components/Flex";
 import { Editor } from "react-draft-wysiwyg";
+import { convertFromRaw, EditorState } from "draft-js";
 import { SettlementData } from "./BlotterData";
 import moment from "moment";
 
@@ -25,6 +27,19 @@ const dateFormat = "YYYY/MM/DD";
 const { Option } = Select;
 
 const Narrative = (props) => {
+  const location = useLocation();
+  const initialData = (location.current == "EDIT") ? location.data : { narrative: null }
+
+  const content = {
+    entityMap: {},
+    blocks: (initialData.narrative != null)
+      ? initialData.narrative.blocks
+      : []
+  }
+
+  const contentState = convertFromRaw(content);
+  const editorState = EditorState.createWithContent(contentState);
+
   return (
     <Row gutter={16}>
       <Col xs={24} sm={24} md={17}>
@@ -47,11 +62,15 @@ const Narrative = (props) => {
           <Flex alignItems="center" justifyContent="between" mobileFlex={false}>
             <Flex className="mb-1" mobileFlex={false}>
               <div className="">
-                <Editor
-                  toolbarClassName="toolbarClassName"
-                  wrapperClassName="wrapperClassName"
-                  editorClassName="editorClassName"
-                />
+                <Form.Item
+                  name="narrative">
+                  <Editor
+                    defaultEditorState={editorState}
+                    toolbarClassName="toolbarClassName"
+                    wrapperClassName="wrapperClassName"
+                    editorClassName="editorClassName"
+                  />
+                </Form.Item>
               </div>
             </Flex>
           </Flex>
@@ -85,7 +104,7 @@ const Narrative = (props) => {
             name="incident_type"
             label="Type of Incident"
             rules={[{ required: true }]}>
-              <Input placeholder="Incident Type" />
+            <Input placeholder="Incident Type" />
           </Form.Item>
           <Form.Item
             name="time_of_incident"
@@ -114,7 +133,7 @@ const Narrative = (props) => {
             name="place_incident"
             label="Place of Incident"
             rules={[{ required: true }]}>
-              <Input placeholder="Place of incident" />
+            <Input placeholder="Place of incident" />
           </Form.Item>
           <Form.Item
             name="time_schedule"

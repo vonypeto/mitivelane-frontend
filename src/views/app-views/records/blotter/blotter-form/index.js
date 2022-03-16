@@ -100,6 +100,7 @@ const MainFormList = (props) => {
           blotter_id: response.data.blotter_id,
           settlement_status: response.data.settlement_status,
           subject: response.data.subject,
+          narrative: response.data.narrative,
           incident_type: response.data.incident_type,
           place_incident: response.data.place_incident,
           time_of_incident: new moment(response.data.time_of_incident),
@@ -139,6 +140,7 @@ const MainFormList = (props) => {
         .then((response) => {
           message.destroy();
           if (response.data == "Success") {
+            history.goBack()
             return message.success(
               `Added ${values.blotter_id} to Blotter list`
             );
@@ -182,6 +184,7 @@ const MainFormList = (props) => {
         message.destroy();
         if (response.data == "Success") {
           message.success(`Edit Blotter saved`);
+          history.goBack()
         } else {
           return message.error("Error, please try again.");
         }
@@ -253,8 +256,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Case"
                   : mode === EDIT
-                  ? `Edit Cases`
-                  : "View Cases"}{" "}
+                    ? `Edit Cases`
+                    : "View Cases"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">

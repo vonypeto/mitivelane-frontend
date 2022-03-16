@@ -41,18 +41,20 @@ const AccountDetails = () => {
     const data = {
       auth_id: localStorage.getItem(AUTH_TOKEN),
     };
-    await axios.post("/api/app/user/details", data).then((response) => {
-      setIsLoading(false);
-      setDisplayName(response.data.full_name);
-      // setInitialVal({
-      //   email: currentUser?.email,
-      //   name: response.data.full_name,
-      // });
-      form.setFieldsValue({
-        email: currentUser?.email,
-        name: response.data.full_name,
+    await axios
+      .post("/api/app/user/details", data, generateToken()[1])
+      .then((response) => {
+        setIsLoading(false);
+        setDisplayName(response.data.full_name);
+        // setInitialVal({
+        //   email: currentUser?.email,
+        //   name: response.data.full_name,
+        // });
+        form.setFieldsValue({
+          email: currentUser?.email,
+          name: response.data.full_name,
+        });
       });
-    });
   };
   //mount data
   // useEffect(() => {

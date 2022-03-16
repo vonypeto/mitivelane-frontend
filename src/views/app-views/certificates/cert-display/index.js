@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import SplitPane, { Pane } from "react-split-pane";
 import CertDisplay from "./cert-display";
 import InputCert from "./input-display";
-
 import { Col, Row } from "antd";
+import FontPicker from "font-picker-react";
+
 const Certificates = () => {
+  const refs = useRef();
   const [parentData, setParentData] = useState({});
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+  const [activeFontFamily, setActiveFontFamily] = useState("Ariel");
+  function handleChange(value) {
+    console.log(`selected ${value}`);
+  }
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
   };
-  const setData = (data) => {
-    setParentData(data);
-  };
+
   useEffect(
     () => {
       const listener = window.addEventListener(
@@ -33,6 +37,7 @@ const Certificates = () => {
 
   return (
     <div>
+      {" "}
       <PageHeaderAlt className="padding-none border-bottom" overlap>
         <div className="">
           <Flex
@@ -70,6 +75,16 @@ const Certificates = () => {
             md={15}
             lg={12}
           >
+            {" "}
+            <FontPicker
+              className="ant-select ant-select-single ant-select-show-arrow"
+              apiKey={process.env.REACT_APP_FONT_ACCESS}
+              activeFontFamily={activeFontFamily}
+              onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
+            />{" "}
+            <div ref={refs} id="test_id" className="apply-font">
+              sdada
+            </div>
             <CertDisplay width={width} height={height} data={parentData} />
           </Col>{" "}
         </Row>

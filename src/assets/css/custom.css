@@ -236,3 +236,60 @@
 .custom-file-upload input {
   display: none !important;
 }
+.testtest {
+  width: 80px;
+  height: 50px;
+  background-color: #808080;
+  margin: 20px;
+}
+div[id^="font-picker"] {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  background-color: white !important;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  transition-delay: 0s border-color;
+}
+div[id^="font-picker"] .dropdown-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 37px !important;
+  padding: 0 10px;
+
+  background: transparent !important;
+}
+
+.dropdown-font-family {
+  color: rgb(88, 88, 88, 1) !important;
+}
+div[id^="font-picker"] ul {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: white !important;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  -webkit-overflow-scrolling: touch;
+}
+div[id^="font-picker"] ul li button.active-font {
+  background: #ecf1ff !important;
+  color: #437df7 !important;
+}
+div[id^="font-picker"] ul li button:hover,
+div[id^="font-picker"] ul li button:focus {
+  background: #ecf1ff !important;
+}
+
+div[id^="font-picker"]:hover {
+  border: 1px solid;
+  border-color: #3e79f7;
+  transition-delay: 0.2s;
+}

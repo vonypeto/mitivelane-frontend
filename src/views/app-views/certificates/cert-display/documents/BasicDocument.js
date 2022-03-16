@@ -1,22 +1,30 @@
 import React from "react";
 import { Page, Text, Font, Document, StyleSheet } from "@react-pdf/renderer";
-
+import { Font_Oswald, Font_Roboto, Font_Bebas } from "assets/font";
 const BasicDocument = () => {
   Font.register({
-    family: "Oswald",
-    src: "https://fonts.gstatic.com/s/oswald/v13/Y_TKV6o8WovbUd3m_X9aAA.ttf",
+    family: "Bebas Neue",
+    src: Font_Bebas,
   });
-
+  Font.register({
+    family: "Roboto",
+    src: Font_Roboto,
+  });
+  Font.register({
+    family: "Oswald",
+    src: Font_Oswald,
+  });
   const styles = StyleSheet.create({
     body: {
       paddingTop: 35,
       paddingBottom: 65,
       paddingHorizontal: 35,
+      fontFamily: "Bebas Neue",
     },
     title: {
       fontSize: 24,
       textAlign: "center",
-      fontFamily: "Oswald",
+      fontFamily: "Bebas Neue",
     },
     author: {
       fontSize: 12,
@@ -32,7 +40,7 @@ const BasicDocument = () => {
       margin: 12,
       fontSize: 14,
       textAlign: "justify",
-      fontFamily: "Times-Roman",
+      fontFamily: "Bebas Neue",
     },
     image: {
       marginVertical: 15,
