@@ -9,8 +9,8 @@ const CertDisplay = (props) => {
       <Col
         justify="center"
         className="pr-1"
-        xs={23}
-        sm={23}
+        xs={22}
+        sm={19}
         md={18}
         lg={18}
         xl={18}
@@ -23,22 +23,24 @@ const CertDisplay = (props) => {
           dasd
         </PDFDownloadLink>{" "}
         <Card
-          className="text-center pdf-template-border"
+          className="text-center pdf-template-border apply-font"
           style={{
             backgroundColor: "#FFFFFF",
             height:
               props.width >= 1920
                 ? 697
                 : props.width >= 1080
-                ? 540
+                ? 500
+                : props.width >= 728
+                ? 600
                 : props.width >= 500
-                ? 540
-                : 450,
+                ? 580
+                : 550,
             width:
               props.width >= 1920
                 ? props.width - (props.height + 330)
-                : props.width >= 1440
-                ? props.width - props.height
+                : props.width >= 1800
+                ? props.width - (props.height + 180)
                 : null,
           }}
         >
@@ -54,7 +56,13 @@ const CertDisplay = (props) => {
             >
               <Image
                 width={
-                  props.width >= 1920 ? 80 : props.width >= 1024 ? 60 : null
+                  props.width >= 1920
+                    ? 80
+                    : props.width >= 1024
+                    ? 60
+                    : props.width >= 768
+                    ? 50
+                    : 60
                 }
                 className="rounded"
                 src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
@@ -87,7 +95,9 @@ const CertDisplay = (props) => {
                     ? 80
                     : props.width >= 1024
                     ? 60
-                    : props.width >= 1920
+                    : props.width >= 768
+                    ? 50
+                    : 60
                 }
                 className="rounded"
                 src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"

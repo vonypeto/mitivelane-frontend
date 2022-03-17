@@ -12,7 +12,7 @@ const Certificates = () => {
   const [parentData, setParentData] = useState({});
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  const [activeFontFamily, setActiveFontFamily] = useState("Ariel");
+  const [activeFontFamily, setActiveFontFamily] = useState("Open Sans");
   function handleChange(value) {
     console.log(`selected ${value}`);
   }
@@ -82,6 +82,7 @@ const Certificates = () => {
               activeFontFamily={activeFontFamily}
               onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
             />{" "}
+            {console.log(activeFontFamily)}
             <div ref={refs} id="test_id" className="apply-font">
               sdada
             </div>
