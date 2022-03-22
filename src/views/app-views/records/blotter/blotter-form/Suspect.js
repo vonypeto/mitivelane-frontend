@@ -13,6 +13,7 @@ import {
   message,
   Select,
 } from "antd";
+import { useHistory } from "react-router-dom";
 import ResidentListData from "assets/data/resident.data.json";
 import Flex from "components/shared-components/Flex";
 import {
@@ -36,7 +37,8 @@ export const resetSuspect = (() => {
 })
 
 const Suspect = (props) => {
-  const { residentlists, residentlistLoading, initialSuspects } = props;
+  const history = useHistory();
+  const { residentlists, residentlistLoading, initialSuspects, barangayId} = props;
 
   const [residentlist, setResidentList] = useState([]);
   const [residentlistData, setResidentListData] = useState([]);
@@ -60,6 +62,10 @@ const Suspect = (props) => {
     suspect = initialSuspects
 
   }, [initialSuspects, initialValues])
+  
+  const ResidentDetail = (residentId) => {
+    history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
+  }
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -240,6 +246,7 @@ const Suspect = (props) => {
                 {elm.firstname} {elm.middlename} {elm.lastname}
                 <div>
                   <Button
+				    onClick = {() => ResidentDetail(elm.resident_id)}
                     icon={<InfoCircleOutlined />}
                     type="default"
                     size="small"

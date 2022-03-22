@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Row,
   Col,
@@ -13,6 +13,9 @@ import {
 import ChartWidget from "components/shared-components/ChartWidget";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import DataDisplayWidget from "components/shared-components/DataDisplayWidget";
+
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
 
 import {
   VisitorChartData,
@@ -189,10 +192,31 @@ const tableColumns = [
 ];
 
 export const DefaultDashboard = () => {
+  const { currentBarangay, generateToken } = useAuth();
+	  
   const [visitorChartData] = useState(VisitorChartData);
   const [newMembersData] = useState(NewMembersData);
   const [recentBlotterCaseData] = useState(RecentBlotterCaseData);
   const { direction } = useSelector((state) => state.theme);
+  
+
+  
+  const [blotterlist, setBlotterList] = useState([]);
+  
+  useEffect(() => {
+	  getLatestBlotters()
+  }, [])
+  
+  const getLatestBlotters = () => {
+	  axios
+      .get("/api/blotter/get-latest-blotters/" + currentBarangay, generateToken()[1])
+      .then((response) => {
+        console.log("Latest Blotter", response.data);
+      })
+      .catch(() => {
+        console.log("Error");
+      });
+  }
 
   return (
     <>
@@ -219,7 +243,7 @@ export const DefaultDashboard = () => {
                   columns={tableColumns}
                   dataSource={recentBlotterCaseData}
                   rowKey="id"
-                  pagination="true"
+                  pagination={false}
                 />
               </Card>
             </Col>
