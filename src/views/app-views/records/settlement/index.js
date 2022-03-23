@@ -27,16 +27,16 @@ const index = (props) => {
             <DynamicCases barangay_id={param_url} caseType="Scheduled" />
           </TabPane>
           <TabPane tab="Unscheduled Cases" key="2">
-          <DynamicCases barangay_id={param_url} caseType="Unscheduled" />
+            <DynamicCases barangay_id={param_url} caseType="Unscheduled" />
 
           </TabPane>
 
-          <TabPane tab="Unsettled Cases"  key="3">
-          <DynamicCases barangay_id={param_url} caseType="Unsettled" />
+          <TabPane tab="Unsettled Cases" key="3">
+            <DynamicCases barangay_id={param_url} caseType="Unsettled" />
 
           </TabPane>
-          <TabPane tab="Settled Cases"  key="4">
-          <DynamicCases barangay_id={param_url} caseType="Settled" />
+          <TabPane tab="Settled Cases" key="4">
+            <DynamicCases barangay_id={param_url} caseType="Settled" />
 
           </TabPane>
 

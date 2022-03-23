@@ -133,6 +133,8 @@ const MainFormList = (props) => {
       message.error("Please enter all required field ");
     } else {
       // console.log("Blotter Data ", values)
+
+      setSubmitLoading(true);
       message.loading("Creating Blotter...", 0);
 
       axios
@@ -174,6 +176,7 @@ const MainFormList = (props) => {
     values.suspects = validateData(initialSuspects, suspect);
     values.respondents = validateData(initialRespondents, respondent);
 
+    setSubmitLoading(true);
     message.loading("Editing Blotter...", 0);
 
     // console.log("Blotter Data ", values)
@@ -210,7 +213,6 @@ const MainFormList = (props) => {
   };
 
   const onFinish = () => {
-    setSubmitLoading(true);
     form
       .validateFields()
       .then((values) => {
@@ -288,6 +290,7 @@ const MainFormList = (props) => {
                   residentlists={residentlists}
                   residentlistLoading={residentlistLoading}
                   initialReporters={initialReporters}
+				  barangayId={currentBarangay}
                 />
               </TabPane>
               <TabPane tab="Victim Data" key="2">

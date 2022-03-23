@@ -1,14 +1,11 @@
-
-
 import React from 'react';
 import BlotterForm from '../blotter-form';
 
 const AddBlotter = (props) => {
-	const {param_url} = props;
+	const { param_url } = props;
 	return (
 		<div>
-			
-		<BlotterForm param={[param_url]} mode="ADD"/>
+			<BlotterForm param={[param_url]} mode="ADD" />
 		</div>
 	)
 }

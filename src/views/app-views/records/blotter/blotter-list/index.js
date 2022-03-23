@@ -292,10 +292,10 @@ const BlotterRecord = (props) => {
               record.settlement_status === "Settled"
                 ? "geekblue"
                 : record.settlement_status === "Unsettled"
-                ? "orange"
-                : record.settlement_status === "Scheduled"
-                ? "cyan"
-                : "gold"
+                  ? "orange"
+                  : record.settlement_status === "Scheduled"
+                    ? "cyan"
+                    : "gold"
             }
           >
             {record.settlement_status}
@@ -368,7 +368,7 @@ const BlotterRecord = (props) => {
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => {}}
+                onClick={() => { }}
                 size="small"
               />
             </Tooltip>

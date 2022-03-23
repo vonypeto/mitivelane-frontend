@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { Tag, Button, Table, Input, Row, Col, Card, Form, Select } from "antd";
+import { useHistory } from "react-router-dom";
 import ResidentListData from "assets/data/resident.data.json";
 import Flex from "components/shared-components/Flex";
 import { InfoCircleOutlined, SearchOutlined } from "@ant-design/icons";
@@ -19,7 +20,8 @@ export const resetRespondent = (() => {
 })
 
 const Respondent = (props) => {
-  const { residentlists, residentlistLoading, initialRespondents } = props;
+  const history = useHistory();
+  const { residentlists, residentlistLoading, initialRespondents, barangayId} = props;
 
   const [residentlist, setResidentList] = useState([]);
   const [residentlistData, setResidentListData] = useState([]);
@@ -43,6 +45,10 @@ const Respondent = (props) => {
     respondent = initialRespondents
 
   }, [initialRespondents, initialValues])
+  
+  const ResidentDetail = (residentId) => {
+    history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
+  }
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -227,6 +233,7 @@ const Respondent = (props) => {
                 {elm.firstname} {elm.middlename} {elm.lastname}
                 <div>
                   <Button
+					onClick = {() => ResidentDetail(elm.resident_id)}
                     icon={<InfoCircleOutlined />}
                     type="default"
                     size="small"

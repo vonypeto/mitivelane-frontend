@@ -18,11 +18,11 @@ const TableBlotterData = (props) => {
   const [blotterselectedRows, setBlotterSelectedRows] = useState([]);
   const [blotterselectedRowKeys, setBlotterSelectedRowKeys] = useState([]);
   const [selectedUserData, setSelectedUserData] = useState({});
-  
+
   useEffect(() => {
-	  setBlotterList(blotterData)
-	  setBlotterListData(blotterData)
-	  
+    setBlotterList(blotterData)
+    setBlotterListData(blotterData)
+
   }, [blotterData, blotterlistData])
 
   const selectOutShow = (event) => {
@@ -153,7 +153,7 @@ const TableBlotterData = (props) => {
             >
               {!selectShow ? (
                 <div key="c">
-                  <Userview selectOutShow={selectOutShow.bind(this)} initialData={selectedUserData}/>
+                  <Userview selectOutShow={selectOutShow.bind(this)} initialData={selectedUserData} />
                 </div>
               ) : null}
             </QueueAnim>

@@ -21,6 +21,7 @@ import {
   LoadingOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
 import utils from "utils";
 import moment from "moment";
 import { Editor } from "react-draft-wysiwyg";
@@ -31,7 +32,9 @@ const caseData = ['Settled', 'Scheduled', 'Unscheduled', 'Unsettled']
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
+
 const UserFormView = (props) => {
+  const history = useHistory();
   const { currentBarangay, generateToken } = useAuth();
   const { selectOutShow, initialData } = props;
   const [form] = Form.useForm();
@@ -40,6 +43,8 @@ const UserFormView = (props) => {
   const victims = initialData.victims
   const suspects = initialData.suspects
   const respondents = initialData.respondents
+
+  const [editBtnDisabled, setEditBtnDisabled] = useState(false)
 
   const content = {
     entityMap: {},
@@ -93,22 +98,33 @@ const UserFormView = (props) => {
   };
 
   const onEditClick = (e) => {
-    console.log("Edit")
-    form
-      .validateFields()
-      .then((values) => {
-        setTimeout(() => {
-          delete values.createdAt
-          console.log(values)
-          editBlotter(values)
-          onChangeData(e);
-        }, 1500);
-      })
-      .catch((info) => {
-        console.log("info", info);
-        // message.error("Please enter all required field ");
-      });
+    if (editBtnDisabled == false) {
+      console.log("Edit")
+      form
+        .validateFields()
+        .then((values) => {
+          setEditBtnDisabled(true)
+
+          setTimeout(() => {
+            delete values.createdAt
+            // console.log(values)
+            editBlotter(values)
+            onChangeData(e);
+          }, 1500);
+        })
+        .catch((info) => {
+          console.log("info", info);
+          message.error("please enter all required field ");
+        });
+
+    }
+
   };
+
+  const ResidentDetail = (barangayId, residentId) => {
+
+    history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
+  }
 
   const uploadProps = {
     onChange(info) {
@@ -130,6 +146,42 @@ const UserFormView = (props) => {
       format: (percent) => `${parseFloat(percent.toFixed(2))}%`,
     },
   };
+
+  const ResidentResponse = ({ name, resident }) => {
+    return (
+      <Card
+        title={name}>
+        <div className="mt-1">
+          <hr />
+          {
+            resident.map((values, i) =>
+              <div key={i}
+                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
+                <div>
+                  <Avatar size={40}
+                    className="font-size-sm"
+                    style={{
+                      backgroundColor: "red"
+                    }}>
+                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
+                  </Avatar>
+                  <span className="ml-2">{values.firstname} {values.lastname}</span>
+                </div>
+                <Button icon={<InfoCircleOutlined />}
+                  type="default"
+                  size="small"
+                  onClick={() => ResidentDetail(currentBarangay, values.resident_id)}
+                >
+                  Details
+                </Button>
+              </div>
+            )
+          }
+
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <div style={{
@@ -170,7 +222,7 @@ const UserFormView = (props) => {
                           labelCol={{
                             span:
                               24
-                          }}>
+                          }} rules={[{ required: true }]}>
                           <Input placeholder="Case Type" />
                         </Form.Item>
                       </Col>
@@ -183,7 +235,8 @@ const UserFormView = (props) => {
                             span:
                               24
                           }}
-                          label="Case Status">
+                          label="Case Status"
+                          rules={[{ required: true }]}>
                           <Select className="w-100"
                             placeholder="Case Status">
                             {caseData.map((elm) => (
@@ -225,7 +278,8 @@ const UserFormView = (props) => {
                                   24
                               }}
                               name="date_of_incident"
-                              label="Date of Issue">
+                              label="Date of Incident"
+                              rules={[{ required: true }]}>
                               <DatePicker className="w-100" />
                             </Form.Item>
                           </Col>
@@ -238,7 +292,8 @@ const UserFormView = (props) => {
                                   24
                               }}
                               name="time_of_incident"
-                              label="Time of Issue">
+                              label="Time of Incident"
+                              rules={[{ required: true }]}>
                               <TimePicker className="w-100" />
                             </Form.Item>
                           </Col>
@@ -317,137 +372,27 @@ const UserFormView = (props) => {
                     <Col xs={24}
                       sm={24}
                       md={24}>
-                      <Card
-                        title="Reporter">
-                        <div className="mt-1">
-                          <hr />
-                          {
-                            reporters.map((values, i) =>
-                              <div key={i}
-                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                                <div>
-                                  <Avatar size={40}
-                                    className="font-size-sm"
-                                    style={{
-                                      backgroundColor: "red"
-                                    }}>
-                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
-                                  </Avatar>
-                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
-                                </div>
-                                <Button icon={<InfoCircleOutlined />}
-                                  type="default"
-                                  size="small"
-                                >
-                                  Details
-                                </Button>
-                              </div>
-                            )
-                          }
+                      <ResidentResponse
+                        name="Reporter"
+                        resident={reporters}
+                      />
 
-                        </div>
-                      </Card>
-                      <Card title="Victim">
-                        <div className="mt-1">
-                          <hr />
-                          {
-                            victims.map((values, i) =>
-                              <div key={i}
-                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                                <div>
-                                  <Avatar size={40}
-                                    className="font-size-sm"
-                                    style={{
-                                      backgroundColor: "red"
-                                    }}>
-                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
-                                  </Avatar>
-                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
-                                </div>
-                                <Button icon={<InfoCircleOutlined />}
-                                  type="default"
-                                  size="small"
-                                >
-                                  Details
-                                </Button>
-                              </div>
-                            )
-                          }
+                      <ResidentResponse
+                        name="Victim"
+                        resident={victims}
+                      />
 
-                        </div>
-                      </Card>
-                      <Card title="Suspect">
-                        <div className="mt-1">
-                          <hr />
-                          {
-                            suspects.map((values, i) =>
-                              <div key={i}
-                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                                <div>
-                                  <Avatar size={40}
-                                    className="font-size-sm"
-                                    style={{
-                                      backgroundColor: "red"
-                                    }}>
-                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
-                                  </Avatar>
-                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
-                                </div>
-                                <Button icon={<InfoCircleOutlined />}
-                                  type="default"
-                                  size="small"
-                                >
-                                  Details
-                                </Button>
-                              </div>
-                            )
-                          }
+                      <ResidentResponse
+                        name="Suspect"
+                        resident={suspects}
+                      />
 
-                        </div>
-                      </Card>
-                      <Card title="Respondent">
-                        <div className="mt-1">
-                          <hr />
-                          {
-                            respondents.map((values, i) =>
-                              <div key={i}
-                                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                                <div>
-                                  <Avatar size={40}
-                                    className="font-size-sm"
-                                    style={{
-                                      backgroundColor: "red"
-                                    }}>
-                                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
-                                  </Avatar>
-                                  <span className="ml-2">{values.firstname} {values.lastname}</span>
-                                </div>
-                                <Button icon={<InfoCircleOutlined />}
-                                  type="default"
-                                  size="small"
-                                >
-                                  Details
-                                </Button>
-                              </div>
-                            )
-                          }
-
-                        </div>
-                      </Card>
+                      <ResidentResponse
+                        name="Respondent"
+                        resident={respondents}
+                      />
                     </Col>
                   </Row>
-
-                  {/* <div className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-	<Avatar size={30}
-	        className="font-size-sm"
-	        style={{backgroundColor:
-	        "red"}}>
-	        {utils.getNameInitial("Von
-	        Maniquis")}
-</Avatar>
-<span
-      className="ml-2">Von Maniquis</span>
-</div> */}
                 </Col>
               </Row>
             </Form>
