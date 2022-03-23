@@ -19,7 +19,7 @@ const index = (props) => {
       <Card>
         <Row justify="space-between" align="middle">
           <h1 className="m-0">Household & Fund</h1>
-          <Link to={ `/app/${param_url}/residents/household/archive`}>
+          <Link to={`/app/${param_url}/residents/household/archive`}>
             <Button style={{ display: "block", float: "right" }} type="primary">
               Archive
             </Button>
@@ -38,7 +38,7 @@ const index = (props) => {
         </Col>
 
         <Col span={24}>
-          <AyudaTable />
+          <AyudaTable barangay_id={param_url}/>
         </Col>
       </Row>
     </div>

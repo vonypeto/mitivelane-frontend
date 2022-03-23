@@ -1,7 +1,8 @@
 import React from 'react'
-import { Card, Table, Badge, Button, Menu } from 'antd'
+import { Card, Table, Badge, Button, Menu, message } from 'antd'
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
+import { Link } from 'react-router-dom';
 
 import {
     EyeOutlined,
@@ -13,15 +14,16 @@ import {
     PrinterOutlined,
     EditOutlined,
     ReloadOutlined,
-  } from "@ant-design/icons";
-  
+} from "@ant-design/icons";
+
 import {
     ResidentTableColumns,
     ResidentTableData,
     HouseholdTableData,
 } from "./ResidentAyudaData"
 
-const AyudaTable = () => {
+const AyudaTable = (props) => {
+    const { barangay_id } = props
     const HouseholdTableColumns = [
         {
             title: "Household Number",
@@ -79,18 +81,24 @@ const AyudaTable = () => {
         }
     ];
 
+    const deleteHousehold = (row) => {
+        message.success(`Deleting household id ${row.household_id}`)
+    }
+
     const dropdownMenu = (row) => (
         <Menu>
             <Menu.Item key={1}>
                 <Flex alignItems="center">
-                <EditOutlined />
-                    <span className="ml-2">Manage Household</span>
+                    <EditOutlined />
+                    <Link style={{ color: "black" }} to={`/app/${barangay_id}/residents/household/${row.household_id}/edit`}>
+                        <span className="ml-2">Manage Household</span>
+                    </Link>
                 </Flex>
             </Menu.Item>
-            <Menu.Item key={2}>
+            <Menu.Item key={2} onClick={() => {deleteHousehold(row)}}>
                 <Flex alignItems="center">
-                <DeleteOutlined />
-                    <span className="ml-2">Delete Household</span>
+                    <DeleteOutlined />
+                    <span className="ml-2" style={{color: "black"}}>Delete Household</span>
                 </Flex>
             </Menu.Item>
         </Menu>
@@ -112,7 +120,13 @@ const AyudaTable = () => {
     return (
         <Card
             title="Residents"
-            extra={<Button type='primary'>Add Household</Button>}
+            extra={
+                <Link to={`/app/${barangay_id}/residents/household/add`}>
+                    <Button type='primary'>
+                        Add Household
+                    </Button>
+                </Link>
+            }
         >
             <Table
                 className="no-border-last"
