@@ -8,7 +8,6 @@ import AyudaDonut from "./AyudaDonut";
 import AyudaChart from "./AyudaChart";
 import AyudaTable from "./AyudaTable";
 
-
 const { TabPane } = Tabs;
 
 const index = (props) => {
@@ -28,7 +27,6 @@ const index = (props) => {
       </Card>
 
       <Row gutter={20} style={{ overflow: "hidden" }}>
-
         <Col xs={24} sm={24} md={24} lg={24} xl={18} className="w-100">
           <AyudaChart />
         </Col>
@@ -38,7 +36,7 @@ const index = (props) => {
         </Col>
 
         <Col span={24}>
-          <AyudaTable barangay_id={param_url}/>
+          <AyudaTable barangay_id={param_url} />
         </Col>
       </Row>
     </div>
