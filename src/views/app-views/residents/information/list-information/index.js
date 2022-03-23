@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Table, Select, Input, Button, Menu, Space } from "antd";
+import { Card, Table, Select, Input, Button, Menu, Space, message } from "antd";
 import QueueAnim from "rc-queue-anim";
 import {
   EyeOutlined,
@@ -44,7 +44,8 @@ const ListInformation = (props) => {
   }, []);
 
   const getAllResident = async () => {
-    await axios
+    try {
+      await axios
       .post("/api/resident/getAll", { barangay_id }, generateToken()[1], { cancelToken })
       .then((res) => {
         setList(res.data);
@@ -54,6 +55,10 @@ const ListInformation = (props) => {
     return () => {
       source.cancel();
     };
+
+    } catch (error) {
+      message.error("Could not fetch data from server!!")
+    }
   }
 
   const dropdownMenu = (row) => (
@@ -100,6 +105,7 @@ const ListInformation = (props) => {
       );
     }, 1000);
   };
+  
   const editDetails = (row) => {
     setShow(!selectShow);
     setTimeout(() => {
@@ -239,7 +245,7 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={cardDropdown(ResidentList)} loading={isResidentLoading}>
+          <Card title="Resident Master List" extra={cardDropdown(ResidentList)}>
             <Flex
               alignItems="center"
               className=""
@@ -299,6 +305,7 @@ const ListInformation = (props) => {
                   preserveSelectedRowKeys: false,
                   ...rowSelection,
                 }}
+                loading={isResidentLoading}
               />
             </div>
           </Card>
