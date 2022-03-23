@@ -1,109 +1,146 @@
 import React from "react";
-import { Page, Text, Font, Document, StyleSheet } from "@react-pdf/renderer";
-import { Font_Oswald, Font_Roboto, Font_Bebas } from "assets/font";
-const BasicDocument = () => {
-  Font.register({
-    family: "Bebas Neue",
-    src: Font_Bebas,
-  });
-  Font.register({
-    family: "Roboto",
-    src: Font_Roboto,
-  });
-  Font.register({
-    family: "Oswald",
-    src: Font_Oswald,
-  });
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+} from "@react-pdf/renderer";
+import { Font_Oswald, Font_Roboto, Font_Bebas, Font_Data } from "assets/font";
+
+// Create Document Component
+const BasicDocument = (props) => {
+  const { data, fontType } = props;
+
+  const font = Font_Data.filter((font) => font.family == fontType);
+  console.log(font);
+
+  Font.register(
+    font[0] || {
+      family: "Roboto",
+      src: Font_Roboto,
+    }
+  );
+
+  // Create styles
   const styles = StyleSheet.create({
+    page: {
+      flexDirection: "row",
+      backgroundColor: "#E4E4E4",
+      fontFamily: font[0].family,
+    },
     body: {
       paddingTop: 35,
-      paddingBottom: 65,
+      paddingBottom: 35,
       paddingHorizontal: 35,
-      fontFamily: "Bebas Neue",
     },
-    title: {
-      fontSize: 24,
+    section: {
+      margin: 10,
+      padding: 10,
+      flexGrow: 1,
+    },
+    container_head: {
+      fontFamily: props.fontType,
+      flexDirection: "row",
+      display: "grid",
+      gridTemplateColumn: "1fr 1fr",
+      gridGap: "20px",
+      height: "20vh",
+      border: " 2px solid red",
+      borderBottom: 0, // margin: 0,
+    },
+    container_body: {
+      fontFamily: props.fontType,
+      flexDirection: "row",
+      display: "grid",
+      gridTemplateColumn: "1fr 1fr",
+      gridGap: "20px",
+      height: "71vh",
+      border: " 2px solid red",
+      borderTop: 0, // margi
+    },
+    col: {
+      width: "50%",
+      float: "left",
+      padding: "20px",
+      border: "2px solid red",
+    },
+    col_center: {
       textAlign: "center",
-      fontFamily: "Bebas Neue",
+      width: "50%",
+      fontSize: "13px",
+      float: "left",
+      padding: "10px",
+      border: "2px solid red",
     },
-    author: {
-      fontSize: 12,
-      textAlign: "center",
-      marginBottom: 40,
+    col_center_space: {
+      margin: " 3px 0px",
     },
-    subtitle: {
-      fontSize: 18,
-      margin: 12,
-      fontFamily: "Oswald",
+    col_center_space_bold: {
+      fontFamily: props.fontType,
+      fontWeight: "bold",
     },
-    text: {
-      margin: 12,
-      fontSize: 14,
-      textAlign: "justify",
-      fontFamily: "Bebas Neue",
+    col_image: {
+      width: "25%",
+      float: "left",
+      padding: "20px",
+      border: "2px solid red",
     },
-    image: {
-      marginVertical: 15,
-      marginHorizontal: 100,
+    col_sidename: {
+      width: "30%",
+      float: "left",
+      padding: "20px",
+      border: "2px solid red",
     },
-    header: {
-      fontSize: 12,
-      marginBottom: 20,
-      textAlign: "center",
-      color: "grey",
-    },
-    pageNumber: {
-      position: "absolute",
-      fontSize: 12,
-      bottom: 30,
-      left: 0,
-      right: 0,
-      textAlign: "center",
-      color: "grey",
+    col_content: {
+      width: "70%",
+      float: "left",
+      padding: "20px",
+      border: "2px solid red",
     },
   });
-
+  console.log(props);
   return (
-    <Document size="A4">
-      <Page style={styles.body}>
-        <Text style={styles.title}>Don Quijote de la Mancha</Text>
-        <Text style={styles.author}>Miguel de Cervantes</Text>
+    <Document>
+      <Page size="A4" style={styles.body}>
+        <View style={styles.container_head}>
+          <View style={styles.col_image}>
+            <Text>Image</Text>
+          </View>
 
-        <Text style={styles.subtitle}>
-          Capítulo I: Que trata de la condición y ejercicio del famoso hidalgo
-          D. Quijote de la Mancha
-        </Text>
-        <Text style={styles.text}>
-          En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha
-          mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga
-          antigua, rocín flaco y galgo corredor. Una olla de algo más vaca que
-          carnero, salpicón las más noches, duelos y quebrantos los sábados,
-          lentejas los viernes, algún palomino de añadidura los domingos,
-          consumían las tres partes de su hacienda. El resto della concluían
-          sayo de velarte, calzas de velludo para las fiestas con sus pantuflos
-          de lo mismo, los días de entre semana se honraba con su vellori de lo
-          más fino. Tenía en su casa una ama que pasaba de los cuarenta, y una
-          sobrina que no llegaba a los veinte, y un mozo de campo y plaza, que
-          así ensillaba el rocín como tomaba la podadera. Frisaba la edad de
-          nuestro hidalgo con los cincuenta años, era de complexión recia, seco
-          de carnes, enjuto de rostro; gran madrugador y amigo de la caza.
-          Quieren decir que tenía el sobrenombre de Quijada o Quesada (que en
-          esto hay alguna diferencia en los autores que deste caso escriben),
-          aunque por conjeturas verosímiles se deja entender que se llama
-          Quijana; pero esto importa poco a nuestro cuento; basta que en la
-          narración dél no se salga un punto de la verdad
-        </Text>
-
-        {/* <Text
-          style={styles.pageNumber}
-          render={({ pageNumber, totalPages }) =>
-            `${pageNumber} / ${totalPages}`
-          }
-          fixed
-        /> */}
+          <View style={styles.col_center}>
+            <Text style={styles.col_center_space}>
+              Republic of the Philippines
+            </Text>
+            <Text style={styles.col_center_space}>Province of Cavite</Text>
+            <Text style={styles.col_center_space_bold}>
+              MUNICIPALITY OF MARAGONDON
+            </Text>
+            <Text style={styles.col_center_space_bold}>
+              OFFICE OF THE BARANGAY CAPTAIN
+            </Text>
+          </View>
+          <View style={styles.col_image}>
+            <Text>image</Text>
+          </View>
+        </View>
+        <View style={styles.container_body}>
+          <View style={styles.col_sidename}>
+            <Text>if else if the user enable the show barangay member</Text>
+          </View>
+          <View style={styles.col_content}>
+            <Text>Content of the barangay</Text>
+          </View>
+        </View>
+        {/* <View style={styles.section}>
+          <Text>{data.republic}</Text>
+        </View>
+        <View style={styles.section}>
+          <Text>Section #2</Text>
+        </View> */}
       </Page>
     </Document>
   );
 };
-
 export default BasicDocument;

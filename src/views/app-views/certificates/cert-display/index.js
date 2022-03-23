@@ -5,14 +5,12 @@ import SplitPane, { Pane } from "react-split-pane";
 import CertDisplay from "./cert-display";
 import InputCert from "./input-display";
 import { Col, Row } from "antd";
-import FontPicker from "font-picker-react";
 
 const Certificates = () => {
   const refs = useRef();
   const [parentData, setParentData] = useState({});
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  const [activeFontFamily, setActiveFontFamily] = useState("Open Sans");
   function handleChange(value) {
     console.log(`selected ${value}`);
   }
@@ -76,16 +74,6 @@ const Certificates = () => {
             lg={12}
           >
             {" "}
-            <FontPicker
-              className="ant-select ant-select-single ant-select-show-arrow"
-              apiKey={process.env.REACT_APP_FONT_ACCESS}
-              activeFontFamily={activeFontFamily}
-              onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
-            />{" "}
-            {console.log(activeFontFamily)}
-            <div ref={refs} id="test_id" className="apply-font">
-              sdada
-            </div>
             <CertDisplay width={width} height={height} data={parentData} />
           </Col>{" "}
         </Row>
