@@ -12,6 +12,7 @@ import {
   InputNumber,
   message,
   Select,
+  Avatar
 } from "antd";
 import { useHistory } from "react-router-dom";
 import ResidentListData from "assets/data/resident.data.json";
@@ -23,6 +24,8 @@ import {
 } from "@ant-design/icons";
 import utils from "utils";
 import { SettlementData, DataColor } from "./BlotterData";
+
+import { setLSBlotterForm, getLSBlotterForm } from "api/AppController/BlotterController/LSBlotterFormController";
 
 const { Option } = Select;
 let tags = [];
@@ -39,7 +42,7 @@ export const resetReporter = () => {
 
 const Reporter = (props) => {
   const history = useHistory();
-  const { residentlists, residentlistLoading, initialReporters, barangayId} = props;
+  const { residentlists, residentlistLoading, initialReporters, barangayId } = props;
 
   const [residentlist, setResidentList] = useState([]);
   const [residentlistData, setResidentListData] = useState([]);
@@ -60,8 +63,10 @@ const Reporter = (props) => {
     setInitialValues(initialReporters);
     setResidentSelectedRowKeys(initialReporters);
     reporter = initialReporters;
+    setResidentSelectedRows(getLSBlotterForm().reporters)
+
   }, [initialReporters, initialValues]);
-  
+
   const ResidentDetail = (residentId) => {
     history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
   }
@@ -86,6 +91,8 @@ const Reporter = (props) => {
       final = [].concat.apply([], tags);
       reporter = residentIds;
 
+      setLSBlotterForm(rows, "reporters")
+      setLSBlotterForm(reporter, "reporters_id")
       console.log("Reporter ", reporter);
 
       setResidentPick(final);
@@ -147,7 +154,7 @@ const Reporter = (props) => {
     const onClose = () => {
       reporter = [];
       setResidentSelectedRowKeys([]);
-	  setResidentSelectedRows([])
+      setResidentSelectedRows([])
       console.log("Reporter Tag Close ", reporter);
     };
     return (
@@ -226,7 +233,7 @@ const Reporter = (props) => {
             label="Status"
             rules={[{ required: true }]}
           >
-            <Select className="w-100" placeholder="Settled">
+            <Select className="w-100" placeholder="Settled" onChange={(e) => setLSBlotterForm(e, "settlement_status")}>
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
                   {elm}
@@ -262,10 +269,19 @@ const Reporter = (props) => {
                     : "mt-3  table-row-dark d-flex align-items-center justify-content-between mb-4"
                 }
               >
-                {elm.firstname} {elm.middlename} {elm.lastname}
+			  <div>
+                  <Avatar size={40}
+                    className="font-size-sm"
+                    style={{
+                      backgroundColor: elm.avatarColor
+                    }}>
+                    {utils.getNameInitial(`${elm.firstname} ${elm.lastname}`)}
+                  </Avatar>
+                  <span className="ml-2">{elm.firstname} {elm.lastname}</span>
+                </div>
                 <div>
                   <Button
-					onClick = {() => ResidentDetail(elm.resident_id)}
+                    onClick={() => ResidentDetail(elm.resident_id)}
                     icon={<InfoCircleOutlined />}
                     type="default"
                     size="small"

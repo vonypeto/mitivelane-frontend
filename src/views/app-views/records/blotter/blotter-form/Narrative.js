@@ -1,5 +1,4 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import {
   Tag,
   Button,
@@ -26,9 +25,10 @@ const current = new Date();
 const dateFormat = "YYYY/MM/DD";
 const { Option } = Select;
 
+import { setLSBlotterForm, getLSBlotterForm } from "api/AppController/BlotterController/LSBlotterFormController";
+
 const Narrative = (props) => {
-  const location = useLocation();
-  const initialData = (location.current == "EDIT") ? location.data : { narrative: null }
+  const initialData = getLSBlotterForm()
 
   const content = {
     entityMap: {},
@@ -39,6 +39,7 @@ const Narrative = (props) => {
 
   const contentState = convertFromRaw(content);
   const editorState = EditorState.createWithContent(contentState);
+
 
   return (
     <Row gutter={16}>
@@ -56,6 +57,7 @@ const Narrative = (props) => {
           <Form.Item
             name="subject"
             labelCol={{ span: 24 }}
+            onChange={(e) => setLSBlotterForm(e.target.value, "subject")}
           >
             <Input placeholder="Subject (Optional)" />
           </Form.Item>
@@ -63,12 +65,14 @@ const Narrative = (props) => {
             <Flex className="mb-1" mobileFlex={false}>
               <div className="">
                 <Form.Item
-                  name="narrative">
+                  name="narrative"
+                >
                   <Editor
                     defaultEditorState={editorState}
                     toolbarClassName="toolbarClassName"
                     wrapperClassName="wrapperClassName"
                     editorClassName="editorClassName"
+                    onChange={(e) => setLSBlotterForm(e, "narrative")}
                   />
                 </Form.Item>
               </div>
@@ -89,8 +93,9 @@ const Narrative = (props) => {
           <Form.Item
             name="settlement_status"
             label="Status"
-            rules={[{ required: true }]}>
-            <Select className="w-100" placeholder="Settled">
+            rules={[{ required: true }]}
+          >
+            <Select className="w-100" placeholder="Settled" onChange={(e) => setLSBlotterForm(e, "settlement_status")}>
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
                   {elm}
@@ -103,16 +108,19 @@ const Narrative = (props) => {
           <Form.Item
             name="incident_type"
             label="Type of Incident"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+            onChange={(e) => setLSBlotterForm(e.target.value, "incident_type")}>
             <Input placeholder="Incident Type" />
           </Form.Item>
           <Form.Item
             name="time_of_incident"
             label="Time occured"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+          >
             <TimePicker
               className="w-100"
               values={moment("12:08:23", "HH:mm:ss")}
+              onChange={(e) => setLSBlotterForm(e, "time_of_incident")}
             />
           </Form.Item>
           <Form.Item
@@ -127,12 +135,14 @@ const Narrative = (props) => {
                 dateFormat
               )}
               format={dateFormat}
+              onChange={(e) => setLSBlotterForm(e, "date_of_incident")}
             />
           </Form.Item>
           <Form.Item
             name="place_incident"
             label="Place of Incident"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+            onChange={(e) => setLSBlotterForm(e.target.value, "place_incident")}>
             <Input placeholder="Place of incident" />
           </Form.Item>
           <Form.Item
@@ -141,6 +151,7 @@ const Narrative = (props) => {
             <TimePicker
               className="w-100"
               values={moment("12:08:23", "HH:mm:ss")}
+              onChange={(e) => setLSBlotterForm(e, "time_schedule")}
             />
           </Form.Item>
           <Form.Item
@@ -154,6 +165,7 @@ const Narrative = (props) => {
                 dateFormat
               )}
               format={dateFormat}
+              onChange={(e) => setLSBlotterForm(e, "date_schedule")}
             />
           </Form.Item>
         </Card>

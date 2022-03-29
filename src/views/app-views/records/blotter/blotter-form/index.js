@@ -21,6 +21,7 @@ import { respondent, resetRespondent } from "./Respondent";
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
+import { setLSBlotterForm, getLSBlotterForm } from "api/AppController/BlotterController/LSBlotterFormController";
 
 const { TabPane } = Tabs;
 
@@ -63,8 +64,10 @@ const MainFormList = (props) => {
 
     getResidents(currentBarangay);
 
+    setBlotterInitialValue();
+
     if (mode === EDIT || mode === VIEW) {
-      setBlotterInitialValue(id);
+      setBlotterInitialValue();
     }
   }, [form, mode, param, props]);
 
@@ -85,43 +88,35 @@ const MainFormList = (props) => {
       });
   };
 
-  const setBlotterInitialValue = (_id) => {
-    axios
-      .get("/api/blotter/get-blotter-initial-value/" + _id, generateToken()[1])
-      .then((response) => {
-        console.log("Blotter Initial Data", response.data);
+  const setBlotterInitialValue = () => {
+    const blotterLocalStorage = getLSBlotterForm()
+    form.setFieldsValue({
+      blotter_id: blotterLocalStorage.blotter_id,
+      settlement_status: blotterLocalStorage.settlement_status,
+      subject: blotterLocalStorage.subject,
+      narrative: blotterLocalStorage.narrative,
+      incident_type: blotterLocalStorage.incident_type,
+      place_incident: blotterLocalStorage.place_incident,
+      time_of_incident: new moment(blotterLocalStorage.time_of_incident),
+      date_of_incident: new moment(blotterLocalStorage.date_of_incident),
+      time_schedule: new moment(blotterLocalStorage.time_schedule),
+      date_schedule: new moment(blotterLocalStorage.date_schedule),
+    });
 
-        setInitialReporters(response.data.reporters);
-        setInitialVictims(response.data.victims);
-        setInitialSuspects(response.data.suspects);
-        setInitialRespondents(response.data.respondents);
-
-        form.setFieldsValue({
-          blotter_id: response.data.blotter_id,
-          settlement_status: response.data.settlement_status,
-          subject: response.data.subject,
-          narrative: response.data.narrative,
-          incident_type: response.data.incident_type,
-          place_incident: response.data.place_incident,
-          time_of_incident: new moment(response.data.time_of_incident),
-          date_of_incident: new moment(response.data.date_of_incident),
-          time_schedule: new moment(response.data.time_schedule),
-          date_schedule: new moment(response.data.date_schedule),
-        });
-      })
-      .catch(() => {
-        message.error("Could not fetch the data in the server!");
-      });
+    setInitialReporters(blotterLocalStorage.reporters_id);
+    setInitialVictims(blotterLocalStorage.victims_id);
+    setInitialSuspects(blotterLocalStorage.suspects_id);
+    setInitialRespondents(blotterLocalStorage.respondents_id);
   };
 
   const createBlotter = (values) => {
     values.barangay_id = currentBarangay;
     values.uuid = authToken;
 
-    values.reporters = reporter;
-    values.victims = victim;
-    values.suspects = suspect;
-    values.respondents = respondent;
+    values.reporters = getLSBlotterForm().reporters_id;
+    values.victims = getLSBlotterForm().victims_id;
+    values.suspects = getLSBlotterForm().suspects_id;
+    values.respondents = getLSBlotterForm().respondents_id;
 
     if (
       !values.hasOwnProperty("incident_type") ||
@@ -144,7 +139,7 @@ const MainFormList = (props) => {
           if (response.data == "Success") {
             history.goBack();
             return message.success(
-              `Added ${values.blotter_id} to Blotter list`
+              `Added new Blotter`
             );
           } else {
             return message.error("Error, please try again.");
@@ -199,6 +194,11 @@ const MainFormList = (props) => {
       });
   };
 
+  const onClickTab = (key) => {
+    setLSBlotterForm(key, "tabActiveKey")
+    console.log("Current Tab Key ", key)
+  }
+
   const handleUploadChange = (info) => {
     if (info.file.status === "uploading") {
       setUploadLoading(true);
@@ -216,15 +216,13 @@ const MainFormList = (props) => {
     form
       .validateFields()
       .then((values) => {
-        setTimeout(() => {
-          setSubmitLoading(false);
-          if (mode === ADD) {
-            createBlotter(values);
-          }
-          if (mode === EDIT) {
-            editBlotter(values);
-          }
-        }, 1500);
+        setSubmitLoading(false);
+        if (mode === ADD) {
+          createBlotter(values);
+        }
+        if (mode === EDIT) {
+          editBlotter(values);
+        }
       })
       .catch((info) => {
         setSubmitLoading(false);
@@ -258,8 +256,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Case"
                   : mode === EDIT
-                  ? `Edit Cases`
-                  : "View Cases"}{" "}
+                    ? `Edit Cases`
+                    : "View Cases"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">
@@ -282,8 +280,9 @@ const MainFormList = (props) => {
         {mode === ADD || mode === EDIT ? (
           <div className="container">
             <Tabs
-              defaultActiveKey={mode === ADD ? "1" : "6"}
+              defaultActiveKey={getLSBlotterForm().tabActiveKey}
               style={{ marginTop: 30 }}
+              onChange={(key) => onClickTab(key)}
             >
               <TabPane tab="Reporter Data" key="1">
                 <Reporter

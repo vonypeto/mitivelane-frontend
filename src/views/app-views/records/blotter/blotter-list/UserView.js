@@ -41,6 +41,29 @@ const UserView = (props) => {
       return "gold";
     }
   };
+  
+  const residentFullName = (record) => {
+	  if(record?.reporters.length == 0)
+		  return "No Resident"
+	  
+	  return `${record?.reporters[0].firstname} ${record?.reporters[0].lastname}`
+  }
+  
+  const residentAvatarColor = (record) => {
+	  if(record?.reporters.length == 0)
+		  return "#04d182"
+	  
+	  return record?.reporters[0].avatarColor
+	  
+  }
+  
+  const residentAddress = (record) => {
+	  if(record?.reporters.length == 0)
+		  return "No Address"
+	  
+	  return record?.reporters[0].address_1
+	  
+  }
 
   return (
     <Drawer
@@ -54,18 +77,18 @@ const UserView = (props) => {
         <Avatar
           size={80}
           className="font-size-sm"
-          style={{ backgroundColor: "#" + "04d182" }}
+          style={{ backgroundColor: residentAvatarColor(data) }}
         >
           <div className="font-size-lg">
             {utils.getNameInitial(
-              `${data?.reporters[0].firstname} ${data?.reporters[0].lastname}`
+              residentFullName(data)
             )}
           </div>
         </Avatar>
         <h3 className="mt-2 mb-0">
-          {data?.reporters[0].firstname} {data?.reporters[0].lastname}
+		{residentFullName(data)}
         </h3>
-        <span className="text-muted">{data?.reporters[0].address_1}</span>
+        <span className="text-muted">{residentAddress(data)}</span>
       </div>
       <div className="pt-1 text-center">
         <Tag

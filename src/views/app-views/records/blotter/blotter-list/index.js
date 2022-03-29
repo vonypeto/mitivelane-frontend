@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Col,
   Card,
@@ -16,11 +16,6 @@ import {
   List,
   message,
 } from "antd";
-import BlotterListData from "assets/data/blotter.data.json";
-import BlotterListRequestData from "assets/data/blotter-request.data.json";
-
-import DonutChartWidget from "components/shared-components/DonutChartWidget";
-import NumberFormat from "react-number-format";
 import {
   EyeOutlined,
   EllipsisOutlined,
@@ -33,18 +28,28 @@ import {
   EditOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
+import { Dropdown } from "antd";
+
+import BlotterListData from "assets/data/blotter.data.json";
+import BlotterListRequestData from "assets/data/blotter-request.data.json";
+
+import DonutChartWidget from "components/shared-components/DonutChartWidget";
+import NumberFormat from "react-number-format";
+
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import { useHistory } from "react-router-dom";
 import utils from "utils";
-import { Dropdown } from "antd";
+
 import UserView from "./UserView";
 
 import { BlotterReportMost } from "./BlotterData";
 import { COLORS } from "constants/ChartConstant";
+import {CSVLink} from "react-csv"
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
+import { resetLSBlotterForm, setInitialBlotterData } from "api/AppController/BlotterController/LSBlotterFormController";
 
 const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
@@ -53,7 +58,7 @@ const BlotterRecord = (props) => {
   const { currentBarangay, generateToken } = useAuth();
 
   const { param_url } = props;
-  let history = useHistory();
+  var history = useHistory();
 
   const [blotterlist, setBlotterList] = useState([]);
   const [blotterlistData, setBlotterlistData] = useState([]);
@@ -61,20 +66,13 @@ const BlotterRecord = (props) => {
 
   const [sessionData, setSessionData] = useState([0, 0, 0, 0]);
 
-  const [blotterlistrequest, setBlotterListRequest] = useState(
-    BlotterListRequestData
-  );
+  const [blotterlistrequest, setBlotterListRequest] = useState(BlotterListRequestData);
 
   const [selectedRowsBlotter, setSelectedRowsBlotter] = useState([]);
   const [selectedRowKeysBlotter, setSelectedRowKeysBlotter] = useState([]);
 
-  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState(
-    []
-  );
-  const [
-    selectedRowKeysBlotterRequest,
-    setSelectedRowKeysBlotterRequest,
-  ] = useState([]);
+  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState([]);
+  const [selectedRowKeysBlotterRequest, setSelectedRowKeysBlotterRequest] = useState([]);
 
   const [userProfileVisible, SetUserProfileVisible] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
@@ -82,6 +80,8 @@ const BlotterRecord = (props) => {
   useEffect(() => {
     getBlotters(currentBarangay);
     getRecordCases(currentBarangay);
+    resetLSBlotterForm();
+
   }, []);
 
   const getBlotters = (currentBarangay) => {
@@ -166,59 +166,6 @@ const BlotterRecord = (props) => {
     </Menu>
   );
 
-  const AddResident = () => {
-    history.push({
-      pathname: `/app/${currentBarangay}/records/blotter-record/add`,
-      current: "ADD",
-    });
-  };
-
-  const BlottereditwDetails = (row) => {
-    history.push({
-      pathname: `/app/${currentBarangay}/records/blotter-record/${row._id}/edit`,
-      data: row,
-      current: "EDIT",
-    });
-  };
-
-  const BlotterDeleteRow = (row) => {
-    const objKey = "_id";
-    let data = blotterlist;
-    if (selectedRowsBlotter.length > 1) {
-      selectedRowsBlotter.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm._id);
-        setBlotterList(data);
-        setSelectedRowsBlotter([]);
-      });
-
-      var _ids = [];
-      selectedRowsBlotter.map((values) => {
-        _ids.push(values._id);
-      });
-
-      deleteBlotter(_ids);
-    } else {
-      data = utils.deleteArrayRow(data, objKey, row._id);
-      setBlotterList(data);
-
-      deleteBlotter([row._id]);
-    }
-  };
-  const BlotterRequestDeleteRow = (row) => {
-    const objKey = "blotter_id";
-    let data = blotterlistrequest;
-    if (selectedRowsBlotterRequest.length > 1) {
-      selectedRowsBlotterRequest.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm.blotter_id);
-        setBlotterListRequest(data);
-        setSelectedRowsBlotterRequest([]);
-      });
-    } else {
-      data = utils.deleteArrayRow(data, objKey, row.blotter_id);
-      setBlotterListRequest(data);
-    }
-  };
-
   // COLUMNS
   const blotterdatacolumn = [
     {
@@ -235,13 +182,11 @@ const BlotterRecord = (props) => {
           <Avatar
             size={30}
             className="font-size-sm"
-            style={{ backgroundColor: "#" + "04d182" }}
+            style={{ backgroundColor: record.avatarColor }}
           >
-            {utils.getNameInitial(
-              `${record.reporters[0].firstname} ${record.reporters[0].lastname}`
-            )}
+            {utils.getNameInitial(record.reporter_name)}
           </Avatar>
-          <span className="ml-2">{`${record.reporters[0].firstname} ${record.reporters[0].lastname}`}</span>
+          <span className="ml-2">{record.reporter_name}</span>
         </div>
       ),
     },
@@ -313,6 +258,134 @@ const BlotterRecord = (props) => {
       ),
     },
   ];
+
+  //SEARCH
+  const rowSelectionBlotter = {
+    onChange: (key, rows) => {
+      setSelectedRowsBlotter(rows);
+      setSelectedRowKeysBlotter(key);
+    },
+  };
+
+  const onBlotterSearch = (e) => {
+    const value = e.currentTarget.value;
+    const searchArray = e.currentTarget.value ? blotterlist : blotterlistData;
+    const data = utils.wildCardSearch(searchArray, value);
+    setBlotterList(data);
+    setSelectedRowKeysBlotter([]);
+  };
+
+  //EXPORT
+  const refreshBlotter = () => {
+    console.log("Refresh Blotter")
+    setBlotterListLoading(true)
+
+    setBlotterList([])
+    getBlotters(currentBarangay)
+
+    setSessionData([0, 0, 0, 0])
+    getRecordCases(currentBarangay)
+  }
+  
+   const headers = [
+    {
+      label: "Blotter ID", key: "_id"
+    },
+    {
+      label: "Reporter", key: "reporter_name"
+    },
+	{
+      label: "Location", key: "place_incident"
+    },
+	{
+      label: "Classification", key: "incident_type"
+    },
+	{
+      label: "Case", key: "settlement_status"
+    }
+	]
+	
+	const csvLink = useRef(null)
+
+  const BlotterList = (
+    <Menu>
+      <Menu.Item key="0" onClick={() => { refreshBlotter() }}>
+        <span>
+          <div className="d-flex align-items-center">
+            <ReloadOutlined />
+            <span className="ml-2">Refresh</span>
+          </div>
+        </span>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <span>
+          <div className="d-flex align-items-center">
+            <PrinterOutlined />
+			<span className="ml-2">Print</span>
+          </div>
+        </span>
+      </Menu.Item>
+      <Menu.Item key="2" onClick={() => { csvLink.current.link.click() }}>
+        <span>
+          <div className="d-flex align-items-center">
+            <FileExcelOutlined />
+			<span className="ml-2">Export</span>
+          </div>
+        </span>
+      </Menu.Item>
+	  <Menu.Item key="3" hidden={true}>
+		<CSVLink ref={csvLink} data={blotterlistData} headers={headers} filename="Blotter.csv">Export</CSVLink>
+	  </Menu.Item>
+    </Menu>
+  );
+
+  const AddResident = () => {
+    history.push(`/app/${currentBarangay}/records/blotter-record/add`);
+  };
+
+  const BlottereditwDetails = (row) => {
+    setInitialBlotterData(row)
+    history.push(`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`);
+  };
+
+  const BlotterDeleteRow = (row) => {
+    const objKey = "_id";
+    let data = blotterlist;
+    if (selectedRowsBlotter.length > 1) {
+      selectedRowsBlotter.forEach((elm) => {
+        data = utils.deleteArrayRow(data, objKey, elm._id);
+        setBlotterList(data);
+        setSelectedRowsBlotter([]);
+      });
+
+      var _ids = [];
+      selectedRowsBlotter.map((values) => {
+        _ids.push(values._id);
+      });
+
+      deleteBlotter(_ids);
+    } else {
+      data = utils.deleteArrayRow(data, objKey, row._id);
+      setBlotterList(data);
+
+      deleteBlotter([row._id]);
+    }
+  };
+
+  const BlotterRequestDeleteRow = (row) => {
+    const objKey = "blotter_id";
+    let data = blotterlistrequest;
+    if (selectedRowsBlotterRequest.length > 1) {
+      selectedRowsBlotterRequest.forEach((elm) => {
+        data = utils.deleteArrayRow(data, objKey, elm.blotter_id);
+        setBlotterListRequest(data);
+        setSelectedRowsBlotterRequest([]);
+      });
+    } else {
+      data = utils.deleteArrayRow(data, objKey, row.blotter_id);
+      setBlotterListRequest(data);
+    }
+  };
 
   const BlotterRequest = [
     {
@@ -436,25 +509,12 @@ const BlotterRecord = (props) => {
   );
 
   //SEARCH
-  const rowSelectionBlotter = {
-    onChange: (key, rows) => {
-      setSelectedRowsBlotter(rows);
-      setSelectedRowKeysBlotter(key);
-    },
-  };
+
   const rowSelectionBlotterRequest = {
     onChange: (key, rows) => {
       setSelectedRowsBlotterRequest(rows);
       setSelectedRowKeysBlotterRequest(key);
     },
-  };
-
-  const onBlotterSearch = (e) => {
-    const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? blotterlist : blotterlistData;
-    const data = utils.wildCardSearch(searchArray, value);
-    setBlotterList(data);
-    setSelectedRowKeysBlotter([]);
   };
 
   const onBlotterRequestSearch = (e) => {
@@ -542,6 +602,7 @@ const BlotterRecord = (props) => {
       }
     />
   );
+
   const MostReportedBlotter = () => (
     <Card title="Most Reported Cases">
       <List
@@ -571,6 +632,7 @@ const BlotterRecord = (props) => {
       />
     </Card>
   );
+
   return (
     <>
       <Row gutter={16}>
@@ -579,7 +641,7 @@ const BlotterRecord = (props) => {
             <Col xs={24} sm={24} md={24} lg={24}>
               <Card
                 title="Blotter Records"
-                extra={cardDropdown(BlotterRequestList)}
+                extra={cardDropdown(BlotterList)}
               >
                 <Flex
                   alignItems="center"

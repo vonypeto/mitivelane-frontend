@@ -161,7 +161,7 @@ const UserFormView = (props) => {
                   <Avatar size={40}
                     className="font-size-sm"
                     style={{
-                      backgroundColor: "red"
+                      backgroundColor: values.avatarColor
                     }}>
                     {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
                   </Avatar>

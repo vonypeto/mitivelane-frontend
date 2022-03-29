@@ -1,11 +1,13 @@
 import { React, useState, useEffect } from "react";
-import { Tag, Button, Table, Input, Row, Col, Card, Form, Select } from "antd";
+import { Tag, Button, Table, Input, Row, Col, Card, Form, Select, Avatar} from "antd";
 import { useHistory } from "react-router-dom";
 import ResidentListData from "assets/data/resident.data.json";
 import Flex from "components/shared-components/Flex";
 import { InfoCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import utils from "utils";
 import { SettlementData, DataColor } from "./BlotterData";
+
+import { setLSBlotterForm, getLSBlotterForm } from "api/AppController/BlotterController/LSBlotterFormController";
 
 const { Option } = Select;
 let tags = [];
@@ -21,7 +23,7 @@ export const resetRespondent = (() => {
 
 const Respondent = (props) => {
   const history = useHistory();
-  const { residentlists, residentlistLoading, initialRespondents, barangayId} = props;
+  const { residentlists, residentlistLoading, initialRespondents, barangayId } = props;
 
   const [residentlist, setResidentList] = useState([]);
   const [residentlistData, setResidentListData] = useState([]);
@@ -34,8 +36,8 @@ const Respondent = (props) => {
   const [initialValues, setInitialValues] = useState([])
 
   useEffect(() => {
-      setResidentList(residentlists)
-      setResidentListData(residentlists)
+    setResidentList(residentlists)
+    setResidentListData(residentlists)
 
   }, [residentlists, residentlistData])
 
@@ -43,9 +45,15 @@ const Respondent = (props) => {
     setInitialValues(initialRespondents)
     setResidentSelectedRowKeys(initialRespondents)
     respondent = initialRespondents
+    setResidentSelectedRows(getLSBlotterForm().respondents)
 
   }, [initialRespondents, initialValues])
-  
+
+  const addFormLocalStorage = (data) => {
+    blotterLocalStorage.respondents_id = data
+    localStorage.setItem("blotter", JSON.stringify(blotterLocalStorage))
+  }
+
   const ResidentDetail = (residentId) => {
     history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
   }
@@ -70,6 +78,8 @@ const Respondent = (props) => {
       final = [].concat.apply([], tags);
       respondent = residentIds;
 
+      setLSBlotterForm(rows, "respondents")
+      setLSBlotterForm(respondent, "respondents_id")
       console.log("Respondent ", respondent)
 
       setResidentPick(final);
@@ -195,7 +205,7 @@ const Respondent = (props) => {
             name="settlement_status"
             label="Status"
             rules={[{ required: true }]}>
-            <Select className="w-100" placeholder="Settled">
+            <Select className="w-100" placeholder="Settled" onChange={(e) => setLSBlotterForm(e, "settlement_status")}>
               {SettlementData.map((elm) => (
                 <Option key={elm} value={elm}>
                   {elm}
@@ -230,10 +240,19 @@ const Respondent = (props) => {
                     : "mt-3  table-row-dark d-flex align-items-center justify-content-between mb-4"
                 }
               >
-                {elm.firstname} {elm.middlename} {elm.lastname}
+                <div>
+                  <Avatar size={40}
+                    className="font-size-sm"
+                    style={{
+                      backgroundColor: elm.avatarColor
+                    }}>
+                    {utils.getNameInitial(`${elm.firstname} ${elm.lastname}`)}
+                  </Avatar>
+                  <span className="ml-2">{elm.firstname} {elm.lastname}</span>
+                </div>
                 <div>
                   <Button
-					onClick = {() => ResidentDetail(elm.resident_id)}
+                    onClick={() => ResidentDetail(elm.resident_id)}
                     icon={<InfoCircleOutlined />}
                     type="default"
                     size="small"
