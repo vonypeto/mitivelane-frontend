@@ -45,11 +45,14 @@ import UserView from "./UserView";
 
 import { BlotterReportMost } from "./BlotterData";
 import { COLORS } from "constants/ChartConstant";
-import {CSVLink} from "react-csv"
+import { CSVLink } from "react-csv";
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { resetLSBlotterForm, setInitialBlotterData } from "api/AppController/BlotterController/LSBlotterFormController";
+import {
+  resetLSBlotterForm,
+  setInitialBlotterData,
+} from "api/AppController/BlotterController/LSBlotterFormController";
 
 const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
@@ -66,13 +69,20 @@ const BlotterRecord = (props) => {
 
   const [sessionData, setSessionData] = useState([0, 0, 0, 0]);
 
-  const [blotterlistrequest, setBlotterListRequest] = useState(BlotterListRequestData);
+  const [blotterlistrequest, setBlotterListRequest] = useState(
+    BlotterListRequestData
+  );
 
   const [selectedRowsBlotter, setSelectedRowsBlotter] = useState([]);
   const [selectedRowKeysBlotter, setSelectedRowKeysBlotter] = useState([]);
 
-  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState([]);
-  const [selectedRowKeysBlotterRequest, setSelectedRowKeysBlotterRequest] = useState([]);
+  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState(
+    []
+  );
+  const [
+    selectedRowKeysBlotterRequest,
+    setSelectedRowKeysBlotterRequest,
+  ] = useState([]);
 
   const [userProfileVisible, SetUserProfileVisible] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
@@ -81,7 +91,6 @@ const BlotterRecord = (props) => {
     getBlotters(currentBarangay);
     getRecordCases(currentBarangay);
     resetLSBlotterForm();
-
   }, []);
 
   const getBlotters = (currentBarangay) => {
@@ -237,10 +246,10 @@ const BlotterRecord = (props) => {
               record.settlement_status === "Settled"
                 ? "geekblue"
                 : record.settlement_status === "Unsettled"
-                  ? "orange"
-                  : record.settlement_status === "Scheduled"
-                    ? "cyan"
-                    : "gold"
+                ? "orange"
+                : record.settlement_status === "Scheduled"
+                ? "cyan"
+                : "gold"
             }
           >
             {record.settlement_status}
@@ -277,39 +286,49 @@ const BlotterRecord = (props) => {
 
   //EXPORT
   const refreshBlotter = () => {
-    console.log("Refresh Blotter")
-    setBlotterListLoading(true)
+    console.log("Refresh Blotter");
+    setBlotterListLoading(true);
 
-    setBlotterList([])
-    getBlotters(currentBarangay)
+    setBlotterList([]);
+    getBlotters(currentBarangay);
 
-    setSessionData([0, 0, 0, 0])
-    getRecordCases(currentBarangay)
-  }
-  
-   const headers = [
+    setSessionData([0, 0, 0, 0]);
+    getRecordCases(currentBarangay);
+  };
+
+  const headers = [
     {
-      label: "Blotter ID", key: "_id"
+      label: "Blotter ID",
+      key: "_id",
     },
     {
-      label: "Reporter", key: "reporter_name"
+      label: "Reporter",
+      key: "reporter_name",
     },
-	{
-      label: "Location", key: "place_incident"
+    {
+      label: "Location",
+      key: "place_incident",
     },
-	{
-      label: "Classification", key: "incident_type"
+    {
+      label: "Classification",
+      key: "incident_type",
     },
-	{
-      label: "Case", key: "settlement_status"
-    }
-	]
-	
-	const csvLink = useRef(null)
+    {
+      label: "Case",
+      key: "settlement_status",
+    },
+  ];
+
+  const csvLink = useRef(null);
 
   const BlotterList = (
     <Menu>
-      <Menu.Item key="0" onClick={() => { refreshBlotter() }}>
+      <Menu.Item
+        key="0"
+        onClick={() => {
+          refreshBlotter();
+        }}
+      >
         <span>
           <div className="d-flex align-items-center">
             <ReloadOutlined />
@@ -321,21 +340,33 @@ const BlotterRecord = (props) => {
         <span>
           <div className="d-flex align-items-center">
             <PrinterOutlined />
-			<span className="ml-2">Print</span>
+            <span className="ml-2">Print</span>
           </div>
         </span>
       </Menu.Item>
-      <Menu.Item key="2" onClick={() => { csvLink.current.link.click() }}>
+      <Menu.Item
+        key="2"
+        onClick={() => {
+          csvLink.current.link.click();
+        }}
+      >
         <span>
           <div className="d-flex align-items-center">
             <FileExcelOutlined />
-			<span className="ml-2">Export</span>
+            <span className="ml-2">Export</span>
           </div>
         </span>
       </Menu.Item>
-	  <Menu.Item key="3" hidden={true}>
-		<CSVLink ref={csvLink} data={blotterlistData} headers={headers} filename="Blotter.csv">Export</CSVLink>
-	  </Menu.Item>
+      <Menu.Item key="3" hidden={true}>
+        <CSVLink
+          ref={csvLink}
+          data={blotterlistData}
+          headers={headers}
+          filename="Blotter.csv"
+        >
+          Export
+        </CSVLink>
+      </Menu.Item>
     </Menu>
   );
 
@@ -344,8 +375,10 @@ const BlotterRecord = (props) => {
   };
 
   const BlottereditwDetails = (row) => {
-    setInitialBlotterData(row)
-    history.push(`/app/${currentBarangay}/records/blotter-record/${row._id}/edit`);
+    setInitialBlotterData(row);
+    history.push(
+      `/app/${currentBarangay}/records/blotter-record/${row._id}/edit`
+    );
   };
 
   const BlotterDeleteRow = (row) => {
@@ -441,7 +474,7 @@ const BlotterRecord = (props) => {
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => { }}
+                onClick={() => {}}
                 size="small"
               />
             </Tooltip>
@@ -639,10 +672,7 @@ const BlotterRecord = (props) => {
         <Col xs={24} sm={24} md={24} lg={18}>
           <Row>
             <Col xs={24} sm={24} md={24} lg={24}>
-              <Card
-                title="Blotter Records"
-                extra={cardDropdown(BlotterList)}
-              >
+              <Card title="Blotter Records" extra={cardDropdown(BlotterList)}>
                 <Flex
                   alignItems="center"
                   className=""

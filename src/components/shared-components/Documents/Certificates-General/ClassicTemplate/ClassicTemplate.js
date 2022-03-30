@@ -27,27 +27,6 @@ const CertDisplay = (props) => {
   };
   return (
     <Row justify="center">
-      <Col lg={24}>
-        {" "}
-        <Card className="custom_cert">
-          {" "}
-          <Button
-            icon={<ArrowDownOutlined />}
-            onClick={() => generatePdfDocument(props.data, "feedata")}
-          >
-            Download
-          </Button>
-          <FontPicker
-            className=" btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
-            apiKey={process.env.REACT_APP_FONT_ACCESS}
-            activeFontFamily={activeFontFamily}
-            limit={10}
-            onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
-          />{" "}
-          {console.log(activeFontFamily)}
-        </Card>
-      </Col>
-
       <Col
         justify="center"
         className="pr-1"

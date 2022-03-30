@@ -275,6 +275,9 @@ div[id^="font-picker"] ul li button:focus {
   background: #ecf1ff !important;
 }
 
+/* div[id^="font-picker"] {
+  background: url("../images/font-icon.png") no-repeat left center;
+} */
 div[id^="font-picker"]:hover {
   border: 1px solid;
   border-color: #3e79f7;
@@ -295,4 +298,14 @@ div[id^="font-picker"]:hover {
   .margin-account-left {
     margin-left: 0px;
   }
+}
+.cert-name {
+  border: none;
+  border-radius: 0px !important;
+  text-align: center;
+  margin-top: 15px;
+  width: 125px;
+}
+.cert-name:focus {
+  box-shadow: 0 4px 2px -2px rgba(62, 121, 247, 0.2) !important;
 }

@@ -4,11 +4,12 @@ import Flex from "components/shared-components/Flex";
 import SplitPane, { Pane } from "react-split-pane";
 import CertDisplay from "./cert-display";
 import InputCert from "./input-display";
-import { Col, Row } from "antd";
-
+import { Col, Row, Button, Input } from "antd";
+import { ArrowDownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 const Certificates = () => {
   const refs = useRef();
   const [parentData, setParentData] = useState({});
+  const [loading, setLoading] = useState(false);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   function handleChange(value) {
@@ -32,19 +33,64 @@ const Certificates = () => {
     [height],
     [width]
   );
+  const setData = (data) => {
+    setLoading(!loading);
+    console.log(data);
+    let x = data;
+    console;
+    return setParentData(x);
+  };
+  useEffect(() => {
+    console.log(parentData);
+    setParentData(parentData);
+    if (loading) {
+      setTimeout(() => {
+        setLoading(!loading);
+      }, 1000);
+    }
+  }, [parentData, loading]);
 
   return (
     <div>
       {" "}
       <PageHeaderAlt className="padding-none border-bottom" overlap>
-        <div className="">
+        {/* <div className="container-fluid">
           <Flex
             className="py-2"
             mobileFlex={false}
             justifyContent="between"
             alignItems="center"
           >
-            <h2 className="mb-3">Certificates</h2>
+            <Button>Back</Button>
+            <div>
+              <Input
+                style={{
+                  border: "none",
+                }}
+                className="mb-3 cert-name"
+                defaultValue="Untitled 1"
+              />
+              <Button type="primary">Download</Button>{" "}
+            </div>
+          </Flex>
+        </div> */}{" "}
+        <div className="container-fluid">
+          <Flex justifyContent="between" alignItems="center" className="py-2">
+            <Button icon={<ArrowLeftOutlined />}>Back</Button>{" "}
+            <Input
+              style={{
+                border: "none",
+                fontWeight: 900,
+              }}
+              className="mb-3 cert-name "
+              defaultValue="Untitled 1"
+            />
+            <div>
+              {" "}
+              <Button icon={<ArrowDownOutlined />} type="primary">
+                <span>Download</span>
+              </Button>
+            </div>
           </Flex>
         </div>
       </PageHeaderAlt>
@@ -62,7 +108,7 @@ const Certificates = () => {
               borderRight: "1px",
             }}
           >
-            <InputCert parentData={parentData} setParentData={setParentData} />
+            <InputCert parentData={parentData} setParentData={setData} />
           </Col>
           <Col
             style={{ overflow: "auto" }}
@@ -74,7 +120,12 @@ const Certificates = () => {
             lg={12}
           >
             {" "}
-            <CertDisplay width={width} height={height} data={parentData} />
+            <CertDisplay
+              width={width}
+              height={height}
+              data={parentData}
+              loadingImage={loading}
+            />
           </Col>{" "}
         </Row>
       </div>
@@ -82,4 +133,4 @@ const Certificates = () => {
   );
 };
 
-export default Certificates;
+export default React.memo(Certificates, InputCert);

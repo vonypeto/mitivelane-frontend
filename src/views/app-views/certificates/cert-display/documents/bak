@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BasicDocument from "./documents/BasicDocument";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Card, Col, Row, Button, Upload, message } from "antd";
@@ -8,8 +8,6 @@ import {
   PlusOutlined,
   LoadingOutlined,
   MinusCircleOutlined,
-  ArrowDownOutlined,
-  ArrowRightOutlined,
 } from "@ant-design/icons";
 import { Form, Input } from "antd";
 import debounce from "lodash.debounce";
@@ -41,7 +39,6 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 const CertDisplay = (props) => {
-  const { setParentData, parentData } = props;
   // const [countOpenForm, setCountOpenForm] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,6 +47,7 @@ const CertDisplay = (props) => {
     { id: 2, image: "" },
   ]);
   const handleChangeFirstLogo = (info) => {
+    console.log(info.file.originFileObj);
     if (info.file.status === "uploading") {
       setLoading(true);
       return;
@@ -57,16 +55,17 @@ const CertDisplay = (props) => {
     if (info.file.status === "done") {
       // Get this url from response in real world.
       getBase64(info.file.originFileObj, (imageUrl) => {
+        let data = props.parentData;
+        data[`firstLogo`] = imageUrl;
+        props.setParentData(data);
         AddImage(1, imageUrl);
+        console.log(imageUrl);
         setLoading(false);
-        // let data = props.parentData;
-        // data[`firstLogo`] = imageUrl;
-        // return setParentData(data);
-        return onImage(imageUrl, "firstLogo");
       });
     }
   };
   const handleChangeSecondLogo = (info) => {
+    console.log(info);
     if (info.file.status === "uploading") {
       setLoading(true);
       return;
@@ -74,12 +73,14 @@ const CertDisplay = (props) => {
     if (info.file.status === "done") {
       // Get this url from response in real world.
       getBase64(info.file.originFileObj, (imageUrl) => {
+        console.log(imageUrl);
+        let data = props.parentData;
+        data[`secondLogo`] = imageUrl;
+        props.setParentData(data);
+
         AddImage(2, imageUrl);
+
         setLoading(false);
-        // let data = props.parentData;
-        // data[`secondLogo`] = imageUrl;
-        // return setParentData(data);
-        return onImage(imageUrl, "secondLogo");
       });
     }
   };
@@ -214,20 +215,13 @@ const CertDisplay = (props) => {
     form.setFieldsValue({
       [title]: e.target.value,
     });
-    let data = parentData;
+    let data = props.parentData;
 
     data[`${title}`] = e.target.value;
-    return setParentData(data);
-  }, 1000);
-  const onImage = debounce((image, title) => {
-    form.setFieldsValue({
-      [title]: image,
-    });
-    let data = parentData;
+    props.setParentData(data);
 
-    data[`${title}`] = image;
-    return setParentData(data);
-  }, 100);
+    console.log(props.parentData);
+  }, 1000);
   // const items = [
   //   { id: 1, num: 1 },
   //   { id: 2, num: 2 },
@@ -385,6 +379,7 @@ const CertDisplay = (props) => {
                                         uploadButton
                                       )}
                                     </Upload>
+                                    {console.log(logoList[index].image)}
                                     {}
                                   </Col>
                                 )}
@@ -448,18 +443,10 @@ const CertDisplay = (props) => {
             </Card>*/}{" "}
             <Col className="mt-2 text-right">
               {" "}
-              <Button
-                icon={<ArrowDownOutlined />}
-                type="primary"
-                htmlType="submit"
-              >
+              <Button type="primary" htmlType="submit">
                 Download
               </Button>{" "}
-              <Button
-                icon={<ArrowRightOutlined />}
-                type="primary"
-                htmlType="submit"
-              >
+              <Button type="primary" htmlType="submit">
                 Preview
               </Button>{" "}
             </Col>
