@@ -39,7 +39,7 @@ const HouseholdForm = () => {
           name="house_status"
           label="House Status"
         >
-          <Select defaultValue={"owned"}>
+          <Select>
             <Option value="owned">Owned</Option>
             <Option value="renting">Renting</Option>
             <Option value="others">Others</Option>
@@ -61,7 +61,7 @@ const HouseholdForm = () => {
           name="water_source"
           label="Water Source"
         >
-          <Select defaultValue={"pipe"}>
+          <Select>
             <Option value="pipe">Pipe</Option>
             <Option value="others">Others</Option>
           </Select>
@@ -73,7 +73,7 @@ const HouseholdForm = () => {
           name="toilet_type"
           label="Toilet Type"
         >
-          <Select defaultValue={"Sealed"}>
+          <Select>
             <Option value="open pit">Open Pit</Option>
             <Option value="sealed">Sealed</Option>
           </Select>
@@ -85,7 +85,7 @@ const HouseholdForm = () => {
           name="waste_management"
           label="Waste Management"
         >
-          <Select defaultValue={"Collect"} span={24}>
+          <Select span={24}>
             <Option value="collect">Collect</Option>
             <Option value="burn">Burn</Option>
             <Option value="dump">Dump</Option>

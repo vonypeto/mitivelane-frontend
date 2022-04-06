@@ -6,11 +6,18 @@ const { Option } = Select;
 const NewHouseholdMemberForm = () => {
     return (
         <Row >
+            <Form.Item
+                name="id"
+                hidden
+            >
+                <Input />
+            </Form.Item>
 
             <Col span={24}>
                 <Form.Item
                     name="first_name"
                     label="First Name"
+                    rules={[{ required: true, message: "Please input resident's first name!" }]}
                 >
                     <Input />
                 </Form.Item>
@@ -20,6 +27,7 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="last_name"
                     label="Last Name"
+                    rules={[{ required: true, message: "Please input resident's last name!" }]}
                 >
                     <Input />
                 </Form.Item>
@@ -29,8 +37,9 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="birthday"
                     label="Birthday"
+                    rules={[{ required: true, message: "Please input resident's birthday!" }]}
                 >
-                    <DatePicker className='w-100'/>
+                    <DatePicker className='w-100' />
                 </Form.Item>
             </Col>
 
@@ -38,8 +47,9 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="age"
                     label="Age"
+                    rules={[{ required: true, message: "Please input resident's age!" }]}
                 >
-                    <InputNumber className='w-100' min={0}/>
+                    <InputNumber className='w-100' min={0} />
                 </Form.Item>
             </Col>
 
@@ -47,8 +57,9 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="blood_type"
                     label="Blood Type"
+                    rules={[{ required: true, message: "Please input resident's blood type!" }]}
                 >
-                    <Select defaultValue={"A"}>
+                    <Select>
                         <Option value="A">A</Option>
                         <Option value="B">B</Option>
                         <Option value="AB">AB</Option>
@@ -59,10 +70,26 @@ const NewHouseholdMemberForm = () => {
 
             <Col span={24}>
                 <Form.Item
+                    name="civil_status"
+                    label="Civil Status"
+                    rules={[{ required: true, message: "Please input resident's civil status!" }]}
+                >
+                    <Select>
+                        <Option value="Single">Single</Option>
+                        <Option value="Married">Married</Option>
+                        <Option value="Seperated">Seperated</Option>
+                        <Option value="Widowed">Widowed</Option>
+                    </Select>
+                </Form.Item>
+            </Col>
+
+            <Col span={24}>
+                <Form.Item
                     name="educational_attainment"
                     label="Educational Attainment"
+                    rules={[{ required: true, message: "Please input resident's educational attainment!" }]}
                 >
-                    <Select defaultValue={"Elementary School Graduate"}>
+                    <Select >
                         <Option value="Elementary School Graduate">Elementary School Graduate</Option>
                         <Option value="HighSchool Graduate">HighSchool Graduate</Option>
                         <Option value="College Graduate">College Graduate</Option>
@@ -75,8 +102,9 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="occupation"
                     label="Occupation"
+                    rules={[{ required: true, message: "Please input resident's occupation!" }]}
                 >
-                    <Input/>
+                    <Input />
                 </Form.Item>
             </Col>
 
@@ -84,8 +112,9 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="ofw"
                     label="OFW"
+                    rules={[{ required: true, message: "Please input if resident is not an OFW or state his/her job  as an OFW!" }]}
                 >
-                    <Input/>
+                    <Input />
                 </Form.Item>
             </Col>
 
@@ -93,8 +122,9 @@ const NewHouseholdMemberForm = () => {
                 <Form.Item
                     name="illness"
                     label="Illness"
+                    rules={[{ required: true, message: "Please input if resident has any occuring illness" }]}
                 >
-                    <Input/>
+                    <Input />
                 </Form.Item>
             </Col>
 

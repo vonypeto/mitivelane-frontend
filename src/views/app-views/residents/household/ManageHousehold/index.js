@@ -1,7 +1,9 @@
-import { React, useEffect, useState, useRef, createRef } from 'react'
-import { useParams } from "react-router-dom";
-import { Card, Form, Input, InputNumber, Select, Row, Col, Table, Menu, Button, Modal } from "antd";
+import { React, useEffect, useState, useRef, createRef, } from 'react'
+import { useParams, useHistory } from "react-router-dom";
+import { Card, Form, Input, InputNumber, Select, Row, Col, Table, Menu, Button, Modal, message } from "antd";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
+import axios from 'axios';
+import { useAuth } from "contexts/AuthContext";
 
 //Form
 import HouseholdForm from './HouseholdForm';
@@ -20,6 +22,11 @@ import {
 } from "@ant-design/icons";
 
 const ManageHousehold = (props) => {
+  //Import 
+  const source = axios.CancelToken.source();
+  const cancelToken = source.token;
+  const history = useHistory();
+  const { generateToken, currentBarangay } = useAuth();
 
   //Initialize
   const { barangay_id, mode } = props
@@ -30,11 +37,25 @@ const ManageHousehold = (props) => {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (_, data) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">
+            {(`${data.first_name} ${data.last_name}`)}
+          </span>
+        </div>
+      ),
     },
     {
       title: "Birthday",
       dataIndex: "birthday",
       key: "birthday",
+      render: (_, data) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">
+            {new Date(data.birthday).toDateString().split(' ').slice(1).join(' ')}
+          </span>
+        </div>
+      ),
     },
     {
       title: "Age",
@@ -137,25 +158,38 @@ const ManageHousehold = (props) => {
     },
   ];
 
+  const householdDefault = {
+    house_status: "owned",
+    water_source: "pipe",
+    toilet_type: "sealed",
+    waste_management: "collect"
+  }
+
+  const householdMemberDefault = {
+    blood_type: "A",
+    educational_attainment: "Elementary School Graduate",
+    civil_status: "Single"
+  }
+
   //State
-  const [householdMemberList, sethouseholdMemberList] = useState(ResidentTableData)
+  const [householdMemberList, sethouseholdMemberList] = useState([])
+  const [householdInitialVal, sethouseholdInitialVal] = useState(householdDefault)
+  const [householdMemberInitialVal, sethouseholdMemberInitialVal] = useState(householdMemberDefault)
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   //Ref
   const NewMemberFormRef = createRef()
+  const NewHouseholdFormRef = createRef()
 
-  const dropdownMenu = (row) => (
-    <Menu>
-      <Menu.Item key={1}>
-        <EditOutlined />
-        <span className="ml-2">Edit</span>
-      </Menu.Item>
-      <Menu.Item key={2} onClick={() => { deleteHousehold(row) }}>
-        <DeleteOutlined />
-        <span className="ml-2" style={{ color: "black" }}>Delete</span>
-      </Menu.Item>
-    </Menu>
-  );
+  //Axios
+  const createHousehold = async (household, householdMembers) => {
+    await axios.post(
+      "/api/household/add",
+      { household, householdMembers, barangay_id: barangay_id },
+      generateToken()[1],
+      { cancelToken }
+    );
+  }
 
   //Modal
   const showModal = () => {
@@ -164,20 +198,78 @@ const ManageHousehold = (props) => {
 
   const handleOk = () => {
     NewMemberFormRef.current.submit()
-    setIsModalVisible(false);
+    // setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    sethouseholdMemberInitialVal(householdMemberDefault)
   };
 
+  //Function
+  const dropdownMenu = (row) => (
+    <Menu>
+      <Menu.Item key={1} onClick={() => { editHouseholdMember(row) }}>
+        <EditOutlined />
+        <span className="ml-2">Edit</span>
+      </Menu.Item>
+      <Menu.Item key={2} onClick={() => { deleteHouseholdMember(row) }}>
+        <DeleteOutlined />
+        <span className="ml-2" style={{ color: "black" }}>Delete</span>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const editHouseholdMember = (row) => {
+    console.log("row", row)
+    console.log(householdMemberInitialVal)
+    sethouseholdMemberInitialVal({...householdMemberInitialVal, ...row})
+    setIsModalVisible(true)
+    
+  }
+
+  const deleteHouseholdMember = (row) => {
+    var currentHouseholdMemberList = [...householdMemberList]
+    var objIndex = currentHouseholdMemberList.findIndex((obj => obj.id == row.id));
+    currentHouseholdMemberList.splice(objIndex, 1); 
+    sethouseholdMemberList(currentHouseholdMemberList)
+    message.success("Deleted household members")
+  }
+
   const onFinishAddMember = (value) => {
-    console.log("Adding new member", value)
+    // if member is new
+    if (value.id == null) {
+      value.action = "added"
+      value.id = householdMemberList.length
+      console.log("Adding new member", value.id)
+      sethouseholdMemberList([...householdMemberList, value])
+      setIsModalVisible(false);
+    }
+    // if member is edited
+    else {
+      value.action = "edited"
+      console.log("Existing member", value.id)
+      var currentHouseholdMemberList = [...householdMemberList]
+      var objIndex = currentHouseholdMemberList.findIndex((obj => obj.id == value.id));
+      currentHouseholdMemberList[objIndex] = value
+      console.log(currentHouseholdMemberList)
+      sethouseholdMemberList(currentHouseholdMemberList)
+      setIsModalVisible(false)
+    }
+  }
+
+  const onFinishAddHousehold = (value) => {
+    console.log("Adding new household", value)
+    // (household, householdMembers)
+    createHousehold(value, householdMemberList)
+    message.success("Success, new household has been added.")
+    history.push(`/app/${barangay_id}/residents/household/list`)
+    //
   }
 
   return (
     <div>
-      <Card>
+      <Card >
         {mode == "ADD" &&
           <h1>Add Household</h1>
         }
@@ -189,10 +281,20 @@ const ManageHousehold = (props) => {
           </div>
         }
         <p>barangay_id: {barangay_id}</p>
+        <Button
+          type='primary'
+          style={{float:"right"}}
+          onClick={() => {NewHouseholdFormRef.current.submit()}}
+        >
+          Submit
+        </Button>
       </Card>
 
       <Form
         name='household_form'
+        onFinish={onFinishAddHousehold}
+        ref={NewHouseholdFormRef}
+        initialValues={householdInitialVal}
       >
         <Card title={<h1>Household Info</h1>}>
           <HouseholdForm />
@@ -211,16 +313,23 @@ const ManageHousehold = (props) => {
           </Button>
         }
       >
-        <Table columns={ResidentTableColumns} dataSource={householdMemberList} />
+        <Table columns={ResidentTableColumns} dataSource={householdMemberList} rowKey={"id"} />
+        <Button
+            type='primary'
+            onClick={() => {console.log(householdMemberList)}}
+          >
+            Show Member
+          </Button>
       </Card>
 
-      <Modal title="New Household Member Information" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} okText={"Submit"}>
+      <Modal title="New Household Member Information" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} okText={"Submit"} destroyOnClose={true}>
         <Form
           name='new_household_member_form'
           onFinish={onFinishAddMember}
           ref={NewMemberFormRef}
+          initialValues={householdMemberInitialVal}
         >
-          <NewHouseholdMemberForm/>
+          <NewHouseholdMemberForm />
         </Form>
       </Modal>
     </div>
