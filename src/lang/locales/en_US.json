@@ -16,10 +16,10 @@
   "sidenav.residents.information.edit": "Edit Resident",
 
   "sidenav.residents.aid-assistant": "Household & Fund",
-  "sidenav.residents.aid-assistant.list": "list",
-  "sidenav.residents.aid-assistant.add": "add",
-  "sidenav.residents.aid-assistant.delete": "delete",
-  "sidenav.residents.aid-assistant.edit": "edit",
+  "sidenav.residents.aid-assistant.list": "Household",
+  "sidenav.residents.aid-assistant.add": "Archive",
+  "sidenav.residents.aid-assistant.delete": "Supply",
+  "sidenav.residents.aid-assistant.edit": "Purok/Area",
 
   "sidenav.reports": "Record and Reports",
   "sidenav.reports.blotter": "Blotter Records",
