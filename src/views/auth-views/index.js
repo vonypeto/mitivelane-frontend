@@ -15,7 +15,7 @@ export const AppViews = () => {
           path={`${AUTH_PREFIX_PATH}/register`}
           component={lazy(() => import(`./authentication/register-2`))}
         />
-        <Route
+        {/* <Route
           path={`${AUTH_PREFIX_PATH}/login-1`}
           component={lazy(() => import(`./authentication/login-1`))}
         />
@@ -52,7 +52,7 @@ export const AppViews = () => {
         <Route
           path={`${AUTH_PREFIX_PATH}/barangay-register`}
           component={lazy(() => import(`./authentication/barangay-register`))}
-        />
+        /> */}
 
         <Redirect
           from={`${AUTH_PREFIX_PATH}`}

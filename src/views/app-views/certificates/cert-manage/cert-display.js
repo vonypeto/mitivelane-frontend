@@ -7,18 +7,21 @@ import { saveAs } from "file-saver";
 import { pdf } from "@react-pdf/renderer";
 import { ArrowDownOutlined } from "@ant-design/icons";
 import { BsCpu } from "react-icons/bs";
+import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 
 const CertDisplay = (props) => {
-  const { data, loadingImage } = props;
+  const { data, loadingImage, width } = props;
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");
   const [childData, setChildData] = useState(data);
+  const [switchData, setSwitchData] = useState(false);
+
   console.log(props.data.firstLogo);
   useEffect(() => {
     localStorage.setItem("font", activeFontFamily);
     setChildData(props.data);
     console.log(data);
   }, [activeFontFamily, data]);
-
+  // useEffect(() => {}, [width]);
   const generatePdfDocument = async (data, fileName) => {
     const blob = await pdf(
       <BasicDocument data={data} fontType={activeFontFamily} />
@@ -28,7 +31,7 @@ const CertDisplay = (props) => {
   };
   return (
     <Row justify="center">
-      <Col lg={24}>
+      <Col xs={24} sm={24} md={24} lg={24}>
         {" "}
         <Card className="custom_cert">
           {" "}
@@ -45,7 +48,6 @@ const CertDisplay = (props) => {
             limit={10}
             onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
           />{" "}
-          {console.log(activeFontFamily)}
         </Card>
       </Col>
 
@@ -69,21 +71,25 @@ const CertDisplay = (props) => {
         </PDFDownloadLink>{" "} */}
         {props.data.munipality}
         <Card
-          className="text-center pdf-template-border apply-font"
+          className="pdf-template-border apply-font"
           style={{
             backgroundColor: "#FFFFFF",
             height:
-              props.width >= 1920
-                ? 697
-                : props.width >= 1080
-                ? 600
-                : props.width >= 1080
-                ? 500
-                : props.width >= 728
-                ? 600
-                : props.width >= 500
-                ? 540
-                : 500,
+              0 <= props.width && 374 >= props.width
+                ? 585
+                : 375 <= props.width && 424 >= props.width
+                ? 590
+                : 425 <= props.width && 648 >= props.width
+                ? 640
+                : 649 <= props.width && 767 >= props.width
+                ? 700
+                : 768 <= props.width && 1235 >= props.width
+                ? 850
+                : 1240 <= props.width && 1399 >= props.width
+                ? 1000
+                : 1400 <= props.width && 1500 >= props.width
+                ? 670
+                : 860,
             width:
               props.width >= 1920
                 ? props.width - (props.height + 330)
@@ -92,7 +98,15 @@ const CertDisplay = (props) => {
                 : null,
           }}
         >
-          <Row>
+          <PDFTemplate
+            data={{ name: "text" }}
+            selectedForm={1}
+            min={4}
+            max={9}
+            width={width}
+            type="view"
+          />
+          {/* <Row>
             <Col
               className="text-center "
               style={{ float: "right" }}
@@ -120,8 +134,7 @@ const CertDisplay = (props) => {
               )}
             </Col>
             <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-              <div className="pdf-template-font">
-                {" "}
+              <div className="">
                 <b>Republic of the Philippines</b> <b>Province of ____</b>{" "}
                 <br />
                 <b>Municipality of _____</b> <br />
@@ -132,7 +145,6 @@ const CertDisplay = (props) => {
                 </b>
               </div>
             </Col>
-            {/* {props.data} */}
             {console.log(props.data)}
             <Col
               xs={6}
@@ -185,10 +197,9 @@ const CertDisplay = (props) => {
                 {/* <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                   asdsad asdsad asdsad asdsad asdsad asdsad asdsad asdsad asdsad
                   asdsad asdsad asdsad asdsad asdsad
-                </Col> */}
               </Row>
             </Col>
-          </Row>
+          </Row> */}
         </Card>
       </Col>
     </Row>

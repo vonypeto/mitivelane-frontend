@@ -734,6 +734,10 @@ const BlotterRecord = (props) => {
                       preserveSelectedRowKeys: false,
                       ...rowSelectionBlotter,
                     }}
+                    pagination={{
+                      defaultPageSize: 10,
+                      showSizeChanger: true,
+                    }}
                   />
                 </div>
               </Card>
@@ -771,6 +775,10 @@ const BlotterRecord = (props) => {
                       type: "checkbox",
                       preserveSelectedRowKeys: false,
                       ...rowSelectionBlotterRequest,
+                    }}
+                    pagination={{
+                      defaultPageSize: 10,
+                      showSizeChanger: true,
                     }}
                   />
                 </div>

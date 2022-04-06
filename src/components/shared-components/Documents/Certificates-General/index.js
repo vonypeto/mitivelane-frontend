@@ -1,0 +1,80 @@
+import React from "react";
+import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
+import { Textfit } from "react-textfit";
+
+const index = (props) => {
+  const { selectedForm, width, type } = props;
+  let size = 9;
+  let lineHeight = "16px";
+  if (type == "drawer") {
+    if (0 <= width && 374 >= width) {
+      size = 7;
+    } else if (375 <= width && 424 >= width) {
+      size = 8;
+    } else if (425 <= width && 648 >= width) {
+      size = 9;
+    } else if (649 <= width && 767 >= width) {
+      size = 11;
+    } else if (768 <= width && 1023 >= width) {
+      size = 13;
+      lineHeight = "16px";
+    } else {
+      size = 15;
+      lineHeight = "18px";
+    }
+  } else if (type == "view") {
+    if (0 <= props.width && 374 >= props.width) {
+      size = 15;
+    } else if (375 <= props.width && 424 >= props.width) {
+      size = 15;
+    } else if (425 <= props.width && 648 >= props.width) {
+      size = 15;
+    } else if (649 <= props.width && 767 >= props.width) {
+      size = 15;
+    } else if (768 <= props.width && 1235 >= props.width) {
+      size = 16.5;
+    } else if (1240 <= props.width && 1399 >= props.width) {
+      size = 18.7;
+      lineHeight = "30px";
+    } else if (1400 <= props.width && 1500 >= props.width) {
+      size = 13;
+    } else {
+      size = 18;
+      lineHeight = "25px";
+    }
+  } else {
+    if (0 <= width && 349 >= width) {
+      lineHeight = "4px";
+      size = 5;
+    } else if (350 <= width && 374 >= width) {
+      lineHeight = "6px";
+      size = 5;
+    } else if (375 <= width && 424 >= width) {
+      lineHeight = "9px";
+      size = 5;
+    } else if (425 <= width && 648 >= width) {
+      size = 6;
+      lineHeight = "10ox";
+    } else if (649 <= width && 767 >= width) {
+      lineHeight = "11px";
+      size = 8;
+    } else if (768 <= width && 1023 >= width) {
+      lineHeight = "12px";
+      size = 8;
+    } else {
+      size = 9;
+      lineHeight = "14px";
+    }
+  }
+  return (
+    <>
+      <Textfit mode="multi" min={size} max={size}>
+        {selectedForm == 1 ? (
+          <ClassicTemplate {...props} lineHeight={lineHeight} />
+        ) : null}
+      </Textfit>
+    </>
+  );
+};
+
+export default index;

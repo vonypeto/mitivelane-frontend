@@ -8,6 +8,10 @@ const Components = ({ match }) => (
       <Route
         path={`${match.url}/list`}
         component={lazy(() => import(`./cert-display`))}
+      />{" "}
+      <Route
+        path={`${match.url}/create`}
+        component={lazy(() => import(`./cert-manage`))}
       />
     </Switch>
   </Suspense>

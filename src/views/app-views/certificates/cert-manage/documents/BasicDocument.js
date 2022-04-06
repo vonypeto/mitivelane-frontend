@@ -198,7 +198,7 @@ const BasicDocument = (props) => {
             </Text>
             <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
             <Text style={styles.indent}>
-              This is to certify that
+              This is to certify that{" "}
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text>is to
               bonafide resident of Barangay Fiesishare, talisay, Batangas.
             </Text>

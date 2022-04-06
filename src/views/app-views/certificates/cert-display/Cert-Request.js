@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Card, Table, Select, Input, Button, Menu, Space, message } from "antd";
+import React, { useState } from "react";
+import { Card, Table, Select, Input, Button, Menu, Space } from "antd";
+import CertList from "assets/data/cert-list.data.json";
 import QueueAnim from "rc-queue-anim";
 import {
   EyeOutlined,
@@ -16,67 +17,35 @@ import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import { useHistory } from "react-router-dom";
 import utils from "utils";
-import { Col, Dropdown } from "antd";
-import axios from "axios";
-import { useAuth } from "contexts/AuthContext";
+import { Col, Dropdown, Tag } from "antd";
 
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
 
-const ListInformation = (props) => {
-  const source = axios.CancelToken.source();
-  const cancelToken = source.token;
-
-  const { generateToken, currentBarangay } = useAuth();
-  const barangay_id = currentBarangay;
-
-  const { param_url } = props;
+const ListInformation = () => {
   const [selectShow, setShow] = useState(true);
   let history = useHistory();
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(CertList);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isResidentLoading, setIsResidentLoading] = useState(true);
-
-  useEffect(() => {
-    getAllResident();
-  }, []);
-
-  const getAllResident = async () => {
-    try {
-      await axios
-        .post("/api/resident/getAll", { barangay_id }, generateToken()[1], {
-          cancelToken,
-        })
-        .then((res) => {
-          setList(res.data);
-          setIsResidentLoading(false);
-        });
-
-      return () => {
-        source.cancel();
-      };
-    } catch (error) {
-      message.error("Could not fetch data from server!!");
-    }
-  };
+  console.log(selectShow);
 
   const dropdownMenu = (row) => (
     <Menu>
-      <Menu.Item onClick={() => viewDetails(row)} key={1}>
-        <Flex alignItems="center">
-          <EyeOutlined />
-          <span className="ml-2">View Details</span>
-        </Flex>
-      </Menu.Item>
-      <Menu.Item onClick={() => editDetails(row)} key={2}>
+      <Menu.Item onClick={() => editDetails(row)}>
         <Flex alignItems="center">
           <EditOutlined />
-          <span className="ml-2">Edit Details</span>
+          <span className="ml-2"> Details</span>
         </Flex>
       </Menu.Item>
-      <Menu.Item onClick={() => deleteRow(row)} key={3}>
+      <Menu.Item onClick={() => viewDetails(row)}>
+        <Flex alignItems="center">
+          <EyeOutlined />
+          <span className="ml-2">Approve</span>
+        </Flex>
+      </Menu.Item>
+      <Menu.Item onClick={() => deleteRow(row)}>
         <Flex alignItems="center">
           <DeleteOutlined />
           <span className="ml-2">
@@ -89,42 +58,24 @@ const ListInformation = (props) => {
     </Menu>
   );
 
-  const AddResident = () => {
-    setShow(!selectShow);
-
-    setTimeout(() => {
-      history.push(`/app/1002/residents/resident-information/add`);
-    }, 1000);
-  };
-
   const viewDetails = (row) => {
     setShow(!selectShow);
 
     setTimeout(() => {
-      history.push(
-        `/app/1002/residents/resident-information/${row.resident_id}/view`
-      );
+      //   history.push(
+      //     `/app/1002/residents/resident-information/${row.resident_id}/view`
+      //   );
     }, 1000);
   };
-
   const editDetails = (row) => {
     setShow(!selectShow);
     setTimeout(() => {
-      history.push(
-        `/app/1002/residents/resident-information/${row.resident_id}/edit`
-      );
+      //   history.push(
+      //     `/app/1002/residents/resident-information/${row.resident_id}/edit`
+      //   );
     }, 1000);
   };
-
-  const deleteRow = async (row) => {
-    const resident_id = row.resident_id;
-    await axios.post(
-      "/api/resident/delete",
-      { resident_id },
-      generateToken()[1]
-    );
-
-    //deleting resident in table
+  const deleteRow = (row) => {
     const objKey = "resident_id";
     let data = list;
     if (selectedRows.length > 1) {
@@ -141,30 +92,37 @@ const ListInformation = (props) => {
 
   const tableColumns = [
     {
-      title: "Last Name",
-      dataIndex: "lastname",
+      title: "Request ID",
+      dataIndex: "request_id",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
     },
     {
-      title: "First Name",
-      dataIndex: "firstname",
+      title: "Name",
+      dataIndex: "name",
+      sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
+    },
+    {
+      title: "Cert. Type",
+      dataIndex: "cert_type",
       sorter: (a, b) => utils.antdTableSorter(a, b, "firstname"),
     },
     {
-      title: "Middle Name",
-      dataIndex: "middlename",
+      title: "Date Issued",
+      dataIndex: "date_issued",
       sorter: (a, b) => utils.antdTableSorter(a, b, "middlename"),
     },
+
     {
-      title: "Age",
-      dataIndex: "age",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "age"),
+      title: "Residency",
+      dataIndex: "residency",
+      render: (_, cert) => (
+        <div className="">
+          <Button>Check</Button>
+        </div>
+      ),
+      sorter: (a, b) => utils.antdTableSorter(a, b, "name"),
     },
-    {
-      title: "Civil Status",
-      dataIndex: "civil_status",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "civil_status"),
-    },
+
     {
       title: "Actions",
       dataIndex: "actions",
@@ -213,7 +171,7 @@ const ListInformation = (props) => {
 
   const onSearch = (e) => {
     const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? list : ResidentListData;
+    const searchArray = e.currentTarget.value ? list : CertList;
     const data = utils.wildCardSearch(searchArray, value);
     setList(data);
     setSelectedRowKeys([]);
@@ -222,10 +180,10 @@ const ListInformation = (props) => {
   const handleShowCategory = (value) => {
     if (value !== "All") {
       const key = "resident_id";
-      const data = utils.filterArray(ResidentListData, key, value);
+      const data = utils.filterArray(CertList, key, value);
       setList(data);
     } else {
-      setList(ResidentListData);
+      setList(CertList);
     }
   };
   const cardDropdown = (menu) => (
@@ -246,7 +204,7 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={cardDropdown(ResidentList)}>
+          <Card title="Requests" extra={cardDropdown(ResidentList)}>
             <Flex
               alignItems="center"
               className=""
@@ -278,38 +236,17 @@ const ListInformation = (props) => {
                   </Select>
                 </div>
               </Flex>
-
-              <div className="justify-content-between">
-                <Space>
-                  <Col>
-                    <Button
-                      onClick={AddResident}
-                      type="primary mb-3"
-                      icon={<PlusCircleOutlined />}
-                      block
-                    >
-                      Add Resident
-                    </Button>
-                  </Col>
-                </Space>
-              </div>
             </Flex>
             <div className="table-responsive">
               <Table
                 columns={tableColumns}
                 dataSource={list}
-                rowKey="resident_id"
-                scroll={{ x: "max-content" }}
+                rowKey="request_id"
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
                   type: "checkbox",
                   preserveSelectedRowKeys: false,
                   ...rowSelection,
-                }}
-                loading={isResidentLoading}
-                pagination={{
-                  defaultPageSize: 10,
-                  showSizeChanger: true,
                 }}
               />
             </div>

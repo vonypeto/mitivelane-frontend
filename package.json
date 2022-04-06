@@ -79,6 +79,7 @@
     "react-split-pane": "^2.0.3",
     "react-sticky": "^6.0.3",
     "react-syntax-highlighter": "^15.4.3",
+    "react-textfit": "^1.1.1",
     "react-tooltip": "^4.2.11",
     "react-virtualized": "^9.22.2",
     "react-window": "^1.8.6",

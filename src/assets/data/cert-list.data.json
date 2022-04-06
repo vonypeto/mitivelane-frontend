@@ -1,0 +1,18 @@
+[
+  {
+    "request_id": 1,
+    "name": "Gian",
+    "avatar": "red",
+    "cert_type": "12314",
+    "date_issued": "10/10/2000",
+    "residency": null
+  },
+  {
+    "request_id": 2,
+    "name": "Gian",
+    "avatar": "red",
+    "cert_type": "12314",
+    "date_issued": "10/10/2000",
+    "residency": null
+  }
+]
