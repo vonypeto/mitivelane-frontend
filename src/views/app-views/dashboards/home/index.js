@@ -143,6 +143,11 @@ const cardDropdown = (menu) => (
 
 const tableColumns = [
   {
+    title: "ID",
+    dataIndex: "blotter_id",
+    key: "blotter_id",
+  },
+  {
     title: "Applicant",
     dataIndex: "applicant",
     key: "applicant",
@@ -151,11 +156,11 @@ const tableColumns = [
         <Avatar
           size={30}
           className="font-size-sm"
-          style={{ backgroundColor: record.avatarColor }}
+          style={{ backgroundColor: record.reporters[0].avatarColor }}
         >
-          {utils.getNameInitial(text)}
+          {utils.getNameInitial(record.reporters[0].firstname)}
         </Avatar>
-        <span className="ml-2">{text}</span>
+        <span className="ml-2">{record.reporters[0].firstname}</span>
       </div>
     ),
   },
@@ -201,17 +206,21 @@ export const DefaultDashboard = () => {
   
 
   
-  const [blotterlist, setBlotterList] = useState([]);
+  const [blotterlistrequest, setBlotterListRequest] = useState([]);
+  // const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
+  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(true);
   
   useEffect(() => {
-	  getLatestBlotters()
+	  getLatestBlotterRequests()
   }, [])
   
-  const getLatestBlotters = () => {
+  const getLatestBlotterRequests = () => {
 	  axios
-      .get("/api/blotter/get-latest-blotters/" + currentBarangay, generateToken()[1])
+      .get("/api/blotter_request/get-latest-blotter-requests/" + currentBarangay, generateToken()[1])
       .then((response) => {
         console.log("Latest Blotter", response.data);
+		setBlotterListRequest(response.data)
+		setBlotterListRequestLoading(false)
       })
       .catch(() => {
         console.log("Error");
@@ -239,10 +248,11 @@ export const DefaultDashboard = () => {
                 extra={cardDropdown(latestRecentBlotterCaseOption)}
               >
                 <Table
+				  loading={blotterlistRequestLoading}
                   className="no-border-last"
                   columns={tableColumns}
-                  dataSource={recentBlotterCaseData}
-                  rowKey="id"
+                  dataSource={blotterlistrequest}
+                  rowKey="_id"
                   pagination={false}
                 />
               </Card>

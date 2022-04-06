@@ -1,4 +1,7 @@
 import React from "react";
+import SettlementFormItem from "./SettlementFormItem";
+import { getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import { BLOTTER_FORM } from "redux/constants/Record";
 import {
   Tag,
   Button,
@@ -25,10 +28,8 @@ const current = new Date();
 const dateFormat = "YYYY/MM/DD";
 const { Option } = Select;
 
-import { setLSBlotterForm, getLSBlotterForm } from "api/AppController/BlotterController/LSBlotterFormController";
-
-const Narrative = (props) => {
-  const initialData = getLSBlotterForm()
+const Narrative = () => {
+  const initialData = getLocalStorage(BLOTTER_FORM)
 
   const content = {
     entityMap: {},
@@ -57,7 +58,7 @@ const Narrative = (props) => {
           <Form.Item
             name="subject"
             labelCol={{ span: 24 }}
-            onChange={(e) => setLSBlotterForm(e.target.value, "subject")}
+            onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e.target.value, "subject")}
           >
             <Input placeholder="Subject (Optional)" />
           </Form.Item>
@@ -72,7 +73,7 @@ const Narrative = (props) => {
                     toolbarClassName="toolbarClassName"
                     wrapperClassName="wrapperClassName"
                     editorClassName="editorClassName"
-                    onChange={(e) => setLSBlotterForm(e, "narrative")}
+                    onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e, "narrative")}
                   />
                 </Form.Item>
               </div>
@@ -89,27 +90,15 @@ const Narrative = (props) => {
             </Col>
           </Form.Item>
         </Card>
-        <Card title="Settlement Status:">
-          <Form.Item
-            name="settlement_status"
-            label="Status"
-            rules={[{ required: true }]}
-          >
-            <Select className="w-100" placeholder="Settled" onChange={(e) => setLSBlotterForm(e, "settlement_status")}>
-              {SettlementData.map((elm) => (
-                <Option key={elm} value={elm}>
-                  {elm}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Card>
+		
+        <SettlementFormItem/>
+		
         <Card title="Incident Details">
           <Form.Item
             name="incident_type"
             label="Type of Incident"
             rules={[{ required: true }]}
-            onChange={(e) => setLSBlotterForm(e.target.value, "incident_type")}>
+            onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e.target.value, "incident_type")}>
             <Input placeholder="Incident Type" />
           </Form.Item>
           <Form.Item
@@ -120,7 +109,7 @@ const Narrative = (props) => {
             <TimePicker
               className="w-100"
               values={moment("12:08:23", "HH:mm:ss")}
-              onChange={(e) => setLSBlotterForm(e, "time_of_incident")}
+              onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e, "time_of_incident")}
             />
           </Form.Item>
           <Form.Item
@@ -135,14 +124,14 @@ const Narrative = (props) => {
                 dateFormat
               )}
               format={dateFormat}
-              onChange={(e) => setLSBlotterForm(e, "date_of_incident")}
+              onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e, "date_of_incident")}
             />
           </Form.Item>
           <Form.Item
             name="place_incident"
             label="Place of Incident"
             rules={[{ required: true }]}
-            onChange={(e) => setLSBlotterForm(e.target.value, "place_incident")}>
+            onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e.target.value, "place_incident")}>
             <Input placeholder="Place of incident" />
           </Form.Item>
           <Form.Item
@@ -151,7 +140,7 @@ const Narrative = (props) => {
             <TimePicker
               className="w-100"
               values={moment("12:08:23", "HH:mm:ss")}
-              onChange={(e) => setLSBlotterForm(e, "time_schedule")}
+              onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e, "time_schedule")}
             />
           </Form.Item>
           <Form.Item
@@ -165,7 +154,7 @@ const Narrative = (props) => {
                 dateFormat
               )}
               format={dateFormat}
-              onChange={(e) => setLSBlotterForm(e, "date_schedule")}
+              onChange={(e) => setLocalStorageObject(BLOTTER_FORM, e, "date_schedule")}
             />
           </Form.Item>
         </Card>

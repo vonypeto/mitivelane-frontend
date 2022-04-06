@@ -60,6 +60,10 @@ const BlotterRecord = (props) => {
 
   const [sessionData, setSessionData] = useState([0, 0, 0, 0]);
 
+  const [blotterlistrequest, setBlotterListRequest] = useState(
+    BlotterListRequestData
+  );
+
   const [selectedRowsBlotter, setSelectedRowsBlotter] = useState([]);
   const [selectedRowKeysBlotter, setSelectedRowKeysBlotter] = useState([]);
 
@@ -77,7 +81,6 @@ const BlotterRecord = (props) => {
   useEffect(() => {
     getBlotters(currentBarangay);
     getRecordCases(currentBarangay);
-	getBlotterRequest(currentBarangay)
 
     setLocalStorage(BLOTTER_FORM, {
       reporters: [],
@@ -132,7 +135,6 @@ const BlotterRecord = (props) => {
       });
   };
 
-  // ViewBlotter
   const showUserProfile = (UserList) => {
     SetUserProfileVisible(true);
     SetSelectedUser(UserList);
@@ -385,11 +387,12 @@ const BlotterRecord = (props) => {
     </Menu>
   );
 
-  const AddBlotter = () => {
+  const AddResident = () => {
     history.push(`/app/${currentBarangay}/records/blotter-record/add`);
   };
 
   const BlottereditwDetails = (row) => {
+
     setLocalStorage(BLOTTER_FORM, row);
     history.push(
       `/app/${currentBarangay}/records/blotter-record/${row._id}/edit`
@@ -420,44 +423,21 @@ const BlotterRecord = (props) => {
     }
   };
 
-  // Blotter Request
-  
-  const [blotterlistrequest, setBlotterListRequest] = useState([]);
-  const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
-  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(true);
-  
-  const getBlotterRequest = () => {
-	  axios
-      .get("/api/blotter_request/get-blotter-request/" + currentBarangay, generateToken()[1])
-      .then((response) => {
-        console.log("Blotters Request ", response.data);
-        setBlotterListRequest(response.data);
-        setBlotterListRequestData(response.data);
-        setBlotterListRequestLoading(false);
-      })
-      .catch(() => {
-        message.error("Could not fetch the data in the server!");
+  const BlotterRequestDeleteRow = (row) => {
+    const objKey = "blotter_id";
+    let data = blotterlistrequest;
+    if (selectedRowsBlotterRequest.length > 1) {
+      selectedRowsBlotterRequest.forEach((elm) => {
+        data = utils.deleteArrayRow(data, objKey, elm.blotter_id);
+        setBlotterListRequest(data);
+        setSelectedRowsBlotterRequest([]);
       });
-  }
-  
-  const deleteBlotterRequest = (_ids) => {
-	  axios
-      .post("/api/blotter_request/delete-blotter-request", { _ids }, generateToken()[1])
-      .then((response) => {
-        // message.destroy()
-        if (response.data == "Success") {
-          return message.success("Successfully Deleted");
-        } else {
-          return message.error("Error, please try again.");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        // message.destroy()
-        message.error("The action can't be completed, please try again.");
-      });
-  }
-  
+    } else {
+      data = utils.deleteArrayRow(data, objKey, row.blotter_id);
+      setBlotterListRequest(data);
+    }
+  };
+
   const BlotterRequest = [
     {
       title: "ID",
@@ -473,11 +453,11 @@ const BlotterRecord = (props) => {
           <Avatar
             size={30}
             className="font-size-sm"
-            style={{ backgroundColor: record.reporters[0].avatarColor }}
+            style={{ backgroundColor: "#" + record.avatarColor }}
           >
-            {utils.getNameInitial(record.reporters[0].firstname)}
+            {utils.getNameInitial(text)}
           </Avatar>
-          <span className="ml-2">{record.reporters[0].firstname}</span>
+          <span className="ml-2">{text}</span>
         </div>
       ),
     },
@@ -549,24 +529,6 @@ const BlotterRecord = (props) => {
     },
   ];
 
-  //SEARCH
-  const rowSelectionBlotterRequest = {
-    onChange: (key, rows) => {
-      setSelectedRowsBlotterRequest(rows);
-      setSelectedRowKeysBlotterRequest(key);
-    },
-  };
-
-  const onBlotterRequestSearch = (e) => {
-    const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value
-      ? blotterlistrequest
-      : BlotterListRequestData;
-    const data = utils.wildCardSearch(searchArray, value);
-    setBlotterListRequest(data);
-    setSelectedRowKeysBlotterRequest([]);
-  };
-
   //EXPORT
   const BlotterRequestList = (
     <Menu>
@@ -597,34 +559,24 @@ const BlotterRecord = (props) => {
     </Menu>
   );
 
-  const AddBlotterRequest = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-request-form/add`);
+  //SEARCH
+
+  const rowSelectionBlotterRequest = {
+    onChange: (key, rows) => {
+      setSelectedRowsBlotterRequest(rows);
+      setSelectedRowKeysBlotterRequest(key);
+    },
   };
 
-  const BlotterRequestDeleteRow = (row) => {
-    const objKey = "blotter_id";
-    let data = blotterlistrequest;
-    if (selectedRowsBlotterRequest.length > 1) {
-      selectedRowsBlotterRequest.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm.blotter_id);
-        setBlotterListRequest(data);
-        setSelectedRowsBlotterRequest([]);
-      });
-	  
-	  var _ids = [];
-      selectedRowsBlotterRequest.map((values) => {
-        _ids.push(values._id);
-      });
-
-      deleteBlotterRequest(_ids);
-    } else {
-      data = utils.deleteArrayRow(data, objKey, row.blotter_id);
-      setBlotterListRequest(data);
-	   deleteBlotterRequest([row._id]);
-    }
+  const onBlotterRequestSearch = (e) => {
+    const value = e.currentTarget.value;
+    const searchArray = e.currentTarget.value
+      ? blotterlistrequest
+      : BlotterListRequestData;
+    const data = utils.wildCardSearch(searchArray, value);
+    setBlotterListRequest(data);
+    setSelectedRowKeysBlotterRequest([]);
   };
-
-  // End Blotter Request
 
   const BlotterCases = (value) => {
     if (value !== "All") {
@@ -774,7 +726,7 @@ const BlotterRecord = (props) => {
                     <Space>
                       <Col>
                         <Button
-                          onClick={AddBlotter}
+                          onClick={AddResident}
                           type="primary"
                           icon={<PlusCircleOutlined />}
                           block
@@ -825,30 +777,12 @@ const BlotterRecord = (props) => {
                     </div>
                     <div className="mb-3"></div>
                   </Flex>
-                  <Flex className="mb-1" mobileFlex={false}>
-                    <div className="mb-3 mr-md-3">
-                      <Space>
-                        <Col>
-                          <Button
-                            onClick={AddBlotterRequest}
-                            type="primary"
-                            icon={<PlusCircleOutlined />}
-                            block
-                          >
-                            Test Request Blotter
-                          </Button>
-                        </Col>
-                      </Space>
-                    </div>
-                  </Flex>
-
                 </Flex>
                 <div className="table-responsive">
                   <Table
-					loading={blotterlistRequestLoading}
                     columns={BlotterRequest}
                     dataSource={blotterlistrequest}
-                    rowKey="_id"
+                    rowKey="blotter_id"
                     scroll={{ x: "max-content" }}
                     rowSelection={{
                       selectedRowKeys: selectedRowKeysBlotterRequest,

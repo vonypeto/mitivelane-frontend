@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import SettlementFormItem from "./SettlementFormItem";
 import {
   Tag,
   Button,
@@ -161,20 +162,9 @@ const ChildrenConflictWithLaw = (props) => {
             </Col>
           </Form.Item>
         </Card>
-        <Card title="Settlement Status:">
-          <Form.Item
-            name="settlement_status"
-            label="Status"
-            rules={[{ required: true }]}>
-            <Select className="w-100" placeholder="Settled">
-              {SettlementData.map((elm) => (
-                <Option key={elm} value={elm}>
-                  {elm}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Card>
+		
+        <SettlementFormItem/>
+		
         <Card title="Guardian">
           {
             //eslint-disable-next-line

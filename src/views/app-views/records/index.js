@@ -5,6 +5,7 @@ import BlotterAdd from "./blotter/blotter-add";
 import BlotterEdit from "./blotter/blotter-edit";
 import BlotterForm from "./blotter/blotter-add";
 import SettlementCase from "./settlement";
+import BlotterRequestForm from "./blotter/blotter-request-form";
 
 import { useParams } from "react-router-dom";
 
@@ -25,6 +26,10 @@ const Resident = (props) => {
       <Route
         path={`${match.url}/blotter-record/:id/edit`}
         component={() => <BlotterEdit param_url={barangay_id} />}
+      />
+      <Route
+        path={`${match.url}/blotter-request-form/add`}
+        component={() => <BlotterRequestForm param_url={barangay_id} />}
       />
       <Route
         path={`${match.url}/settlement`}
