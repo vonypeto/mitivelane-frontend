@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import { BLOTTER_FORM } from "redux/constants/Record";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import { Tabs, Form, Button, message } from "antd";
 import Flex from "components/shared-components/Flex";
@@ -6,22 +8,13 @@ import { useHistory } from "react-router-dom";
 import BlotterListData from "assets/data/blotter.data.json";
 import moment from "moment";
 import { useParams } from "react-router-dom";
-import Reporter from "./Reporter";
-import Victim from "./Victim";
-import Suspect from "./Suspect";
-import Respondent from "./Respondent";
 import ChildrenConflictWithLaw from "./ChildrenConflict";
 import NarrativeReport from "./Narrative";
 import Receipt from "./Receipt";
-
-import { reporter, resetReporter } from "./Reporter";
-import { victim, resetVictim } from "./Victim";
-import { suspect, resetSuspect } from "./Suspect";
-import { respondent, resetRespondent } from "./Respondent";
+import ResidentInvolvement from "./ResidentInvolvement"
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { setLSBlotterForm, getLSBlotterForm } from "api/AppController/BlotterController/LSBlotterFormController";
 
 const { TabPane } = Tabs;
 
@@ -51,17 +44,7 @@ const MainFormList = (props) => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const [initialReporters, setInitialReporters] = useState([]);
-  const [initialVictims, setInitialVictims] = useState([]);
-  const [initialSuspects, setInitialSuspects] = useState([]);
-  const [initialRespondents, setInitialRespondents] = useState([]);
-
   useEffect(() => {
-    resetReporter();
-    resetVictim();
-    resetSuspect();
-    resetRespondent();
-
     getResidents(currentBarangay);
 
     setBlotterInitialValue();
@@ -89,7 +72,8 @@ const MainFormList = (props) => {
   };
 
   const setBlotterInitialValue = () => {
-    const blotterLocalStorage = getLSBlotterForm()
+    const blotterLocalStorage = getLocalStorage(BLOTTER_FORM)
+
     form.setFieldsValue({
       blotter_id: blotterLocalStorage.blotter_id,
       settlement_status: blotterLocalStorage.settlement_status,
@@ -97,29 +81,41 @@ const MainFormList = (props) => {
       narrative: blotterLocalStorage.narrative,
       incident_type: blotterLocalStorage.incident_type,
       place_incident: blotterLocalStorage.place_incident,
-      time_of_incident: new moment(blotterLocalStorage.time_of_incident),
-      date_of_incident: new moment(blotterLocalStorage.date_of_incident),
-      time_schedule: new moment(blotterLocalStorage.time_schedule),
-      date_schedule: new moment(blotterLocalStorage.date_schedule),
     });
 
-    setInitialReporters(blotterLocalStorage.reporters_id);
-    setInitialVictims(blotterLocalStorage.victims_id);
-    setInitialSuspects(blotterLocalStorage.suspects_id);
-    setInitialRespondents(blotterLocalStorage.respondents_id);
+    const validateDate = (keyName) => {
+      if (blotterLocalStorage.hasOwnProperty(keyName)) {
+        form.setFieldsValue({
+          [keyName]: new moment(blotterLocalStorage[keyName]),
+        });
+      }
+    }
+
+    validateDate("time_of_incident")
+    validateDate("date_of_incident")
+    validateDate("time_schedule")
+    validateDate("date_schedule")
+
+    // form.setFieldsValue({
+    // time_of_incident: new moment(blotterLocalStorage.time_of_incident),
+    // date_of_incident: new moment(blotterLocalStorage.date_of_incident),
+    // time_schedule: new moment(blotterLocalStorage.time_schedule),
+    // date_schedule: new moment(blotterLocalStorage.date_schedule),
+    // });
   };
 
-  const createBlotter = (values) => {
+  const blotterForm = (values, formMode) => {
+    const blotterLocalStorage = getLocalStorage(BLOTTER_FORM)
+
     values.barangay_id = currentBarangay;
     values.uuid = authToken;
 
-    values.reporters = getLSBlotterForm().reporters_id;
-    values.victims = getLSBlotterForm().victims_id;
-    values.suspects = getLSBlotterForm().suspects_id;
-    values.respondents = getLSBlotterForm().respondents_id;
+    values.reporters = blotterLocalStorage.reporters_id;
+    values.victims = blotterLocalStorage.victims_id;
+    values.suspects = blotterLocalStorage.suspects_id;
+    values.respondents = blotterLocalStorage.respondents_id;
 
     if (
-      !values.hasOwnProperty("incident_type") ||
       values.reporters.length == 0 ||
       values.victims.length == 0 ||
       values.suspects.length == 0 ||
@@ -127,76 +123,63 @@ const MainFormList = (props) => {
     ) {
       message.error("Please enter all required field ");
     } else {
-      // console.log("Blotter Data ", values)
 
-      setSubmitLoading(true);
-      message.loading("Creating Blotter...", 0);
 
-      axios
-        .post("/api/blotter/create-blotter", values, generateToken()[1])
-        .then((response) => {
-          message.destroy();
-          if (response.data == "Success") {
-            history.goBack();
-            return message.success(
-              `Added new Blotter`
-            );
-          } else {
-            return message.error("Error, please try again.");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          message.destroy();
-          message.error("The action can't be completed, please try again.");
-        });
-    }
-  };
+      console.log("Form Data ", values)
 
-  const editBlotter = (values) => {
-    const validateData = (initialValues, newValues) => {
-      var finalValue = [];
+      if (formMode == ADD) {
+        setSubmitLoading(true);
+        message.loading("Creating Blotter...", 0);
 
-      if (newValues.length == 0) {
-        finalValue = initialValues;
-      } else {
-        finalValue = newValues;
+        axios
+          .post("/api/blotter/create-blotter", values, generateToken()[1])
+          .then((response) => {
+            message.destroy();
+            if (response.data == "Success") {
+              history.goBack();
+              return message.success(
+                `Added new Blotter`
+              );
+            } else {
+              return message.error("Error, please try again.");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            message.destroy();
+            message.error("The action can't be completed, please try again.");
+          });
+
       }
+      else if (formMode == EDIT) {
+        setSubmitLoading(true);
+        message.loading("Editing Blotter...", 0);
 
-      return finalValue;
-    };
+        axios
+          .post(`/api/blotter/edit-blotter/${id}`, values, generateToken()[1])
+          .then((response) => {
+            message.destroy();
+            if (response.data == "Success") {
+              message.success(`Edit Blotter saved`);
+              history.goBack();
+            } else {
+              return message.error("Error, please try again.");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            message.destroy();
+            message.error("The action can't be completed, please try again.");
+          });
 
-    values.reporters = validateData(initialReporters, reporter);
-    values.victims = validateData(initialVictims, victim);
-    values.suspects = validateData(initialSuspects, suspect);
-    values.respondents = validateData(initialRespondents, respondent);
+      }
+    }
 
-    setSubmitLoading(true);
-    message.loading("Editing Blotter...", 0);
-
-    // console.log("Blotter Data ", values)
-
-    axios
-      .post(`/api/blotter/edit-blotter/${id}`, values, generateToken()[1])
-      .then((response) => {
-        message.destroy();
-        if (response.data == "Success") {
-          message.success(`Edit Blotter saved`);
-          history.goBack();
-        } else {
-          return message.error("Error, please try again.");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        message.destroy();
-        message.error("The action can't be completed, please try again.");
-      });
-  };
+  }
 
   const onClickTab = (key) => {
-    setLSBlotterForm(key, "tabActiveKey")
-    console.log("Current Tab Key ", key)
+    setLocalStorageObject(BLOTTER_FORM, key, "tabActiveKey")
+    // console.log("Current Tab Key ", key)
   }
 
   const handleUploadChange = (info) => {
@@ -218,10 +201,10 @@ const MainFormList = (props) => {
       .then((values) => {
         setSubmitLoading(false);
         if (mode === ADD) {
-          createBlotter(values);
+          blotterForm(values, ADD);
         }
         if (mode === EDIT) {
-          editBlotter(values);
+          blotterForm(values, EDIT);
         }
       })
       .catch((info) => {
@@ -238,11 +221,6 @@ const MainFormList = (props) => {
         form={form}
         name="advanced_search"
         className="ant-advanced-search-form"
-        initialValues={{
-          heightUnit: "cm",
-          widthUnit: "cm",
-          weightUnit: "kg",
-        }}
       >
         <PageHeaderAlt className="border-bottom" overlap>
           <div className="container">
@@ -280,44 +258,50 @@ const MainFormList = (props) => {
         {mode === ADD || mode === EDIT ? (
           <div className="container">
             <Tabs
-              defaultActiveKey={getLSBlotterForm().tabActiveKey}
+              defaultActiveKey={getLocalStorage(BLOTTER_FORM).tabActiveKey}
               style={{ marginTop: 30 }}
               onChange={(key) => onClickTab(key)}
             >
               <TabPane tab="Reporter Data" key="1">
-                <Reporter
-                  residentlists={residentlists}
-                  residentlistLoading={residentlistLoading}
-                  initialReporters={initialReporters}
-                  barangayId={currentBarangay}
-                />
+                <ResidentInvolvement selectionType="radio"
+                  involvementType="reporters"
+                  residentData={residentlists}
+                  isLoading={residentlistLoading}
+                  initialData={[]}
+                  barangayId={currentBarangay} />
               </TabPane>
+
               <TabPane tab="Victim Data" key="2">
-                <Victim
-                  residentlists={residentlists}
-                  residentlistLoading={residentlistLoading}
-                  initialVictims={initialVictims}
-                />
+                <ResidentInvolvement selectionType="checkbox"
+                  involvementType="victims"
+                  residentData={residentlists}
+                  isLoading={residentlistLoading}
+                  initialData={[]}
+                  barangayId={currentBarangay} />
               </TabPane>
+
               <TabPane tab="Suspect Data" key="3">
-                <Suspect
-                  residentlists={residentlists}
-                  residentlistLoading={residentlistLoading}
-                  initialSuspects={initialSuspects}
-                />
+                <ResidentInvolvement selectionType="checkbox"
+                  involvementType="suspects"
+                  residentData={residentlists}
+                  isLoading={residentlistLoading}
+                  initialData={[]}
+                  barangayId={currentBarangay} />
               </TabPane>
+
               <TabPane tab="Respondent Data" key="4">
-                <Respondent
-                  residentlists={residentlists}
-                  residentlistLoading={residentlistLoading}
-                  initialRespondents={initialRespondents}
-                />
+                <ResidentInvolvement selectionType="checkbox"
+                  involvementType="respondents"
+                  residentData={residentlists}
+                  isLoading={residentlistLoading}
+                  initialData={[]}
+                  barangayId={currentBarangay} />
               </TabPane>
 
               <TabPane tab="Child Conflict with Law" key="5">
                 <ChildrenConflictWithLaw />
               </TabPane>
-              <TabPane tab="Narrative Report" key="6">
+              <TabPane tab="Narrative Report" key="6" forceRender>
                 <NarrativeReport />
               </TabPane>
               <TabPane tab="Record Transaction Receipt" key="7">
