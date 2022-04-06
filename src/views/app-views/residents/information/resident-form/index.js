@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import QueueAnim from "rc-queue-anim";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
+import { AUTH_BARANGAY } from "redux/constants/Auth"
 
 const { TabPane } = Tabs;
 
@@ -30,10 +31,10 @@ const VIEW = "VIEW";
 const MainFormList = (props) => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
-  const { generateToken, currentBarangay } = useAuth();
+  const { generateToken} = useAuth();
 
   const { id } = useParams();
-  const barangay_id = currentBarangay;
+  const barangay_id = localStorage.getItem(AUTH_BARANGAY)
   let history = useHistory();
   const { mode = ADD, param } = props;
   const [residentList, setResidentList] = useState([]);
@@ -46,55 +47,60 @@ const MainFormList = (props) => {
 
   useEffect(() => {
     if (mode === EDIT || mode === VIEW) {
-      (async () => {
-        const response = await axios.post(
-          "/api/resident/getAll",
-          { barangay_id },
-          generateToken()[1],
-          { cancelToken }
-        );
-
-        const ResidentListData = response.data;
-
-        const residentID = id;
-        setResidentFilter(residentID);
-        const residentData = ResidentListData.filter(
-          (resident) => resident.resident_id === residentID
-        );
-
-        const resident = residentData[0];
-        setResidentData(residentData[0]);
-
-        form.setFieldsValue({
-          lastname: resident.lastname,
-          firstname: resident.firstname,
-          middlename: resident.middlename,
-          alias: resident.alias,
-          height: resident.height,
-          birthday: new moment(resident.birthday),
-          occupation: resident.occupation,
-          voter_status: resident.voter_status,
-          religion: resident.religion,
-          weight: resident.weight,
-          age: resident.age,
-          civil_status: resident.civil_status,
-          citizenship: resident.citizenship,
-          birth_of_place: resident.birth_of_place,
-          address_1: resident.address_1,
-          address_2: resident.address_2,
-          area: resident.area,
-          father: resident.father,
-          mother: resident.mother,
-          spouse: resident.spouse,
-          telephone: resident.telephone,
-          mobile_number: resident.mobile_number,
-          pag_ibig: resident.pag_ibig,
-          philhealth: resident.philhealth,
-          sss: resident.sss,
-          tin: resident.tin,
-        });
-        setImage(resident.image);
-      })();
+      try {
+        (async () => {
+          const response = await axios.post(
+            "/api/resident/getAll",
+            { barangay_id },
+            generateToken()[1],
+            { cancelToken }
+          );
+  
+          const ResidentListData = response.data;
+  
+          const residentID = id;
+          setResidentFilter(residentID);
+          const residentData = ResidentListData.filter(
+            (resident) => resident.resident_id === residentID
+          );
+  
+          const resident = residentData[0];
+          setResidentData(residentData[0]);
+  
+          form.setFieldsValue({
+            lastname: resident.lastname,
+            firstname: resident.firstname,
+            middlename: resident.middlename,
+            alias: resident.alias,
+            height: resident.height,
+            birthday: new moment(resident.birthday),
+            occupation: resident.occupation,
+            voter_status: resident.voter_status,
+            religion: resident.religion,
+            weight: resident.weight,
+            age: resident.age,
+            civil_status: resident.civil_status,
+            citizenship: resident.citizenship,
+            birth_of_place: resident.birth_of_place,
+            address_1: resident.address_1,
+            address_2: resident.address_2,
+            area: resident.area,
+            father: resident.father,
+            mother: resident.mother,
+            spouse: resident.spouse,
+            telephone: resident.telephone,
+            mobile_number: resident.mobile_number,
+            pag_ibig: resident.pag_ibig,
+            philhealth: resident.philhealth,
+            sss: resident.sss,
+            tin: resident.tin,
+          });
+          setImage(resident.image);
+        })();
+      } catch (error) {
+        console.log(error)
+        message.error("Error!! Please try again later.")
+      }
     }
   }, [form, mode, param, props]);
 
@@ -126,7 +132,7 @@ const MainFormList = (props) => {
 
     message.success(`Added ${values.firstname} to Resident list`);
     setTimeout(() => {
-      history.goBack()
+      history.push(`/app/${barangay_id}/residents/resident-information/list`)
     }, 2000);
   };
 
@@ -240,17 +246,17 @@ const MainFormList = (props) => {
                   </div>
                 </QueueAnim>
               </TabPane>
-              <TabPane tab="Address" key="2">
+              <TabPane tab="Address" key="2" forceRender>
                 <Address data={{ resident: "pogi" }} />
               </TabPane>
-              <TabPane tab="Social Welfare Service" key="3">
+              <TabPane tab="Social Welfare Service" key="3" forceRender>
                 <SocialWelfare />
               </TabPane>
 
               {mode === "ADD" ? (
                 "Add New Resident"
               ) : (
-                <TabPane tab="Blotter Records" key="4">
+                <TabPane tab="Blotter Records" key="4" forceRender>
                   <BlotterRecords
                     barangay_id={param}
                     resident_id={residentFilter}
@@ -258,7 +264,7 @@ const MainFormList = (props) => {
                 </TabPane>
               )}
 
-              <TabPane tab="Account Information" key="5">
+              <TabPane tab="Account Information" key="5" forceRender>
                 <Account />
               </TabPane>
             </Tabs>

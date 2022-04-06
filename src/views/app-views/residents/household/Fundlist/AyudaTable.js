@@ -1,5 +1,7 @@
-import React from 'react'
+import { React, useEffect, useState, } from 'react'
 import { Card, Table, Badge, Button, Menu, message } from 'antd'
+import { useAuth } from "contexts/AuthContext";
+import axios from 'axios';
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import { Link } from 'react-router-dom';
@@ -23,17 +25,25 @@ import {
 } from "./ResidentAyudaData"
 
 const AyudaTable = (props) => {
+    //Import 
+    const source = axios.CancelToken.source();
+    const cancelToken = source.token;
+    const { generateToken, currentBarangay } = useAuth();
+
+    //Initialize
     const { barangay_id } = props
+
+    //Table
     const HouseholdTableColumns = [
         {
             title: "Household Number",
-            dataIndex: "household_number",
-            key: "household_number",
+            dataIndex: "house_number",
+            key: "house_number",
         },
         {
             title: "Household Name",
-            dataIndex: "househole_name",
-            key: "househole_name",
+            dataIndex: "name",
+            key: "name",
         },
         {
             title: "Purok",
@@ -81,8 +91,47 @@ const AyudaTable = (props) => {
         }
     ];
 
+    //State
+    const [householdList, sethouseholdList] = useState([])
+
+    //useEffect
+    useEffect(() => {
+        getHousehold()
+    }, [])
+
+    //Axios
+    const getHousehold = async () => {
+        const households = await axios.post(
+            "/api/household/getAll",
+            { barangay_id: barangay_id },
+            generateToken()[1],
+            { cancelToken }
+        )
+
+        sethouseholdList(households.data)
+    }
+    
+    const popHousehold = async (household_id) => {
+        const households = await axios.post(
+            "/api/household/delete",
+            {household_id, barangay_id: barangay_id },
+            generateToken()[1],
+            { cancelToken }
+        )
+    }
+
+
+    //Functions
     const deleteHousehold = (row) => {
+        const household_id = row.household_id
+        var currentHouseholdList = [...householdList]
+        var objIndex = currentHouseholdList.findIndex((obj => obj.household_id == household_id));
+        currentHouseholdList.splice(objIndex, 1); 
+        sethouseholdList(currentHouseholdList)
         message.success(`Deleting household id ${row.household_id}`)
+
+        popHousehold(row.household_id)
+        
     }
 
     const dropdownMenu = (row) => (
@@ -95,26 +144,22 @@ const AyudaTable = (props) => {
                     </Link>
                 </Flex>
             </Menu.Item>
-            <Menu.Item key={2} onClick={() => {deleteHousehold(row)}}>
+            <Menu.Item key={2} onClick={() => { deleteHousehold(row) }}>
                 <Flex alignItems="center">
                     <DeleteOutlined />
-                    <span className="ml-2" style={{color: "black"}}>Delete Household</span>
+                    <span className="ml-2" style={{ color: "black" }}>Delete Household</span>
                 </Flex>
             </Menu.Item>
         </Menu>
     );
 
-    const expandedRowRender = (household_member_id) => {
-
-        const data = [];
-        ResidentTableData.map((resident_data) => {
-            let isResidentValid = household_member_id.includes(resident_data.id)
-            if (isResidentValid === true) {
-                data.push(resident_data)
-            }
+    const expandedRowRender = (household_members) => {
+        console.log(household_members)
+        household_members.map((member) => {
+            member.name = `${member.first_name} ${member.last_name}`
         })
 
-        return <Table columns={ResidentTableColumns} dataSource={data} pagination={false} rowKey="id" />;
+        return <Table columns={ResidentTableColumns} dataSource={household_members} pagination={false}  rowKey="_id" />;
     };
 
     return (
@@ -131,11 +176,11 @@ const AyudaTable = (props) => {
             <Table
                 className="no-border-last"
                 columns={HouseholdTableColumns}
-                dataSource={HouseholdTableData}
+                dataSource={householdList}
                 scroll={{ x: "max-content" }}
                 expandable={{
                     expandedRowRender: data => (
-                        expandedRowRender(data.household_member_id)
+                        expandedRowRender(data.household_members)
                     ),
                     rowExpandable: data => data.househole_name !== "Not Expandable"
                 }}

@@ -43,6 +43,7 @@ const ListInformation = (props) => {
     getAllResident()
   }, []);
 
+  //Axios Funtion
   const getAllResident = async () => {
     try {
       await axios
@@ -59,6 +60,17 @@ const ListInformation = (props) => {
     } catch (error) {
       message.error("Could not fetch data from server!!")
     }
+  }
+
+  const deleteResident = async (resident_id) => {
+    console.log(resident_id)
+    await axios.post(
+      "/api/resident/delete",
+      { resident_id },
+      generateToken()[1]
+    );
+
+    console.log(resident_id)
   }
 
   const dropdownMenu = (row) => (
@@ -116,25 +128,26 @@ const ListInformation = (props) => {
   };
 
   const deleteRow = async (row) => {
-    const resident_id = row.resident_id;
-    await axios.post(
-      "/api/resident/delete",
-      { resident_id },
-      generateToken()[1]
-    );
 
     //deleting resident in table
     const objKey = "resident_id";
     let data = list;
+    let residentIdArray = [];
+
     if (selectedRows.length > 1) {
       selectedRows.forEach((elm) => {
         data = utils.deleteArrayRow(data, objKey, elm.resident_id);
         setList(data);
         setSelectedRows([]);
-      });
+        residentIdArray.push(elm.resident_id)
+      }); //end of loop
+      deleteResident(residentIdArray)
+
     } else {
       data = utils.deleteArrayRow(data, objKey, row.resident_id);
       setList(data);
+      residentIdArray.push(row.resident_id)
+      deleteResident(residentIdArray)
     }
   };
 
