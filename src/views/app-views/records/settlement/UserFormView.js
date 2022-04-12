@@ -33,10 +33,13 @@ import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
 
+import { setLocalStorage, getLocalStorage, setLocalStorageObject, updateLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import { SETTLEMENT_FORM } from "redux/constants/Record";
+
 const UserFormView = (props) => {
   const history = useHistory();
   const { currentBarangay, generateToken } = useAuth();
-  const { selectOutShow, initialData } = props;
+  const { caseType, selectOutShow, initialData } = props;
   const [form] = Form.useForm();
 
   const reporters = initialData.reporters
@@ -90,6 +93,7 @@ const UserFormView = (props) => {
   const onChangeData = (e) => {
     e.preventDefault();
     selectOutShow(true);
+	setLocalStorageObject(SETTLEMENT_FORM, {}, caseType)
   };
   const onBackClick = (e) => {
     console.log("Back");
@@ -222,7 +226,8 @@ const UserFormView = (props) => {
                           labelCol={{
                             span:
                               24
-                          }} rules={[{ required: true }]}>
+                          }} rules={[{ required: true }]}
+						  onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e.target.value, caseType, "incident_type")}>
                           <Input placeholder="Case Type" />
                         </Form.Item>
                       </Col>
@@ -238,7 +243,7 @@ const UserFormView = (props) => {
                           label="Case Status"
                           rules={[{ required: true }]}>
                           <Select className="w-100"
-                            placeholder="Case Status">
+                            placeholder="Case Status" onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "settlement_status")}>
                             {caseData.map((elm) => (
                               <Option key={elm}
                                 value={elm}>
@@ -259,7 +264,8 @@ const UserFormView = (props) => {
                               defaultEditorState={editorState}
                               toolbarClassName="toolbarClassName"
                               wrapperClassName="wrapperClassName"
-                              editorClassName="editorClassName" />
+                              editorClassName="editorClassName" 
+							  onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "narrative")}/>
                           </Form.Item>
                         </div>
                       </Col>
@@ -280,7 +286,7 @@ const UserFormView = (props) => {
                               name="date_of_incident"
                               label="Date of Incident"
                               rules={[{ required: true }]}>
-                              <DatePicker className="w-100" />
+                              <DatePicker className="w-100" onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "date_of_incident")}/>
                             </Form.Item>
                           </Col>
                           <Col xs={24}
@@ -294,7 +300,7 @@ const UserFormView = (props) => {
                               name="time_of_incident"
                               label="Time of Incident"
                               rules={[{ required: true }]}>
-                              <TimePicker className="w-100" />
+                              <TimePicker className="w-100" onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "time_of_incident")}/>
                             </Form.Item>
                           </Col>
                         </Row>

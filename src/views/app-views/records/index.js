@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import BlotterList from "./blotter/blotter-list";
+import BlotterRequest from "./blotter/blotter-request";
 import BlotterAdd from "./blotter/blotter-add";
 import BlotterEdit from "./blotter/blotter-edit";
 import BlotterForm from "./blotter/blotter-add";
@@ -18,6 +19,10 @@ const Resident = (props) => {
       <Route
         path={`${match.url}/blotter-record/list`}
         component={() => <BlotterList param_url={barangay_id} />}
+      />
+	  <Route
+        path={`${match.url}/blotter-record/request`}
+        component={() => <BlotterRequest param_url={barangay_id} />}
       />
       <Route
         path={`${match.url}/blotter-record/add`}

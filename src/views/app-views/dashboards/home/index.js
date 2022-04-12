@@ -165,10 +165,17 @@ const tableColumns = [
     ),
   },
   {
-    title: "Date",
-    dataIndex: "date",
-    key: "date",
-  },
+      title: "Date Reported",
+      dataIndex: "createdAt",
+      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+      render: (_, record) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">
+            {new Date(record.createdAt).toDateString()}
+          </span>
+        </div>
+      ),
+    },
   {
     title: "Classification",
     dataIndex: "classification",

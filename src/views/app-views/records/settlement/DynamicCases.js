@@ -8,8 +8,8 @@ import { useAuth } from "contexts/AuthContext";
 
 const DynamicCases = (props) => {
   const { generateToken } = useAuth();
-  const CancelToken = axios.CancelToken;
-  const source = CancelToken.source();
+  const source = axios.CancelToken.source();
+  const cancelToken = source.token;
   const [blotterlist, setBlotterList] = useState([]);
   const [blotterlistData, setBlotterlistData] = useState([]);
   const [blotterlistLoading, setBlotterListLoading] = useState(true);
@@ -27,7 +27,7 @@ const DynamicCases = (props) => {
   const getBlotters = (barangayId) => {
     axios
       .get("/api/blotter/get-blotters/" + barangayId, generateToken()[1], {
-        cancelToken: source.token,
+        cancelToken,
       })
       .then((response) => {
         console.log(response.data);
@@ -52,6 +52,7 @@ const DynamicCases = (props) => {
 
           <BlotterTable
             testout={selectTestText.bind(this)}
+			caseType={caseType}
             barangay_id={barangay_id}
             blotterData={blotterData}
             blotterlistLoading={blotterlistLoading}

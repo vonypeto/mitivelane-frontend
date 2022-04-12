@@ -14,6 +14,14 @@ export const setLocalStorageObject = (itemName, data, key) => {
 	return localStorage.setItem(itemName, JSON.stringify(localStorageData))
 }
 
+// Update Object Value in Object
+export const updateLocalStorageObject = (itemName, data, key, childKey) => {
+	var localStorageData = JSON.parse(localStorage.getItem(itemName))
+	localStorageData[key][childKey] = data
+	
+	return localStorage.setItem(itemName, JSON.stringify(localStorageData))
+}
+
 
 
 

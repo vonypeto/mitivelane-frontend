@@ -77,7 +77,6 @@ const BlotterRecord = (props) => {
   useEffect(() => {
     getBlotters(currentBarangay);
     getRecordCases(currentBarangay);
-	getBlotterRequest(currentBarangay)
 
     setLocalStorage(BLOTTER_FORM, {
       reporters: [],
@@ -420,212 +419,6 @@ const BlotterRecord = (props) => {
     }
   };
 
-  // Blotter Request
-  
-  const [blotterlistrequest, setBlotterListRequest] = useState([]);
-  const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
-  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(true);
-  
-  const getBlotterRequest = () => {
-	  axios
-      .get("/api/blotter_request/get-blotter-request/" + currentBarangay, generateToken()[1])
-      .then((response) => {
-        console.log("Blotters Request ", response.data);
-        setBlotterListRequest(response.data);
-        setBlotterListRequestData(response.data);
-        setBlotterListRequestLoading(false);
-      })
-      .catch(() => {
-        message.error("Could not fetch the data in the server!");
-      });
-  }
-  
-  const deleteBlotterRequest = (_ids) => {
-	  axios
-      .post("/api/blotter_request/delete-blotter-request", { _ids }, generateToken()[1])
-      .then((response) => {
-        // message.destroy()
-        if (response.data == "Success") {
-          return message.success("Successfully Deleted");
-        } else {
-          return message.error("Error, please try again.");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        // message.destroy()
-        message.error("The action can't be completed, please try again.");
-      });
-  }
-  
-  const BlotterRequest = [
-    {
-      title: "ID",
-      dataIndex: "blotter_id",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    },
-    {
-      title: "Reporter",
-      dataIndex: "reporter",
-      key: "reporter",
-      render: (text, record) => (
-        <div className="d-flex align-items-center">
-          <Avatar
-            size={30}
-            className="font-size-sm"
-            style={{ backgroundColor: record.reporters[0].avatarColor }}
-          >
-            {utils.getNameInitial(record.reporters[0].firstname)}
-          </Avatar>
-          <span className="ml-2">{record.reporters[0].firstname}</span>
-        </div>
-      ),
-    },
-
-    {
-      title: "Date Occured",
-      dataIndex: "incidentdate",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    },
-    {
-      title: "Date Reported",
-      dataIndex: "daterecorded",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    },
-    {
-      title: "Location",
-      dataIndex: "incidentlocation",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    },
-    {
-      title: "Classification",
-      dataIndex: "classification",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_, elm) => (
-        <div className="text-right">
-          <div className="text-right d-flex justify-content-end">
-            <Tooltip title="Approve">
-              <Button
-                className="mr-2 btn-success background"
-                icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => { }}
-                size="small"
-              />
-            </Tooltip>
-            <Tooltip title="View">
-              <Button
-                type="primary"
-                className="mr-2"
-                icon={<EyeOutlined />}
-                onClick={() => {
-                  showUserProfile(elm);
-                }}
-                size="small"
-              />
-            </Tooltip>
-            <Tooltip
-              title={
-                selectedRowsBlotterRequest.length > 0
-                  ? `Delete (${selectedRowsBlotterRequest.length})`
-                  : "Delete"
-              }
-            >
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => {
-                  BlotterRequestDeleteRow(elm);
-                }}
-                size="small"
-              />
-            </Tooltip>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
-  //SEARCH
-  const rowSelectionBlotterRequest = {
-    onChange: (key, rows) => {
-      setSelectedRowsBlotterRequest(rows);
-      setSelectedRowKeysBlotterRequest(key);
-    },
-  };
-
-  const onBlotterRequestSearch = (e) => {
-    const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value
-      ? blotterlistrequest
-      : BlotterListRequestData;
-    const data = utils.wildCardSearch(searchArray, value);
-    setBlotterListRequest(data);
-    setSelectedRowKeysBlotterRequest([]);
-  };
-
-  //EXPORT
-  const BlotterRequestList = (
-    <Menu>
-      <Menu.Item key="0">
-        <span>
-          <div className="d-flex align-items-center">
-            <ReloadOutlined />
-            <span className="ml-2">Refresh</span>
-          </div>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <span>
-          <div className="d-flex align-items-center">
-            <PrinterOutlined />
-            <span className="ml-2">Print</span>
-          </div>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="12">
-        <span>
-          <div className="d-flex align-items-center">
-            <FileExcelOutlined />
-            <span className="ml-2">Export</span>
-          </div>
-        </span>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const AddBlotterRequest = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-request-form/add`);
-  };
-
-  const BlotterRequestDeleteRow = (row) => {
-    const objKey = "blotter_id";
-    let data = blotterlistrequest;
-    if (selectedRowsBlotterRequest.length > 1) {
-      selectedRowsBlotterRequest.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm.blotter_id);
-        setBlotterListRequest(data);
-        setSelectedRowsBlotterRequest([]);
-      });
-	  
-	  var _ids = [];
-      selectedRowsBlotterRequest.map((values) => {
-        _ids.push(values._id);
-      });
-
-      deleteBlotterRequest(_ids);
-    } else {
-      data = utils.deleteArrayRow(data, objKey, row.blotter_id);
-      setBlotterListRequest(data);
-	   deleteBlotterRequest([row._id]);
-    }
-  };
-
-  // End Blotter Request
-
   const BlotterCases = (value) => {
     if (value !== "All") {
       const key = "settlement_status";
@@ -770,7 +563,9 @@ const BlotterRecord = (props) => {
                       </Select>
                     </div>
                   </Flex>
-                  <div className="justify-content-between">
+				  
+				  <Flex className="mb-1" mobileFlex={false}>
+				  <div className="mb-3 mr-md-3">
                     <Space>
                       <Col>
                         <Button
@@ -784,6 +579,9 @@ const BlotterRecord = (props) => {
                       </Col>
                     </Space>
                   </div>
+                   
+                  </Flex>
+                  
                 </Flex>
 
                 <div className="table-responsive">
@@ -808,71 +606,11 @@ const BlotterRecord = (props) => {
                 </div>
               </Card>
             </Col>
-            <Col xs={24} sm={24} md={24} lg={24}>
-              <Card
-                title="Blotter Request"
-                extra={cardDropdown(BlotterRequestList)}
-              >
-                <Flex
-                  alignItems="center"
-                  className=""
-                  justifyContent="between"
-                  mobileFlex={false}
-                >
-                  <Flex className="mb-1" mobileFlex={false}>
-                    <div className="mb-3 mr-md-3">
-                      <Input
-                        placeholder="Search"
-                        prefix={<SearchOutlined />}
-                        onChange={(e) => onBlotterRequestSearch(e)}
-                      />
-                    </div>
-                    <div className="mb-3"></div>
-                  </Flex>
-                  <Flex className="mb-1" mobileFlex={false}>
-                    <div className="mb-3 mr-md-3">
-                      <Space>
-                        <Col>
-                          <Button
-                            onClick={AddBlotterRequest}
-                            type="primary"
-                            icon={<PlusCircleOutlined />}
-                            block
-                          >
-                            Test Request Blotter
-                          </Button>
-                        </Col>
-                      </Space>
-                    </div>
-                  </Flex>
-
-                </Flex>
-                <div className="table-responsive">
-                  <Table
-					loading={blotterlistRequestLoading}
-                    columns={BlotterRequest}
-                    dataSource={blotterlistrequest}
-                    rowKey="_id"
-                    scroll={{ x: "max-content" }}
-                    rowSelection={{
-                      selectedRowKeys: selectedRowKeysBlotterRequest,
-                      type: "checkbox",
-                      preserveSelectedRowKeys: false,
-                      ...rowSelectionBlotterRequest,
-                    }}
-                    pagination={{
-                      defaultPageSize: 10,
-                      showSizeChanger: true,
-                    }}
-                  />
-                </div>
-              </Card>
-            </Col>
           </Row>
         </Col>
         <Col xs={24} sm={24} md={24} lg={6}>
           <RecordCases />
-          <MostReportedBlotter />
+          {/* <MostReportedBlotter /> */}
         </Col>
 
         <UserView

@@ -22,6 +22,7 @@ import {
 } from "../actions/Auth";
 // import { db } from "auth/FirebaseAuth";
 import FirebaseService from "services/FirebaseService";
+import { BLOTTER_FORM, SETTLEMENT_FORM } from "../constants/Record";
 
 export function* signInWithFBEmail() {
   yield takeEvery(SIGNIN, function* ({ payload }) {
@@ -57,6 +58,8 @@ export function* signOut() {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(SESSION_TOKEN);
         localStorage.removeItem(PROFILE_URL);
+		localStorage.removeItem(BLOTTER_FORM);
+		localStorage.removeItem(SETTLEMENT_FORM);
         yield put(signOutSuccess(signOutUser));
       } else {
         yield put(showAuthMessage(signOutUser.message));
