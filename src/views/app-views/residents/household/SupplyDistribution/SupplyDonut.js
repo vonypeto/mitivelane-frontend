@@ -11,7 +11,7 @@ import {
     resident_ayudas
 } from './ResidentAyudaData'
 
-const AyudaDonut = () => {
+const SupplyDonut = () => {
     return (
         <DonutChartWidget
             series={resident_ayuda_amount}
@@ -45,4 +45,4 @@ const AyudaDonut = () => {
     )
 }
 
-export default AyudaDonut
+export default SupplyDonut

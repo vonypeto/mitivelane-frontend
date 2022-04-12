@@ -7,7 +7,7 @@ import {
     AyudaChartData
 } from "./ResidentAyudaData"
 
-const AyudaChart = () => {
+const SupplyChart = () => {
     return (
         <Card>
             <h4>Supply Distribution</h4>
@@ -21,4 +21,4 @@ const AyudaChart = () => {
     )
 }
 
-export default AyudaChart
+export default SupplyChart

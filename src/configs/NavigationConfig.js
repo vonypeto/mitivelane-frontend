@@ -75,7 +75,7 @@ const residentNavTree = [
           },
           {
             key: "aid-assistant-add",
-            path: `${APP_PREFIX_PATH}//residents/aid-assistant/add`,
+            path: `${APP_PREFIX_PATH}//residents/household/archive`,
             title: "sidenav.residents.aid-assistant.add",
             icon: "",
             breadcrumb: false,
@@ -83,7 +83,7 @@ const residentNavTree = [
           },
           {
             key: "aid-assistant-delete",
-            path: `${APP_PREFIX_PATH}//residents/aid-assistant/delete`,
+            path: `${APP_PREFIX_PATH}//residents/household/supply`,
             title: "sidenav.residents.aid-assistant.delete",
             icon: "",
             breadcrumb: false,
@@ -91,7 +91,7 @@ const residentNavTree = [
           },
           {
             key: "aid-assistant-edit",
-            path: `${APP_PREFIX_PATH}//residents/aid-assistant/edit`,
+            path: `${APP_PREFIX_PATH}//residents/household/purok`,
             title: "sidenav.residents.aid-assistant.edit",
             icon: "",
             breadcrumb: false,
