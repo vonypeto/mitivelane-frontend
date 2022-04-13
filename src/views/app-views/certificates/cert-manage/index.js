@@ -89,29 +89,34 @@ const Certificates = () => {
           <Row>
             <Col
               className="pl-2 "
-              xs={width >= 1240 ? 0 : 0}
-              sm={width >= 1240 ? 0 : 0}
-              md={width >= 1240 ? 0 : 0}
-              lg={width >= 1240 ? 0 : 0}
-              xl={width >= 1240 ? 12 : 24}
-              xxl={width >= 1240 ? 12 : 24}
+              xs={width >= 1399 || switchCert ? 24 : 0}
+              sm={width >= 1399 || switchCert ? 24 : 0}
+              md={width >= 1399 || switchCert ? 24 : 0}
+              lg={width >= 1399 || switchCert ? 24 : 0}
+              xl={width >= 1399 ? 12 : 24}
+              xxl={width >= 1399 ? 12 : 24}
               style={{
                 borderRightStyle: " solid",
                 borderRight: "1px",
               }}
             >
-              <InputCert parentData={parentData} setParentData={setData} />
+              <InputCert
+                parentData={parentData}
+                setParentData={setData}
+                width={width}
+                switchCol={setSwitchCert}
+              />
             </Col>
             <Col
               style={{ overflow: "auto" }}
               justify="center"
               className="pl-2"
-              xs={width >= 1240 ? 24 : 24}
-              sm={width >= 1240 ? 24 : 24}
-              md={width >= 1240 ? 24 : 24}
-              lg={width >= 1240 ? 24 : 24}
-              xl={width >= 1240 ? 12 : 24}
-              xxl={width >= 1240 ? 12 : 24}
+              xs={width >= 1399 || !switchCert ? 24 : 0}
+              sm={width >= 1399 || !switchCert ? 24 : 0}
+              md={width >= 1399 || !switchCert ? 24 : 0}
+              lg={width >= 1399 || !switchCert ? 24 : 0}
+              xl={width >= 1399 ? 12 : 24}
+              xxl={width >= 1399 ? 12 : 24}
             >
               <CertDisplay
                 width={width}

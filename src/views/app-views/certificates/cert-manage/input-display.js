@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import BasicDocument from "./documents/BasicDocument";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Card, Col, Row, Button, Upload, message } from "antd";
 import {
@@ -13,6 +12,9 @@ import {
 } from "@ant-design/icons";
 import { Form, Input } from "antd";
 import debounce from "lodash.debounce";
+import { Editor } from "react-draft-wysiwyg";
+import { convertFromRaw, EditorState } from "draft-js";
+import CertDrawer from "../cert-display/Cert-Drawer";
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -41,8 +43,10 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 const CertDisplay = (props) => {
-  const { setParentData, parentData } = props;
+  const { setParentData, parentData, width } = props;
   // const [countOpenForm, setCountOpenForm] = useState([]);
+  const [drawer, setDrawer] = useState(false);
+  const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [logoList, setLogoList] = useState([
@@ -59,9 +63,7 @@ const CertDisplay = (props) => {
       getBase64(info.file.originFileObj, (imageUrl) => {
         AddImage(1, imageUrl);
         setLoading(false);
-        // let data = props.parentData;
-        // data[`firstLogo`] = imageUrl;
-        // return setParentData(data);
+
         return onImage(imageUrl, "firstLogo");
       });
     }
@@ -76,9 +78,7 @@ const CertDisplay = (props) => {
       getBase64(info.file.originFileObj, (imageUrl) => {
         AddImage(2, imageUrl);
         setLoading(false);
-        // let data = props.parentData;
-        // data[`secondLogo`] = imageUrl;
-        // return setParentData(data);
+
         return onImage(imageUrl, "secondLogo");
       });
     }
@@ -89,7 +89,15 @@ const CertDisplay = (props) => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
-  const sample = [{ test: "1" }, { test: "2" }];
+
+  const onHandle = (elm) => {
+    setDrawer(true);
+    SetSelectedUser(elm);
+  };
+  const closeDrawer = () => {
+    setDrawer(false);
+    SetSelectedUser(null);
+  };
 
   const [dropDownForm, setDropDownForm] = useState([
     {
@@ -154,6 +162,34 @@ const CertDisplay = (props) => {
         },
       ],
     },
+    {
+      id: 3,
+      Details: "Content",
+      isOpen: false,
+      type: "content",
+      data: [
+        {
+          id: 2,
+          formName: "content",
+          titleName: "Content Editor",
+          type: "editor",
+        },
+      ],
+    },
+    {
+      id: 4,
+      Details: "Content",
+      isOpen: false,
+      type: "content",
+      data: [
+        {
+          id: 2,
+          formName: "barangay captain",
+          titleName: "barangay",
+          type: "text",
+        },
+      ],
+    },
   ]);
 
   const [form] = Form.useForm();
@@ -210,14 +246,24 @@ const CertDisplay = (props) => {
       ];
     });
   };
-  const onFill = debounce((e, title) => {
-    form.setFieldsValue({
-      [title]: e.target.value,
-    });
-    let data = parentData;
+  const onFill = debounce((e, title, type) => {
+    if (type == "editor") {
+      form.setFieldsValue({
+        [title]: e,
+      });
+      let data = parentData;
 
-    data[`${title}`] = e.target.value;
-    return setParentData(data);
+      data[`${title}`] = e;
+      return setParentData(data);
+    } else {
+      form.setFieldsValue({
+        [title]: e.target.value,
+      });
+      let data = parentData;
+
+      data[`${title}`] = e.target.value;
+      return setParentData(data);
+    }
   }, 1000);
   const onImage = debounce((image, title) => {
     form.setFieldsValue({
@@ -247,13 +293,14 @@ const CertDisplay = (props) => {
 
   return (
     <Row justify="center">
-      {" "}
-      {/* <div>
-        <button onClick={onClick}>update</button>
-        {vals.map((v) => {
-          return <p key={v.id}>{v.num}</p>;
-        })}
-      </div> */}
+      <CertDrawer
+        width={width}
+        data={selectedUser}
+        visible={drawer}
+        close={() => {
+          closeDrawer();
+        }}
+      />
       <Col
         justify="center"
         className=""
@@ -263,7 +310,6 @@ const CertDisplay = (props) => {
         lg={24}
         xl={24}
       >
-        {" "}
         <Form
           name="dynamic_form_nest_item"
           onFinish={onFinish}
@@ -297,7 +343,6 @@ const CertDisplay = (props) => {
                       xl={24}
                       justify="between"
                     >
-                      {" "}
                       <Row>
                         <Col className="pt-2" span={12}>
                           <h4>{item.Details}</h4>
@@ -316,8 +361,8 @@ const CertDisplay = (props) => {
                           )}
                         </Col>
                       </Row>
-                    </Col>{" "}
-                  </Row>{" "}
+                    </Col>
+                  </Row>
                   <Row justify="between">
                     <Col
                       xs={24}
@@ -327,7 +372,6 @@ const CertDisplay = (props) => {
                       xl={24}
                       justify="between"
                     >
-                      {" "}
                       <></>
                       {item.isOpen ? (
                         <Row>
@@ -335,11 +379,36 @@ const CertDisplay = (props) => {
                             return (
                               <Col
                                 key={index}
-                                xl={formItems.type == "text" ? 24 : 5}
-                                lg={formItems.type == "text" ? 24 : 8}
-                                md={formItems.type == "text" ? 24 : 12}
-                                sm={formItems.type == "text" ? 24 : 24}
-                                xs={formItems.type == "text" ? 24 : 24}
+                                xl={
+                                  formItems.type == "text" ||
+                                  formItems.type == "editor"
+                                    ? 24
+                                    : 5
+                                }
+                                lg={
+                                  formItems.type == "text" ||
+                                  formItems.type == "editor"
+                                    ? 24
+                                    : 8
+                                }
+                                md={
+                                  formItems.type == "text" ||
+                                  formItems.type == "editor"
+                                    ? 24
+                                    : 12
+                                }
+                                sm={
+                                  formItems.type == "text" ||
+                                  formItems.type == "editor"
+                                    ? 24
+                                    : 24
+                                }
+                                xs={
+                                  formItems.type == "text" ||
+                                  formItems.type == "editor"
+                                    ? 24
+                                    : 24
+                                }
                               >
                                 {formItems.type == "text" ? (
                                   <Form.Item
@@ -356,6 +425,34 @@ const CertDisplay = (props) => {
                                       }}
                                     />
                                   </Form.Item>
+                                ) : formItems.type == "editor" ? (
+                                  <>
+                                    {/* options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 
+                                    'embedded', 'emoji', 'image', 'remove', 'history'] */}
+                                    <Editor
+                                      toolbarClassName="toolbarClassName"
+                                      wrapperClassName="wrapperClassName"
+                                      editorClassName="editorClassName"
+                                      toolbar={{
+                                        options: [
+                                          "inline",
+                                          "blockType",
+                                          "fontSize",
+
+                                          "textAlign",
+                                          "history",
+                                        ],
+                                        inline: { inDropdown: true },
+                                        list: { inDropdown: true },
+                                        textAlign: { inDropdown: true },
+                                        link: { inDropdown: true },
+                                        history: { inDropdown: true },
+                                      }}
+                                      onChange={(e) => {
+                                        onFill(e, formItems.formName, "editor");
+                                      }}
+                                    />
+                                  </>
                                 ) : (
                                   <Col
                                     lg={6}
@@ -401,67 +498,70 @@ const CertDisplay = (props) => {
             {/* <Card>
               <Row justify="between">
                 <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-                  {" "}
+                  
                   <Row>
                     <Col className="pt-2" span={12}>
                       <h3>Clearance Details</h3>
                     </Col>
                     <Col span={6} offset={6} className="text-right">
-                      <Button icon={<MinusCircleOutlined />}></Button>{" "}
+                      <Button icon={<MinusCircleOutlined />}></Button>
                       <Button icon={<PlusCircleOutlined />}></Button>
                     </Col>
                   </Row>
-                </Col>{" "}
+                </Col>
               </Row>
             </Card>
             <Card>
               <Row justify="between">
                 <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-                  {" "}
+                  
                   <Row>
                     <Col className="pt-2" span={12}>
                       <h3>Person Details</h3>
                     </Col>
                     <Col span={6} offset={6} className="text-right">
-                      <Button icon={<MinusCircleOutlined />}></Button>{" "}
+                      <Button icon={<MinusCircleOutlined />}></Button>
                       <Button icon={<PlusCircleOutlined />}></Button>
                     </Col>
                   </Row>
-                </Col>{" "}
+                </Col>
               </Row>
             </Card>
             <Card> */}
             {/* <Row justify="between">
                 <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-                  {" "}
+                  
                   <Row>
                     <Col className="pt-2" span={12}>
                       <h3>Government Personals</h3>
                     </Col>
                     <Col span={6} offset={6} className="text-right">
-                      <Button icon={<MinusCircleOutlined />}></Button>{" "}
+                      <Button icon={<MinusCircleOutlined />}></Button>
                       <Button icon={<PlusCircleOutlined />}></Button>
                     </Col>
                   </Row>
-                </Col>{" "}
+                </Col>
               </Row>
-            </Card>*/}{" "}
+            </Card>*/}
             <Col className="mt-2 text-right">
-              {" "}
-              <Button
-                icon={<ArrowDownOutlined />}
-                type="primary"
-                htmlType="submit"
-              >
-                Download
-              </Button>{" "}
-              <Button
-                icon={<ArrowRightOutlined />}
-                type="primary"
-                htmlType="submit"
-              >
-                Preview
-              </Button>{" "}
+              {width >= 1399 ? (
+                <Button
+                  icon={<ArrowDownOutlined />}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  Download
+                </Button>
+              ) : (
+                <Button
+                  icon={<ArrowRightOutlined />}
+                  type="primary"
+                  htmlType="submit"
+                  onClick={() => onHandle(parentData)}
+                >
+                  Preview
+                </Button>
+              )}
             </Col>
           </Card>
         </Form>
@@ -485,7 +585,7 @@ export default CertDisplay;
 //           xl={24}
 //           justify="between"
 //         >
-//           {" "}
+//
 //           <Row>
 //             <Col className="pt-2" span={12}>
 //               <h4>{item.Details}</h4>
@@ -504,8 +604,8 @@ export default CertDisplay;
 //               )}
 //             </Col>
 //           </Row>
-//         </Col>{" "}
-//       </Row>{" "}
+//         </Col>
+//       </Row>
 //       <Row justify="between">
 //         <Col
 //           xs={24}
@@ -517,7 +617,7 @@ export default CertDisplay;
 //         >
 //           {item.isOpen ? (
 //             <div>
-//               {" "}
+//
 //               <Form.List name="users">
 //                 {(fields, { add, remove }) => (
 //                   <>
@@ -528,7 +628,7 @@ export default CertDisplay;
 //                         align="baseline"
 //                       >
 //                         <Col lg={24}>
-//                           {" "}
+//
 //                           <Form.Item
 //                             {...restField}
 //                             name={[name, "first"]}
@@ -563,7 +663,7 @@ export default CertDisplay;
 //               </Form.List>
 //             </div>
 //           ) : null}
-//         </Col>{" "}
+//         </Col>
 //       </Row>
 //     </Card>
 //   );
@@ -571,55 +671,55 @@ export default CertDisplay;
 // {/* <Card>
 //   <Row justify="between">
 //     <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-//       {" "}
+//
 //       <Row>
 //         <Col className="pt-2" span={12}>
 //           <h3>Clearance Details</h3>
 //         </Col>
 //         <Col span={6} offset={6} className="text-right">
-//           <Button icon={<MinusCircleOutlined />}></Button>{" "}
+//           <Button icon={<MinusCircleOutlined />}></Button>
 //           <Button icon={<PlusCircleOutlined />}></Button>
 //         </Col>
 //       </Row>
-//     </Col>{" "}
+//     </Col>
 //   </Row>
 // </Card>
 // <Card>
 //   <Row justify="between">
 //     <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-//       {" "}
+//
 //       <Row>
 //         <Col className="pt-2" span={12}>
 //           <h3>Person Details</h3>
 //         </Col>
 //         <Col span={6} offset={6} className="text-right">
-//           <Button icon={<MinusCircleOutlined />}></Button>{" "}
+//           <Button icon={<MinusCircleOutlined />}></Button>
 //           <Button icon={<PlusCircleOutlined />}></Button>
 //         </Col>
 //       </Row>
-//     </Col>{" "}
+//     </Col>
 //   </Row>
 // </Card>
 // <Card> */}
 // {/* <Row justify="between">
 //     <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-//       {" "}
+//
 //       <Row>
 //         <Col className="pt-2" span={12}>
 //           <h3>Government Personals</h3>
 //         </Col>
 //         <Col span={6} offset={6} className="text-right">
-//           <Button icon={<MinusCircleOutlined />}></Button>{" "}
+//           <Button icon={<MinusCircleOutlined />}></Button>
 //           <Button icon={<PlusCircleOutlined />}></Button>
 //         </Col>
 //       </Row>
-//     </Col>{" "}
+//     </Col>
 //   </Row>
-// </Card>*/}{" "}
+// </Card>*/}
 // <Col className="text-right">
-//   {" "}
+//
 //   <Button type="primary" htmlType="submit">
 //     Submit
-//   </Button>{" "}
+//   </Button>
 // </Col>
-// </Card>{" "}
+// </Card>

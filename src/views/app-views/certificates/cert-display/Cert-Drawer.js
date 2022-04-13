@@ -41,7 +41,7 @@ const UserView = (props) => {
           <Card style={{ width: "100%" }}>
             {" "}
             <PDFTemplate
-              data={{ name: "text" }}
+              data={data}
               selectedForm={1}
               min={4}
               type="drawer"

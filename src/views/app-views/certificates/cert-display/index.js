@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import SplitPane, { Pane } from "react-split-pane";
-import CertDisplay from "./cert-display";
-import InputCert from "./input-display";
 import { Col, Row, Button, Input, Radio } from "antd";
 import {
   ArrowDownOutlined,
@@ -198,4 +196,4 @@ const Certificates = () => {
   );
 };
 
-export default React.memo(Certificates, InputCert);
+export default React.memo(Certificates);

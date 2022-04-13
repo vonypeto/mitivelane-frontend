@@ -1,24 +1,61 @@
-import React, { useState, useEffect } from "react";
-
+import React from "react";
+import DOMPurify from "dompurify";
 import { Col, Row, Image } from "antd";
-
-import { Textfit } from "react-textfit";
 
 const ClassicTemplateList = (props) => {
   const { data, max, min, width, lineHeight } = props;
-  let size = 9;
-  if (width >= 1920) {
-    size = 9;
-  } else if (width >= 1080) {
-    size = 8;
-  } else if (width >= 728) {
-    size = 7;
-  } else if (width >= 500) {
-    size = 5;
-  } else {
-    size = 4;
+  let content = data?.content;
+  let numberRow = content?.blocks.length - 1;
+  let container;
+  let inlineStyle;
+  let dynamicDiv = [];
+  container = '<span style="text-align: justify; line-height: 16px;">';
+  // console.log(inlineStyle?.filter((set) => set.offset == 3));
+  for (var k = 0; k <= numberRow; k++) {
+    container += "<span > <br/>";
+
+    for (var i = 0; i <= content?.blocks[k].text.length; i++) {
+      inlineStyle = content?.blocks[k].inlineStyleRanges;
+      if (content?.blocks[k].text[i]) {
+        //Start of InlineStyle
+        if (inlineStyle?.filter((set) => set.offset == i)) {
+          const data = inlineStyle?.filter((set) => set.offset == i);
+          if (data.length >= 1) {
+            dynamicDiv.push({ key: i, length: Number(data[0]?.length) });
+
+            container += '<span id="!" style="';
+            //Multiple Style
+            for (var s = 0; s < data.length; s++) {
+              if (data[s]?.style.includes("font-family")) {
+              } else {
+                if (data[s]?.style == "BOLD") {
+                  container += `font-weight: 700;`;
+                } else if (data[s]?.style == "italic") {
+                }
+              }
+            }
+            container += '">';
+          }
+        }
+        // Character Output
+        container += `${content?.blocks[k].text[i]}`;
+        // End of InlineStyle
+        for (var a = 0; a < dynamicDiv.length; a++) {
+          dynamicDiv[a].length = dynamicDiv[a]?.length - 1;
+          if (dynamicDiv[a]?.length == 0) {
+            container += "</span>";
+          }
+        }
+      }
+      //  console.log(content?.blocks[k].text[i]);
+    }
+    container += "<br /></span>";
   }
-  console.log(size);
+  container += "</span>";
+  let clean = DOMPurify.sanitize(container);
+
+  clean = clean.replaceAll("{NAME}", "MR & MRS RAFAEL S ESTEBAN");
+  console.log(clean);
   return (
     <Row>
       <Col
@@ -77,25 +114,27 @@ const ClassicTemplateList = (props) => {
       </Col>
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
         {/* Normal Line Height 16px */} <br />
-        <div>TO WHOM IT CONCERN</div> <br />
+        <div>TO WHOM IT CONCERN</div>
         <div style={{ textAlign: "justify", lineHeight: lineHeight }}>
-          <span>
+          <div dangerouslySetInnerHTML={{ __html: clean }} />
+          {/*  <span>
             This is to certify that
             <b> MR & MRS RAFAEL S ESTEBAN </b>is to bonafide resident of
             Barangay Fiesishare, talisay, Batangas.
           </span>
-          <br /> <br />
+          <br />
+          <br />
           <span>
             This certification issued upon the request of
             <b> MR & MRS RAFAEL S ESTEBAN </b> and whatever legal purpose this
             may serve him/her best
-          </span>{" "}
+          </span>
           <br />
           <br />
           <span>
             Issuied thus 14th day if January, 2020 at Barangay BUhangin Proper,
             Davo CIty, Philippines
-          </span>{" "}
+          </span>*/}
         </div>
       </Col>
 
@@ -113,15 +152,7 @@ const ClassicTemplateList = (props) => {
               className="text-center "
             >
               <br />
-              {/* <div
-                className="text-left "
-                style={{
-                  textAlign: "left",
 
-                  alignSelf: "left",
-                  display: "block",
-                }}
-              > */}
               <Image
                 src="/img/signature.png"
                 style={{
@@ -131,7 +162,7 @@ const ClassicTemplateList = (props) => {
                   alignSelf: "center",
                   display: "inline",
                 }}
-              />{" "}
+              />
               <br />
               {/* </div> */}
               <span
@@ -156,14 +187,13 @@ const ClassicTemplateList = (props) => {
           <span>Issued on ______</span>
           <br />
           <div className="text-center">
-            {" "}
             <br />
             <span>
               <i>
                 Note not valid with erasures and without the official seal of
                 issuing office
               </i>
-            </span>{" "}
+            </span>
           </div>
         </Col>
       </Col>

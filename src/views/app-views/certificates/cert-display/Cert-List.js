@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import BasicDocument from "./documents/BasicDocument";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import React, { useState } from "react";
+
 import {
   Card,
   Col,
@@ -12,9 +11,6 @@ import {
   Menu,
   Input,
 } from "antd";
-import FontPicker from "font-picker-react";
-import { saveAs } from "file-saver";
-import { pdf } from "@react-pdf/renderer";
 import {
   EyeOutlined,
   EditOutlined,
@@ -24,11 +20,9 @@ import {
   ArrowDownOutlined,
   HighlightOutlined,
 } from "@ant-design/icons";
-import { BsCpu } from "react-icons/bs";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import CertDrawer from "./Cert-Drawer";
-import { Textfit } from "react-textfit";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { useHistory } from "react-router-dom";
 import { AUTH_BARANGAY } from "redux/constants/Auth";
@@ -36,7 +30,6 @@ const { Footer } = Layout;
 const CertList = (props) => {
   const history = useHistory();
   const { width } = props;
-  const [fontSize, setFontSize] = useState();
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setIsLoading] = useState(false);
@@ -55,7 +48,7 @@ const CertList = (props) => {
     setDrawer(false);
     SetSelectedUser(null);
   };
-  const createCert = () => {};
+
   const dropdownMenu = (row) => (
     <Menu>
       <Menu.Item key={1}>

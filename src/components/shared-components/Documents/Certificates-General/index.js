@@ -1,5 +1,7 @@
 import React from "react";
 import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
+import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
+
 import { Textfit } from "react-textfit";
 
 const index = (props) => {
@@ -68,11 +70,19 @@ const index = (props) => {
   }
   return (
     <>
-      <Textfit mode="multi" min={size} max={size}>
-        {selectedForm == 1 ? (
-          <ClassicTemplate {...props} lineHeight={lineHeight} />
-        ) : null}
-      </Textfit>
+      {type == "form" || type == "view" || type == "drawer" ? (
+        <Textfit mode="multi" min={size} max={size}>
+          {selectedForm == 1 ? (
+            <ClassicTemplate {...props} lineHeight={lineHeight} />
+          ) : null}
+        </Textfit>
+      ) : (
+        <>
+          {selectedForm == 1 ? (
+            <ClassicTemplatePDF {...props} lineHeight={lineHeight} />
+          ) : null}
+        </>
+      )}
     </>
   );
 };
