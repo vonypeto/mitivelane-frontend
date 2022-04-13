@@ -5,6 +5,7 @@ export const COLOR_4 = '#ffc107';  // gold
 export const COLOR_5 = '#a461d8';  // purple
 export const COLOR_6 = '#fa8c16';  // orange
 export const COLOR_7 = '#17bcff';  // geekblue
+export const COLOR_8 = '#ff0000';  // red
 
 export const COLOR_1_LIGHT = 'rgba(62, 130, 247, 0.15)';
 export const COLOR_2_LIGHT = 'rgba(4, 209, 130, 0.1)';
@@ -21,7 +22,8 @@ export const COLORS = [
 	COLOR_4,
 	COLOR_5,
 	COLOR_6,
-	COLOR_7
+	COLOR_7,
+	COLOR_8
 ]
 
 export const COLORS_LIGHT = [

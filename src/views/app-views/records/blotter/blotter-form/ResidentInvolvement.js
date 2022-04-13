@@ -200,7 +200,7 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
         <SettlementFormItem />
 
         <Card title="Reporter">
-          <Select
+		{/* <Select
             maxTagCount="responsive"
             mode="multiple"
             style={{ width: "100%" }}
@@ -210,9 +210,10 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
             value={residentpick.map((item) => item.value)}
           >
           </Select>
+		*/}
 
           <div className="mt-3">
-            <hr />
+		  {/*<hr />*/}
             {residentselectedRows.map((elm, i) => (
               <div
                 key={i}

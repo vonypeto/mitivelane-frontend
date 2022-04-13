@@ -22,9 +22,9 @@
   "sidenav.residents.aid-assistant.edit": "Purok/Area",
 
   "sidenav.reports": "Record and Reports",
-  "sidenav.reports.blotter": "Blotter Records",
-  "sidenav.reports.blotter.list": "Blotter list",
-  "sidenav.reports.blotter.add": "Blotter add",
+  "sidenav.reports.blotter": "Blotter",
+  "sidenav.reports.blotter.record": "Record",
+  "sidenav.reports.blotter.request": "Request",
   "sidenav.reports.blotter.delete": "Blotter delete",
   "sidenav.reports.blotter.edit": "Blotter edit",
 

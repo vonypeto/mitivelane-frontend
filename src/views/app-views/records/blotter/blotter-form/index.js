@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
 import { BLOTTER_FORM } from "redux/constants/Record";
+import { AUTH_TOKEN } from "redux/constants/Auth";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import { Tabs, Form, Button, message } from "antd";
 import Flex from "components/shared-components/Flex";
@@ -32,7 +33,7 @@ const MainFormList = (props) => {
   const { currentBarangay, generateToken } = useAuth();
 
   const { id } = useParams();
-  const authToken = localStorage.getItem("auth_token");
+  const authToken = localStorage.getItem(AUTH_TOKEN);
 
   let history = useHistory();
   const { mode = ADD, param } = props;
@@ -46,12 +47,7 @@ const MainFormList = (props) => {
 
   useEffect(() => {
     getResidents(currentBarangay);
-
     setBlotterInitialValue();
-
-    if (mode === EDIT || mode === VIEW) {
-      setBlotterInitialValue();
-    }
   }, [form, mode, param, props]);
 
   const getResidents = (currentBarangay) => {

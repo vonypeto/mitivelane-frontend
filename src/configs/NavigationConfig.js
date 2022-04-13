@@ -117,8 +117,24 @@ const blotterNavTree = [
         title: "sidenav.reports.blotter",
         icon: SnippetsOutlined,
         breadcrumb: true,
-        // Remove AFTER DEVELOPMENT
-        submenu: [],
+        submenu: [
+          {
+            key: "blotter.record",
+            path: `${APP_PREFIX_PATH}//records`,
+            title: "sidenav.reports.blotter.record",
+            icon: "",
+            breadcrumb: false,
+            submenu: [],
+          },
+          {
+            key: "blotter.request",
+            path: `${APP_PREFIX_PATH}//records/blotter-record/request`,
+            title: "sidenav.reports.blotter.request",
+            icon: "",
+            breadcrumb: false,
+            submenu: [],
+          }
+        ]
       },
       {
         key: "settlement-case-list",

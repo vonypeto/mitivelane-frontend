@@ -5,13 +5,16 @@ import Userview from "./UserFormView";
 import Flex from "components/shared-components/Flex";
 import utils from "utils";
 
+import { setLocalStorage, getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import { SETTLEMENT_FORM } from "redux/constants/Record";
+
 import {
   InfoCircleOutlined,
   SearchOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
 const TableBlotterData = (props) => {
-  const { testout, barangay_id, blotterData, blotterlistLoading } = props;
+  const { testout, caseType, barangay_id, blotterData, blotterlistLoading } = props;
   const [blotterlist, setBlotterList] = useState(blotterData);
   const [blotterlistData, setBlotterListData] = useState(blotterData);
   const [selectShow, setShow] = useState(true);
@@ -24,6 +27,12 @@ const TableBlotterData = (props) => {
     setBlotterListData(blotterData)
 
   }, [blotterData, blotterlistData])
+  
+  useEffect(() => {
+	  if(Object.keys(getLocalStorage(SETTLEMENT_FORM)[caseType]).length != 0){
+		  currentRenderData(getLocalStorage(SETTLEMENT_FORM)[caseType])
+	  }
+  }, [])
 
   const selectOutShow = (event) => {
     return setShow(event);
@@ -89,7 +98,13 @@ const TableBlotterData = (props) => {
 
     console.log("Data ", data)
     setSelectedUserData(data);
+	setLocalStorageObject(SETTLEMENT_FORM, data, caseType)
 
+  };
+  
+  const currentRenderData = (data) => {
+    setShow(!selectShow);
+    setSelectedUserData(data);
   };
 
   const ViewDetails = (data) => {
@@ -153,7 +168,7 @@ const TableBlotterData = (props) => {
             >
               {!selectShow ? (
                 <div key="c">
-                  <Userview selectOutShow={selectOutShow.bind(this)} initialData={selectedUserData} />
+                  <Userview selectOutShow={selectOutShow.bind(this)} initialData={selectedUserData} caseType={caseType}/>
                 </div>
               ) : null}
             </QueueAnim>

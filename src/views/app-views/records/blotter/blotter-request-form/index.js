@@ -65,6 +65,7 @@ const index = () => {
 				values.reporters = [values.reporters_id]
 				values.uuid = authToken
 				values.status = "Pending"
+				values.settlement_status = "Unscheduled"
 				requestBlotter(values)
 
 			})
