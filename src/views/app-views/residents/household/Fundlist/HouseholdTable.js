@@ -96,11 +96,11 @@ const AyudaTable = (props) => {
 
     //useEffect
     useEffect(() => {
-        getHousehold()
+        getAllHousehold()
     }, [])
 
     //Axios
-    const getHousehold = async () => {
+    const getAllHousehold = async () => {
         const households = await axios.post(
             "/api/household/getAll",
             { barangay_id: barangay_id },

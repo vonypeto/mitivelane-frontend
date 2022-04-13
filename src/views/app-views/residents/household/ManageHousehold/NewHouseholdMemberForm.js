@@ -1,13 +1,27 @@
 import React from 'react'
-import { Form, Input, InputNumber, DatePicker, Select, Row, Col } from "antd";
+import { Form, Input, InputNumber, DatePicker, Select, Row, Col, Button } from "antd";
 
 const { Option } = Select;
 
-const NewHouseholdMemberForm = () => {
+const NewHouseholdMemberForm = ({importResidentAsMember}) => {
     return (
         <Row >
             <Form.Item
-                name="id"
+                name="_id"
+                hidden
+            >
+                <Input />
+            </Form.Item>
+
+            <Form.Item
+                name="isOld"
+                hidden
+            >
+                <Input />
+            </Form.Item>
+
+            <Form.Item
+                name="action"
                 hidden
             >
                 <Input />
@@ -128,6 +142,13 @@ const NewHouseholdMemberForm = () => {
                 </Form.Item>
             </Col>
 
+            <Button
+                type='primary'
+                className='w-100'
+                onClick={() => {importResidentAsMember("print dis")}}
+            >
+                Import resident data
+            </Button>
         </Row>
     )
 }
