@@ -14,7 +14,7 @@ export const PROFILE_URL = "profile_url";
 export const ACCESS_TOKEN = "access_token";
 export const SESSION_TOKEN = "session_token";
 export const CODE_TOKEN = "code";
-
+export const FONTS = "font";
 export const SIGNIN_WITH_GOOGLE = "SIGNIN_WITH_GOOGLE";
 export const SIGNIN_WITH_GOOGLE_AUTHENTICATED =
   "SIGNIN_WITH_GOOGLE_AUTHENTICATED";

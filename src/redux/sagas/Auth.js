@@ -11,6 +11,7 @@ import {
   SIGNUP,
   SIGNIN_WITH_GOOGLE,
   SIGNIN_WITH_FACEBOOK,
+  FONTS,
 } from "../constants/Auth";
 import {
   showAuthMessage,
@@ -58,8 +59,9 @@ export function* signOut() {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(SESSION_TOKEN);
         localStorage.removeItem(PROFILE_URL);
-		localStorage.removeItem(BLOTTER_FORM);
-		localStorage.removeItem(SETTLEMENT_FORM);
+        localStorage.removeItem(BLOTTER_FORM);
+        localStorage.removeItem(SETTLEMENT_FORM);
+        localStorage.removeItem(FONTS);
         yield put(signOutSuccess(signOutUser));
       } else {
         yield put(showAuthMessage(signOutUser.message));

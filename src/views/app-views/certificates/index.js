@@ -5,6 +5,7 @@ import Loading from "components/shared-components/Loading";
 const Components = ({ match }) => (
   <Suspense fallback={<Loading cover="content" />}>
     <Switch>
+      {/* cert display list */}
       <Route
         path={`${match.url}/list`}
         component={lazy(() => import(`./cert-display`))}
