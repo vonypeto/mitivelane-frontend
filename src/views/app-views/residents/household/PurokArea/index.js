@@ -7,13 +7,31 @@ import axios from 'axios';
 import moment from 'moment'
 import { useAuth } from "contexts/AuthContext";
 
+import {
+  EyeOutlined,
+  EllipsisOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  PlusCircleOutlined,
+  FileExcelOutlined,
+  PrinterOutlined,
+  EditOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
+
 import NewAreaForm from "./NewAreaForm"
 
 const PurokArea = (props) => {
   //Initialize
   const { barangay_id } = props
 
-  const ResidentTableColumns = [
+  //Import
+  const source = axios.CancelToken.source();
+  const cancelToken = source.token;
+  const history = useHistory();
+  const { generateToken, currentBarangay } = useAuth();
+
+  const purokColumn = [
     {
       title: "Purok",
       dataIndex: "name",
@@ -32,6 +50,16 @@ const PurokArea = (props) => {
         </div>
       ),
     },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      width: "20px",
+      render: (_, elm) => (
+        <div className="text-right">
+          <EllipsisDropdown menu={dropdownMenu(elm)} />
+        </div>
+      ),
+    }
   ]
 
   const tempData = [
@@ -62,13 +90,62 @@ const PurokArea = (props) => {
 
   //State
   const [showAreaModal, setShowAreaModal] = useState(false)
-  const [purokList, setPurokList] = useState(tempData)
+  const [purokList, setPurokList] = useState([])
+  const [purokInitialVal, setPurokInitialVal] = useState({})
+  const [submitting, setSubmitting] = useState(false)
 
   //UseEffect 
+  useEffect(() => {
+    getAreas()
+  }, [])
+
 
   //Axios
-  const addNewArea = (newArea) => {
-    axios.post("")
+  const addNewArea = async (newArea) => {
+    const request = await axios.post(
+      "/api/purok/add",
+      { newArea, barangay_id: barangay_id },
+      generateToken()[1],
+      { cancelToken }
+    );
+
+    const data = request.data
+    setPurokList([...purokList, data])
+  }
+
+  const getAreas = async () => {
+    const request = await axios.post(
+      "/api/purok/getAll",
+      { barangay_id: barangay_id },
+      generateToken()[1],
+      { cancelToken }
+    );
+
+    setPurokList(request.data)
+  }
+
+  const deleteArea = async (area_id) => {
+    const request = await axios.post(
+      "/api/purok/delete",
+      { barangay_id: barangay_id, area_id },
+      generateToken()[1],
+      { cancelToken }
+    );
+  }
+
+  const updateArea = async (newAreaData) => {
+    const request = await axios.post(
+      "/api/purok/update",
+      { barangay_id: barangay_id, newAreaData },
+      generateToken()[1],
+      { cancelToken }
+    ); 
+  }
+
+  //Popup
+  const handlePopUp = () => {
+    setPurokInitialVal({ action: "added" })
+    setShowAreaModal(true)
   }
 
   // Modal Function
@@ -78,14 +155,60 @@ const PurokArea = (props) => {
 
   const handleCancel = () => {
     setShowAreaModal(false);
+    setPurokInitialVal({})
   };
+
+  //Components
+  const dropdownMenu = (row) => (
+    <Menu>
+      <Menu.Item key={1} onClick={() => { editPurok(row) }}>
+        <EditOutlined />
+        <span className="ml-2">Edit</span>
+      </Menu.Item>
+      <Menu.Item key={2} onClick={() => { deletePurok(row) }}>
+        <DeleteOutlined />
+        <span className="ml-2" style={{ color: "black" }}>Delete</span>
+      </Menu.Item>
+    </Menu>
+  );
+
+  //Function
+  const editPurok = (row) => {
+    setPurokInitialVal({ 'name': row.name, action: "edited", purok_id: row.purok_id})
+    setShowAreaModal(true)
+  }
+
+  const deletePurok = (row) => {
+    console.log("deleting purok")
+    deleteArea(row.purok_id)
+
+    const currentpurokList = [...purokList]
+    var objIndex = currentpurokList.findIndex((obj => obj.purok_id == row.purok_id));
+    currentpurokList.splice(objIndex, 1);
+    setPurokList(currentpurokList)
+
+    message.success("Success, area has been deleted")
+  }
 
   // Form Function
   const onFinishAddArea = (value) => {
     value.createdAt = Date.now()
-    message.success("New Area has been added.")
 
-    setPurokList([...purokList, value])
+    if (value.action == "added") {
+      addNewArea(value)
+      message.success("New Area has been added.")
+    }
+
+    if (value.action == "edited") {
+      updateArea(value)
+
+      const currentpurokList = [...purokList]
+      var objIndex = currentpurokList.findIndex((obj => obj.purok_id == value.purok_id));
+      currentpurokList[objIndex] = value
+      setPurokList(currentpurokList)
+      message.success("Area data has been updated.")
+    }
+
     setShowAreaModal(false);
   }
 
@@ -97,13 +220,13 @@ const PurokArea = (props) => {
 
         <Row justify="space-between">
           <Col>
-          <h1>Purok/Area</h1>
+            <h1>Purok/Area</h1>
           </Col>
 
           <Col>
             <Button
               type='primary'
-              onClick={() => setShowAreaModal(true)}
+              onClick={() => handlePopUp()}
             >
               Add Area
             </Button>
@@ -111,9 +234,9 @@ const PurokArea = (props) => {
         </Row>
 
         <Table
-          columns={ResidentTableColumns}
+          columns={purokColumn}
           dataSource={purokList}
-          rowKey={"_id"}
+          rowKey={"purok_id"}
           scroll={{ x: "max-content" }}
         >
         </Table>
@@ -124,7 +247,8 @@ const PurokArea = (props) => {
           name='new_area_form'
           onFinish={onFinishAddArea}
           ref={NewAreaFormRef}
-          // initialValues={householdMemberInitialVal}
+          initialValues={purokInitialVal}
+        // initialValues={householdMemberInitialVal}
         >
           <NewAreaForm />
         </Form>

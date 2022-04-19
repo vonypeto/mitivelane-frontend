@@ -1,6 +1,6 @@
 import { React, useEffect, useState, useRef, createRef, } from 'react'
 import { useParams, useHistory } from "react-router-dom";
-import { Card, Form, Input, InputNumber, Select, Row, Col, Table, Menu, Button, Modal, Space, message } from "antd";
+import { Card, Form, Input, InputNumber, Select, Row, Col, Table, Menu, Button, Modal, Space, Drawer, message } from "antd";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from 'axios';
 import moment from 'moment'
@@ -178,6 +178,9 @@ const ManageHousehold = (props) => {
   const [householdMemberInitialVal, setHouseholdMemberInitialVal] = useState(householdMemberDefault)
   const [deletedMembers, setDeletedMembers] = useState([])
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   //Ref
   const NewMemberFormRef = createRef()
@@ -241,10 +244,10 @@ const ManageHousehold = (props) => {
     console.log("deletedMembers", deletedMembers)
   }, [deletedMembers])
 
+
   //Modal
-  const showModal = (action) => {
+  const showModal = () => {
     setIsModalVisible(true);
-    setHouseholdMemberInitialVal({ ...householdMemberInitialVal, action })
   };
 
   const handleOk = () => {
@@ -256,6 +259,16 @@ const ManageHousehold = (props) => {
     setIsModalVisible(false);
     setHouseholdMemberInitialVal(householdMemberDefault)
   };
+
+  //Drawer
+  const showDrawer = () => {
+    setIsDrawerVisible(true);
+  }
+
+  const onDrawerClose = () => {
+    setIsDrawerVisible(false);
+    setHouseholdMemberInitialVal(householdMemberDefault)
+  }
 
   //Function
   const dropdownMenu = (row) => (
@@ -271,11 +284,44 @@ const ManageHousehold = (props) => {
     </Menu>
   );
 
+  const drawerFooter = () => {
+    return (
+      <Button 
+      type='primary'
+      style={{float: "right"}}
+      onClick={() => {handleOk()}} 
+      >
+      
+        Submit
+      </Button>
+    )
+  };
+
+  // function for handling drawer and modal
+  const handlePopUp = (action) => {
+    const screenWidth = window.innerWidth
+    console.log(screenWidth)
+
+    if (screenWidth > 480) {
+      showModal()
+    }
+
+    if (screenWidth <= 480) {
+      showDrawer()
+    }
+
+    if (action != null) {
+      setHouseholdMemberInitialVal({ ...householdMemberInitialVal, action })
+    }
+
+  }
+
   const editHouseholdMember = (row) => {
     var data = { ...row }
     data.action = "edited"
     setHouseholdMemberInitialVal({ ...householdMemberInitialVal, ...data })
-    setIsModalVisible(true)
+
+    handlePopUp()
   }
 
   const deleteHouseholdMember = (row) => {
@@ -292,7 +338,8 @@ const ManageHousehold = (props) => {
   }
 
   const onFinishAddMember = (value) => {
-    message.success("Submit")
+    setLoading(true)
+
     if (value.isOld == null) {
       value.isOld = false
     }
@@ -302,6 +349,7 @@ const ManageHousehold = (props) => {
       value._id = householdMemberList.length
       console.log("Adding new member", value._id)
       setHouseholdMemberList([...householdMemberList, value])
+      message.success("Success, New Household Member added.")
     }
     // if member is edited
     if (value.action == "edited") {
@@ -312,11 +360,13 @@ const ManageHousehold = (props) => {
       console.log(currentHouseholdMemberList)
       setHouseholdMemberList(currentHouseholdMemberList)
 
+      message.success("Success, Household Member data has been updated.")
     }
 
     setIsModalVisible(false)
+    setIsDrawerVisible(false)
     setHouseholdMemberInitialVal(householdMemberDefault)
-
+    setLoading(false)
   }
 
   const onFinishHouseHoldForm = (value) => {
@@ -331,22 +381,19 @@ const ManageHousehold = (props) => {
   }
 
   const onFinishAddHousehold = (value) => {
-    console.log("Adding new household", value)
-
+    setLoading(true)
     // (household, householdMembers)
     createHousehold(value, householdMemberList)
 
     message.success("Success, new household has been added.")
-    history.push(`/app/${barangay_id}/residents/household/list`)
+    // history.push(`/app/${barangay_id}/residents/household/list`)
   }
 
   const onFinishUpdateHousehold = (value) => {
-    console.log("Updating household", value)
-
+    setLoading(true)
     // (household, householdMembers, deletedMemberArray)
     updateHousehold(value, householdMemberList, deletedMembers)
     message.success("Success, household data has been updated.")
-
     // history.push(`/app/${barangay_id}/residents/household/list`)
   }
 
@@ -379,6 +426,7 @@ const ManageHousehold = (props) => {
               type='primary'
               style={{ float: "right" }}
               onClick={() => { NewHouseholdFormRef.current.submit() }}
+              loading={loading}
             >
               Submit
             </Button>
@@ -409,7 +457,8 @@ const ManageHousehold = (props) => {
           <Col>
             <Button
               type='primary'
-              onClick={() => showModal("added")}
+              onClick={() => handlePopUp("added")}
+              loading={loading}
             >
               Add Member
             </Button>
@@ -422,6 +471,7 @@ const ManageHousehold = (props) => {
           rowKey={"_id"}
           scroll={{ x: "max-content" }}
         />
+
         {/* <Button
           type='primary'
           onClick={() => { console.log(householdMemberList) }}
@@ -432,15 +482,33 @@ const ManageHousehold = (props) => {
       </Card>
 
       <Modal title="New Household Member Information" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} okText={"Submit"} destroyOnClose={true}>
-        <Form
-          name='new_household_member_form'
-          onFinish={onFinishAddMember}
-          ref={NewMemberFormRef}
-          initialValues={householdMemberInitialVal}
-        >
-          <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember}/>
-        </Form>
+
+      { isModalVisible &&
+          <Form
+            name='new_household_member_form'
+            onFinish={onFinishAddMember}
+            ref={NewMemberFormRef}
+            initialValues={householdMemberInitialVal}
+          >
+            <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember} />
+          </Form>
+      }
+
       </Modal>
+
+      <Drawer title="New Household Member Information" placement="right" onClose={onDrawerClose} visible={isDrawerVisible} width={"100%"} height={"100%"} footer={drawerFooter()}>
+      { isDrawerVisible &&
+          <Form
+            name='new_household_member_form'
+            onFinish={onFinishAddMember}
+            ref={NewMemberFormRef}
+            initialValues={householdMemberInitialVal}
+          >
+            <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember} />
+            
+          </Form>
+      }
+      </Drawer>
     </div>
   )
 }

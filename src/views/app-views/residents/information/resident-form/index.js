@@ -41,6 +41,7 @@ const MainFormList = (props) => {
   const [residentData, setResidentData] = useState([]);
   const [residentFilter, setResidentFilter] = useState([]);
   const [form] = Form.useForm();
+  const [purokList, setPurokList] = useState([])
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -103,6 +104,21 @@ const MainFormList = (props) => {
       }
     }
   }, [form, mode, param, props]);
+
+  useEffect(() => {
+    (async () => {
+      const request = await axios.post(
+        "/api/purok/getAll",
+        { barangay_id: barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+  
+      setPurokList(request.data)
+      console.log(request.data)
+    })()
+  }, [])
+  
 
   const handleUploadChange = (info) => {
     if (info.file.status === "uploading") {
@@ -181,6 +197,12 @@ const MainFormList = (props) => {
       });
   };
 
+  const onFailed = (values) => {
+    values.errorFields.map((field) => {
+      message.error(field.errors)
+    })
+  }
+
   return (
     <>
       <Form
@@ -189,6 +211,7 @@ const MainFormList = (props) => {
         name="advanced_search"
         className="ant-advanced-search-foarm"
         onFinish={onFinish}
+        onFinishFailed={onFailed}
         initialValues={{
           heightUnit: "cm",
           widthUnit: "cm",
@@ -247,7 +270,7 @@ const MainFormList = (props) => {
                 </QueueAnim>
               </TabPane>
               <TabPane tab="Address" key="2" forceRender>
-                <Address data={{ resident: "pogi" }} />
+                <Address purokList={purokList} />
               </TabPane>
               <TabPane tab="Social Welfare Service" key="3" forceRender>
                 <SocialWelfare />
@@ -273,7 +296,7 @@ const MainFormList = (props) => {
           <div className="container">
             <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
               <TabPane tab="Resident Details" key="1">
-                <MainFormView residentData={residentData} />
+                <MainFormView residentData={residentData}/>
               </TabPane>
 
               <TabPane tab="Blotter Records" key="2">

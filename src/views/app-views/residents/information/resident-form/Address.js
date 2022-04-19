@@ -28,7 +28,7 @@ const rules = {
 const area = ['PUROK 1', 'PUROK 2']
 
 const AddressField = (props) => {
-	console.log("props:", props)
+	const {purokList} = props
 	return (
 		<Row>
 			<Col xs={24} sm={24} md={17}>
@@ -51,8 +51,8 @@ const AddressField = (props) => {
 									<Form.Item name="area" label="Area/Purok" >
 										<Select className="w-100" placeholder="Area/Purok">
 											{
-												area.map(elm => (
-													<Option key={elm} value={elm}>{elm}</Option>
+												purokList.map(elm => (
+													<Option key={elm.name} value={elm.name}>{elm.name}</Option>
 												))
 											}
 										</Select>
