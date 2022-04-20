@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Card, Col, Row, Button, Upload, message } from "antd";
+import { Card, Col, Row, Button, Upload, message, Space } from "antd";
 import {
   UserOutlined,
   PlusCircleOutlined,
@@ -26,11 +26,6 @@ const dummyRequest = ({ file, onSuccess }) => {
     onSuccess("ok");
   }, 0);
 };
-function findArrayElementByTitle(array, id) {
-  return array.find((element) => {
-    return element.id === id;
-  });
-}
 function beforeUpload(file) {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
   if (!isJpgOrPng) {
@@ -43,17 +38,42 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 const CertDisplay = (props) => {
+  const MAX_LENGTH = 2000;
   const { setParentData, parentData, width } = props;
   // const [countOpenForm, setCountOpenForm] = useState([]);
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [editorState, setEditorStateChange] = useState(
+    EditorState.createEmpty()
+  );
   const [logoList, setLogoList] = useState([
     { id: 1, image: "" },
     { id: 2, image: "" },
   ]);
-  const handleChangeFirstLogo = (info) => {
+  const [signatureImage, setSignatureImage] = useState([
+    { id: 1, image: "", formName: "signature1" },
+  ]);
+  const handleAddSignature = () => {
+    let logoID = signatureImage.length;
+    let logoEnd;
+    if (logoID == 0) {
+      logoEnd = 1;
+    } else {
+      logoEnd = signatureImage[logoID - 1].id + 1;
+    }
+    setSignatureImage([
+      ...signatureImage,
+      { id: logoEnd, image: "", formName: `signature${logoEnd}` },
+    ]);
+  };
+  const handleRemoveSignature = (index) => {
+    const values = [...signatureImage];
+    values.splice(index, 1);
+    setSignatureImage(values);
+  };
+
+  const handlerLogo = (info, index, name) => {
     if (info.file.status === "uploading") {
       setLoading(true);
       return;
@@ -61,14 +81,14 @@ const CertDisplay = (props) => {
     if (info.file.status === "done") {
       // Get this url from response in real world.
       getBase64(info.file.originFileObj, (imageUrl) => {
-        AddImage(1, imageUrl);
+        AddImage(index, imageUrl);
         setLoading(false);
 
-        return onImage(imageUrl, "firstLogo");
+        return onImage(imageUrl, name);
       });
     }
   };
-  const handleChangeSecondLogo = (info) => {
+  const handlerLogoSignature = (info, index, name) => {
     if (info.file.status === "uploading") {
       setLoading(true);
       return;
@@ -76,10 +96,10 @@ const CertDisplay = (props) => {
     if (info.file.status === "done") {
       // Get this url from response in real world.
       getBase64(info.file.originFileObj, (imageUrl) => {
-        AddImage(2, imageUrl);
+        AddImageSignature(index, imageUrl);
         setLoading(false);
 
-        return onImage(imageUrl, "secondLogo");
+        return onImage(imageUrl, name);
       });
     }
   };
@@ -111,14 +131,14 @@ const CertDisplay = (props) => {
           formName: "firstLogo",
           type: "file",
           titleName: "FirstLogo",
-          handler: handleChangeFirstLogo,
+          logoID: 1,
         },
         {
           id: 2,
-          formName: "firstLogo",
+          formName: "secondLogo",
           type: "file",
-          titleName: "FirstLogo",
-          handler: handleChangeSecondLogo,
+          titleName: "SecondLogo",
+          logoID: 2,
         },
         {
           id: 3,
@@ -146,22 +166,15 @@ const CertDisplay = (props) => {
           type: "text",
           titleName: "Ofiice",
         },
-      ],
-    },
-    {
-      id: 2,
-      Details: "Clearance Details",
-      isOpen: false,
-      type: "clearance",
-      data: [
         {
-          id: 2,
+          id: 7,
           formName: "clearance",
           titleName: "Clearance Type",
           type: "text",
         },
       ],
     },
+
     {
       id: 3,
       Details: "Content",
@@ -178,15 +191,15 @@ const CertDisplay = (props) => {
     },
     {
       id: 4,
-      Details: "Content",
+      Details: "Signatures",
       isOpen: false,
-      type: "content",
+      type: "signature",
       data: [
         {
           id: 2,
-          formName: "barangay captain",
-          titleName: "barangay",
-          type: "text",
+          formName: "test",
+          titleName: "multiform",
+          type: "multiform",
         },
       ],
     },
@@ -197,6 +210,11 @@ const CertDisplay = (props) => {
   //   barangay: "test",
   //   office: "test",
   // });
+
+  form.setFieldsValue({
+    test: "test",
+    office: "test",
+  });
   const onFinish = () => {
     let data = [];
     dropDownForm.map((value) => {
@@ -230,7 +248,6 @@ const CertDisplay = (props) => {
   };
   // Image
   const AddImage = (currentId, Image) => {
-    console.log(currentId);
     setLogoList((existingItems) => {
       const itemIndex = existingItems.findIndex(
         (item) => item.id === currentId
@@ -246,23 +263,51 @@ const CertDisplay = (props) => {
       ];
     });
   };
+  const AddImageSignature = (currentId, Image) => {
+    setSignatureImage((existingItems) => {
+      const itemIndex = existingItems.findIndex(
+        (item) => item.id === currentId
+      );
+      return [
+        ...existingItems.slice(0, itemIndex),
+        {
+          // spread all the other items in the object and update only the score
+          ...existingItems[itemIndex],
+          image: Image,
+        },
+        ...existingItems.slice(itemIndex + 1),
+      ];
+    });
+  };
   const onFill = debounce((e, title, type) => {
-    if (type == "editor") {
-      form.setFieldsValue({
-        [title]: e,
-      });
-      let data = parentData;
+    try {
+      if (type == "editor") {
+        const length = editorState?.getCurrentContent().getPlainText("").length;
+        if (length <= MAX_LENGTH && 5 >= e.blocks.length) {
+          console.log(e.blocks.length);
+          setEditorStateChange(e); // or this.setState({ editorState: editorState })
+          let data = parentData;
+          form.setFieldsValue({
+            [title]: e,
+          });
+          data[`${title}`] = e;
+          return setParentData(data);
+        } else {
+          return console.log(
+            `Sorry, you've exceeded your limit of ${MAX_LENGTH}`
+          );
+        }
+      } else {
+        form.setFieldsValue({
+          [title]: e.target.value,
+        });
+        let data = parentData;
 
-      data[`${title}`] = e;
-      return setParentData(data);
-    } else {
-      form.setFieldsValue({
-        [title]: e.target.value,
-      });
-      let data = parentData;
-
-      data[`${title}`] = e.target.value;
-      return setParentData(data);
+        data[`${title}`] = e.target.value;
+        return setParentData(data);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }, 1000);
   const onImage = debounce((image, title) => {
@@ -381,31 +426,36 @@ const CertDisplay = (props) => {
                                 key={index}
                                 xl={
                                   formItems.type == "text" ||
-                                  formItems.type == "editor"
+                                  formItems.type == "editor" ||
+                                  formItems.type == "multiform"
                                     ? 24
                                     : 5
                                 }
                                 lg={
                                   formItems.type == "text" ||
-                                  formItems.type == "editor"
+                                  formItems.type == "editor" ||
+                                  formItems.type == "multiform"
                                     ? 24
                                     : 8
                                 }
                                 md={
                                   formItems.type == "text" ||
-                                  formItems.type == "editor"
+                                  formItems.type == "editor" ||
+                                  formItems.type == "multiform"
                                     ? 24
                                     : 12
                                 }
                                 sm={
                                   formItems.type == "text" ||
-                                  formItems.type == "editor"
+                                  formItems.type == "editor" ||
+                                  formItems.type == "multiform"
                                     ? 24
                                     : 24
                                 }
                                 xs={
                                   formItems.type == "text" ||
-                                  formItems.type == "editor"
+                                  formItems.type == "editor" ||
+                                  formItems.type == "multiform"
                                     ? 24
                                     : 24
                                 }
@@ -429,16 +479,20 @@ const CertDisplay = (props) => {
                                   <>
                                     {/* options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 
                                     'embedded', 'emoji', 'image', 'remove', 'history'] */}
+                                    <i>*Max 5 paragraph*</i>
                                     <Editor
                                       toolbarClassName="toolbarClassName"
                                       wrapperClassName="wrapperClassName"
                                       editorClassName="editorClassName"
+                                      onEditorStateChange={(editorState) => {
+                                        setEditorStateChange(editorState);
+                                      }}
                                       toolbar={{
                                         options: [
                                           "inline",
                                           "blockType",
                                           "fontSize",
-
+                                          "colorPicker",
                                           "textAlign",
                                           "history",
                                         ],
@@ -452,6 +506,106 @@ const CertDisplay = (props) => {
                                         onFill(e, formItems.formName, "editor");
                                       }}
                                     />
+                                  </>
+                                ) : formItems.type == "multiform" ? (
+                                  <>
+                                    <i>
+                                      *Leave Blank upload if Applicant signature
+                                      is required*
+                                    </i>
+                                    <Row>
+                                      {signatureImage.map((data, index) => (
+                                        <Col
+                                          key={index}
+                                          xs={24}
+                                          sm={12}
+                                          md={8}
+                                          lg={8}
+                                        >
+                                          <Form.Item>
+                                            <div>
+                                              <Row>
+                                                <Col
+                                                  xs={10}
+                                                  sm={10}
+                                                  md={10}
+                                                  lg={10}
+                                                >
+                                                  <Input
+                                                    style={{
+                                                      border: "none",
+                                                      fontWeight: 900,
+                                                    }}
+                                                    className="cert-name "
+                                                    placeholder={`Signature${
+                                                      index + 1
+                                                    }`}
+                                                  />
+                                                </Col>
+                                                <Col
+                                                  xs={4}
+                                                  sm={4}
+                                                  md={4}
+                                                  lg={4}
+                                                >
+                                                  <div className="pt-3 pl-2 text-center vertical-center">
+                                                    <MinusCircleOutlined
+                                                      onClick={() =>
+                                                        handleRemoveSignature(
+                                                          index
+                                                        )
+                                                      }
+                                                    />
+                                                  </div>
+                                                </Col>{" "}
+                                              </Row>
+                                            </div>
+
+                                            {console.log(signatureImage)}
+                                            <Upload
+                                              name="avatar"
+                                              listType="picture-card"
+                                              className="pt-2 pl-2 avatar-uploader"
+                                              showUploadList={false}
+                                              customRequest={dummyRequest}
+                                              beforeUpload={beforeUpload}
+                                              accept=".png,.jpeg"
+                                              onChange={(e) =>
+                                                handlerLogoSignature(
+                                                  e,
+                                                  data.id,
+                                                  data.formName
+                                                )
+                                              }
+                                            >
+                                              {signatureImage[index].image ? (
+                                                <img
+                                                  src={
+                                                    signatureImage[index].image
+                                                  }
+                                                  alt="avatar"
+                                                  style={{ width: "100%" }}
+                                                />
+                                              ) : (
+                                                uploadButton
+                                              )}
+                                            </Upload>
+                                          </Form.Item>
+                                        </Col>
+                                      ))}
+                                    </Row>
+                                    <Form.Item>
+                                      {signatureImage.length <= 3 ? (
+                                        <Button
+                                          type="dashed"
+                                          onClick={() => handleAddSignature()}
+                                          block
+                                          icon={<PlusOutlined />}
+                                        >
+                                          Add field
+                                        </Button>
+                                      ) : null}
+                                    </Form.Item>
                                   </>
                                 ) : (
                                   <Col
@@ -470,7 +624,13 @@ const CertDisplay = (props) => {
                                       customRequest={dummyRequest}
                                       beforeUpload={beforeUpload}
                                       accept=".png,.jpeg"
-                                      onChange={formItems.handler}
+                                      onChange={(e) =>
+                                        handlerLogo(
+                                          e,
+                                          formItems.logoID,
+                                          formItems.formName
+                                        )
+                                      }
                                     >
                                       {logoList[index].image ? (
                                         <img
@@ -495,54 +655,7 @@ const CertDisplay = (props) => {
                 </Card>
               );
             })}
-            {/* <Card>
-              <Row justify="between">
-                <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-                  
-                  <Row>
-                    <Col className="pt-2" span={12}>
-                      <h3>Clearance Details</h3>
-                    </Col>
-                    <Col span={6} offset={6} className="text-right">
-                      <Button icon={<MinusCircleOutlined />}></Button>
-                      <Button icon={<PlusCircleOutlined />}></Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Card>
-            <Card>
-              <Row justify="between">
-                <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-                  
-                  <Row>
-                    <Col className="pt-2" span={12}>
-                      <h3>Person Details</h3>
-                    </Col>
-                    <Col span={6} offset={6} className="text-right">
-                      <Button icon={<MinusCircleOutlined />}></Button>
-                      <Button icon={<PlusCircleOutlined />}></Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Card>
-            <Card> */}
-            {/* <Row justify="between">
-                <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-                  
-                  <Row>
-                    <Col className="pt-2" span={12}>
-                      <h3>Government Personals</h3>
-                    </Col>
-                    <Col span={6} offset={6} className="text-right">
-                      <Button icon={<MinusCircleOutlined />}></Button>
-                      <Button icon={<PlusCircleOutlined />}></Button>
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Card>*/}
+
             <Col className="mt-2 text-right">
               {width >= 1399 ? (
                 <Button
@@ -571,155 +684,3 @@ const CertDisplay = (props) => {
 };
 
 export default CertDisplay;
-
-// <Card>
-// {dropDownForm.map((item) => {
-//   return (
-//     <Card key={item.id}>
-//       <Row justify="between">
-//         <Col
-//           xs={24}
-//           sm={24}
-//           md={24}
-//           lg={24}
-//           xl={24}
-//           justify="between"
-//         >
-//
-//           <Row>
-//             <Col className="pt-2" span={12}>
-//               <h4>{item.Details}</h4>
-//             </Col>
-//             <Col span={6} offset={6} className="text-right">
-//               {item.isOpen ? (
-//                 <Button
-//                   onClick={() => AddDetails(item.id)}
-//                   icon={<MinusCircleOutlined />}
-//                 ></Button>
-//               ) : (
-//                 <Button
-//                   onClick={() => AddDetails(item.id)}
-//                   icon={<PlusCircleOutlined />}
-//                 ></Button>
-//               )}
-//             </Col>
-//           </Row>
-//         </Col>
-//       </Row>
-//       <Row justify="between">
-//         <Col
-//           xs={24}
-//           sm={24}
-//           md={24}
-//           lg={24}
-//           xl={24}
-//           justify="between"
-//         >
-//           {item.isOpen ? (
-//             <div>
-//
-//               <Form.List name="users">
-//                 {(fields, { add, remove }) => (
-//                   <>
-//                     {fields.map(({ key, name, ...restField }) => (
-//                       <Space
-//                         key={key}
-//                         style={{ display: "flex", marginBottom: 8 }}
-//                         align="baseline"
-//                       >
-//                         <Col lg={24}>
-//
-//                           <Form.Item
-//                             {...restField}
-//                             name={[name, "first"]}
-//                             rules={[
-//                               {
-//                                 required: true,
-//                                 message: "Missing first name",
-//                               },
-//                             ]}
-//                           >
-//                             <Input placeholder="First Name" />
-//                           </Form.Item>
-//                         </Col>
-
-//                         <MinusCircleOutlined
-//                           onClick={() => remove(name)}
-//                         />
-//                       </Space>
-//                     ))}
-//                     <Form.Item>
-//                       <Button
-//                         type="dashed"
-//                         onClick={() => add()}
-//                         block
-//                         icon={<PlusOutlined />}
-//                       >
-//                         Add field
-//                       </Button>
-//                     </Form.Item>
-//                   </>
-//                 )}
-//               </Form.List>
-//             </div>
-//           ) : null}
-//         </Col>
-//       </Row>
-//     </Card>
-//   );
-// })}
-// {/* <Card>
-//   <Row justify="between">
-//     <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-//
-//       <Row>
-//         <Col className="pt-2" span={12}>
-//           <h3>Clearance Details</h3>
-//         </Col>
-//         <Col span={6} offset={6} className="text-right">
-//           <Button icon={<MinusCircleOutlined />}></Button>
-//           <Button icon={<PlusCircleOutlined />}></Button>
-//         </Col>
-//       </Row>
-//     </Col>
-//   </Row>
-// </Card>
-// <Card>
-//   <Row justify="between">
-//     <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-//
-//       <Row>
-//         <Col className="pt-2" span={12}>
-//           <h3>Person Details</h3>
-//         </Col>
-//         <Col span={6} offset={6} className="text-right">
-//           <Button icon={<MinusCircleOutlined />}></Button>
-//           <Button icon={<PlusCircleOutlined />}></Button>
-//         </Col>
-//       </Row>
-//     </Col>
-//   </Row>
-// </Card>
-// <Card> */}
-// {/* <Row justify="between">
-//     <Col xs={24} sm={24} md={24} lg={24} xl={24} justify="between">
-//
-//       <Row>
-//         <Col className="pt-2" span={12}>
-//           <h3>Government Personals</h3>
-//         </Col>
-//         <Col span={6} offset={6} className="text-right">
-//           <Button icon={<MinusCircleOutlined />}></Button>
-//           <Button icon={<PlusCircleOutlined />}></Button>
-//         </Col>
-//       </Row>
-//     </Col>
-//   </Row>
-// </Card>*/}
-// <Col className="text-right">
-//
-//   <Button type="primary" htmlType="submit">
-//     Submit
-//   </Button>
-// </Col>
-// </Card>

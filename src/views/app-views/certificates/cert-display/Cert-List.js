@@ -33,6 +33,7 @@ const CertList = (props) => {
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setIsLoading] = useState(false);
+  let ratio = 1.41451612903;
 
   // useEffect(() => {
   //   setTimeout(() => {

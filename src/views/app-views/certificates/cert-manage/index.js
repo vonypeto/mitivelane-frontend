@@ -1,18 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
-import SplitPane, { Pane } from "react-split-pane";
 import CertDisplay from "./cert-display";
 import InputCert from "./input-display";
-import { Col, Row, Button, Input, Radio } from "antd";
-import {
-  ArrowDownOutlined,
-  ArrowLeftOutlined,
-  AppstoreOutlined,
-  UnorderedListOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-
+import { Col, Row, Button, Input } from "antd";
+import { ArrowDownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
+import { AUTH_BARANGAY } from "redux/constants/Auth";
 const Certificates = () => {
   const refs = useRef();
   const [parentData, setParentData] = useState({});
@@ -20,6 +14,7 @@ const Certificates = () => {
   const [switchCert, setSwitchCert] = useState(true);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+  const history = useHistory();
   function handleChange(value) {
     console.log(`selected ${value}`);
   }
@@ -58,14 +53,20 @@ const Certificates = () => {
       }, 1000);
     }
   }, [parentData, loading]);
-
+  const navigate = () => {
+    history.push(
+      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/list`
+    );
+  };
   return (
     <div>
       <PageHeaderAlt className="padding-none border-bottom" overlap>
         <div className="container-fluid">
           <Flex justifyContent="between" alignItems="center" className="py-2">
             {/* new folder */}
-            <Button icon={<ArrowLeftOutlined />}>Back</Button>
+            <Button icon={<ArrowLeftOutlined />} onClick={navigate}>
+              Back
+            </Button>
             <Input
               style={{
                 border: "none",

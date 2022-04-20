@@ -105,7 +105,8 @@ const BasicDocument = (props) => {
       //  border: "2px solid red",
     },
     col_content: {
-      width: "80%",
+      //  width: "80%",
+      width: "100%",
       float: "left",
       padding: "20px",
       //   border: "2px solid red",
@@ -179,6 +180,9 @@ const BasicDocument = (props) => {
               MUNICIPALITY OF MARAGONDON
             </Text>
             <Text style={styles.col_center_space_bold}>
+              BARANGAY Moro {data.barangay}
+            </Text>
+            <Text style={styles.col_center_space_bold}>
               OFFICE OF THE BARANGAY CAPTAIN {data.office}
             </Text>
           </View>
@@ -189,9 +193,9 @@ const BasicDocument = (props) => {
           </View>
         </View>
         <View style={styles.container_body}>
-          <View style={styles.col_sidename}>
+          {/* <View style={styles.col_sidename}>
             <Text>if else if the user enable the show barangay member</Text>
-          </View>
+          </View> */}
           <View style={styles.col_content}>
             <Text style={styles.col_center_space_bold_clearance}>
               BARANGAY CLEARANCE

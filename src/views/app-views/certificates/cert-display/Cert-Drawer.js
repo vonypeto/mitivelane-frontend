@@ -5,6 +5,8 @@ import PDFTemplate from "components/shared-components/Documents/Certificates-Gen
 
 const UserView = (props) => {
   const { data, visible, close, width } = props;
+  let ratio = 1.41451612903;
+
   let size = 500;
   if (width > 1400) {
     size = 600;
@@ -27,7 +29,7 @@ const UserView = (props) => {
       className="custom-ant-header"
     >
       <Row
-        style={{ height: "95%", minHeight: "95%", display: "flex" }}
+        style={{ height: "100%", minHeight: "95%", display: "flex" }}
         justify="center"
       >
         <Col
@@ -36,7 +38,10 @@ const UserView = (props) => {
           md={24}
           lg={24}
           xl={24}
-          style={{ height: "90%", minHeight: "90%", display: "flex" }}
+          style={{
+            height: Math.floor(size * ratio),
+            display: "flex",
+          }}
         >
           <Card style={{ width: "100%" }}>
             {" "}

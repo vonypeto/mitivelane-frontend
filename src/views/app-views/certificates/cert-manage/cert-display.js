@@ -14,6 +14,8 @@ const CertDisplay = (props) => {
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");
   const [childData, setChildData] = useState(data);
   const [switchData, setSwitchData] = useState(false);
+  let ratio = 1.41451612903;
+
   let testts = [
     { id: 1, test: 25 },
     { id: 2, test: 24 },
@@ -67,39 +69,26 @@ const CertDisplay = (props) => {
           className="pdf-template-border apply-font"
           style={{
             backgroundColor: "#FFFFFF",
-            height:
-              0 <= props.width && 374 >= props.width
-                ? 585
-                : 375 <= props.width && 424 >= props.width
-                ? 590
-                : 425 <= props.width && 648 >= props.width
-                ? 640
-                : 649 <= props.width && 767 >= props.width
-                ? 700
-                : 768 <= props.width && 1235 >= props.width
-                ? 850
-                : 1240 <= props.width && 1399 >= props.width
-                ? 1000
-                : 1400 <= props.width && 1500 >= props.width
-                ? 670
-                : 860,
-            width:
-              props.width >= 1920
-                ? props.width - (props.height + 330)
-                : props.width >= 1800
-                ? props.width - (props.height + 180)
-                : null,
+            height: Math.floor((props.width / 3.5) * ratio),
           }}
         >
-          {data.clearance}
-          <PDFTemplate
-            data={data}
-            selectedForm={1}
-            min={4}
-            max={9}
-            width={width}
-            type="view"
-          />
+          <div
+            style={{
+              height: Math.floor((props.width / 3.5) * ratio) - 40,
+              border: "5px solid #888888",
+              padding: 5,
+            }}
+          >
+            {data.clearance}
+            <PDFTemplate
+              data={data}
+              selectedForm={1}
+              min={4}
+              max={9}
+              width={width}
+              type="view"
+            />{" "}
+          </div>
         </Card>
       </Col>
     </Row>

@@ -1,18 +1,17 @@
 import React from "react";
 import DOMPurify from "dompurify";
 import { Col, Row, Image } from "antd";
-
-const ClassicTemplateList = (props) => {
-  const { data, max, min, width, lineHeight } = props;
+const draftTohtml = (data) => {
   let content = data?.content;
   let numberRow = content?.blocks.length - 1;
   let container;
   let inlineStyle;
   let dynamicDiv = [];
-  container = '<span style="text-align: justify; line-height: 16px;">';
+  let type = "span";
+  container = `<${type} style="text-align: justify;text-indent: 50px; line-height: 16px;">`;
   // console.log(inlineStyle?.filter((set) => set.offset == 3));
   for (var k = 0; k <= numberRow; k++) {
-    container += "<span > <br/>";
+    container += `<${type} > <br/>`;
 
     for (var i = 0; i <= content?.blocks[k].text.length; i++) {
       inlineStyle = content?.blocks[k].inlineStyleRanges;
@@ -23,14 +22,16 @@ const ClassicTemplateList = (props) => {
           if (data.length >= 1) {
             dynamicDiv.push({ key: i, length: Number(data[0]?.length) });
 
-            container += '<span id="!" style="';
+            container += `<${type} id="!" style="text-indent: 50px;`;
             //Multiple Style
             for (var s = 0; s < data.length; s++) {
               if (data[s]?.style.includes("font-family")) {
               } else {
                 if (data[s]?.style == "BOLD") {
                   container += `font-weight: 700;`;
-                } else if (data[s]?.style == "italic") {
+                  //Continue this
+                } else if (data[s]?.style == "ITALIC") {
+                  container += `font-style: italic;`;
                 }
               }
             }
@@ -43,15 +44,21 @@ const ClassicTemplateList = (props) => {
         for (var a = 0; a < dynamicDiv.length; a++) {
           dynamicDiv[a].length = dynamicDiv[a]?.length - 1;
           if (dynamicDiv[a]?.length == 0) {
-            container += "</span>";
+            container += `</${type}>`;
           }
         }
       }
       //  console.log(content?.blocks[k].text[i]);
     }
-    container += "<br /></span>";
+    container += `<br /></${type}>`;
   }
-  container += "</span>";
+  container += `</${type}>`;
+  return container;
+};
+const ClassicTemplateList = (props) => {
+  const { data, max, min, width, lineHeight } = props;
+  let container = draftTohtml(data);
+
   let clean = DOMPurify.sanitize(container);
 
   clean = clean.replaceAll("{NAME}", "MR & MRS RAFAEL S ESTEBAN");
@@ -74,13 +81,14 @@ const ClassicTemplateList = (props) => {
         <Image
           style={{
             height: "20%",
-            width: "80%",
+            width: "60%",
             float: "right",
             marginLeft: "auto",
             marginRight: 0,
           }}
           className="rounded"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          src={data?.firstLogo}
+          // src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
         />
       </Col>
       <Col xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -103,9 +111,10 @@ const ClassicTemplateList = (props) => {
         style={{ float: "left" }}
       >
         <Image
-          style={{ height: "20%", width: "80%" }}
+          style={{ height: "20%", width: "60%" }}
           className="rounded"
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          src={data?.secondLogo}
+          //    src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
         />
       </Col>
 
@@ -117,7 +126,7 @@ const ClassicTemplateList = (props) => {
         <div>TO WHOM IT CONCERN</div>
         <div style={{ textAlign: "justify", lineHeight: lineHeight }}>
           <div dangerouslySetInnerHTML={{ __html: clean }} />
-          {/*  <span>
+          <span>
             This is to certify that
             <b> MR & MRS RAFAEL S ESTEBAN </b>is to bonafide resident of
             Barangay Fiesishare, talisay, Batangas.
@@ -134,7 +143,7 @@ const ClassicTemplateList = (props) => {
           <span>
             Issuied thus 14th day if January, 2020 at Barangay BUhangin Proper,
             Davo CIty, Philippines
-          </span>*/}
+          </span>
         </div>
       </Col>
 

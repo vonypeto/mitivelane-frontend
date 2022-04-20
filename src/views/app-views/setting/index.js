@@ -4,7 +4,7 @@ import Default from "./default";
 import Billing from "./billing";
 import Audit from "./audit";
 import TeamManage from "./team/manage-team";
-import TeamCreate from "./team/create-team";
+// import TeamCreate from "./team/create-team";
 
 import { useParams } from "react-router-dom";
 
@@ -27,10 +27,10 @@ const Resident = (props) => {
         path={`${match.url}/team-manage`}
         component={() => <TeamManage param_url={barangay_id} />}
       />
-      <Route
+      {/* <Route
         path={`${match.url}/team-create`}
         component={() => <TeamCreate param_url={barangay_id} />}
-      />
+      /> */}
 
       <Redirect exact from={`${match.url}`} to={`${match.url}/team-manage`} />
     </Switch>
