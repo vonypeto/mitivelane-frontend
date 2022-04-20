@@ -25,6 +25,12 @@ const { Dragger } = Upload;
 const { Option } = Select;
 
 const rules = {
+  number: [
+    {
+      message: "This data must be number only!!",
+      type: "email"
+    },
+  ],
   firstname: [
     {
       required: true,
@@ -35,6 +41,31 @@ const rules = {
     {
       required: true,
       message: "Please enter last name",
+    },
+  ],
+  age: [
+    {
+      required: true,
+      message: "Please enter your age",
+      type: "integer",
+    }
+  ],
+  weight: [
+    {
+      required: true,
+      message: "Please enter your weight",
+    },
+  ],
+  height: [
+    {
+      required: true,
+      message: "Please enter your height",
+    },
+  ],
+  birthday: [
+    {
+      required: true,
+      message: "Please enter your birthday",
     },
   ],
   middlename: [
@@ -96,6 +127,12 @@ const beforeUpload = (file) => {
   return isJpgOrPng && isLt2M;
 };
 
+const numberFilter = (e) => {
+  if (!/[0-9]/.test(e.key)) {
+    e.preventDefault();
+  }
+}
+
 const yesno = ["Yes", "No"];
 
 const MainForm = (props) => {
@@ -118,6 +155,7 @@ const MainForm = (props) => {
                         name="lastname"
                         label="Last Name"
                         rules={rules.lastname}
+
                       >
                         <Input placeholder="Last Name" />
                       </Form.Item>
@@ -151,44 +189,69 @@ const MainForm = (props) => {
               <div key="b">
                 <Card title="Details">
                   <Row gutter={16}>
+
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="height" label="Height">
-                        <Input
-                          rules={rules.height}
-                          placeholder="Height"
-                          addonAfter={
-                            <Form.Item name="heightUnit" noStyle>
-                              <Select style={{ minWidth: 70 }}>
-                                {lengthUnit.map((unit) => (
-                                  <Option key={unit} value={unit}>
-                                    {unit}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          }
-                        />
-                      </Form.Item>
+                      <Row gutter={0}>
+
+                        <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
+                          <Form.Item name="height" label="Height"
+                            rules={rules.height}
+                          >
+                            <InputNumber
+                              className="w-100"
+                              placeholder="Height"
+                              onKeyPress={(e) => { numberFilter(e) }}
+                            />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={3} sm={4} md={6} lg={6} xl={4} xxl={4}>
+                          <Form.Item
+                            name="heightUnit" label={" "}
+                          >
+                            <Select style={{ minWidth: 70 }}>
+                              {lengthUnit.map((unit) => (
+                                <Option key={unit} value={unit}>
+                                  {unit}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                      </Row>
                     </Col>
 
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="weight" label="Weight">
-                        <Input
-                          rules={rules.weight}
-                          placeholder="Weight"
-                          addonAfter={
-                            <Form.Item name="weightUnit" noStyle>
-                              <Select style={{ minWidth: 70 }}>
-                                {weightUnit.map((unit) => (
-                                  <Option key={unit} value={unit}>
-                                    {unit}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          }
-                        />
-                      </Form.Item>
+                      <Row gutter={0}>
+
+                        <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
+                          <Form.Item name="weight" label="Weight"
+                            rules={rules.height}
+                          >
+                            <InputNumber
+                              className="w-100"
+                              placeholder="Weight"
+                              onKeyPress={(e) => { numberFilter(e) }}
+                            />
+                          </Form.Item>
+                        </Col>
+
+                        <Col xs={3} sm={4} md={6} lg={6} xl={4} xxl={4}>
+                          <Form.Item
+                            name="weightUnit" label={" "}
+
+                          >
+                            <Select style={{ minWidth: 70 }}>
+                              {weightUnit.map((unit) => (
+                                <Option key={unit} value={unit}>
+                                  {unit}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
                     </Col>
                     <Col xs={24} sm={24} md={24}>
                       <Form.Item
@@ -211,11 +274,7 @@ const MainForm = (props) => {
                       <Form.Item name="age" label="Age" rules={rules.age}>
                         <InputNumber
                           className="w-100"
-                          value={0}
-                          formatter={(value) =>
-                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                          }
-                          parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                          onKeyPress={(e) => { numberFilter(e) }}
                           placeholder="Age"
                         />
                       </Form.Item>
@@ -246,7 +305,7 @@ const MainForm = (props) => {
                             className="w-40"
                             style={{ width: 100, textAlign: "center" }}
                             placeholder="Minimum"
-                            value={0}
+                            onKeyPress={(e) => { numberFilter(e) }}
                             formatter={(value) =>
                               `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             }
@@ -265,7 +324,7 @@ const MainForm = (props) => {
                           />
                           <InputNumber
                             className="w-40 site-input-right"
-                            value={0}
+                            onKeyPress={(e) => { numberFilter(e) }}
                             formatter={(value) =>
                               `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             }
@@ -281,7 +340,7 @@ const MainForm = (props) => {
                     </Col>
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item name="occupation" label="Occupation">
-                        <Input className="w-100" placeholder="Occupation"/>
+                        <Input className="w-100" placeholder="Occupation" />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12}>
