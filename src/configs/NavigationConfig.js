@@ -10,6 +10,7 @@ import {
   ReconciliationOutlined,
   DollarCircleOutlined,
   ContainerOutlined,
+  MessageOutlined
 } from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
@@ -34,6 +35,14 @@ const dashBoardNavTree = [
         path: `${APP_PREFIX_PATH}//dashboards/campaign`,
         title: "sidenav.dashboard.campaign",
         icon: DollarCircleOutlined,
+        breadcrumb: false,
+        submenu: [],
+      },
+	  {
+        key: "dashboards-chat",
+        path: `${APP_PREFIX_PATH}//dashboards/chat`,
+        title: "sidenav.dashboard.chat",
+        icon: MessageOutlined,
         breadcrumb: false,
         submenu: [],
       },
