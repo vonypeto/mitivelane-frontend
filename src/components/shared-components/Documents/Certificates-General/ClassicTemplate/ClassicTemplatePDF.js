@@ -11,61 +11,8 @@ import {
 import { Font_Oswald, Font_Roboto, Font_Bebas, Font_Data } from "assets/font";
 import DOMPurify from "dompurify";
 import RichText from "./RichText";
-
-const draftTohtml = (data) => {
-  let content = data?.content;
-  let numberRow = content?.blocks.length - 1;
-  let container;
-  let inlineStyle;
-  let dynamicDiv = [];
-  let type = `span`;
-  container = `<${type} style="text-align: justify;text-indent: 50px; line-height: 16px;">`;
-  // console.log(inlineStyle?.filter((set) => set.offset == 3));
-  for (var k = 0; k <= numberRow; k++) {
-    container += `<${type} > <br/>`;
-
-    for (var i = 0; i <= content?.blocks[k].text.length; i++) {
-      inlineStyle = content?.blocks[k].inlineStyleRanges;
-      if (content?.blocks[k].text[i]) {
-        //Start of InlineStyle
-        if (inlineStyle?.filter((set) => set.offset == i)) {
-          const data = inlineStyle?.filter((set) => set.offset == i);
-          if (data.length >= 1) {
-            dynamicDiv.push({ key: i, length: Number(data[0]?.length) });
-
-            container += `<${type} id="!" style="text-indent: 50px;`;
-            //Multiple Style
-            for (var s = 0; s < data.length; s++) {
-              if (data[s]?.style.includes("font-family")) {
-              } else {
-                if (data[s]?.style == "BOLD") {
-                  container += `font-weight: 700;`;
-                  //Continue this
-                } else if (data[s]?.style == "ITALIC") {
-                  container += `font-style: italic;`;
-                }
-              }
-            }
-            container += '">';
-          }
-        }
-        // Character Output
-        container += `${content?.blocks[k].text[i]}`;
-        // End of InlineStyle
-        for (var a = 0; a < dynamicDiv.length; a++) {
-          dynamicDiv[a].length = dynamicDiv[a]?.length - 1;
-          if (dynamicDiv[a]?.length == 0) {
-            container += `</${type}>`;
-          }
-        }
-      }
-      //  console.log(content?.blocks[k].text[i]);
-    }
-    container += `<br /></${type}>`;
-  }
-  container += `</${type}>`;
-  return container;
-};
+import DraftToHtml from "components/util-components/DraftHtml";
+import Header from "./ContentPDF/Header";
 // Remember pt to cm to convert the size of the typewriting
 // Create Document Component
 const BasicDocument = (props) => {
@@ -98,19 +45,9 @@ const BasicDocument = (props) => {
       padding: 10,
       flexGrow: 1,
     },
-    container_head: {
-      fontFamily: props.fontType,
-      flexDirection: "row",
-      display: "grid",
-      gridTemplateColumn: "1fr 1fr",
-      gridGap: "20px",
-      height: "14vh",
-      border: " 5px solid black",
-      borderBottom: 0, // margin: 0,
-      lineHeight: "1.5",
-    },
+
     container_body: {
-      fontFamily: props.fontType,
+      fontFamily: fontType,
       flexDirection: "row",
       display: "grid",
       fontSize: 13,
@@ -121,25 +58,9 @@ const BasicDocument = (props) => {
       borderTop: 0, // margi
       lineHeight: "1.8",
     },
-    col: {
-      width: "50%",
-      float: "left",
-      padding: "20px",
-      // border: "2px solid red",
-    },
-    col_center: {
-      textAlign: "center",
-      width: "50%",
-      fontSize: "13px",
-      float: "left",
-      padding: "10px",
-      //   border: "2px solid red",
-    },
-    col_center_space: {
-      // margin: " 3px 0px",
-    },
+
     col_center_space_bold: {
-      fontFamily: props.fontType,
+      fontFamily: fontType,
       fontWeight: "bold",
     },
     col_center_space_bold_clearance: {
@@ -149,12 +70,7 @@ const BasicDocument = (props) => {
       fontSize: "20px",
       textAlign: "center",
     },
-    col_image: {
-      width: "25%",
-      float: "left",
-      padding: "20px",
-      //    border: "2px solid red",
-    },
+
     col_sidename: {
       width: "20%",
       float: "left",
@@ -189,7 +105,7 @@ const BasicDocument = (props) => {
       lineHeight: 2,
     },
     container_sig: {
-      fontFamily: props.fontType,
+      fontFamily: fontType,
       flexDirection: "row",
       display: "grid",
       gridTemplateColumn: "1fr 1fr",
@@ -218,7 +134,7 @@ const BasicDocument = (props) => {
     },
   });
   console.log(props);
-  let container = draftTohtml(data);
+  let container = DraftToHtml(data);
 
   let clean = DOMPurify.sanitize(container);
 
@@ -228,34 +144,7 @@ const BasicDocument = (props) => {
   return (
     <Document>
       <Page size="A4" style={styles.body}>
-        <View style={styles.container_head}>
-          <View style={styles.col_image}>
-            {data.firstLogo ? (
-              <Image style={styles.image} src={data.firstLogo} />
-            ) : null}
-          </View>
-
-          <View style={styles.col_center}>
-            <Text style={styles.col_center_space}>
-              Republic of the Philippines
-            </Text>
-            <Text style={styles.col_center_space}>Province of Cavite</Text>
-            <Text style={styles.col_center_space_bold}>
-              MUNICIPALITY OF MARAGONDON
-            </Text>
-            <Text style={styles.col_center_space_bold}>
-              BARANGAY Moro {data.barangay}
-            </Text>
-            <Text style={styles.col_center_space_bold}>
-              OFFICE OF THE BARANGAY CAPTAIN {data.office}
-            </Text>
-          </View>
-          <View style={styles.col_image}>
-            {data.secondLogo ? (
-              <Image style={styles.image} src={data.secondLogo} />
-            ) : null}
-          </View>
-        </View>
+        <Header {...props} />
         <View style={styles.container_body}>
           {/* <View style={styles.col_sidename}>
             <Text>if else if the user enable the show barangay member</Text>

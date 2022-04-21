@@ -15,9 +15,7 @@ const Certificates = () => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const history = useHistory();
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
+
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
@@ -38,14 +36,13 @@ const Certificates = () => {
   );
   const setData = (data) => {
     setLoading(!loading);
-    console.log(data);
+
     let x = data;
-    console;
+
     return setParentData(x);
   };
 
   useEffect(() => {
-    console.log(parentData);
     setParentData(parentData);
     if (loading) {
       setTimeout(() => {

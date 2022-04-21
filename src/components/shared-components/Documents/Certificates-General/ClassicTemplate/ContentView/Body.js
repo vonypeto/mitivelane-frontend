@@ -2,14 +2,15 @@ import React from "react";
 import { Col, Row, Image } from "antd";
 
 const Body = (data) => {
-  console.log(data);
   const { clean, lineHeight } = data;
   return (
     <>
-      {" "}
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-        <div>TO WHOM IT CONCERN</div>
-
+        <Col className="text-center" xs={24} sm={24} md={24} lg={24} xl={24}>
+          <b style={{ letterSpacing: 2 }}>BARANGAY CLEARANCE</b>
+        </Col>
+        <br />
+        <div>TO WHOM IT CONCERN</div> <br />
         <div style={{ textAlign: "justify", lineHeight: lineHeight }}>
           <div dangerouslySetInnerHTML={{ __html: clean }} />
           <span>

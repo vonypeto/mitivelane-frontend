@@ -53,9 +53,6 @@ const Header = (data) => {
           src={data?.secondLogo}
         />
       </Col>
-      <Col className="text-center" xs={24} sm={24} md={24} lg={24} xl={24}>
-        <b style={{ letterSpacing: 2 }}>BARANGAY CLEARANCE</b>
-      </Col>
     </>
   );
 };

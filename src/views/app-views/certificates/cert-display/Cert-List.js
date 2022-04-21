@@ -120,15 +120,15 @@ const CertList = (props) => {
               paddingBottom: " calc(9/16 * 100%) ",
               marginBottom: "5px",
               height:
-                0 <= props.width && 374 >= props.width
+                0 <= width && 374 >= width
                   ? 270
-                  : 375 <= props.width && 424 >= props.width
+                  : 375 <= width && 424 >= width
                   ? 300
-                  : 425 <= props.width && 648 >= props.width
+                  : 425 <= width && 648 >= width
                   ? 340
-                  : 649 <= props.width && 767 >= props.width
+                  : 649 <= width && 767 >= width
                   ? 400
-                  : 768 <= props.width && 1023 >= props.width
+                  : 768 <= width && 1023 >= width
                   ? 410
                   : 440,
             }}
@@ -182,7 +182,7 @@ const CertList = (props) => {
             <Footer>
               <div
                 className="border demo bottomright"
-                style={{ borderRadius: "50%" }}
+                style={{ borderRadius: "50%", backgroundColor: "white" }}
               >
                 <EllipsisDropdown placement="topRight" menu={dropdownMenu()} />
               </div>
@@ -198,15 +198,15 @@ const CertList = (props) => {
                     padding: "0",
                     width: "100%",
                     fontSize:
-                      0 <= props.width && 374 >= props.width
+                      0 <= width && 374 >= width
                         ? 10
-                        : 375 <= props.width && 424 >= props.width
+                        : 375 <= width && 424 >= width
                         ? 13
-                        : 425 <= props.width && 648 >= props.width
+                        : 425 <= width && 648 >= width
                         ? 14
-                        : 649 <= props.width && 767 >= props.width
+                        : 649 <= width && 767 >= width
                         ? 15
-                        : 768 <= props.width && 1023 >= props.width
+                        : 768 <= width && 1023 >= width
                         ? 16
                         : 17,
                     backgroundColor: "#FAFAFB",

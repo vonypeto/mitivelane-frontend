@@ -14,18 +14,17 @@ const CertDisplay = (props) => {
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");
   const [childData, setChildData] = useState(data);
   const [switchData, setSwitchData] = useState(false);
-  let ratio = 1.41451612903;
+  const ratio = 1.41451612903;
 
-  let testts = [
-    { id: 1, test: 25 },
-    { id: 2, test: 24 },
-  ];
-  testts = testts.map((data) => data.test + 1);
-  console.log(testts);
-  console.log(props.data.firstLogo);
+  // let testts = [
+  //   { id: 1, test: 25 },
+  //   { id: 2, test: 24 },
+  // ];
+  // testts = testts.map((data) => data.test + 1);
+
   useEffect(() => {
     localStorage.setItem("font", activeFontFamily);
-    setChildData(props.data);
+    setChildData(data);
     console.log(data);
   }, [activeFontFamily, data]);
 
@@ -42,7 +41,7 @@ const CertDisplay = (props) => {
         <Card className="custom_cert">
           <Button
             icon={<ArrowDownOutlined />}
-            onClick={() => generatePdfDocument(props.data, "feedata")}
+            onClick={() => generatePdfDocument(data, "feedata")}
           >
             Download
           </Button>
@@ -69,26 +68,17 @@ const CertDisplay = (props) => {
           className="pdf-template-border apply-font"
           style={{
             backgroundColor: "#FFFFFF",
-            height: Math.floor((props.width / 3.5) * ratio),
+            height: Math.floor((width / 3.5) * ratio),
           }}
         >
-          <div
-            style={{
-              height: Math.floor((props.width / 3.5) * ratio) - 40,
-              border: "5px solid #888888",
-              padding: 5,
-            }}
-          >
-            {data.clearance}
-            <PDFTemplate
-              data={data}
-              selectedForm={1}
-              min={4}
-              max={9}
-              width={width}
-              type="view"
-            />{" "}
-          </div>
+          <PDFTemplate
+            data={data}
+            selectedForm={1}
+            min={4}
+            max={9}
+            width={width}
+            type="view"
+          />{" "}
         </Card>
       </Col>
     </Row>

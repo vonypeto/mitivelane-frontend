@@ -284,7 +284,6 @@ const CertDisplay = (props) => {
       if (type == "editor") {
         const length = editorState?.getCurrentContent().getPlainText("").length;
         if (length <= MAX_LENGTH && 5 >= e.blocks.length) {
-          console.log(e.blocks.length);
           setEditorStateChange(e); // or this.setState({ editorState: editorState })
           let data = parentData;
           form.setFieldsValue({

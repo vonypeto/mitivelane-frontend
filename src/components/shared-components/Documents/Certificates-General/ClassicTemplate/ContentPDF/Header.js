@@ -1,5 +1,89 @@
 import React from "react";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+  Image,
+} from "@react-pdf/renderer";
 
-export const Header = () => {
-  return <div></div>;
+const Header = (props) => {
+  const { data, fontType } = props; // Create styles
+  const styles = StyleSheet.create({
+    container_head: {
+      fontFamily: fontType,
+      flexDirection: "row",
+      display: "grid",
+      gridTemplateColumn: "1fr 1fr",
+      gridGap: "20px",
+      height: "14vh",
+      border: " 5px solid black",
+      borderBottom: 0, // margin: 0,
+      lineHeight: "1.5",
+    },
+
+    col_center: {
+      textAlign: "center",
+      width: "50%",
+      fontSize: "13px",
+      float: "left",
+      padding: "10px",
+      //   border: "2px solid red",
+    },
+    col_center_space: {
+      // margin: " 3px 0px",
+    },
+    col_center_space_bold: {
+      fontFamily: fontType,
+      fontWeight: "bold",
+    },
+    col_center_space_bold_clearance: {
+      marginBottom: "18px",
+      marginTop: "-5px",
+      fontWeight: "bold",
+      fontSize: "20px",
+      textAlign: "center",
+    },
+    col_image: {
+      width: "25%",
+      float: "left",
+      padding: "20px",
+      //    border: "2px solid red",
+    },
+  });
+  return (
+    <>
+      <View style={styles.container_head}>
+        <View style={styles.col_image}>
+          {data?.firstLogo ? (
+            <Image style={styles.image} src={data?.firstLogo} />
+          ) : null}
+        </View>
+
+        <View style={styles.col_center}>
+          <Text style={styles.col_center_space}>
+            Republic of the Philippines
+          </Text>
+          <Text style={styles.col_center_space}>Province of Cavite</Text>
+          <Text style={styles.col_center_space_bold}>
+            MUNICIPALITY OF MARAGONDON
+          </Text>
+          <Text style={styles.col_center_space_bold}>
+            BARANGAY Moro {data?.barangay}
+          </Text>
+          <Text style={styles.col_center_space_bold}>
+            OFFICE OF THE BARANGAY CAPTAIN {data?.office}
+          </Text>
+        </View>
+        <View style={styles.col_image}>
+          {data?.secondLogo ? (
+            <Image style={styles.image} src={data?.secondLogo} />
+          ) : null}
+        </View>
+      </View>
+    </>
+  );
 };
+export default Header;
