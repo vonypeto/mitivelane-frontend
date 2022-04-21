@@ -528,8 +528,8 @@ const CertDisplay = (props) => {
                                                 <Col
                                                   xs={10}
                                                   sm={10}
-                                                  md={10}
-                                                  lg={10}
+                                                  md={11}
+                                                  lg={14}
                                                 >
                                                   <Input
                                                     style={{
@@ -548,7 +548,7 @@ const CertDisplay = (props) => {
                                                   md={4}
                                                   lg={4}
                                                 >
-                                                  <div className="pt-3 pl-2 text-center vertical-center">
+                                                  <div className="pt-3 pl-3 text-center vertical-center">
                                                     <MinusCircleOutlined
                                                       onClick={() =>
                                                         handleRemoveSignature(

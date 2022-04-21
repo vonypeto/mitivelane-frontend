@@ -7,6 +7,7 @@ import { saveAs } from "file-saver";
 import { pdf } from "@react-pdf/renderer";
 import { ArrowDownOutlined } from "@ant-design/icons";
 import { BsCpu } from "react-icons/bs";
+
 const CertDisplay = (props) => {
   const { data, loadingImage } = props;
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");

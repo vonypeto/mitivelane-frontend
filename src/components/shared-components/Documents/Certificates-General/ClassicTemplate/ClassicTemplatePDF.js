@@ -9,11 +9,68 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { Font_Oswald, Font_Roboto, Font_Bebas, Font_Data } from "assets/font";
+import DOMPurify from "dompurify";
+import RichText from "./RichText";
+
+const draftTohtml = (data) => {
+  let content = data?.content;
+  let numberRow = content?.blocks.length - 1;
+  let container;
+  let inlineStyle;
+  let dynamicDiv = [];
+  let type = `span`;
+  container = `<${type} style="text-align: justify;text-indent: 50px; line-height: 16px;">`;
+  // console.log(inlineStyle?.filter((set) => set.offset == 3));
+  for (var k = 0; k <= numberRow; k++) {
+    container += `<${type} > <br/>`;
+
+    for (var i = 0; i <= content?.blocks[k].text.length; i++) {
+      inlineStyle = content?.blocks[k].inlineStyleRanges;
+      if (content?.blocks[k].text[i]) {
+        //Start of InlineStyle
+        if (inlineStyle?.filter((set) => set.offset == i)) {
+          const data = inlineStyle?.filter((set) => set.offset == i);
+          if (data.length >= 1) {
+            dynamicDiv.push({ key: i, length: Number(data[0]?.length) });
+
+            container += `<${type} id="!" style="text-indent: 50px;`;
+            //Multiple Style
+            for (var s = 0; s < data.length; s++) {
+              if (data[s]?.style.includes("font-family")) {
+              } else {
+                if (data[s]?.style == "BOLD") {
+                  container += `font-weight: 700;`;
+                  //Continue this
+                } else if (data[s]?.style == "ITALIC") {
+                  container += `font-style: italic;`;
+                }
+              }
+            }
+            container += '">';
+          }
+        }
+        // Character Output
+        container += `${content?.blocks[k].text[i]}`;
+        // End of InlineStyle
+        for (var a = 0; a < dynamicDiv.length; a++) {
+          dynamicDiv[a].length = dynamicDiv[a]?.length - 1;
+          if (dynamicDiv[a]?.length == 0) {
+            container += `</${type}>`;
+          }
+        }
+      }
+      //  console.log(content?.blocks[k].text[i]);
+    }
+    container += `<br /></${type}>`;
+  }
+  container += `</${type}>`;
+  return container;
+};
 // Remember pt to cm to convert the size of the typewriting
 // Create Document Component
 const BasicDocument = (props) => {
   const { data, fontType } = props;
-  console.log(data.secondLogo);
+  console.log(data.content);
   const font = Font_Data.filter((font) => font.family == fontType);
   console.log(font);
 
@@ -161,6 +218,13 @@ const BasicDocument = (props) => {
     },
   });
   console.log(props);
+  let container = draftTohtml(data);
+
+  let clean = DOMPurify.sanitize(container);
+
+  clean = clean.replaceAll("{NAME}", "MR & MRS RAFAEL S ESTEBAN");
+  console.log(RichText({ note: clean }));
+  console.log(container);
   return (
     <Document>
       <Page size="A4" style={styles.body}>
@@ -201,12 +265,14 @@ const BasicDocument = (props) => {
               BARANGAY CLEARANCE
             </Text>
             <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
+
             <Text style={styles.indent}>
-              This is to certify that
+              <RichText note={clean} />
+              {/* This is to certify that
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text>is to
-              bonafide resident of Barangay Fiesishare, talisay, Batangas.
+              bonafide resident of Barangay Fiesishare, talisay, Batangas. */}
             </Text>
-            <Text style={styles.indent}>
+            {/* <Text style={styles.indent}>
               This certification issued upon the request of{" "}
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text> and
               whatever legal purpose this may serve him/her best
@@ -214,7 +280,7 @@ const BasicDocument = (props) => {
             <Text style={styles.indent}>
               Issuied thus 14th day if January, 2020 at Barangay BUhangin
               Proper, Davo CIty, Philippines
-            </Text>
+            </Text> */}
             <View style={styles.container_sig}>
               <View style={styles.col_signature}></View>
               <View style={styles.col_signature}>
