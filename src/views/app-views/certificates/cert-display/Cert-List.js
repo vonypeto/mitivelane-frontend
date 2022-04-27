@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Card,
@@ -26,30 +26,43 @@ import CertDrawer from "./Cert-Drawer";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { useHistory } from "react-router-dom";
 import { AUTH_BARANGAY } from "redux/constants/Auth";
+import SinglePagePDFViewer from "components/shared-components/Documents/Certificates-General/Paging";
+import FileTest from "assets/files/test.pdf";
+import CreateLayout from "assets/files/create.pdf";
+
 const { Footer } = Layout;
 const CertList = (props) => {
   const history = useHistory();
-  const { width } = props;
+
+  const [counter, setCounter] = useState(1);
+
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setIsLoading] = useState(false);
   let ratio = 1.41451612903;
-
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(!loading);
   //   }, 1000);
   // }, []);
   //Handle Drawer
-  const onHandle = (elm) => {
-    setDrawer(true);
-    SetSelectedUser(elm);
+  const counterClick = () => {
+    setCounter("click");
+    console.log("click");
+  };
+  const onHandle = (e, elm) => {
+    e.preventDefault();
+
+    // setDrawer(true);
+    // SetSelectedUser(elm);
   };
   const closeDrawer = () => {
     setDrawer(false);
     SetSelectedUser(null);
   };
-
+  useEffect(() => {
+    counterClick();
+  }, []);
   const dropdownMenu = (row) => (
     <Menu>
       <Menu.Item key={1}>
@@ -87,16 +100,15 @@ const CertList = (props) => {
   );
   return (
     <div>
-      <CertDrawer
-        width={width}
+      {/* <CertDrawer
         data={selectedUser}
         visible={drawer}
         close={() => {
           closeDrawer();
         }}
-      />
-      <Row justify="right" gutter={[30, 10]}>
-        <Col
+      /> */}
+      <Row gutter={[50, 40]}>
+        {/* <Col
           onClick={() =>
             history.push(
               "/app/" +
@@ -114,21 +126,21 @@ const CertList = (props) => {
           xxl={5}
         >
           <Card
-            className="text-center apply-font cert-dash"
+            className="ml-5 text-center apply-font cert-dash"
             style={{
               cursor: "pointer",
               paddingBottom: " calc(9/16 * 100%) ",
               marginBottom: "5px",
               height:
-                0 <= props.width && 374 >= props.width
+                0 <= width && 374 >= width
                   ? 270
-                  : 375 <= props.width && 424 >= props.width
+                  : 375 <= width && 424 >= width
                   ? 300
-                  : 425 <= props.width && 648 >= props.width
+                  : 425 <= width && 648 >= width
                   ? 340
-                  : 649 <= props.width && 767 >= props.width
+                  : 649 <= width && 767 >= width
                   ? 400
-                  : 768 <= props.width && 1023 >= props.width
+                  : 768 <= width && 1023 >= width
                   ? 410
                   : 440,
             }}
@@ -138,8 +150,9 @@ const CertList = (props) => {
               <br /> <PlusCircleOutlined />
             </div>
           </Card>
-        </Col>
+        </Col> */}
         {/* {loading ? ( */}
+
         <Col
           justify="right"
           className="pr-1 pdf-input-hover"
@@ -150,23 +163,11 @@ const CertList = (props) => {
           xl={6}
           xxl={5}
         >
-          <Card className="pdf-template-border pdf-hover">
+          <div>
             <div
-              onClick={() => onHandle({ id: 1, user: "na,e" })}
+              onClick={(e) => onHandle(e, CreateLayout)}
               style={{
                 cursor: "pointer",
-                height:
-                  0 <= width && 374 >= width
-                    ? 175
-                    : 375 <= width && 424 >= width
-                    ? 210
-                    : 425 <= width && 648 >= width
-                    ? 250
-                    : 649 <= width && 767 >= width
-                    ? 310
-                    : 768 <= width && 1023 >= width
-                    ? 320
-                    : 350,
               }}
             >
               <PDFTemplate
@@ -174,53 +175,43 @@ const CertList = (props) => {
                 selectedForm={1}
                 min={4}
                 max={9}
-                width={width}
-                type="form"
+                pdf={CreateLayout}
+                type={"view"}
+                counterClick={counterClick}
               />
             </div>
-
-            <Footer>
-              <div
-                className="border demo bottomright"
-                style={{ borderRadius: "50%" }}
-              >
-                <EllipsisDropdown placement="topRight" menu={dropdownMenu()} />
-              </div>
-            </Footer>
-          </Card>
-          <div className="pl-2 cert-font-buttom">
-            <p>
-              <b>
-                <Input
-                  style={{
-                    border: "none",
-                    textAlign: "left",
-                    padding: "0",
-                    width: "100%",
-                    fontSize:
-                      0 <= props.width && 374 >= props.width
-                        ? 10
-                        : 375 <= props.width && 424 >= props.width
-                        ? 13
-                        : 425 <= props.width && 648 >= props.width
-                        ? 14
-                        : 649 <= props.width && 767 >= props.width
-                        ? 15
-                        : 768 <= props.width && 1023 >= props.width
-                        ? 16
-                        : 17,
-                    backgroundColor: "#FAFAFB",
-                    margin: 0,
-                    fontWeight: 900,
-                  }}
-                  className="cert-name "
-                  defaultValue="Untitled 1"
-                />
-              </b>
-            </p>
-            <p>Modified 1 Mininutes Ago</p>
           </div>
         </Col>
+        <Col
+          justify="right"
+          className="pr-1 pdf-input-hover"
+          xs={11}
+          sm={11}
+          md={8}
+          lg={8}
+          xl={6}
+          xxl={5}
+        >
+          <div>
+            <div
+              onClick={(e) => onHandle(e, FileTest)}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              <PDFTemplate
+                data={{ name: "text" }}
+                selectedForm={1}
+                min={4}
+                max={9}
+                pdf={FileTest}
+                type={"view"}
+                counterClick={counterClick}
+              />
+            </div>
+          </div>
+        </Col>
+
         {/* ) : null} */}
       </Row>
     </div>

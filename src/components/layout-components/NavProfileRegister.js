@@ -31,12 +31,14 @@ let colortag = [
   "#0085c3",
   "#FF1493",
 ];
+
 export const NavProfile = ({ signOut }) => {
   // let history = useHistory();
   const { currentUser, generateToken, currentPhoto } = useAuth();
   const [profile, setProfile] = useState(
     JSON.parse(localStorage.getItem(PROFILE_URL) || "[]")
   );
+  const [timer, setTimer] = useState(false);
   // const profileImg = "/img/avatars/thumb-1.jpg";
   const user =
     currentUser?.displayName != null ? currentUser.displayName : "N/A";
@@ -46,6 +48,10 @@ export const NavProfile = ({ signOut }) => {
   };
   useEffect(() => {
     let mount = true;
+    if (!timer)
+      setTimeout(() => {
+        setTimer(true);
+      }, 1500);
     if (mount) setProfile(currentPhoto);
 
     return () => {
@@ -102,25 +108,33 @@ export const NavProfile = ({ signOut }) => {
     </div>
   );
   return (
-    <Dropdown placement="bottomRight" overlay={profileMenu} trigger={["click"]}>
-      <Menu className="d-flex align-item-center" mode="horizontal">
-        <Menu.Item key="profile">
-          {profile?.profile_data ? (
-            <Avatar src={profile?.profile_data} size={45}>
-              <b> {utils.getNameInitial(user)} </b>{" "}
-            </Avatar>
-          ) : (
-            <Avatar
-              src={profile?.profile_data}
-              size={45}
-              style={{ backgroundColor: profile?.profile_color }}
-            >
-              <b> {utils.getNameInitial(user)} </b>{" "}
-            </Avatar>
-          )}
-        </Menu.Item>
-      </Menu>
-    </Dropdown>
+    <>
+      {timer ? (
+        <Dropdown
+          placement="bottomRight"
+          overlay={profileMenu}
+          trigger={["click"]}
+        >
+          <Menu className="d-flex align-item-center" mode="horizontal">
+            <Menu.Item key="profile">
+              {profile?.profile_data ? (
+                <Avatar src={profile?.profile_data} size={45}>
+                  <b> {utils.getNameInitial(user)} </b>{" "}
+                </Avatar>
+              ) : (
+                <Avatar
+                  src={profile?.profile_data}
+                  size={45}
+                  style={{ backgroundColor: profile?.profile_color }}
+                >
+                  <b> {utils.getNameInitial(user)} </b>{" "}
+                </Avatar>
+              )}
+            </Menu.Item>
+          </Menu>
+        </Dropdown>
+      ) : null}
+    </>
   );
 };
 function toBase64(arr) {

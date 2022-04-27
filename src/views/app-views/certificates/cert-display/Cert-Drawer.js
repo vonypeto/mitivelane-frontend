@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Tag, Row, Col, Drawer, Card, Divider, Button } from "antd";
 import { EditOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents/Certificates-General/indexView";
 
 const UserView = (props) => {
-  const { data, visible, close, width } = props;
+  const { data, visible, close } = props;
   let ratio = 1.41451612903;
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+
+  const updateWindowDimensions = () => {
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
+  };
+
+  useEffect(
+    () => {
+      const listener = window.addEventListener(
+        "resize",
+        updateWindowDimensions
+      );
+      updateWindowDimensions();
+
+      return () => {
+        listener, setHeight(), setWidth();
+      };
+    },
+    [height],
+    [width]
+  );
 
   let size = 500;
   if (width > 1400) {
@@ -19,6 +42,7 @@ const UserView = (props) => {
   } else {
     size = width;
   }
+  console.log(data);
   return (
     <Drawer
       width={size}
@@ -29,31 +53,34 @@ const UserView = (props) => {
       className="custom-ant-header"
     >
       <Row
-        style={{ height: "100%", minHeight: "95%", display: "flex" }}
+        style={{
+          height: "100%",
+          minHeight: "95%",
+          display: "flex",
+          width: "100%",
+        }}
         justify="center"
       >
         <Col
-          xs={24}
-          sm={24}
-          md={24}
-          lg={24}
-          xl={24}
+          xs={22}
+          sm={22}
+          md={22}
+          lg={22}
+          xl={22}
           style={{
             height: Math.floor(size * ratio),
             display: "flex",
           }}
         >
-          <Card style={{ width: "100%" }}>
-            {" "}
-            <PDFTemplate
-              data={data}
-              selectedForm={1}
-              min={4}
-              type="drawer"
-              max={9}
-              width={width}
-            />
-          </Card>
+          {" "}
+          <PDFTemplate
+            data={data}
+            selectedForm={1}
+            min={4}
+            max={9}
+            pdf={data}
+            type={"view"}
+          />
         </Col>
         <Divider style={{ margin: "0px !important" }} />
         <Col xs={12} sm={12} md={12} lg={12} xl={12}>

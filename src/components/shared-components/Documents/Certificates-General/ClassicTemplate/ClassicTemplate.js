@@ -7,6 +7,7 @@ import { saveAs } from "file-saver";
 import { pdf } from "@react-pdf/renderer";
 import { ArrowDownOutlined } from "@ant-design/icons";
 import { BsCpu } from "react-icons/bs";
+
 const CertDisplay = (props) => {
   const { data, loadingImage } = props;
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");
@@ -159,7 +160,7 @@ const CertDisplay = (props) => {
                   standard dummy text ever since the 1500s, when an unknown
                   printer took a galley of type and scrambled it to make a type
                   specimen book.
-                </Col>{" "}
+                </Col>
                 {/* <Col xs={12} sm={12} md={12} lg={12} xl={12}>
                   asdsad asdsad asdsad asdsad asdsad asdsad asdsad asdsad asdsad
                   asdsad asdsad asdsad asdsad asdsad
