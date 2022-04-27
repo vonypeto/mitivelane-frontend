@@ -35,7 +35,7 @@ const ChatMenu = ({ match, location, chatData }) => {
 		setList(data)
 	}
 
-	const id = parseInt(location.pathname.match(/\/([^/]+)\/?$/)[1])
+	const _id = parseInt(location.pathname.match(/\/([^/]+)\/?$/)[1])
 
 	return (
 		<div className="chat-menu">
@@ -54,7 +54,7 @@ const ChatMenu = ({ match, location, chatData }) => {
 						<div
 							key={`chat-item-${item._id}`}
 							onClick={() => openChat(item._id)}
-							className={`chat-menu-list-item ${i === (list.length - 1) ? 'last' : ''} ${item.id === id ? 'selected' : ''}`}
+							className={`chat-menu-list-item ${i === (list.length - 1) ? 'last' : ''} ${item._id === _id ? 'selected' : ''}`}
 						>
 
 
