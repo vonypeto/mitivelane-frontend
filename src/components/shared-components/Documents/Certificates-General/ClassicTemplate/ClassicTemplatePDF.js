@@ -17,9 +17,7 @@ import Header from "./ContentPDF/Header";
 // Create Document Component
 const BasicDocument = (props) => {
   const { data, fontType } = props;
-  console.log(data.content);
   const font = Font_Data.filter((font) => font.family == fontType);
-  console.log(font);
 
   Font.register(
     font[0] || {
@@ -36,10 +34,15 @@ const BasicDocument = (props) => {
       fontFamily: font[0].family,
     },
     body: {
-      paddingTop: 35,
-      paddingBottom: 35,
-      paddingHorizontal: 35,
+      padding: 5,
+      backgroundColor: "black",
+      borderColor: "white",
+      borderWidth: 15,
+      outlineColor: "white",
+      outlineStyle: "solid",
+      outlineWidth: 0,
     },
+    borders: { backgroundColor: "white" },
     section: {
       margin: 10,
       padding: 10,
@@ -53,8 +56,8 @@ const BasicDocument = (props) => {
       fontSize: 13,
       gridTemplateColumn: "1fr 1fr",
       gridGap: "10px",
-      height: "77vh",
-      border: " 5px solid black",
+      height: "100%",
+      //  border: " 5px solid black",
       borderTop: 0, // margi
       lineHeight: "1.8",
     },
@@ -82,6 +85,7 @@ const BasicDocument = (props) => {
       width: "100%",
       float: "left",
       padding: "20px",
+
       //   border: "2px solid red",
 
       textAlign: "justify",
@@ -95,6 +99,7 @@ const BasicDocument = (props) => {
       height: "auto",
       width: "auto",
       borderRadius: "50%",
+      display: "inline-block",
     },
     indent: {
       textIndent: 30,
@@ -133,36 +138,35 @@ const BasicDocument = (props) => {
       fontWeight: "bold",
     },
   });
-  console.log(props);
   let container = DraftToHtml(data);
 
   let clean = DOMPurify.sanitize(container);
 
   clean = clean.replaceAll("{NAME}", "MR & MRS RAFAEL S ESTEBAN");
-  console.log(RichText({ note: clean }));
-  console.log(container);
+
   return (
     <Document>
-      <Page size="A4" style={styles.body}>
-        <Header {...props} />
-        <View style={styles.container_body}>
-          {/* <View style={styles.col_sidename}>
+      <Page size="A4" style={styles.body} wrap={false}>
+        <View style={styles.borders}>
+          <Header {...props} />
+          <View style={styles.container_body}>
+            {/* <View style={styles.col_sidename}>
             <Text>if else if the user enable the show barangay member</Text>
           </View> */}
-          <View style={styles.col_content}>
-            <Text style={styles.col_center_space_bold_clearance}>
-              BARANGAY CLEARANCE
-            </Text>
-            <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
+            <View style={styles.col_content}>
+              <Text style={styles.col_center_space_bold_clearance}>
+                BARANGAY CLEARANCE
+              </Text>
+              <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
 
-            <Text style={styles.indent}>
-              <RichText note={clean} />
-              {/* This is to certify that
+              <Text style={styles.indent}>
+                <RichText note={clean} />
+                {/* This is to certify that
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text>is to
               bonafide resident of Barangay Fiesishare, talisay, Batangas. */}
-            </Text>
-            {/* <Text style={styles.indent}>
-              This certification issued upon the request of{" "}
+              </Text>
+              {/* <Text style={styles.indent}>
+              This certification issued upon the request of
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text> and
               whatever legal purpose this may serve him/her best
             </Text>
@@ -170,38 +174,39 @@ const BasicDocument = (props) => {
               Issuied thus 14th day if January, 2020 at Barangay BUhangin
               Proper, Davo CIty, Philippines
             </Text> */}
-            <View style={styles.container_sig}>
-              <View style={styles.col_signature}></View>
-              <View style={styles.col_signature}>
-                <Text>__________________</Text>
-                <Text>Sample CAptain</Text>
+              <View style={styles.container_sig}>
+                <View style={styles.col_signature}></View>
+                <View style={styles.col_signature}>
+                  <Text>__________________</Text>
+                  <Text>Sample CAptain</Text>
+                </View>
               </View>
+              <View style={styles.container_sig}>
+                <View style={styles.col_signature}>
+                  <Text>__________________</Text>
+                  <Text>Sample Applicant</Text>
+                </View>
+                <View style={styles.col_signature}>
+                  <Text>__________________</Text>
+                  <Text>Sample Secretary</Text>
+                </View>
+              </View>
+              <Text>OR No. _______</Text>
+              <Text>Issued at ______</Text>
+              <Text>Issued on ______</Text>
+              <Text style={styles.col_footer}>
+                Note not valid with erasures and without the official seal of
+                issuing office
+              </Text>
             </View>
-            <View style={styles.container_sig}>
-              <View style={styles.col_signature}>
-                <Text>__________________</Text>
-                <Text>Sample Applicant</Text>
-              </View>
-              <View style={styles.col_signature}>
-                <Text>__________________</Text>
-                <Text>Sample Secretary</Text>
-              </View>
-            </View>
-            <Text>OR No. _______</Text>
-            <Text>Issued at ______</Text>
-            <Text>Issued on ______</Text>
-            <Text style={styles.col_footer}>
-              Note not valid with erasures and without the official seal of
-              issuing office
-            </Text>
           </View>
-        </View>
-        {/* <View style={styles.section}>
+          {/* <View style={styles.section}>
           <Text>{data.republic}</Text>
         </View>
         <View style={styles.section}>
           <Text>Section #2</Text>
         </View> */}
+        </View>
       </Page>
     </Document>
   );

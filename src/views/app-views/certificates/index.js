@@ -18,4 +18,4 @@ const Components = ({ match }) => (
   </Suspense>
 );
 
-export default Components;
+export default React.memo(Components);

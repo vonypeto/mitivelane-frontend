@@ -28,19 +28,19 @@ const Certificates = () => {
     setHeight(window.innerHeight);
   };
 
-  useEffect(
-    () => {
-      const listener = window.addEventListener(
-        "resize",
-        updateWindowDimensions
-      );
-      updateWindowDimensions();
+  // useEffect(
+  //   () => {
+  //     const listener = window.addEventListener(
+  //       "resize",
+  //       updateWindowDimensions
+  //     );
+  //     updateWindowDimensions();
 
-      return listener;
-    },
-    [height],
-    [width]
-  );
+  //     return listener;
+  //   },
+  //   [height],
+  //   [width]
+  // );
   // const setData = (data) => {
   //   setLoading(!loading);
   //   console.log(data);
@@ -141,7 +141,7 @@ const Certificates = () => {
                 </div> */}
         </div>
       </PageHeaderAlt>
-      <div className="" style={{ marginTop: 95 }}>
+      <div className="pb-5 mb-5" style={{ marginTop: 95 }}>
         {/* width: {width} ~ height: {height} */}
         {switchCert ? (
           <>
@@ -151,7 +151,7 @@ const Certificates = () => {
           </>
         ) : (
           <>
-            <div>
+            <div className="container">
               <CertList width={width} />
             </div>
           </>

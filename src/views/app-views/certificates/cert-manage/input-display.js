@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Card, Col, Row, Button, Upload, message, Space } from "antd";
 import {
@@ -41,12 +41,23 @@ const CertDisplay = (props) => {
   const MAX_LENGTH = 2000;
   const { setParentData, parentData, width } = props;
   // const [countOpenForm, setCountOpenForm] = useState([]);
+  const content = {
+    entityMap: {},
+    blocks: parentData?.content != null ? parentData?.content.blocks : [],
+  };
+  const contentState = convertFromRaw(content);
+
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [editorState, setEditorStateChange] = useState(
-    EditorState.createEmpty()
+    EditorState.createWithContent(contentState)
   );
+
+  // useEffect(() => {
+  //   let contentState = convertFromRaw(parentData?.content);
+  //   setEditorStateChange(EditorState.createWithContent(contentState));
+  // }, [parentData]);
   const [logoList, setLogoList] = useState([
     { id: 1, image: "" },
     { id: 2, image: "" },
@@ -284,7 +295,7 @@ const CertDisplay = (props) => {
       if (type == "editor") {
         const length = editorState?.getCurrentContent().getPlainText("").length;
         if (length <= MAX_LENGTH && 5 >= e.blocks.length) {
-          setEditorStateChange(e); // or this.setState({ editorState: editorState })
+          // setEditorStateChange(e); // or this.setState({ editorState: editorState })
           let data = parentData;
           form.setFieldsValue({
             [title]: e,
@@ -483,16 +494,16 @@ const CertDisplay = (props) => {
                                       toolbarClassName="toolbarClassName"
                                       wrapperClassName="wrapperClassName"
                                       editorClassName="editorClassName"
-                                      onEditorStateChange={(editorState) => {
-                                        setEditorStateChange(editorState);
-                                      }}
+                                      onEditorStateChange={setEditorStateChange}
+                                      defaultEditorState={editorState}
                                       toolbar={{
                                         options: [
                                           "inline",
-                                          "blockType",
+
                                           "fontSize",
                                           "colorPicker",
                                           "textAlign",
+                                          "list",
                                           "history",
                                         ],
                                         inline: { inDropdown: true },
@@ -682,4 +693,4 @@ const CertDisplay = (props) => {
   );
 };
 
-export default CertDisplay;
+export default React.memo(CertDisplay);

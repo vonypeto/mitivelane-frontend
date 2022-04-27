@@ -16,7 +16,6 @@ const ClassicTemplateList = (props) => {
   let clean = DOMPurify.sanitize(container);
 
   clean = clean.replaceAll("{NAME}", "MR & MRS RAFAEL S ESTEBAN");
-  console.log(clean);
   return (
     <Row>
       <Header {...data} />

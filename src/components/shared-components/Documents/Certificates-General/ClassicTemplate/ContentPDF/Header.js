@@ -19,7 +19,7 @@ const Header = (props) => {
       gridTemplateColumn: "1fr 1fr",
       gridGap: "20px",
       height: "14vh",
-      border: " 5px solid black",
+
       borderBottom: 0, // margin: 0,
       lineHeight: "1.5",
     },
@@ -49,8 +49,20 @@ const Header = (props) => {
     col_image: {
       width: "25%",
       float: "left",
-      padding: "20px",
+      padding: "15px",
       //    border: "2px solid red",
+    },
+    image: {
+      // marginVertical: 10,
+      // marginHorizontal: 10,
+      Maxheight: "`95px`",
+      Maxwidth: "95px",
+      display: "block",
+      height: "auto",
+      width: "auto",
+      borderRadius: "50%",
+      backgroundPposition: " 50% 50%",
+      backgroundSsize: "cover",
     },
   });
   return (

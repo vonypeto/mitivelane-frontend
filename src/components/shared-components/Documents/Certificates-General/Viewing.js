@@ -2,14 +2,18 @@ import React, { useEffect, useState } from "react";
 import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
 import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
 import Paging from "./Paging";
+
 import { Textfit } from "react-textfit";
 
 const index = (props) => {
   const { selectedForm, type, pdf } = props;
   const [getResolve, setGetResolve] = useState(null);
+
   let size = 9;
+
   let lineHeight = "16px";
   const ratio = 1.41451612903;
+  let tmp = true;
 
   useEffect(() => {
     let cancel = true;
@@ -37,20 +41,25 @@ const index = (props) => {
 
   return (
     <>
-      {type == "form" || type == "view" || type == "drawer" ? (
+      {getResolve ? (
         <>
-          <Paging {...props} size={size} type={type} pdf={getResolve} />
+          {type == "form" || type == "view" || type == "drawer" ? (
+            <Paging {...props} size={size} type={type} pdf={getResolve} />
+          ) : (
+            <>
+              {selectedForm == 1 ? (
+                <ClassicTemplatePDF
+                  type={type}
+                  {...props}
+                  lineHeight={lineHeight}
+                  data={getResolve}
+                />
+              ) : null}
+            </>
+          )}
         </>
       ) : (
-        <>
-          {selectedForm == 1 ? (
-            <ClassicTemplatePDF
-              type={type}
-              {...props}
-              lineHeight={lineHeight}
-            />
-          ) : null}
-        </>
+        <>Loading</>
       )}
     </>
   );
