@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
 import { Route, Switch, } from 'react-router-dom';
 import Conversation from './Conversation';
 
@@ -11,10 +11,17 @@ const ConversationEmpty = () => (
   </div>
 )
 
-const ChatContent = ({match}) => {
+const ChatContent = ({ match, chatData, setChatData }) => {
+  const [conversation, setConversation] = useState([])
+
+  useEffect(() => {
+    setConversation(chatData)
+  }, [chatData])
+
   return (
     <Switch>
-      <Route path={`${match.url}/:id`} component={Conversation} />
+      <Route path={`${match.url}/:_id`}
+        render={result => <Conversation match={result.match} chatData={conversation} setChatData={setChatData}></Conversation>} />
       <Route path={`${match.url}`} component={ConversationEmpty} />
     </Switch>
   )
