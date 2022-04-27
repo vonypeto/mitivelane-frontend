@@ -188,45 +188,62 @@ const ManageHousehold = (props) => {
 
   //Axios
   const createHousehold = async (household, householdMembers) => {
-    await axios.post(
-      "/api/household/add",
-      { household, householdMembers, barangay_id: barangay_id },
-      generateToken()[1],
-      { cancelToken }
-    );
+    try {
+      await axios.post(
+        "/api/household/add",
+        { household, householdMembers, barangay_id: barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+    } catch (error) {
+      console.log(error)
+      message.error("Error!! Please try again later!!")
+    }
   }
 
   const getHousehold = async () => {
-    const request = await axios.post(
-      "/api/household/get",
-      { household_id: household_id, barangay_id: barangay_id },
-      generateToken()[1],
-      { cancelToken }
-    );
 
-    const householdData = request.data
-    const householdMembersData = householdData.household_members
+    try {
+      const request = await axios.post(
+        "/api/household/get",
+        { household_id: household_id, barangay_id: barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
 
-    householdMembersData.map((member) => {
-      member.birthday = moment(new Date(member.birthday))
-      member.isOld = true
+      const householdData = request.data
+      const householdMembersData = householdData.household_members
 
-    })
+      householdMembersData.map((member) => {
+        member.birthday = moment(new Date(member.birthday))
+        member.isOld = true
 
-    console.log(householdData)
-    console.log(householdMembersData)
+      })
 
-    setHouseholdInitialVal(householdData)
-    setHouseholdMemberList(householdMembersData)
+      // console.log(householdData)
+      // console.log(householdMembersData)
+
+      setHouseholdInitialVal(householdData)
+      setHouseholdMemberList(householdMembersData)
+    } catch (error) {
+      console.log(error)
+      message.error("Error!! Please try again later!!")
+    }
+
   }
 
   const updateHousehold = async (household, householdMembers, deletedMembers) => {
-    await axios.post(
-      "/api/household/update",
-      { household, householdMembers, deletedMembers, barangay_id: barangay_id },
-      generateToken()[1],
-      { cancelToken }
-    );
+    try {
+      await axios.post(
+        "/api/household/update",
+        { household, householdMembers, deletedMembers, barangay_id: barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+    } catch (error) {
+      console.log(error)
+      message.error("Error!! Please try again later!!")
+    }
   }
 
   //UseEffect 
@@ -286,12 +303,12 @@ const ManageHousehold = (props) => {
 
   const drawerFooter = () => {
     return (
-      <Button 
-      type='primary'
-      style={{float: "right"}}
-      onClick={() => {handleOk()}} 
+      <Button
+        type='primary'
+        style={{ float: 'right' }}
+        onClick={() => { handleOk() }}
       >
-      
+
         Submit
       </Button>
     )
@@ -300,7 +317,6 @@ const ManageHousehold = (props) => {
   // function for handling drawer and modal
   const handlePopUp = (action) => {
     const screenWidth = window.innerWidth
-    console.log(screenWidth)
 
     if (screenWidth > 480) {
       showModal()
@@ -347,17 +363,17 @@ const ManageHousehold = (props) => {
     // if member is new
     if (value.action == "added") {
       value._id = householdMemberList.length
-      console.log("Adding new member", value._id)
+      // console.log("Adding new member", value._id)
       setHouseholdMemberList([...householdMemberList, value])
       message.success("Success, New Household Member added.")
     }
     // if member is edited
     if (value.action == "edited") {
-      console.log("Existing member", value._id)
+      // console.log("Existing member", value._id)
       var currentHouseholdMemberList = [...householdMemberList]
       var objIndex = currentHouseholdMemberList.findIndex((obj => obj._id == value._id));
       currentHouseholdMemberList[objIndex] = value
-      console.log(currentHouseholdMemberList)
+      // console.log(currentHouseholdMemberList)
       setHouseholdMemberList(currentHouseholdMemberList)
 
       message.success("Success, Household Member data has been updated.")
@@ -483,7 +499,7 @@ const ManageHousehold = (props) => {
 
       <Modal title="New Household Member Information" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} okText={"Submit"} destroyOnClose={true}>
 
-      { isModalVisible &&
+        {isModalVisible &&
           <Form
             name='new_household_member_form'
             onFinish={onFinishAddMember}
@@ -492,12 +508,12 @@ const ManageHousehold = (props) => {
           >
             <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember} />
           </Form>
-      }
+        }
 
       </Modal>
 
       <Drawer title="New Household Member Information" placement="right" onClose={onDrawerClose} visible={isDrawerVisible} width={"100%"} height={"100%"} footer={drawerFooter()}>
-      { isDrawerVisible &&
+        {isDrawerVisible &&
           <Form
             name='new_household_member_form'
             onFinish={onFinishAddMember}
@@ -505,10 +521,11 @@ const ManageHousehold = (props) => {
             initialValues={householdMemberInitialVal}
           >
             <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember} />
-            
+
           </Form>
-      }
+        }
       </Drawer>
+      
     </div>
   )
 }

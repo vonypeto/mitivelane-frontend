@@ -102,44 +102,64 @@ const PurokArea = (props) => {
 
   //Axios
   const addNewArea = async (newArea) => {
-    const request = await axios.post(
-      "/api/purok/add",
-      { newArea, barangay_id: barangay_id },
-      generateToken()[1],
-      { cancelToken }
-    );
+    try {
+      const request = await axios.post(
+        "/api/purok/add",
+        { newArea, barangay_id: barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
 
-    const data = request.data
-    setPurokList([...purokList, data])
+      const data = request.data
+      setPurokList([...purokList, data])
+    } catch (error) {
+      console.log(error)
+      message.error("Error in database connection!!")
+    }
   }
 
   const getAreas = async () => {
-    const request = await axios.post(
-      "/api/purok/getAll",
-      { barangay_id: barangay_id },
-      generateToken()[1],
-      { cancelToken }
-    );
+    try {
+      const request = await axios.post(
+        "/api/purok/getAll",
+        { barangay_id: barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
 
-    setPurokList(request.data)
+      setPurokList(request.data)
+    } catch (error) {
+      console.log(error)
+      message.error("Error in database connection!!")
+    }
   }
 
   const deleteArea = async (area_id) => {
-    const request = await axios.post(
-      "/api/purok/delete",
-      { barangay_id: barangay_id, area_id },
-      generateToken()[1],
-      { cancelToken }
-    );
+    try {
+      const request = await axios.post(
+        "/api/purok/delete",
+        { barangay_id: barangay_id, area_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+    } catch (error) {
+      console.log(error)
+      message.error("Error in database connection!!")
+    }
   }
 
   const updateArea = async (newAreaData) => {
-    const request = await axios.post(
-      "/api/purok/update",
-      { barangay_id: barangay_id, newAreaData },
-      generateToken()[1],
-      { cancelToken }
-    ); 
+      try {
+        const request = await axios.post(
+          "/api/purok/update",
+          { barangay_id: barangay_id, newAreaData },
+          generateToken()[1],
+          { cancelToken }
+        );
+      } catch (error) {
+      console.log(error)
+      message.error("Error in database connection!!")
+      }
   }
 
   //Popup
@@ -174,12 +194,11 @@ const PurokArea = (props) => {
 
   //Function
   const editPurok = (row) => {
-    setPurokInitialVal({ 'name': row.name, action: "edited", purok_id: row.purok_id})
+    setPurokInitialVal({ 'name': row.name, action: "edited", purok_id: row.purok_id })
     setShowAreaModal(true)
   }
 
   const deletePurok = (row) => {
-    console.log("deleting purok")
     deleteArea(row.purok_id)
 
     const currentpurokList = [...purokList]
@@ -248,7 +267,6 @@ const PurokArea = (props) => {
           onFinish={onFinishAddArea}
           ref={NewAreaFormRef}
           initialValues={purokInitialVal}
-        // initialValues={householdMemberInitialVal}
         >
           <NewAreaForm />
         </Form>
