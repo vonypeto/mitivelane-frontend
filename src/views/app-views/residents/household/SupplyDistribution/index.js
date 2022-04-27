@@ -78,7 +78,7 @@ const SupplyDistribution = (props) => {
       SupplyGiven.map((data) => {
         data.date = moment(new Date(data.date))
       })
-      
+
       setSupplyGivenList(SupplyGiven)
 
 
@@ -97,7 +97,10 @@ const SupplyDistribution = (props) => {
         { cancelToken }
       );
 
-      values.supply_given_id = supplyGivenList.length + 1
+      const data = request.data
+      console.log("data", data)
+
+      newSupplyGiven.supply_given_id = data.supply_given_id
       setSupplyGivenList([...supplyGivenList, newSupplyGiven])
       message.success(" New Supply Given data has been added.")
     } catch (error) {
@@ -116,7 +119,7 @@ const SupplyDistribution = (props) => {
       );
 
       const currentSupplyGivenList = [...supplyGivenList]
-      var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_receive_id == values.supply_receive_id));
+      var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_given_id == values.supply_given_id));
       currentSupplyGivenList[objIndex] = values
       setSupplyGivenList(currentSupplyGivenList)
       message.success("Supply Given Table data has been updated.")
@@ -136,7 +139,37 @@ const SupplyDistribution = (props) => {
         { cancelToken }
       );
 
-      console.log(request.data)
+      const currentSupplyGivenList = [...supplyGivenList]
+      var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_given_id == supplyGivenIDs));
+      currentSupplyGivenList.splice(objIndex, 1);
+      setSupplyGivenList(currentSupplyGivenList)
+  
+      message.success("Success, data has been deleted")
+    } catch (error) {
+      console.log(error)
+      message.error("Error in database connection!!")
+    }
+  }
+
+  const popSuppliesGiven = async (supplyGivenIDs) => {
+    try {
+      const request = await axios.post(
+        '/api/supply/given/delete',
+        { supplyGivenIDs, barangay_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+
+      const currentSupplyGivenList = [...supplyGivenList]
+
+      givenSelectedRowKeys.map((row) => {
+        var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_given_id == row.supply_given_id));
+        currentSupplyGivenList.splice(objIndex, 1);
+      })
+
+      console.log(currentSupplyGivenList);
+      setSupplyGivenList(currentSupplyGivenList)
+      message.success("Success, data has been deleted")
     } catch (error) {
       console.log(error)
       message.error("Error in database connection!!")
@@ -323,17 +356,12 @@ const SupplyDistribution = (props) => {
     handleGivenPopUp("edited")
   }
 
-  console.log(supplyGivenList);
-
   const deleteSupplyGiven = (row) => {
     popSupplyGiven([row.supply_given_id])
+  }
 
-    const currentSupplyGivenList = [...supplyGivenList]
-    var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_given_id == row.supply_given_id));
-    currentSupplyGivenList.splice(objIndex, 1);
-    setSupplyGivenList(currentSupplyGivenList)
-
-    message.success("Success, data has been deleted")
+  const deleteSuppliesGiven = () => {
+      popSuppliesGiven(givenSelectedRowKeys)
   }
 
   //Function for updatating and deleting Supply Given
@@ -364,6 +392,12 @@ const SupplyDistribution = (props) => {
         <DeleteOutlined />
         <span className="ml-2" style={{ color: "black" }}>Delete</span>
       </Menu.Item>
+      {givenSelectedRowKeys.length > 0 &&
+        <Menu.Item key={3} onClick={() => { deleteSuppliesGiven() }}>
+          <DeleteOutlined />
+          <span className="ml-2" style={{ color: "black" }}>Delete {`(${givenSelectedRowKeys.length})`}</span>
+        </Menu.Item>
+      }
     </Menu>
   );
 
@@ -381,13 +415,32 @@ const SupplyDistribution = (props) => {
   );
 
   const onSelectReceivedSupplyChange = (selectedRowKeys, selectedRows) => {
-    message.success(`Selected received row ${selectedRows}`)
-    console.log(selectedRows);
+    if (selectedRows.length > 0) {
+      let supplyReceiveIDs = []
+
+      selectedRows.map((row) => {
+        supplyReceiveIDs.push(row.supply_given_id)
+      })
+
+      console.log(supplyReceiveIDs);
+      SetReceivedSelectedRowKeys(supplyReceiveIDs)
+      message.success(`Selected receive row ${selectedRows.length}`)
+
+    }
   }
 
   const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
-    message.success(`Selected given row ${selectedRows}`)
-    console.log(selectedRows);
+    if (selectedRows.length > 0) {
+      let supplyGivenIDs = []
+
+      selectedRows.map((row) => {
+        supplyGivenIDs.push(row.supply_given_id)
+      })
+
+      console.log(supplyGivenIDs);
+      SetGivenSelectedRowKeys(supplyGivenIDs)
+      message.success(`Selected given row ${selectedRows.length}`)
+    }
   }
 
   const onFinishSupplyGivenForm = (values) => {
