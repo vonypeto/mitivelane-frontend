@@ -6,6 +6,8 @@ const URL = IS_PROD
   : "http://localhost:3000";
 export const socket = io(URL, {
   withCredentials: true,
+  credentials: true,
+  methods: ["GET", "POST"],
 });
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
