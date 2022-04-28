@@ -6,6 +6,6 @@ export const socket = io("/");
 const authToken = localStorage.getItem(AUTH_TOKEN);
 
 socket.on("connect", () => {
-  console.log("Im Connected ", socket.id);
+  console.log("Im Connected to Socket id ", socket.id);
   socket.emit("socket:add-user", authToken);
 });
