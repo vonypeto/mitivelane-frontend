@@ -1,2 +1,2 @@
 /api/*  https://mitivelane.herokuapp.com/api/:splat  200
-/socket.io/*  https://mitivelane.herokuapp.com/socket.io/:splat  200
+/socket.io/*  https://mitivelane.herokuapp.com/:splat  200
