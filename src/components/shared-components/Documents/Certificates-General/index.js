@@ -25,7 +25,7 @@ const index = (props) => {
               return result;
             });
           }
-          if (type == "view") {
+          if (type == "view" || type == "create") {
             setGetResolve(pdf);
           }
         }, 1100);
@@ -37,8 +37,12 @@ const index = (props) => {
 
   return (
     <>
-      {type == "form" || type == "view" || type == "drawer" ? (
+      {type == "form" ||
+      type == "view" ||
+      type == "drawer" ||
+      type == "create" ? (
         <>
+          {/* React View Pdf */}
           <Paging {...props} size={size} type={type} pdf={getResolve} />
         </>
       ) : (
