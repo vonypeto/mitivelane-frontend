@@ -5,7 +5,8 @@ const URL = IS_PROD
   ? "https://mitivelane.herokuapp.com"
   : "https://localhost:3000";
 export const socket = io(URL, {
-	 transports: ["polling"]
+	 transports: ["polling", "websocket"],
+	 autoConnect: false
 });
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
