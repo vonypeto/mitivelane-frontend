@@ -22,7 +22,7 @@ const Chat = props => {
 		if (alreadyRun == false) {
 			getConversations()
 			alreadyRun = true
-			console.log("Test 3 Chat muna sa console wss")
+			console.log("Test 4 Chat muna sa console wss")
 		}
 
 	}, [])
