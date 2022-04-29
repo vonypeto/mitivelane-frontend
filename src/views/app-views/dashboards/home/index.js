@@ -39,8 +39,6 @@ import utils from "utils";
 import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import { socket } from "api/AppController/SocketController/SocketController"
-
 const DisplayDataSet = () => (
   <Row gutter={16}>
     <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>

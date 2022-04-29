@@ -2,12 +2,12 @@ import { io } from "socket.io-client";
 import { AUTH_TOKEN } from "redux/constants/Auth";
 const IS_PROD = process.env.NODE_ENV === "production";
 const URL = IS_PROD
-  ? "https://mitivelane.herokuapp.com/"
-  : "http://localhost:3000";
+  ? "ws://mitivelane.herokuapp.com/"
+  : "ws://localhost:3000";
 export const socket = io(URL, {
   withCredentials: true,
   credentials: true,
-  transports: ["websocket", "polling", "flashsocket"],
+  transports: IS_PROD ? ["websocket", "polling", "flashsocket"]: null,
   methods: ["GET", "POST"],
 });
 
