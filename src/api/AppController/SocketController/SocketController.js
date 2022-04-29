@@ -7,6 +7,7 @@ const URL = IS_PROD
 export const socket = io(URL, {
   withCredentials: true,
   credentials: true,
+  transports: null,
   methods: ["GET", "POST"],
 });
 
