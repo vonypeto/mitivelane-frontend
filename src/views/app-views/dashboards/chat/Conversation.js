@@ -54,32 +54,28 @@ const Conversation = ({ match, chatData, setChatData }) => {
 
 		setChatData(finalValue)
 
-		// var values = {
-			// participants: ["62284d4700fd9e2d45af89cd", "62288194ad33a709728a68da"],
-			// sender_uuid: authToken,
-			// content: newMsgData.content,
-			// unread: false,
-			// conversation_id: conversationId
-		// }
+		var values = {
+			sender_uuid: authToken,
+			content: newMsgData.content,
+			conversation_id: conversationId
+		}
 
 		socket.emit("chat:send-message", conversationId, receiver_uuid, newMsgData)
 
-		// axios
-		// .post("/api/chat/send-message", values, generateToken()[1])
-		// .then((response) => {
-		// if (response.data == "Success") {
-		// return message.success(
-		// `Added new Blotter`
-		// );
-		// } else {
-		// return message.error("Error, please try again.");
-		// }
-		// })
-		// .catch((error) => {
-		// console.log(error);
-		// message.destroy();
-		// message.error("The action can't be completed, please try again.");
-		// });
+		axios
+		.post("/api/chat/send-message", values, generateToken()[1])
+		.then((response) => {
+		if (response.data == "Success") {
+		// Do nothing for now
+		} else {
+		return message.error("Error, please try again.");
+		}
+		})
+		.catch((error) => {
+		console.log(error);
+		message.destroy();
+		message.error("The action can't be completed, please try again.");
+		});
 	}
 
 	const deleteChat = (currentId) => {

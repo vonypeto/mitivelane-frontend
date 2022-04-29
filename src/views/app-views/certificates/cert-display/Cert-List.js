@@ -1,32 +1,17 @@
 import React, { useState, useEffect } from "react";
-
+import { Col, Row, Layout, Menu } from "antd";
 import {
-  Card,
-  Col,
-  Row,
-  Image,
-  Button,
-  Layout,
-  Divider,
-  Menu,
-  Input,
-} from "antd";
-import {
-  EyeOutlined,
   EditOutlined,
   DeleteOutlined,
-  PlusCircleOutlined,
   CopyOutlined,
   ArrowDownOutlined,
   HighlightOutlined,
 } from "@ant-design/icons";
-import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import CertDrawer from "./Cert-Drawer";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { useHistory } from "react-router-dom";
 import { AUTH_BARANGAY } from "redux/constants/Auth";
-import SinglePagePDFViewer from "components/shared-components/Documents/Certificates-General/Paging";
 import FileTest from "assets/files/test.pdf";
 import CreateLayout from "assets/files/create.pdf";
 
@@ -38,8 +23,10 @@ const CertList = (props) => {
 
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
-  const [loading, setIsLoading] = useState(false);
-  let ratio = 1.41451612903;
+
+  //const [loading, setIsLoading] = useState(false);
+
+  //let ratio = 1.41451612903;
   // useEffect(() => {
   //   setTimeout(() => {
   //     setIsLoading(!loading);
@@ -50,11 +37,10 @@ const CertList = (props) => {
     setCounter("click");
     console.log("click");
   };
-  const onHandle = (e, elm) => {
-    e.preventDefault();
-
+  const onHandle = (elm) => {
     // setDrawer(true);
-    // SetSelectedUser(elm);
+    SetSelectedUser("click");
+    console.log(elm);
   };
   const closeDrawer = () => {
     setDrawer(false);
@@ -62,6 +48,7 @@ const CertList = (props) => {
   };
   useEffect(() => {
     counterClick();
+    onHandle(null);
   }, []);
   const dropdownMenu = (row) => (
     <Menu>
@@ -165,10 +152,7 @@ const CertList = (props) => {
         >
           <div>
             <div
-              onClick={(e) => onHandle(e, CreateLayout)}
-              style={{
-                cursor: "pointer",
-              }}
+            //    onClick={(e) => onHandle(e, CreateLayout)}
             >
               <PDFTemplate
                 data={{ name: "text" }}
@@ -176,8 +160,9 @@ const CertList = (props) => {
                 min={4}
                 max={9}
                 pdf={CreateLayout}
-                type={"view"}
+                type={"create"}
                 counterClick={counterClick}
+                onHandle={onHandle}
               />
             </div>
           </div>
@@ -194,10 +179,7 @@ const CertList = (props) => {
         >
           <div>
             <div
-              onClick={(e) => onHandle(e, FileTest)}
-              style={{
-                cursor: "pointer",
-              }}
+            //    onClick={(e) => onHandle(e, FileTest)}
             >
               <PDFTemplate
                 data={{ name: "text" }}
@@ -207,6 +189,7 @@ const CertList = (props) => {
                 pdf={FileTest}
                 type={"view"}
                 counterClick={counterClick}
+                onHandle={onHandle}
               />
             </div>
           </div>

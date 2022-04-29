@@ -297,9 +297,9 @@ div[id^="font-picker"]:hover {
 }
 .bottomright {
   position: absolute;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  bottom: 5px;
+  margin-right: 3%;
+  margin-bottom: 3%;
+  bottom: 1%;
   right: 5px;
 }
 
@@ -380,9 +380,6 @@ div[id^="font-picker"]:hover {
   margin-left: 1.5rem;
 }
 @media screen and (max-width: 1024px) {
-  .bottomright {
-    margin-right: 5px;
-  }
   .ellipsis-dropdown {
     font-size: 14px;
   }
@@ -429,11 +426,6 @@ div[id^="font-picker"]:hover {
 @media screen and (max-width: 375px) {
   .ellipsis-dropdown {
     font-size: 8px;
-  }
-  .bottomright {
-    margin-bottom: 5px;
-    bottom: 5px;
-    right: 5px;
   }
 }
 @media screen and (max-width: 355px) {
@@ -485,14 +477,23 @@ div[id^="font-picker"]:hover {
 
 .PDFPage {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-  border: red solid 3px;
+  /* border: red solid 3px; */
 }
-
+.PDFPageTwo {
+  /* box-shadow: 0 0 8px rgba(0, 0, 0, 0.5); */
+  /* border: blue solid 3px; */
+  border-style: dashed;
+  border: 2px dashed gray;
+}
 .PDFPageOne {
   margin-bottom: 25px;
 }
 
 .PDFPage > canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+.PDFPageTwo > canvas {
   max-width: 100%;
   height: auto !important;
 }

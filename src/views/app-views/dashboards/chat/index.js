@@ -33,6 +33,7 @@ const Chat = props => {
 	useEffect(() => {
 		socket.off("chat:receive-message").on("chat:receive-message", (conversationId, message) => {
 			message.from = "opposite"
+			console.log(message)
 			const newData = conversationData.filter(elm => elm._id === conversationId)
 			
 			newData[0].messages.push(message)

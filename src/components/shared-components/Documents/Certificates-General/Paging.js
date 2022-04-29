@@ -15,9 +15,7 @@ import {
 const SinglePage = (props) => {
   const [numPages, setNumPages] = useState(null);
   const documentWrapperRef = useRef();
-  const [getResolve, setGetResolve] = useState(null);
   const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
-
   const { pdf, type } = props;
   console.log(props);
   const dropdownMenu = (row) => (
@@ -55,11 +53,16 @@ const SinglePage = (props) => {
       </Menu.Item>
     </Menu>
   );
-  const [counter, setCounter] = useState(1);
-  console.log(counter);
-  function handleClick() {
-    props.counterClick();
-  }
+
+  // function handleClick() {
+  //   props.counterClick();
+  // }
+
+  useEffect(() => {
+    return () => {
+      setPageNumber();
+    };
+  }, []);
   const TypeView = (props) => {
     const { type } = props;
     return (
@@ -140,14 +143,14 @@ const SinglePage = (props) => {
     changePage(1);
   }
 
-  const [width, setWidth] = React.useState(0);
+  // const [width, setWidth] = React.useState(0);
 
-  React.useLayoutEffect(() => {
-    setTimeout(
-      () => setWidth(documentWrapperRef.current?.getBoundingClientRect().width),
-      200
-    );
-  });
+  // React.useLayoutEffect(() => {
+  //   setTimeout(
+  //     () => setWidth(documentWrapperRef.current?.getBoundingClientRect().width),
+  //     200
+  //   );
+  // });
   // useEffect(() => {
   //   let cancel = true;
 
@@ -171,7 +174,9 @@ const SinglePage = (props) => {
   //   };
   // }, [pdf]);
   // console.log(getResolve);
-
+  const onHandle = () => {
+    props.onHandle("click");
+  };
   const PdfRender = React.memo((data) => {
     console.log(data.pdf);
     return (
@@ -182,38 +187,51 @@ const SinglePage = (props) => {
             style={{ position: "relative" }}
             ref={documentWrapperRef}
           >
-            <Document
-              //   renderMode="svg"
-              className={"PDFDocument"}
-              file={{ url: data.pdf }}
-              onLoadSuccess={onDocumentLoadSuccess}
+            <div
+              onClick={() => onHandle(pdf)}
+              style={{
+                cursor: "pointer",
+              }}
             >
-              <Page
-                //   width={width || undefined}
-                className={"PDFPage PDFPageOne"}
-                renderTextLayer={false}
-                renderInteractiveForms={false}
-                pageNumber={pageNumber}
+              <Document
+                //   renderMode="svg"
+                className={"PDFDocument"}
+                file={{ url: data.pdf }}
+                onLoadSuccess={onDocumentLoadSuccess}
               >
-                <div>
-                  <div className="text-right">
-                    <div
-                      className="border bottomright "
-                      style={{
-                        borderRadius: "50%",
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <EllipsisDropdown
-                        placement="topRight"
-                        menu={dropdownMenu()}
-                      />
+                <Page
+                  //   width={width || undefined}
+                  className={
+                    "PDFPageOne  " +
+                    (type == "create" ? "PDFPageTwo" : " PDFPage") +
+                    ""
+                  }
+                  renderTextLayer={false}
+                  renderInteractiveForms={false}
+                  pageNumber={pageNumber}
+                >
+                  <div>
+                    <div className="text-right">
+                      <div
+                        className="border bottomright "
+                        style={{
+                          borderRadius: "50%",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        {type == "form" ? (
+                          <EllipsisDropdown
+                            placement="topRight"
+                            menu={dropdownMenu()}
+                          />
+                        ) : null}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Page>
-            </Document>
-            <TypeView type={type} /> {counter}
+                </Page>
+              </Document>
+            </div>
+            <TypeView type={type} />
           </div>
         </>
       </>
@@ -221,15 +239,15 @@ const SinglePage = (props) => {
   });
   return (
     <>
-      <PdfRender pdf={pdf} />{" "}
-      <Button
+      <PdfRender pdf={pdf} />
+      {/* <Button
         type="button"
         onClick={() => {
           handleClick();
         }}
       >
         sadas
-      </Button>
+      </Button> */}
     </>
   );
 };
