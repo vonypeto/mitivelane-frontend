@@ -7,7 +7,6 @@ const URL = IS_PROD
 export const socket = io(URL, {
   withCredentials: true,
   credentials: true,
-  transports: IS_PROD ? ["websocket", "polling", "flashsocket"]: null,
   methods: ["GET", "POST"],
 });
 
