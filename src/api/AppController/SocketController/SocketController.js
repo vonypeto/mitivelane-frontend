@@ -6,9 +6,13 @@ const URL = IS_PROD
   : "ws://localhost:3000";
 export const socket = io(URL, {
   withCredentials: true,
-  credentials: true,
-  transports: ["polling", "websocket"],
-  methods: ["GET", "POST"],
+  transportOptions: {
+	  polling: {
+		  extraHeaders: {
+			  "my-custom-header": "abcd"
+		  }
+	  }
+  }
 });
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
