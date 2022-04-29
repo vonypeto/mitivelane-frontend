@@ -5,14 +5,10 @@ const URL = IS_PROD
   ? "wss://mitivelane.herokuapp.com/"
   : "ws://localhost:3000";
 export const socket = io(URL, {
-  withCredentials: true,
-  transportOptions: {
-	  polling: {
-		  extraHeaders: {
-			  "my-custom-header": "abcd"
-		  }
-	  }
-  }
+  "force new connection" : true,
+            "reconnectionAttempts": "Infinity", 
+            "timeout" : 10000,                  
+            "transports" : ["websocket"]
 });
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
