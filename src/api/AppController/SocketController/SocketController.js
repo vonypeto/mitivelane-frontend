@@ -4,7 +4,9 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const URL = IS_PROD
   ? "wss://mitivelane.herokuapp.com/"
   : "ws://localhost:3000";
-export const socket = io(URL);
+export const socket = io(URL, {
+	 transports: ["websocket"]
+});
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
 console.log(process.env.NODE_ENV);
