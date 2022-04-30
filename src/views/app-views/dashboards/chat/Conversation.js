@@ -17,9 +17,7 @@ import { AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
-import { socket } from "api/AppController/SocketController/SocketController"
-
-const Conversation = ({ match, chatData, setChatData }) => {
+const Conversation = ({ match, chatData, setChatData, socket}) => {
 	const { currentBarangay, generateToken } = useAuth();
 	const authToken = localStorage.getItem(AUTH_TOKEN);
 	const formRef = useRef(null)
@@ -62,20 +60,20 @@ const Conversation = ({ match, chatData, setChatData }) => {
 
 		socket.emit("chat:send-message", conversationId, receiver_uuid, newMsgData)
 
-		axios
-		.post("/api/chat/send-message", values, generateToken()[1])
-		.then((response) => {
-		if (response.data == "Success") {
-		// Do nothing for now
-		} else {
-		return message.error("Error, please try again.");
-		}
-		})
-		.catch((error) => {
-		console.log(error);
-		message.destroy();
-		message.error("The action can't be completed, please try again.");
-		});
+		// axios
+		// .post("/api/chat/send-message", values, generateToken()[1])
+		// .then((response) => {
+		// if (response.data == "Success") {
+		// // Do nothing for now
+		// } else {
+		// return message.error("Error, please try again.");
+		// }
+		// })
+		// .catch((error) => {
+		// console.log(error);
+		// message.destroy();
+		// message.error("The action can't be completed, please try again.");
+		// });
 	}
 
 	const deleteChat = (currentId) => {

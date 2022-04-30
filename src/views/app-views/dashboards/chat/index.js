@@ -22,6 +22,7 @@ const Chat = props => {
 		if (alreadyRun == false) {
 			getConversations()
 			alreadyRun = true
+			console.log("Polling Test Chat muna sa console wss")
 		}
 
 	}, [])
@@ -34,6 +35,8 @@ const Chat = props => {
 		socket.off("chat:receive-message").on("chat:receive-message", (conversationId, message) => {
 			message.from = "opposite"
 			console.log(message)
+			{
+				/*
 			const newData = conversationData.filter(elm => elm._id === conversationId)
 			
 			newData[0].messages.push(message)
@@ -44,6 +47,8 @@ const Chat = props => {
 			var finalValue = newData.concat(currentData)
 
 			setChatData(finalValue)
+				*/
+			}
 	
 		})
 
@@ -87,7 +92,7 @@ const Chat = props => {
 		<div className="chat">
 			<InnerAppLayout
 				sideContent={<ChatMenu match={props.match} location={props.location} chatData={chatData} />}
-				mainContent={<ChatContent {...props} chatData={chatData} setChatData={setChatData} />}
+				mainContent={<ChatContent {...props} chatData={chatData} setChatData={setChatData} socket={socket}/>}
 				sideContentWidth={450}
 				sideContentGutter={false}
 				border
