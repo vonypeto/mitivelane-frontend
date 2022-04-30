@@ -363,9 +363,6 @@ div[id^="font-picker"]:hover {
 }
 
 @media screen and (max-width: 1900px) {
-  .logo {
-    padding: 0px 0px !important;
-  }
   .pdf-template-font {
     font-size: 8px;
   }
@@ -387,7 +384,10 @@ div[id^="font-picker"]:hover {
 .margin-account-left {
   margin-left: 1.5rem;
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 990px) {
+  /* .logo {
+    padding: 0px 0px !important;
+  } */
   .margin-account-left {
     margin-left: 0px;
   }

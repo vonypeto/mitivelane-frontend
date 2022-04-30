@@ -126,6 +126,7 @@ const SideNavContent = (props) => {
                       key={subMenuFirst.key}
                       title={setLocale(localization, subMenuFirst.title)}
                     >
+                      {console.log(setLocale(localization, subMenuFirst.title))}
                       {subMenuFirst.submenu.map((subMenuSecond) => (
                         <Menu.Item key={subMenuSecond.key}>
                           {subMenuSecond.icon ? (
@@ -176,7 +177,8 @@ const SideNavContent = (props) => {
             ) : (
               <Menu.Item key={menu.key}>
                 {menu.icon ? <Icon type={menu?.icon} /> : null}
-                <span>{setLocale(localization, menu?.title)}</span>
+
+                <span> {setLocale(localization, menu?.title)}</span>
                 {menu.path ? (
                   <Link onClick={() => closeMobileNav()} to={menu.path} />
                 ) : null}
@@ -202,7 +204,7 @@ const TopNavContent = (props) => {
             title={
               <span>
                 {menu.icon ? <Icon type={menu?.icon} /> : null}
-                <span>{setLocale(localization, menu.title)}</span>
+                <span> {setLocale(localization, menu.title)}</span>
               </span>
             }
           >
@@ -255,7 +257,7 @@ const TopNavContent = (props) => {
         ) : (
           <Menu.Item key={menu.key}>
             {menu.icon ? <Icon type={menu?.icon} /> : null}
-            <span>{setLocale(localization, menu?.title)}</span>
+            <span> {setLocale(localization, menu?.title)}</span>
             {menu.path ? <Link to={menu.path} /> : null}
           </Menu.Item>
         )
