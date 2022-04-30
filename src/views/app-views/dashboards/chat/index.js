@@ -22,7 +22,7 @@ const Chat = props => {
 		if (alreadyRun == false) {
 			getConversations()
 			alreadyRun = true
-			console.log("Test 1 Chat muna sa console wss")
+			console.log("Test 2 Chat muna sa console wss")
 		}
 
 	}, [])
@@ -32,7 +32,7 @@ const Chat = props => {
 	}, [chatData])
 	
 	useEffect(() => {
-		socket.off("chat:receive-message").on("chat:receive-message", (conversationId, message) => {
+		socket.on("chat:receive-message", (conversationId, message) => {
 			message.from = "opposite"
 			console.log(message)
 			{
