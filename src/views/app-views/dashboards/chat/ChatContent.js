@@ -11,7 +11,7 @@ const ConversationEmpty = () => (
   </div>
 )
 
-const ChatContent = ({ match, chatData, setChatData, socket}) => {
+const ChatContent = ({ match, chatData, setChatData, socket }) => {
   const [conversation, setConversation] = useState([])
 
   useEffect(() => {

@@ -17,7 +17,7 @@ import { AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
-const Conversation = ({ match, chatData, setChatData, socket}) => {
+const Conversation = ({ match, chatData, setChatData, socket }) => {
 	const { currentBarangay, generateToken } = useAuth();
 	const authToken = localStorage.getItem(AUTH_TOKEN);
 	const formRef = useRef(null)
@@ -25,7 +25,7 @@ const Conversation = ({ match, chatData, setChatData, socket}) => {
 
 	const [info, setInfo] = useState({})
 	const [msgList, setMsgList] = useState([])
-	
+
 	const [avatar, setAvatar] = useState(null)
 
 	const { _id } = match.params
@@ -43,9 +43,9 @@ const Conversation = ({ match, chatData, setChatData, socket}) => {
 	const sendMessage = (conversationId, newMsgData) => {
 		const newData = chatData.filter(elm => elm._id === conversationId)
 		const receiver_uuid = newData[0].receiver_uuid
-		
+
 		newData[0].messages.push(newMsgData)
-		
+
 		var currentData = chatData.filter((elm) => elm._id !== conversationId)
 
 		var finalValue = newData.concat(currentData)
@@ -86,7 +86,7 @@ const Conversation = ({ match, chatData, setChatData, socket}) => {
 	}
 
 	const getConversation = (currentId) => {
-		
+
 		if (chatData.length != 0) {
 			const data = chatData.filter(elm => elm._id === currentId)
 			setInfo(data[0])
@@ -184,7 +184,7 @@ const Conversation = ({ match, chatData, setChatData, socket}) => {
 								className={`msg ${elm.msgType === 'date' ? 'datetime' : ''} ${elm.from === 'opposite' ? 'msg-recipient' : elm.from === 'me' ? 'msg-sent' : ''}`}
 							>
 								{
-									elm.avatar && elm.from === "opposite"?
+									elm.avatar && elm.from === "opposite" ?
 										<div className="mr-2">
 											<Avatar size={30}
 												className="font-size-sm" src={elm.avatar}></Avatar>

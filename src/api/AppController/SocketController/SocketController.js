@@ -4,7 +4,7 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const URL = IS_PROD
   ? "https://mitivelane.herokuapp.com"
   : "http://localhost:5000";
-  
+
 export const socket = io(URL);
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
@@ -21,6 +21,6 @@ socket.on("connect_error", (err) => {
 });
 
 socket.on("socket:new-user", authToken => {
-	console.log("New user connected with authToken ", authToken)
+  console.log("New user connected with authToken ", authToken)
 })
 
