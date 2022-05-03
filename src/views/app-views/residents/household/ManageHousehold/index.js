@@ -177,10 +177,11 @@ const ManageHousehold = (props) => {
   const [householdInitialVal, setHouseholdInitialVal] = useState(householdDefault)
   const [householdMemberInitialVal, setHouseholdMemberInitialVal] = useState(householdMemberDefault)
   const [deletedMembers, setDeletedMembers] = useState([])
+  const [residentList, setResidentList] = useState([])
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [isImportResidentModalVisible, setIsImportResidentModalVisible] = useState(false);
 
   //Ref
   const NewMemberFormRef = createRef()
@@ -246,11 +247,35 @@ const ManageHousehold = (props) => {
     }
   }
 
+  const getAllResident = async () => {
+    try {
+      await axios
+        .post("/api/resident/getAll", { barangay_id }, generateToken()[1], {
+          cancelToken,
+        })
+        .then((res) => {
+          const data = res.data
+          data.map((data) => {
+            data.birthday = moment(new Date(data.birthday))
+          })
+          setResidentList(data);
+        });
+
+      return () => {
+        source.cancel();
+      };
+    } catch (error) {
+      message.error("Could not fetch data from server!!");
+    }
+  };
+
   //UseEffect 
   useEffect(() => {
     if (mode == "EDIT") {
       getHousehold()
     }
+
+    getAllResident()
   }, [])
 
   useEffect(() => {
@@ -261,8 +286,14 @@ const ManageHousehold = (props) => {
     console.log("deletedMembers", deletedMembers)
   }, [deletedMembers])
 
+  useEffect(() => {
+    if (householdMemberInitialVal.importResident == true) {
+      NewMemberFormRef.current.resetFields()
+      message.success("Success, resident data has been imported")
+    }
+  }, [householdMemberInitialVal])
 
-  //Modal
+  //Household Member Modal
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -277,10 +308,27 @@ const ManageHousehold = (props) => {
     setHouseholdMemberInitialVal(householdMemberDefault)
   };
 
-  //Drawer
+  //Household Member Drawer
   const showDrawer = () => {
     setIsDrawerVisible(true);
   }
+
+  //Resident Import Modal
+  const showImportResidentModal = () => {
+    setIsImportResidentModalVisible(true);
+  };
+
+  const handleImportResidentModalOk = () => {
+    setHouseholdMemberInitialVal({ first_name: "test" })
+    NewMemberFormRef.current.resetFields()
+    setIsImportResidentModalVisible(false);
+
+  };
+
+  const handleImportResidentModalCancel = () => {
+    setIsImportResidentModalVisible(false);
+    // formInitialVal(defaultVar) Reset the form
+  };
 
   const onDrawerClose = () => {
     setIsDrawerVisible(false);
@@ -367,6 +415,7 @@ const ManageHousehold = (props) => {
       setHouseholdMemberList([...householdMemberList, value])
       message.success("Success, New Household Member added.")
     }
+
     // if member is edited
     if (value.action == "edited") {
       // console.log("Existing member", value._id)
@@ -402,7 +451,7 @@ const ManageHousehold = (props) => {
     createHousehold(value, householdMemberList)
 
     message.success("Success, new household has been added.")
-    // history.push(`/app/${barangay_id}/residents/household/list`)
+    history.push(`/app/${barangay_id}/residents/household/list`)
   }
 
   const onFinishUpdateHousehold = (value) => {
@@ -413,9 +462,22 @@ const ManageHousehold = (props) => {
     // history.push(`/app/${barangay_id}/residents/household/list`)
   }
 
-  const importResidentAsMember = (test) => {
-    message.success("TBA pa hahahhaha, nagiipon pa ng sipag ang gagawa.")
-    console.log(test)
+  const importResidentAsMember = (key) => {
+    const resident = residentList[key]
+    console.log("resident", resident)
+
+    setHouseholdMemberInitialVal({
+      ...householdMemberInitialVal,
+      first_name: resident.firstname,
+      last_name: resident.lastname,
+      birthday: resident.birthday,
+      age: resident.age,
+      occupation: resident.occupation,
+      blood_type: resident.blood_type,
+      civil_status: resident.civil_status,
+      blood_type: resident.blood_type,
+      importResident: true
+    })
   }
 
   const printTitle = () => {
@@ -506,7 +568,7 @@ const ManageHousehold = (props) => {
             ref={NewMemberFormRef}
             initialValues={householdMemberInitialVal}
           >
-            <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember} />
+            <NewHouseholdMemberForm residentList={residentList} importResidentAsMember={importResidentAsMember} NewMemberFormRef={NewMemberFormRef}/>
           </Form>
         }
 
@@ -520,12 +582,21 @@ const ManageHousehold = (props) => {
             ref={NewMemberFormRef}
             initialValues={householdMemberInitialVal}
           >
-            <NewHouseholdMemberForm importResidentAsMember={importResidentAsMember} />
+            <NewHouseholdMemberForm residentList={residentList} />
 
           </Form>
         }
       </Drawer>
-      
+
+      <Modal title='Choose Resident' visible={isImportResidentModalVisible} onOk={handleImportResidentModalOk}
+        onCancel={handleImportResidentModalCancel} okText={'Submit'} destroyOnClose={true}>
+
+        {isImportResidentModalVisible &&
+          "Import resident hell yeah"
+        }
+
+      </Modal>
+
     </div>
   )
 }
