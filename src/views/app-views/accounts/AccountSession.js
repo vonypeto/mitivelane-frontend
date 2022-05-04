@@ -38,6 +38,7 @@ const AccountSession = () => {
   const [nextPageLoad, setNextPageLoad] = useState(false);
   const [totalSession, setTotalSession] = useState(false);
   const [currentSession, setCurrentSession] = useState(false);
+  const [limit, setLimit] = useState(5);
 
   const [next, setNext] = useState(3);
   const [showMessage, setShowMessage] = useState({
@@ -62,6 +63,7 @@ const AccountSession = () => {
     }, 1000);
   };
   const handleShowMoreSession = (data) => {
+    setLimit(limit + 5);
     loopWithSlice(0, next + postsPerPage, data);
     setNext(next + postsPerPage);
     setNextPageLoad(true);
@@ -86,6 +88,7 @@ const AccountSession = () => {
   const getData = async () => {
     const data = {
       auth_id: localStorage.getItem(AUTH_TOKEN),
+      limit: limit,
     };
     await axios
       .post("/api/app/user/sessions", data, generateToken()[1])

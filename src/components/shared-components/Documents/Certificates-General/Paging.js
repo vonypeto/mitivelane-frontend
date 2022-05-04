@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
-import { Card, Col, Row, Menu, Button, Input } from "antd";
+import { Skeleton, Card, Col, Row, Menu, Button, Input } from "antd";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import {
@@ -17,6 +17,8 @@ const SinglePage = (props) => {
   const documentWrapperRef = useRef();
   const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
   const { pdf, type } = props;
+  const data = useMemo(() => ({ pdf }), [pdf]);
+
   console.log(props);
   const dropdownMenu = (row) => (
     <Menu>
@@ -54,9 +56,9 @@ const SinglePage = (props) => {
     </Menu>
   );
 
-  // function handleClick() {
-  //   props.counterClick();
-  // }
+  function handleClick(pdf) {
+    props.counterClick(pdf);
+  }
 
   useEffect(() => {
     return () => {
@@ -121,6 +123,10 @@ const SinglePage = (props) => {
               <p>Edited 1 seconds ago</p>
             </Col>
           </Row>
+        ) : type == "drawer" ? (
+          <></>
+        ) : type == "drawer" ? (
+          <></>
         ) : null}
       </>
     );
@@ -174,11 +180,21 @@ const SinglePage = (props) => {
   //   };
   // }, [pdf]);
   // console.log(getResolve);
-  const onHandle = () => {
-    props.onHandle("click");
+  const onHandle = (pdf, type) => {
+    switch (type) {
+      case "create":
+        break;
+      case "view":
+        props.onHandle(pdf);
+        break;
+      case "drawer":
+        break;
+      case "form":
+        break;
+    }
   };
+  ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
   const PdfRender = React.memo((data) => {
-    console.log(data.pdf);
     return (
       <>
         <>
@@ -188,16 +204,47 @@ const SinglePage = (props) => {
             ref={documentWrapperRef}
           >
             <div
-              onClick={() => onHandle(pdf)}
+              onClick={() => onHandle(data.pdf, data.type)}
               style={{
                 cursor: "pointer",
               }}
             >
               <Document
-                //   renderMode="svg"
                 className={"PDFDocument"}
                 file={{ url: data.pdf }}
                 onLoadSuccess={onDocumentLoadSuccess}
+                loading={
+                  <Card className="cert_loading">
+                    <Skeleton
+                      size={"small"}
+                      paragraph={{ rows: 9 }}
+                      className="position-absolute h-100 w-100 cert_loading"
+                    ></Skeleton>
+
+                    <div className="react-pdf__Document PDFDocument">
+                      <div
+                        className="react-pdf__Page PDFPageOne PDFPageTwo"
+                        data-page-number="1"
+                        style={{ position: "relative" }}
+                      >
+                        <canvas
+                          className="react-pdf__Page__canvas"
+                          dir="ltr"
+                          width="1192"
+                          height="1684"
+                          style={{
+                            display: "block",
+                            userSelect: "none",
+                            width: "596px",
+                            height: "842px",
+                          }}
+                        ></canvas>
+
+                        <div className="react-pdf__Page__annotations annotationLayer"></div>
+                      </div>
+                    </div>
+                  </Card>
+                }
               >
                 <Page
                   //   width={width || undefined}
@@ -219,11 +266,17 @@ const SinglePage = (props) => {
                           backgroundColor: "white",
                         }}
                       >
-                        {type == "form" ? (
-                          <EllipsisDropdown
-                            placement="topRight"
-                            menu={dropdownMenu()}
-                          />
+                        {type == "view" ? (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="children"
+                          >
+                            {" "}
+                            <EllipsisDropdown
+                              placement="topRight"
+                              menu={dropdownMenu()}
+                            />
+                          </div>
                         ) : null}
                       </div>
                     </div>
@@ -239,11 +292,11 @@ const SinglePage = (props) => {
   });
   return (
     <>
-      <PdfRender pdf={pdf} />
+      <PdfRender pdf={pdf} type={type} />
       {/* <Button
         type="button"
         onClick={() => {
-          handleClick();
+          handleClick(pdf);
         }}
       >
         sadas

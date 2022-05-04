@@ -7,7 +7,9 @@ import { Col, Row, Button, Input } from "antd";
 import { ArrowDownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import { AUTH_BARANGAY } from "redux/constants/Auth";
+import { useParams } from "react-router-dom";
 const Certificates = () => {
+  let { id } = useParams();
   const refs = useRef();
   const [parentData, setParentData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,7 @@ const Certificates = () => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const history = useHistory();
-
+  console.log(id);
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
@@ -101,7 +103,6 @@ const Certificates = () => {
               <InputCert
                 parentData={parentData}
                 setParentData={setData}
-                width={width}
                 switchCol={setSwitchCert}
               />
             </Col>
@@ -116,12 +117,7 @@ const Certificates = () => {
               xl={width >= 1399 ? 12 : 24}
               xxl={width >= 1399 ? 12 : 24}
             >
-              <CertDisplay
-                width={width}
-                height={height}
-                data={parentData}
-                loadingImage={loading}
-              />
+              <CertDisplay data={parentData} loadingImage={loading} />
             </Col>
           </Row>
         </div>

@@ -14,18 +14,16 @@ const index = (props) => {
   useEffect(() => {
     let cancel = true;
 
-    console.log(pdf);
     if (cancel)
       if (getResolve != pdf)
         setTimeout(() => {
           if (type == "form") {
             pdf.then(function (result) {
-              console.log(result);
               setGetResolve(result);
               return result;
             });
           }
-          if (type == "view" || type == "create") {
+          if (type == "view" || type == "create" || type == "drawer") {
             setGetResolve(pdf);
           }
         }, 1100);
@@ -34,7 +32,7 @@ const index = (props) => {
       setGetResolve();
     };
   }, []);
-
+  const SelectedForm = (props) => {};
   return (
     <>
       {type == "form" ||
@@ -43,7 +41,10 @@ const index = (props) => {
       type == "create" ? (
         <>
           {/* React View Pdf */}
-          <Paging {...props} size={size} type={type} pdf={getResolve} />
+
+          {selectedForm == 1 ? (
+            <Paging {...props} size={size} type={type} pdf={getResolve} />
+          ) : null}
         </>
       ) : (
         <>

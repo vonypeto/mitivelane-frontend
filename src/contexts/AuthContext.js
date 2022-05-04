@@ -52,13 +52,16 @@ export function AuthProvider({ children }) {
     });
   }
   function generateToken() {
-    let response = jwt_decode(localStorage.getItem("access_token"));
+    let response = jwt_decode(localStorage.getItem(ACCESS_TOKEN));
+    let auth_barangay = localStorage.getItem(AUTH_BARANGAY);
+
     const date = new Date().getTime() / 1000;
     const unix = Math.round(date);
     const data = {
       auth_id: response.auth_id,
+      auth_barangay: auth_barangay,
       iat: unix,
-      exp: unix + 60,
+      exp: unix + 100000,
     };
     const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
     const header = {
