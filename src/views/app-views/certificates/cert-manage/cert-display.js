@@ -21,10 +21,9 @@ const CertDisplay = (props) => {
   //   { id: 2, test: 24 },
   // ];
   // testts = testts.map((data) => data.test + 1);
-
+  console.log(data);
   useEffect(() => {
     setChildData(data);
-    console.log(data);
   }, [data]);
 
   useEffect(() => {
@@ -73,7 +72,7 @@ const CertDisplay = (props) => {
         type="pdf"
       />
     ).toBlob();
-    console.log(URL.createObjectURL(blob));
+    // console.log(URL.createObjectURL(blob));
     return URL.createObjectURL(blob);
     // var reader = new FileReader();
     // reader.readAsDataURL(blob);

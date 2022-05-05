@@ -40,31 +40,27 @@ function beforeUpload(file) {
 const CertDisplay = (props) => {
   const MAX_LENGTH = 2000;
   const { setParentData, parentData, width } = props;
-  // const [countOpenForm, setCountOpenForm] = useState([]);
   const content = {
     entityMap: {},
     blocks: parentData?.content != null ? parentData?.content.blocks : [],
   };
   const contentState = convertFromRaw(content);
-
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [editorState, setEditorStateChange] = useState(
     EditorState.createWithContent(contentState)
   );
-
-  // useEffect(() => {
-  //   let contentState = convertFromRaw(parentData?.content);
-  //   setEditorStateChange(EditorState.createWithContent(contentState));
-  // }, [parentData]);
   const [logoList, setLogoList] = useState([
     { id: 1, image: "" },
     { id: 2, image: "" },
   ]);
-  const [signatureImage, setSignatureImage] = useState([
-    { id: 1, image: "", formName: "signature1" },
-  ]);
+  const [signatureImage, setSignatureImage] = useState([]);
+
+  useEffect(() => {
+    onImageSignature();
+  }, [signatureImage, loading]);
+
   const handleAddSignature = () => {
     let logoID = signatureImage.length;
     let logoEnd;
@@ -79,9 +75,11 @@ const CertDisplay = (props) => {
     ]);
   };
   const handleRemoveSignature = (index) => {
+    setLoading(true);
     const values = [...signatureImage];
     values.splice(index, 1);
     setSignatureImage(values);
+    setLoading(false);
   };
 
   const handlerLogo = (info, index, name) => {
@@ -110,7 +108,7 @@ const CertDisplay = (props) => {
         AddImageSignature(index, imageUrl);
         setLoading(false);
 
-        return onImage(imageUrl, name);
+        return onImageSignature();
       });
     }
   };
@@ -307,6 +305,7 @@ const CertDisplay = (props) => {
             `Sorry, you've exceeded your limit of ${MAX_LENGTH}`
           );
         }
+      } else if (type == "multiform") {
       } else {
         form.setFieldsValue({
           [title]: e.target.value,
@@ -327,6 +326,15 @@ const CertDisplay = (props) => {
     let data = parentData;
 
     data[`${title}`] = image;
+    return setParentData(data);
+  }, 100);
+  const onImageSignature = debounce(() => {
+    form.setFieldsValue({
+      signatures: signatureImage,
+    });
+    let data = parentData;
+
+    data[`signatures`] = signatureImage;
     return setParentData(data);
   }, 100);
   // const items = [
@@ -542,6 +550,12 @@ const CertDisplay = (props) => {
                                                   lg={14}
                                                 >
                                                   <Input
+                                                    // onChange={(e) => {
+                                                    //   onFill(
+                                                    //     e,
+                                                    //     formItems.formName
+                                                    //   );
+                                                    // }}
                                                     style={{
                                                       border: "none",
                                                       fontWeight: 900,
@@ -571,7 +585,6 @@ const CertDisplay = (props) => {
                                               </Row>
                                             </div>
 
-                                            {console.log(signatureImage)}
                                             <Upload
                                               name="avatar"
                                               listType="picture-card"

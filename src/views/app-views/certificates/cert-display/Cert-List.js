@@ -18,6 +18,7 @@ import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { getCertificateAll } from "api/AppController/CertificatesController/CertificatesController";
 import InfinitScroll from "react-infinite-scroll-component";
+import Spin from "components/shared-components/Loading";
 
 const CertList = () => {
   const history = useHistory();
@@ -33,10 +34,10 @@ const CertList = () => {
   const [pdfFile, setPdfFile] = useState([]);
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
-  const [count, setCount] = useState(10);
-  const [start, setStart] = useState(10);
+  const [count, setCount] = useState(6);
+  const [start, setStart] = useState(7);
   const [hasMore, setHasMore] = useState(true);
-
+  const [counter, setCounter] = useState(true);
   //const [loading, setIsLoading] = useState(false);
 
   //let ratio = 1.41451612903;
@@ -48,12 +49,10 @@ const CertList = () => {
     }, 1000);
   }, []);
   //Handle Drawer
-  // const counterClick = (elm) => {
-  //   setCounter("click");
-  //   console.log("click");
-  //   SetSelectedUser(elm);
-  //   console.log(selectedUser);
-  // };
+  const counterClick = (elm) => {
+    setCounter(counter + 1);
+    console.log(counter);
+  };
   const onHandle = (elm) => {
     // setDrawer(true);
     SetSelectedUser(elm);
@@ -98,6 +97,7 @@ const CertList = () => {
         if (data.length === 0) setHasMore(false);
       });
   };
+
   const dropdownMenu = (row) => (
     <Menu>
       <Menu.Item key={1}>
@@ -135,17 +135,18 @@ const CertList = () => {
   );
   return (
     <div className="container">
-      {/* <CertDrawer
+      <CertDrawer
         data={selectedUser}
         visible={drawer}
         close={() => {
           closeDrawer();
         }}
-      /> */}
+      />
+
       <InfinitScroll
         dataLength={pdfFile.length}
         hasMore={hasMore}
-        loader={<h4>LOADING YOUR ASS</h4>}
+        loader={<Spin />}
         next={getCertificateNext}
       >
         <Row gutter={[0, 40]}>
@@ -201,7 +202,7 @@ const CertList = () => {
                           max={9}
                           pdf={FileTest}
                           type={"view"}
-                          // counterClick={counterClick}
+                          counterClick={counterClick}
                           onHandle={onHandle}
                         />
                       </div>

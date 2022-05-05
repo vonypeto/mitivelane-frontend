@@ -17,9 +17,10 @@ const SinglePage = (props) => {
   const documentWrapperRef = useRef();
   const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
   const { pdf, type } = props;
-  const data = useMemo(() => ({ pdf }), [pdf]);
+  const [renderedPageNumber, setRenderedPageNumber] = useState(null);
 
-  console.log(props);
+  // const data = useMemo(() => ({ pdf }), [pdf]);
+
   const dropdownMenu = (row) => (
     <Menu>
       <Menu.Item key={1}>
@@ -148,7 +149,7 @@ const SinglePage = (props) => {
   function nextPage() {
     changePage(1);
   }
-
+  //  const isLoading = renderedPageNumber !== pageNumber;
   // const [width, setWidth] = React.useState(0);
 
   // React.useLayoutEffect(() => {
@@ -194,7 +195,8 @@ const SinglePage = (props) => {
     }
   };
   ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
-  const PdfRender = React.memo((data) => {
+
+  const PdfRender = (data) => {
     return (
       <>
         <>
@@ -213,6 +215,7 @@ const SinglePage = (props) => {
                 className={"PDFDocument"}
                 file={{ url: data.pdf }}
                 onLoadSuccess={onDocumentLoadSuccess}
+                key={renderedPageNumber}
                 loading={
                   <Card className="cert_loading">
                     <Skeleton
@@ -246,6 +249,78 @@ const SinglePage = (props) => {
                   </Card>
                 }
               >
+                {/* {isLoading && renderedPageNumber ? (
+                  <Page
+                    //   width={width || undefined}
+                    key={renderedPageNumber}
+                    className={
+                      "PDFPageOne prevPage " +
+                      (type == "create" ? "PDFPageTwo" : " PDFPage") +
+                      ""
+                    }
+                    renderTextLayer={false}
+                    renderInteractiveForms={false}
+                    pageNumber={pageNumber}
+                    loading={
+                      <Card className="cert_loading">
+                        <Skeleton
+                          size={"small"}
+                          paragraph={{ rows: 9 }}
+                          className="position-absolute h-100 w-100 cert_loading"
+                        ></Skeleton>
+
+                        <div className="react-pdf__Document PDFDocument">
+                          <div
+                            className="react-pdf__Page PDFPageOne PDFPageTwo"
+                            data-page-number="1"
+                            style={{ position: "relative" }}
+                          >
+                            <canvas
+                              className="react-pdf__Page__canvas"
+                              dir="ltr"
+                              width="1192"
+                              height="1684"
+                              style={{
+                                display: "block",
+                                userSelect: "none",
+                                width: "596px",
+                                height: "842px",
+                              }}
+                            ></canvas>
+
+                            <div className="react-pdf__Page__annotations annotationLayer"></div>
+                          </div>
+                        </div>
+                      </Card>
+                    }
+                  >
+                    <div>
+                      <div className="text-right">
+                        <div
+                          className="border bottomright "
+                          style={{
+                            borderRadius: "50%",
+                            backgroundColor: "white",
+                          }}
+                        >
+                          {type == "view" ? (
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              className="children"
+                            >
+                              {" "}
+                              <EllipsisDropdown
+                                placement="topRight"
+                                menu={dropdownMenu()}
+                              />
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  </Page>
+                ) : null} */}
+
                 <Page
                   //   width={width || undefined}
                   className={
@@ -254,8 +329,12 @@ const SinglePage = (props) => {
                     ""
                   }
                   renderTextLayer={false}
+                  key={renderedPageNumber}
                   renderInteractiveForms={false}
                   pageNumber={pageNumber}
+                  onRenderSuccess={() => {
+                    setRenderedPageNumber(pageNumber);
+                  }}
                 >
                   <div>
                     <div className="text-right">
@@ -289,18 +368,10 @@ const SinglePage = (props) => {
         </>
       </>
     );
-  });
+  };
   return (
     <>
       <PdfRender pdf={pdf} type={type} />
-      {/* <Button
-        type="button"
-        onClick={() => {
-          handleClick(pdf);
-        }}
-      >
-        sadas
-      </Button> */}
     </>
   );
 };

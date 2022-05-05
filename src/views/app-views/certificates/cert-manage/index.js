@@ -8,7 +8,12 @@ import { ArrowDownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import { AUTH_BARANGAY } from "redux/constants/Auth";
 import { useParams } from "react-router-dom";
+import { getCertificateData } from "api/AppController/CertificatesController/CertificatesController";
+import { useAuth } from "contexts/AuthContext";
+
 const Certificates = () => {
+  const { generateToken } = useAuth();
+
   let { id } = useParams();
   const refs = useRef();
   const [parentData, setParentData] = useState({});
@@ -17,12 +22,15 @@ const Certificates = () => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const history = useHistory();
-  console.log(id);
+
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
   };
-
+  useEffect(() => {
+    getCertificateData(setParentData, generateToken()[1], id, history);
+    return () => {};
+  }, []);
   useEffect(
     () => {
       const listener = window.addEventListener(
