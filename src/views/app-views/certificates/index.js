@@ -11,7 +11,7 @@ const Components = ({ match }) => (
         component={lazy(() => import(`./cert-display`))}
       />{" "}
       <Route
-        path={`${match.url}/create`}
+        path={`${match.url}/:id`}
         component={lazy(() => import(`./cert-manage`))}
       />
     </Switch>

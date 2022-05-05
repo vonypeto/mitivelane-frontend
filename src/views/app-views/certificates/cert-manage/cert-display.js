@@ -10,7 +10,7 @@ import { BsCpu } from "react-icons/bs";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import SinglePagePDFViewer from "components/shared-components/Documents/Certificates-General/";
 const CertDisplay = (props) => {
-  const { data, loadingImage, width } = props;
+  const { data, loadingImage } = props;
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");
   const [childData, setChildData] = useState(data);
   const [switchData, setSwitchData] = useState(false);

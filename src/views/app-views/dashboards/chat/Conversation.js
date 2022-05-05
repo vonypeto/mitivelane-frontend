@@ -17,9 +17,7 @@ import { AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
-import { socket } from "api/AppController/SocketController/SocketController"
-
-const Conversation = ({ match, chatData, setChatData }) => {
+const Conversation = ({ match, chatData, setChatData, socket }) => {
 	const { currentBarangay, generateToken } = useAuth();
 	const authToken = localStorage.getItem(AUTH_TOKEN);
 	const formRef = useRef(null)
@@ -27,7 +25,7 @@ const Conversation = ({ match, chatData, setChatData }) => {
 
 	const [info, setInfo] = useState({})
 	const [msgList, setMsgList] = useState([])
-	
+
 	const [avatar, setAvatar] = useState(null)
 
 	const { _id } = match.params
@@ -45,9 +43,9 @@ const Conversation = ({ match, chatData, setChatData }) => {
 	const sendMessage = (conversationId, newMsgData) => {
 		const newData = chatData.filter(elm => elm._id === conversationId)
 		const receiver_uuid = newData[0].receiver_uuid
-		
+
 		newData[0].messages.push(newMsgData)
-		
+
 		var currentData = chatData.filter((elm) => elm._id !== conversationId)
 
 		var finalValue = newData.concat(currentData)
@@ -62,20 +60,20 @@ const Conversation = ({ match, chatData, setChatData }) => {
 
 		socket.emit("chat:send-message", conversationId, receiver_uuid, newMsgData)
 
-		axios
-		.post("/api/chat/send-message", values, generateToken()[1])
-		.then((response) => {
-		if (response.data == "Success") {
-		// Do nothing for now
-		} else {
-		return message.error("Error, please try again.");
-		}
-		})
-		.catch((error) => {
-		console.log(error);
-		message.destroy();
-		message.error("The action can't be completed, please try again.");
-		});
+		// axios
+		// .post("/api/chat/send-message", values, generateToken()[1])
+		// .then((response) => {
+		// if (response.data == "Success") {
+		// // Do nothing for now
+		// } else {
+		// return message.error("Error, please try again.");
+		// }
+		// })
+		// .catch((error) => {
+		// console.log(error);
+		// message.destroy();
+		// message.error("The action can't be completed, please try again.");
+		// });
 	}
 
 	const deleteChat = (currentId) => {
@@ -88,7 +86,7 @@ const Conversation = ({ match, chatData, setChatData }) => {
 	}
 
 	const getConversation = (currentId) => {
-		
+
 		if (chatData.length != 0) {
 			const data = chatData.filter(elm => elm._id === currentId)
 			setInfo(data[0])
@@ -186,7 +184,7 @@ const Conversation = ({ match, chatData, setChatData }) => {
 								className={`msg ${elm.msgType === 'date' ? 'datetime' : ''} ${elm.from === 'opposite' ? 'msg-recipient' : elm.from === 'me' ? 'msg-sent' : ''}`}
 							>
 								{
-									elm.avatar && elm.from === "opposite"?
+									elm.avatar && elm.from === "opposite" ?
 										<div className="mr-2">
 											<Avatar size={30}
 												className="font-size-sm" src={elm.avatar}></Avatar>

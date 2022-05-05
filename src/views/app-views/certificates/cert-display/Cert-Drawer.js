@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Tag, Row, Col, Drawer, Card, Divider, Button } from "antd";
 import { EditOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General/indexView";
+import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 
 const UserView = (props) => {
   const { data, visible, close } = props;
@@ -73,14 +73,16 @@ const UserView = (props) => {
           }}
         >
           {" "}
-          <PDFTemplate
-            data={data}
-            selectedForm={1}
-            min={4}
-            max={9}
-            pdf={data}
-            type={"view"}
-          />
+          {data ? (
+            <PDFTemplate
+              data={{ name: "text" }}
+              selectedForm={1}
+              min={4}
+              max={9}
+              pdf={data}
+              type={"drawer"}
+            />
+          ) : null}
         </Col>
         <Divider style={{ margin: "0px !important" }} />
         <Col xs={12} sm={12} md={12} lg={12} xl={12}>

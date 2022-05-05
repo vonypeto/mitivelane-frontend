@@ -20,13 +20,19 @@ import {
   AUTH_BARANGAY_LIST,
   ACCESS_TOKEN,
   PROFILE_URL,
+  SESSION_TOKEN,
 } from "../redux/constants/Auth";
-function RouteInterceptor({ children, isAuthenticated, ...rest }) {
+function RouteInterceptor({
+  children,
+  isAuthenticated,
+  sessionToken,
+  ...rest
+}) {
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        isAuthenticated ? (
+        isAuthenticated && sessionToken ? (
           children
         ) : (
           <Redirect
@@ -40,12 +46,17 @@ function RouteInterceptor({ children, isAuthenticated, ...rest }) {
     />
   );
 }
-function RoutePreInterceptor({ children, isAuthenticated, ...rest }) {
+function RoutePreInterceptor({
+  children,
+  isAuthenticated,
+  sessionToken,
+  ...rest
+}) {
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        isAuthenticated ? (
+        isAuthenticated && sessionToken ? (
           children
         ) : (
           <Redirect
@@ -108,10 +119,18 @@ export const Views = (props) => {
             <AuthLayout direction={direction} />
           </Route>
 
-          <RouteInterceptor path={APP_PREFIX_PATH} isAuthenticated={token}>
+          <RouteInterceptor
+            path={APP_PREFIX_PATH}
+            isAuthenticated={token}
+            sessionToken={localStorage.getItem(SESSION_TOKEN)}
+          >
             <AppLayout direction={direction} location={location} />
           </RouteInterceptor>
-          <RoutePreInterceptor path={PRE_PREFIX_PATH} isAuthenticated={token}>
+          <RoutePreInterceptor
+            path={PRE_PREFIX_PATH}
+            isAuthenticated={token}
+            sessionToken={localStorage.getItem(SESSION_TOKEN)}
+          >
             <Route path={PRE_PREFIX_PATH}>
               <PreLayout />
             </Route>{" "}
