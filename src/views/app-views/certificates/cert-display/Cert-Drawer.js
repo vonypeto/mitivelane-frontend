@@ -42,7 +42,7 @@ const UserView = (props) => {
   } else {
     size = width;
   }
-  console.log(data);
+  //  console.log(data);
   return (
     <Drawer
       width={size}

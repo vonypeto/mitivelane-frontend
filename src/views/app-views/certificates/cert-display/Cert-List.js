@@ -77,6 +77,7 @@ const CertList = () => {
         });
     }
   };
+
   function isEmpty(obj) {
     return Object.keys(obj).length === 0;
   }
@@ -166,7 +167,8 @@ const CertList = () => {
               >
                 <PDFTemplate
                   data={{ name: "text" }}
-                  selectedForm={1}
+                  certType="cert"
+                  templateType="simple"
                   min={4}
                   max={9}
                   pdf={CreateLayout}
@@ -179,7 +181,6 @@ const CertList = () => {
           </Col>
           {pdfFile ? (
             <>
-              {console.log(pdfFile)}
               {pdfFile.map((item, i) => {
                 return (
                   <Col
@@ -196,8 +197,9 @@ const CertList = () => {
                     <div>
                       <div>
                         <PDFTemplate
-                          data={item.id}
-                          selectedForm={1}
+                          data={item.certificate_id}
+                          certType="cert"
+                          templateType="simple"
                           min={4}
                           max={9}
                           pdf={FileTest}

@@ -10,7 +10,7 @@ import { BsCpu } from "react-icons/bs";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import SinglePagePDFViewer from "components/shared-components/Documents/Certificates-General/";
 const CertDisplay = (props) => {
-  const { data, loadingImage } = props;
+  const { data, loadingImage, templateType, certType } = props;
   const [activeFontFamily, setActiveFontFamily] = useState("Tinos");
   const [childData, setChildData] = useState(data);
   const [switchData, setSwitchData] = useState(false);
@@ -21,7 +21,6 @@ const CertDisplay = (props) => {
   //   { id: 2, test: 24 },
   // ];
   // testts = testts.map((data) => data.test + 1);
-  console.log(data);
   useEffect(() => {
     setChildData(data);
   }, [data]);
@@ -56,24 +55,38 @@ const CertDisplay = (props) => {
     });
   }
   const generatePdfDocument = async (data, fileName) => {
-    const blob = await pdf(
-      <BasicDocument data={data} fontType={activeFontFamily} selectedForm={1} />
-    ).toBlob();
-    console.log(blob);
-    saveAs(blob, fileName);
+    try {
+      const blob = await pdf(
+        <BasicDocument
+          data={data}
+          fontType={activeFontFamily}
+          templateType={templateType}
+          certType={certType}
+        />
+      ).toBlob();
+      console.log(blob);
+      saveAs(blob, fileName);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const generatePdfDocumentShow = async (data) => {
-    const blob = await pdf(
-      <BasicDocument
-        data={data}
-        fontType={activeFontFamily}
-        selectedForm={1}
-        type="pdf"
-      />
-    ).toBlob();
-    // console.log(URL.createObjectURL(blob));
-    return URL.createObjectURL(blob);
+    try {
+      const blob = await pdf(
+        <BasicDocument
+          data={data}
+          fontType={activeFontFamily}
+          certType={certType}
+          templateType={templateType}
+          type="pdf"
+        />
+      ).toBlob();
+      // console.log(URL.createObjectURL(blob));
+      return URL.createObjectURL(blob);
+    } catch (e) {
+      console.log(e);
+    }
     // var reader = new FileReader();
     // reader.readAsDataURL(blob);
     // return new Promise((resolve) => {
@@ -91,11 +104,16 @@ const CertDisplay = (props) => {
 
   const GetCertificate = () => {
     return (
-      <SinglePagePDFViewer
-        selectedForm={1}
-        pdf={generatePdfDocumentShow(data)}
-        type={"form"}
-      />
+      <>
+        {certType && templateType ? (
+          <SinglePagePDFViewer
+            certType="cert"
+            templateType="simple"
+            pdf={generatePdfDocumentShow(data)}
+            type={"form"}
+          />
+        ) : null}
+      </>
     );
   };
   return (
@@ -126,23 +144,7 @@ const CertDisplay = (props) => {
         lg={18}
         xl={18}
       >
-        {<GetCertificate />}
-        {/* <Card
-          className="pdf-template-border apply-font"
-          style={{
-            backgroundColor: "#FFFFFF",
-            height: Math.floor((width / 3.5) * ratio),
-          }}
-        >
-          <PDFTemplate
-            data={data}
-            selectedForm={1}
-            min={4}
-            max={9}
-            width={width}
-            type="view"
-          />{" "}
-        </Card> */}
+        <GetCertificate />
       </Col>
     </Row>
   );

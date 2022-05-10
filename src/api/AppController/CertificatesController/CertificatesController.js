@@ -13,11 +13,21 @@ export const getCertificateData = async (
   setParentData,
   generateToken,
   id,
-  history
+  history,
+  setCertType,
+  setTemplateType
 ) => {
   try {
     await axios.get(`/api/cert-display/${id}`, generateToken).then((res) => {
-      console.log(res.data[0]);
+      let data = res.data[0];
+      setCertType(res.data[0]?.cert_type);
+      setTemplateType(res.data[0]?.template_type);
+      delete data["createdAt"];
+      delete data["updatedAt"];
+      delete data["cert_type"];
+      delete data["template_type"];
+
+      console.log(data);
       setParentData(res.data[0]);
     });
   } catch (e) {
@@ -27,21 +37,14 @@ export const getCertificateData = async (
     );
   }
 };
-export const updateCertificateData = async (
-  setParentData,
-  generateToken,
-  id,
-  history
-) => {
+export const updateCertificateData = async (data, generateToken) => {
   try {
-    await axios.get(`/api/cert-display/${id}`, generateToken).then((res) => {
-      console.log(res.data[0]);
-      setParentData(res.data[0]);
-    });
+    await axios
+      .post(`/api/cert-display/${data.certificate_id}`, data, generateToken)
+      .then((_) => {
+        console.log("updated");
+      });
   } catch (e) {
     console.log(e);
-    history.push(
-      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/list`
-    );
   }
 };

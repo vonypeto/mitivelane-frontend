@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useMemo } from "react";
 import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
 import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
+import Clearances from "./ClearanceList";
 import Paging from "./Paging";
 import { Textfit } from "react-textfit";
 
 const index = React.memo(
   (props) => {
-    const { selectedForm, type, pdf } = props;
+    const { selectedForm, type, pdf, certType } = props;
     //    console.log("Rendering", props);
     const [getResolve, setGetResolve] = useState(null);
     let size = 9;
     let lineHeight = "16px";
     const ratio = 1.41451612903;
-
     useEffect(() => {
       let cancel = true;
 
@@ -42,18 +42,18 @@ const index = React.memo(
           type == "drawer" ||
           type == "create" ? (
             <>
-              {selectedForm == 1 ? (
-                <Paging {...props} size={size} type={type} pdf={getResolve} />
-              ) : null}
+              <Paging {...props} size={size} type={type} pdf={getResolve} />
             </>
           ) : (
             <>
-              {selectedForm == 1 ? (
-                <ClassicTemplatePDF
-                  type={type}
-                  {...props}
-                  lineHeight={lineHeight}
-                />
+              {certType == "cert" ? (
+                <>
+                  <Clearances type={type} {...props} lineHeight={lineHeight} />
+                </>
+              ) : certType == "blotter" ? (
+                <></>
+              ) : certType == "business" ? (
+                <></>
               ) : null}
             </>
           )}

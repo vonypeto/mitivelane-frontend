@@ -8,12 +8,14 @@ import { ArrowDownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
 import { AUTH_BARANGAY } from "redux/constants/Auth";
 import { useParams } from "react-router-dom";
-import { getCertificateData } from "api/AppController/CertificatesController/CertificatesController";
+import {
+  getCertificateData,
+  updateCertificateData,
+} from "api/AppController/CertificatesController/CertificatesController";
 import { useAuth } from "contexts/AuthContext";
 
 const Certificates = () => {
   const { generateToken } = useAuth();
-
   let { id } = useParams();
   const refs = useRef();
   const [parentData, setParentData] = useState({});
@@ -22,13 +24,43 @@ const Certificates = () => {
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const history = useHistory();
-
+  const [certType, setCertType] = useState();
+  const [templateType, setTemplateType] = useState();
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
   };
+  //Functions
+  const setData = (data) => {
+    setLoading(!loading);
+    let x = data;
+    return setParentData(x);
+  };
+  const navigate = () => {
+    history.push(
+      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/list`
+    );
+  };
+  //useEffects
   useEffect(() => {
-    getCertificateData(setParentData, generateToken()[1], id, history);
+    setParentData(parentData);
+    updateCertificateData(parentData, generateToken()[1]);
+    if (loading) {
+      setTimeout(() => {
+        setLoading(!loading);
+      }, 1000);
+    }
+  }, [parentData, loading]);
+
+  useEffect(() => {
+    getCertificateData(
+      setParentData,
+      generateToken()[1],
+      id,
+      history,
+      setCertType,
+      setTemplateType
+    );
     return () => {};
   }, []);
   useEffect(
@@ -38,33 +70,12 @@ const Certificates = () => {
         updateWindowDimensions
       );
       updateWindowDimensions();
-
       return listener;
     },
     [height],
     [width]
   );
-  const setData = (data) => {
-    setLoading(!loading);
 
-    let x = data;
-
-    return setParentData(x);
-  };
-
-  useEffect(() => {
-    setParentData(parentData);
-    if (loading) {
-      setTimeout(() => {
-        setLoading(!loading);
-      }, 1000);
-    }
-  }, [parentData, loading]);
-  const navigate = () => {
-    history.push(
-      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/list`
-    );
-  };
   return (
     <div>
       <PageHeaderAlt className="padding-none border-bottom" overlap>
@@ -112,6 +123,10 @@ const Certificates = () => {
                 parentData={parentData}
                 setParentData={setData}
                 switchCol={setSwitchCert}
+                certType={certType}
+                setCertType={setCertType}
+                templateType={templateType}
+                setTemplateType={setTemplateType}
               />
             </Col>
             <Col
@@ -125,7 +140,14 @@ const Certificates = () => {
               xl={width >= 1399 ? 12 : 24}
               xxl={width >= 1399 ? 12 : 24}
             >
-              <CertDisplay data={parentData} loadingImage={loading} />
+              <CertDisplay
+                data={parentData}
+                loadingImage={loading}
+                certType={certType}
+                setCertType={setCertType}
+                templateType={templateType}
+                setTemplateType={setTemplateType}
+              />
             </Col>
           </Row>
         </div>

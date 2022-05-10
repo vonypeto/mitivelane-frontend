@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
 import { Skeleton, Card, Col, Row, Menu, Button, Input } from "antd";
@@ -12,18 +12,101 @@ import {
   ArrowDownOutlined,
   HighlightOutlined,
 } from "@ant-design/icons";
+import { useHistory } from "react-router-dom";
+import { AUTH_BARANGAY } from "redux/constants/Auth";
+
 const SinglePage = (props) => {
   const [numPages, setNumPages] = useState(null);
   const documentWrapperRef = useRef();
   const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
   const { pdf, type } = props;
   const [renderedPageNumber, setRenderedPageNumber] = useState(null);
-
+  let history = useHistory();
   // const data = useMemo(() => ({ pdf }), [pdf]);
 
+  function handleClick(pdf) {
+    props.counterClick(pdf);
+  }
+
+  useEffect(() => {
+    return () => {
+      setPageNumber();
+    };
+  }, []);
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
+    setPageNumber(1);
+  }
+
+  function changePage(offset) {
+    setPageNumber((prevPageNumber) => prevPageNumber + offset);
+  }
+
+  function previousPage() {
+    changePage(-1);
+  }
+
+  function nextPage() {
+    changePage(1);
+  }
+  const onHandle = (pdf, type) => {
+    switch (type) {
+      case "create":
+        break;
+      case "view":
+        props.onHandle(pdf);
+        break;
+      case "drawer":
+        break;
+      case "form":
+        break;
+    }
+  };
+  //  const isLoading = renderedPageNumber !== pageNumber;
+  // const [width, setWidth] = React.useState(0);
+
+  // React.useLayoutEffect(() => {
+  //   setTimeout(
+  //     () => setWidth(documentWrapperRef.current?.getBoundingClientRect().width),
+  //     200
+  //   );
+  // });
+  // useEffect(() => {
+  //   let cancel = true;
+
+  //   console.log(getResolve);
+  //   if (cancel)
+  //     if (getResolve != pdf)
+  //       setTimeout(() => {
+  //         if (type == "form") {
+  //           pdf.then(function (result) {
+  //             setGetResolve(result);
+  //             return result;
+  //           });
+  //         }
+  //         if (type == "view") {
+  //           setGetResolve(pdf);
+  //         }
+  //       }, 1100);
+  //   return () => {
+  //     cancel = false;
+  //     setGetResolve();
+  //   };
+  // }, [pdf]);
+  // console.log(getResolve);
+
+  ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
+
+  const navigateData = (data) => {
+    console.log(data);
+    return history.push(
+      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/${data}`
+    );
+  };
   const dropdownMenu = (row) => (
     <Menu>
-      <Menu.Item key={1}>
+      <Menu.Item onClick={() => navigateData(row.data)} key={1}>
         <Flex alignItems="center">
           <EditOutlined />
           <span className="ml-2"> Edit</span>
@@ -56,16 +139,6 @@ const SinglePage = (props) => {
       </Menu.Item>
     </Menu>
   );
-
-  function handleClick(pdf) {
-    props.counterClick(pdf);
-  }
-
-  useEffect(() => {
-    return () => {
-      setPageNumber();
-    };
-  }, []);
   const TypeView = (props) => {
     const { type } = props;
     return (
@@ -132,70 +205,6 @@ const SinglePage = (props) => {
       </>
     );
   };
-
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-    setPageNumber(1);
-  }
-
-  function changePage(offset) {
-    setPageNumber((prevPageNumber) => prevPageNumber + offset);
-  }
-
-  function previousPage() {
-    changePage(-1);
-  }
-
-  function nextPage() {
-    changePage(1);
-  }
-  //  const isLoading = renderedPageNumber !== pageNumber;
-  // const [width, setWidth] = React.useState(0);
-
-  // React.useLayoutEffect(() => {
-  //   setTimeout(
-  //     () => setWidth(documentWrapperRef.current?.getBoundingClientRect().width),
-  //     200
-  //   );
-  // });
-  // useEffect(() => {
-  //   let cancel = true;
-
-  //   console.log(getResolve);
-  //   if (cancel)
-  //     if (getResolve != pdf)
-  //       setTimeout(() => {
-  //         if (type == "form") {
-  //           pdf.then(function (result) {
-  //             setGetResolve(result);
-  //             return result;
-  //           });
-  //         }
-  //         if (type == "view") {
-  //           setGetResolve(pdf);
-  //         }
-  //       }, 1100);
-  //   return () => {
-  //     cancel = false;
-  //     setGetResolve();
-  //   };
-  // }, [pdf]);
-  // console.log(getResolve);
-  const onHandle = (pdf, type) => {
-    switch (type) {
-      case "create":
-        break;
-      case "view":
-        props.onHandle(pdf);
-        break;
-      case "drawer":
-        break;
-      case "form":
-        break;
-    }
-  };
-  ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
-
   const PdfRender = (data) => {
     return (
       <>
@@ -353,7 +362,7 @@ const SinglePage = (props) => {
                             {" "}
                             <EllipsisDropdown
                               placement="topRight"
-                              menu={dropdownMenu()}
+                              menu={dropdownMenu(data)}
                             />
                           </div>
                         ) : null}
@@ -371,7 +380,7 @@ const SinglePage = (props) => {
   };
   return (
     <>
-      <PdfRender pdf={pdf} type={type} />
+      <PdfRender pdf={pdf} type={type} {...props} />
     </>
   );
 };
