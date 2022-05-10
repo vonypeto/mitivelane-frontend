@@ -38,7 +38,7 @@ const Conversation = ({ match, chatData, setChatData, socket }) => {
 	useEffect(() => {
 		// console.log("Scroll")
 		scrollToBottom()
-	}, [msgList])
+	}, [msgList, chatData])
 
 	const sendMessage = (conversationId, newMsgData) => {
 		const newData = chatData.filter(elm => elm._id === conversationId)
