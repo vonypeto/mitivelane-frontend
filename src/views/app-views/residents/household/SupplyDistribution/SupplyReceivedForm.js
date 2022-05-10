@@ -30,7 +30,7 @@ const SupplyReceiveForm = () => {
                     label="Amount"
                     rules={[{ required: true, message: "Insert supply amount to be received!" }]}
                 >
-                    <InputNumber className="w-100" placeholder="Enter supply amount to be received" />
+                    <InputNumber className="w-100" placeholder="Enter supply amount to be received" min={0}/>
                 </Form.Item>
             </Col>
 
@@ -40,7 +40,7 @@ const SupplyReceiveForm = () => {
                     label="Date"
                     rules={[{ required: true, message: "Need date of this transaction!" }]}
                 >
-                    <DatePicker />
+                    <DatePicker className='w-100'/>
                 </Form.Item>
             </Col>
 

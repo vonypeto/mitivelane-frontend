@@ -1,9 +1,28 @@
 import React from 'react'
-import { Form, Input, InputNumber, DatePicker, Select, Row, Col, Button } from "antd";
+import { Form, Input, InputNumber, DatePicker, Select, Row, Col, Button, Divider, message } from "antd";
 
 const { Option } = Select;
 
-const NewHouseholdMemberForm = ({importResidentAsMember}) => {
+const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
+
+    const handleChange = (value) => {
+        importResidentAsMember(value)
+
+    }
+
+    const printResidentOption = () => {
+        return (
+            residentList.map((resident, key) => {
+                return (
+                    <Option key={key} value={key}>
+                        {`${resident.firstname} ${resident.lastname} `}
+                    </Option>
+                )
+            })
+        )
+
+    }
+
     return (
         <Row >
             <Form.Item
@@ -142,13 +161,20 @@ const NewHouseholdMemberForm = ({importResidentAsMember}) => {
                 </Form.Item>
             </Col>
 
-            <Button
+            <Col span={24}>
+                <Divider>Import Resident Data</Divider>
+                <Select onChange={handleChange} className="w-100 mb-3" placeholder="Choose Resident" allowClear>
+                    {printResidentOption()}
+                </Select>
+            </Col>
+
+            {/* <Button
                 type='primary'
                 className='w-100'
-                onClick={() => {importResidentAsMember("print dis")}}
+                onClick={() => { importResidentAsMember("print dis") }}
             >
                 Import resident data
-            </Button>
+            </Button> */}
         </Row>
     )
 }

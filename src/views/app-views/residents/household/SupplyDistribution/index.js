@@ -1,10 +1,10 @@
 import { React, useState, useEffect, createRef } from 'react'
+
+//Hooks
 import { Row, Col, Table, Card, Button, DatePicker, Modal, Drawer, Form, Menu, message } from 'antd'
 import SupplyChart from './SupplyChart'
-import SupplyDonut from './SupplyDonut'
 import DataDisplayWidget from "components/shared-components/DataDisplayWidget";
-import { useParams, useHistory } from "react-router-dom";
-
+import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import moment from 'moment'
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
@@ -12,25 +12,18 @@ import { useAuth } from "contexts/AuthContext";
 
 //Icons
 import {
-  FaBox,
   FaBoxes,
 } from "react-icons/fa";
 
 import {
-  EyeOutlined,
-  EllipsisOutlined,
   DeleteOutlined,
-  SearchOutlined,
-  PlusCircleOutlined,
-  FileExcelOutlined,
-  PrinterOutlined,
   EditOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 
-import SupplyGivenForm from './SupplyGivenForm';
+//Components
 import SupplyReceivedForm from './SupplyReceivedForm';
-
+import GivenList from './GivenList';
+import ReceievedList from './ReceivedList';
 
 const SupplyDistribution = (props) => {
   const { barangay_id } = props
@@ -42,45 +35,47 @@ const SupplyDistribution = (props) => {
   const { generateToken, currentBarangay } = useAuth();
 
   //State
-  const [isReceiveModalVisible, setisReceiveModalVisible] = useState(false);
-  const [isReceiveDrawerVisible, setisReceiveDrawerVisible] = useState(false);
-  const [isGivenModalVisible, setIsGivenModalVisible] = useState(false);
-  const [isGivenDrawerVisible, setIsGivenDrawerVisible] = useState(false);
-  const [supplyGivenList, setSupplyGivenList] = useState([]);
+  const [isReceivedModalVisible, setisReceivedModalVisible] = useState(false);
+  const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
   const [supplyReceivedList, setSupplyReceivedList] = useState([]);
-  const [supplyGivenInitialVal, setSupplyGivenInitialVal] = useState({})
   const [supplyReceivedInitialVal, setSupplyReceivedInitialVal] = useState({})
-  const [receivedSelectedRowKeys, SetReceivedSelectedRowKeys] = useState(0)
-  const [givenSelectedRowKeys, SetGivenSelectedRowKeys] = useState(0)
+  const [currentSupply, setCurrentSupply] = useState(0);
+  const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState(0)
+  const [receiveSupplyCurrentPage, setReceiveSupplyCurrentPage] = useState([])
+  const [receiveSupplyTotal, setReceiveSupplyTotal] = useState()
   const [formAction, setFormAction] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [receiveTableLoading, setReceivedTableLoading] = useState(false)
+  const [pageSize, setPageSize] = useState(3)
 
   //Ref
-  const SupplyGivenFormRef = createRef()
   const SupplyReceivedFormRef = createRef()
 
   //UseEffect
   useEffect(() => {
     getAllSupplies()
+    getCurrentSupply()
   }, [])
 
   //Axios
   const getAllSupplies = async () => {
     try {
-      const request = await axios.post(
-        '/api/supply/getAll',
-        { barangay_id },
+      await axios.post(
+        '/api/supply/receive/getAll',
+        { barangay_id, pageSize },
         generateToken()[1],
         { cancelToken }
-      );
+      ).then((res) => {
+        console.log("res", res)
+        var SupplyReceived = res.data.SupplyReceived
+        SupplyReceived.map((data) => {
+          data.date = moment(new Date(data.date))
+        })
 
-      var SupplyGiven = request.data.SupplyGiven
-      SupplyGiven.map((data) => {
-        data.date = moment(new Date(data.date))
+        var suppliesReceivedCount = res.data.suppliesReceivedCount
+        setReceiveSupplyTotal(suppliesReceivedCount)
+        setSupplyReceivedList(SupplyReceived)
       })
-      
-      setSupplyGivenList(SupplyGiven)
-
 
     } catch (error) {
       console.log(error)
@@ -88,357 +83,16 @@ const SupplyDistribution = (props) => {
     }
   }
 
-  const addSupplyGiven = async (newSupplyGiven) => {
-    try {
-      const request = await axios.post(
-        '/api/supply/given/add',
-        { newSupplyGiven, barangay_id },
-        generateToken()[1],
-        { cancelToken }
-      );
+  const getCurrentSupply = async () => {
+    const request = await axios.post(
+      '/api/supply/get/current',
+      { barangay_id },
+      generateToken()[1],
+      { cancelToken }
+    );
 
-      values.supply_given_id = supplyGivenList.length + 1
-      setSupplyGivenList([...supplyGivenList, newSupplyGiven])
-      message.success(" New Supply Given data has been added.")
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!")
-    }
+    setCurrentSupply(request.data.barangay_supply)
   }
-
-  const updateSupplyGiven = async (values) => {
-    try {
-      const request = await axios.post(
-        '/api/supply/given/update',
-        { newSupplyGiven: values, barangay_id },
-        generateToken()[1],
-        { cancelToken }
-      );
-
-      const currentSupplyGivenList = [...supplyGivenList]
-      var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_receive_id == values.supply_receive_id));
-      currentSupplyGivenList[objIndex] = values
-      setSupplyGivenList(currentSupplyGivenList)
-      message.success("Supply Given Table data has been updated.")
-
-    } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
-    }
-  }
-
-  const popSupplyGiven = async (supplyGivenIDs) => {
-    try {
-      const request = await axios.post(
-        '/api/supply/given/delete',
-        { supplyGivenIDs, barangay_id },
-        generateToken()[1],
-        { cancelToken }
-      );
-
-      console.log(request.data)
-    } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
-    }
-  }
-
-  //Table
-  const SupplyGivenColumns = [
-    {
-      title: "Household Name",
-      dataIndex: "household_name",
-      key: "household_name",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (_, data) => (
-        <div className="d-flex align-items-center">
-          <span className="ml-2">
-            {new Date(data.date).toDateString().split(' ').slice(1).join(' ')}
-          </span>
-        </div>
-      ),
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_, elm) => (
-        <div className="text-right">
-          <EllipsisDropdown menu={dropdownMenuSupplyGiven(elm)} />
-        </div>
-      ),
-    }
-  ];
-
-  const SupplyReceivedColumns = [
-    {
-      title: "Source",
-      dataIndex: "source",
-      key: "source",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (_, data) => (
-        <div className="d-flex align-items-center">
-          <span className="ml-2">
-            {new Date(data.date).toDateString().split(' ').slice(1).join(' ')}
-          </span>
-        </div>
-      ),
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_, elm) => (
-        <div className="text-right">
-          <EllipsisDropdown menu={dropdownMenuSupplyReceived(elm)} />
-        </div>
-      ),
-    }
-  ];
-
-  //Modal
-  const showReceiveModal = () => {
-    setisReceiveModalVisible(true);
-  };
-
-  const handleReceiveModalOk = () => {
-    SupplyReceivedFormRef.current.submit()
-    // insert your code here...
-  };
-
-  const handleReceiveModalCancel = () => {
-    setisReceiveModalVisible(false);
-    setSupplyReceivedInitialVal({})
-  };
-
-  //Drawer
-  const showReceiveDrawer = () => {
-    setisReceiveDrawerVisible(true);
-  }
-
-  const onReceiveDrawerClose = () => {
-    setisReceiveDrawerVisible(false);
-    setSupplyReceivedInitialVal({})
-  }
-
-  const ReceiveDrawerFooter = () => {
-    return (
-      <Button
-        type='primary'
-        style={{ float: 'right' }}
-        onClick={() => { handleReceiveModalOk() }}
-      >
-        Submit
-      </Button>
-    )
-  };
-
-  // function for handling drawer and modal
-  const handleReceivePopUp = (action) => {
-    setFormAction(action)
-
-    const screenWidth = window.innerWidth
-
-    if (screenWidth > 480) {
-      showReceiveModal()
-    }
-
-    if (screenWidth <= 480) {
-      showReceiveDrawer()
-    }
-  }
-
-  //Modal
-  const showGivenModal = () => {
-    setIsGivenModalVisible(true);
-  };
-
-  const handleGivenModalOk = () => {
-    SupplyGivenFormRef.current.submit()
-    // insert your code here...
-  };
-
-  const handleGivenModalCancel = () => {
-    setIsGivenModalVisible(false);
-    setSupplyGivenInitialVal({})
-  };
-
-  //Drawer
-  const showGivenDrawer = () => {
-    setIsGivenDrawerVisible(true);
-  }
-
-  const onGivenDrawerClose = () => {
-    setIsGivenDrawerVisible(false);
-    setSupplyGivenInitialVal({})
-  }
-
-  const GivenDrawerFooter = () => {
-    return (
-      <Button
-        type='primary'
-        style={{ float: 'right' }}
-        onClick={() => { handleGivenModalOk() }}
-      >
-        Submit
-      </Button>
-    )
-  };
-
-  // Function for handling drawer and modal
-  const handleGivenPopUp = (action) => {
-    setFormAction(action)
-
-    const screenWidth = window.innerWidth
-
-    if (screenWidth > 480) {
-      showGivenModal()
-    }
-
-    if (screenWidth <= 480) {
-      showGivenDrawer()
-    }
-  }
-
-  //Function for updateting and deleting Supply Given
-  const editSupplyGiven = (row) => {
-    console.log(row)
-    setSupplyGivenInitialVal({ ...supplyGivenInitialVal, ...row })
-    handleGivenPopUp("edited")
-  }
-
-  console.log(supplyGivenList);
-
-  const deleteSupplyGiven = (row) => {
-    popSupplyGiven([row.supply_given_id])
-
-    const currentSupplyGivenList = [...supplyGivenList]
-    var objIndex = currentSupplyGivenList.findIndex((obj => obj.supply_given_id == row.supply_given_id));
-    currentSupplyGivenList.splice(objIndex, 1);
-    setSupplyGivenList(currentSupplyGivenList)
-
-    message.success("Success, data has been deleted")
-  }
-
-  //Function for updatating and deleting Supply Given
-  const editSupplyReceived = (row) => {
-    row.date = new Date(row.date).toDateString().split(' ').slice(1).join(' ')
-    setSupplyReceivedInitialVal({ 'source': row.source, 'amount': row.amount, 'date': row.date, supply_receive_id: row.supply_receive_id })
-    handleReceivePopUp("edited")
-  }
-
-  const deleteSupplyReceived = (row) => {
-    // deleteArea(row.purok_id)
-
-    const currentsupplyReceivedList = [...supplyReceivedList]
-    var objIndex = currentsupplyReceivedList.findIndex((obj => obj.supply_received_id == row.supply_received_id));
-    currentsupplyReceivedList.splice(objIndex, 1);
-    setSupplyReceivedList(currentsupplyReceivedList)
-
-    message.success("Success, data has been deleted")
-  }
-
-  const dropdownMenuSupplyGiven = (row) => (
-    <Menu>
-      <Menu.Item key={1} onClick={() => { editSupplyGiven(row) }}>
-        <EditOutlined />
-        <span className="ml-2">Edit</span>
-      </Menu.Item>
-      <Menu.Item key={2} onClick={() => { deleteSupplyGiven(row) }}>
-        <DeleteOutlined />
-        <span className="ml-2" style={{ color: "black" }}>Delete</span>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const dropdownMenuSupplyReceived = (row) => (
-    <Menu>
-      <Menu.Item key={1} onClick={() => { editSupplyReceived(row) }}>
-        <EditOutlined />
-        <span className="ml-2">Edit</span>
-      </Menu.Item>
-      <Menu.Item key={2} onClick={() => { deleteSupplyReceived(row) }}>
-        <DeleteOutlined />
-        <span className="ml-2" style={{ color: "black" }}>Delete</span>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const onSelectReceivedSupplyChange = (selectedRowKeys, selectedRows) => {
-    message.success(`Selected received row ${selectedRows}`)
-    console.log(selectedRows);
-  }
-
-  const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
-    message.success(`Selected given row ${selectedRows}`)
-    console.log(selectedRows);
-  }
-
-  const onFinishSupplyGivenForm = (values) => {
-    console.log(values);
-
-    if (formAction == "added") {
-      addSupplyGiven(values)
-    }
-
-    if (formAction == "edited") {
-      updateSupplyGiven(values)
-    }
-
-    setIsGivenModalVisible(false)
-    setIsGivenDrawerVisible(false)
-    setSupplyGivenInitialVal({})
-  }
-
-  const onFinishSupplyReceivedForm = (values) => {
-    console.log(values);
-
-    if (formAction == "added") {
-      values.supply_receive_id = supplyReceivedList.length + 1
-      setSupplyReceivedList([...supplyReceivedList, values])
-      message.success(" New Supply Received data has been added.")
-    }
-
-    if (formAction == "edited") {
-
-      const currentSupplyReceivedList = [...supplyReceivedList]
-      var objIndex = currentSupplyReceivedList.findIndex((obj => obj.supply_receive_id == values.supply_receive_id));
-      console.log(currentSupplyReceivedList[objIndex])
-      currentSupplyReceivedList[objIndex] = values
-      console.log(currentSupplyReceivedList[objIndex])
-      setSupplyReceivedList(currentSupplyReceivedList)
-      message.success("Supply Received Table data has been updated.")
-    }
-
-    setisReceiveModalVisible(false)
-    setisReceiveDrawerVisible(false)
-  }
-
-  const SupplyReceivedRowSelection = {
-    receivedSelectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => { onSelectReceivedSupplyChange(selectedRowKeys, selectedRows) },
-  };
-
-  const SupplyGivenRowSelection = {
-    givenSelectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => { onSelectGivenSupplyChange(selectedRowKeys, selectedRows) },
-  };
 
   return (
     <div>
@@ -466,7 +120,7 @@ const SupplyDistribution = (props) => {
             centerCardBody
             centerIcon
             icon={<FaBoxes />}
-            value="13"
+            value={currentSupply}
             title="Current Supply Stock"
             vertical={true}
             color="green"
@@ -475,117 +129,9 @@ const SupplyDistribution = (props) => {
         </Col>
       </Row>
 
-      <Card>
-        <Row justify='space-between'>
-          <Col>
-            <h1>Supply Given</h1>
-          </Col>
+      <GivenList pageSize={pageSize} barangay_id={barangay_id} setCurrentSupply={setCurrentSupply} currentSupply={currentSupply}/>
 
-          <Col>
-            <Button
-              type='primary'
-              onClick={() => handleGivenPopUp("added")}
-            >
-              <p style={{ color: "white" }}>Give Supply</p>
-            </Button>
-          </Col>
-        </Row>
-
-        <Table
-          columns={SupplyGivenColumns}
-          dataSource={supplyGivenList}
-          scroll={{ x: "max-content" }}
-          rowKey="supply_given_id"
-          rowSelection={SupplyGivenRowSelection}
-          bordered
-        />
-      </Card>
-
-      <Card>
-        <Row justify='space-between'>
-          <Col>
-            <h1>Received Supply</h1>
-          </Col>
-
-          <Col>
-            <Button
-              type='primary'
-              onClick={() => handleReceivePopUp("added")}
-            >
-              <p style={{ color: "white" }}>Add Stock</p>
-            </Button>
-          </Col>
-        </Row>
-
-        <Table
-          columns={SupplyReceivedColumns}
-          dataSource={supplyReceivedList}
-          scroll={{ x: "max-content" }}
-          rowKey="supply_receive_id"
-          rowSelection={SupplyReceivedRowSelection}
-          bordered
-        />
-      </Card>
-
-      <Modal title='Supply Received Information' visible={isReceiveModalVisible} onOk={handleReceiveModalOk}
-        onCancel={handleReceiveModalCancel} okText={'Submit'} destroyOnClose={true}>
-
-        {isReceiveModalVisible &&
-          <Form
-            name='supply_Received_form'
-            onFinish={onFinishSupplyReceivedForm}
-            ref={SupplyReceivedFormRef}
-            initialValues={supplyReceivedInitialVal}
-          >
-            <SupplyReceivedForm />
-          </Form>
-        }
-
-      </Modal>
-
-      <Drawer title='Supply Received Information' placement='right' onClose={onReceiveDrawerClose}
-        visible={isReceiveDrawerVisible} width={'100%'} height={'100%'} footer={ReceiveDrawerFooter()}>
-        {isReceiveDrawerVisible &&
-          <Form
-            name='supply_received_form'
-            onFinish={onFinishSupplyReceivedForm}
-            ref={SupplyReceivedFormRef}
-            initialValues={supplyReceivedInitialVal}
-          >
-            <SupplyReceivedForm />
-          </Form>
-        }
-      </Drawer>
-
-      <Modal title='Supply Given Information' visible={isGivenModalVisible} onOk={handleGivenModalOk}
-        onCancel={handleGivenModalCancel} okText={'Submit'} destroyOnClose={true}>
-
-        {isGivenModalVisible &&
-          <Form
-            name='supply_given_form'
-            onFinish={onFinishSupplyGivenForm}
-            ref={SupplyGivenFormRef}
-            initialValues={supplyGivenInitialVal}
-          >
-            <SupplyGivenForm />
-          </Form>
-        }
-
-      </Modal>
-
-      <Drawer title='Supply Given Information' placement='right' onClose={onGivenDrawerClose}
-        visible={isGivenDrawerVisible} width={'100%'} height={'100%'} footer={GivenDrawerFooter()}>
-        {isGivenDrawerVisible &&
-          <Form
-            name='supply_given_form'
-            onFinish={onFinishSupplyGivenForm}
-            ref={SupplyGivenFormRef}
-            initialValues={supplyGivenInitialVal}
-          >
-            <SupplyGivenForm />
-          </Form>
-        }
-      </Drawer>
+      <ReceievedList pageSize={pageSize} barangay_id={barangay_id} setCurrentSupply={setCurrentSupply} currentSupply={currentSupply}/>
 
     </div>
   )
