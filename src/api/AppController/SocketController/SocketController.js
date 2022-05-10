@@ -4,14 +4,8 @@ const IS_PROD = process.env.NODE_ENV === "production";
 const URL = IS_PROD
   ? "https://mitivelane.herokuapp.com"
   : "http://localhost:5000";
-  
-const TRANSPORT = IS_PROD
-  ? ["websocket", "polling", "flashsocket"]
-  : null;
 
-export const socket = io(URL, {
-	transports: TRANSPORT
-});
+export const socket = io(URL);
 
 const authToken = localStorage.getItem(AUTH_TOKEN);
 console.log(process.env.NODE_ENV);
@@ -23,10 +17,9 @@ socket.on("connect", () => {
 
 socket.on("connect_error", (err) => {
   console.log(`connect_error due to ${err.message}`);
-  socket.io.opts.transports = ["polling", "websocket", "flashsocket"]
+  socket.io.opts.transports = ["websocket", "polling", "flashsocket"]
 });
 
 socket.on("socket:new-user", authToken => {
   console.log("New user connected with authToken ", authToken)
 })
-
