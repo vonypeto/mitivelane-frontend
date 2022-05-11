@@ -43,9 +43,13 @@ const CertBarangay = React.memo(
       setDropDownForm,
       form,
     } = props;
+    console.log(parentData?.content);
     const content = {
       entityMap: {},
-      blocks: parentData?.content != null ? parentData?.content.blocks : [],
+      blocks:
+        parentData?.content != null && parentData?.content != 0
+          ? parentData?.content.blocks
+          : [],
     };
     console.log(parentData);
     const contentState = convertFromRaw(content);

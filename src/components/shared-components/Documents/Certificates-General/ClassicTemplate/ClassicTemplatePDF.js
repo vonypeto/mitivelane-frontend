@@ -138,7 +138,9 @@ const BasicDocument = (props) => {
       fontWeight: "bold",
     },
   });
-  let container = DraftToHtml(data);
+  let container;
+  if (data.content.length != 0) container = DraftToHtml(data);
+  else container = "<><>";
 
   let clean = DOMPurify.sanitize(container);
 
