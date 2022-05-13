@@ -7,8 +7,10 @@ import ChatMenu from './ChatMenu';
 import { withRouter } from "react-router-dom";
 import { AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
+
 import { useAuth } from "contexts/AuthContext";
-import { socket } from "api/AppController/SocketController/SocketController"
+import { SocketContext, socket } from "contexts/SocketContext";
+import { ChatContext } from "contexts/ChatContext";
 
 var conversationData = []
 var alreadyRun = false
@@ -22,7 +24,7 @@ const Chat = props => {
 		if (alreadyRun == false) {
 			getConversations()
 			alreadyRun = true
-			console.log("Test 1 Chat muna sa console")
+			console.log("Socket IO Connection in Context API")
 		}
 
 	}, [])
@@ -46,22 +48,6 @@ const Chat = props => {
 			var finalValue = newData.concat(currentData)
 
 			setChatData(finalValue)
-			
-			{
-				/*
-			const newData = conversationData.filter(elm => elm._id === conversationId)
-			
-			newData[0].messages.push(message)
-		
-
-			var currentData = conversationData.filter((elm) => elm._id !== conversationId)
-
-			var finalValue = newData.concat(currentData)
-
-			setChatData(finalValue)
-				*/
-			}
-
 		})
 
 	}, [socket])
@@ -102,13 +88,17 @@ const Chat = props => {
 
 	return (
 		<div className="chat">
-			<InnerAppLayout
-				sideContent={<ChatMenu match={props.match} location={props.location} chatData={chatData} />}
-				mainContent={<ChatContent {...props} chatData={chatData} setChatData={setChatData} socket={socket} />}
-				sideContentWidth={450}
-				sideContentGutter={false}
-				border
-			/>
+			<SocketContext.Provider value={socket}>
+				<ChatContext.Provider value={{chatData, setChatData}}>
+					<InnerAppLayout
+					sideContent={<ChatMenu {...props}/>}
+					mainContent={<ChatContent {...props} />}
+					sideContentWidth={450}
+					sideContentGutter={false}
+					border
+					/>
+				</ChatContext.Provider>
+			</SocketContext.Provider>
 		</div>
 	)
 }

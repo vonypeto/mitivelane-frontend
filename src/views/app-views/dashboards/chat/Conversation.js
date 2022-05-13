@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Avatar, Divider, Input, Form, Button, Menu, message } from 'antd';
 import utils from "utils";
 import {
@@ -17,7 +17,16 @@ import { AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
-const Conversation = ({ match, chatData, setChatData, socket }) => {
+import { isValidURL } from 'components/util-components/URL'
+import Picker from 'emoji-picker-react';
+
+import { SocketContext } from "contexts/SocketContext";
+import { ChatContext } from "contexts/ChatContext";
+
+const Conversation = ({ match }) => {
+	const socket = useContext(SocketContext);
+	const { chatData, setChatData } = useContext(ChatContext)
+	 
 	const { currentBarangay, generateToken } = useAuth();
 	const authToken = localStorage.getItem(AUTH_TOKEN);
 	const formRef = useRef(null)
@@ -39,6 +48,20 @@ const Conversation = ({ match, chatData, setChatData, socket }) => {
 		// console.log("Scroll")
 		scrollToBottom()
 	}, [msgList, chatData])
+	
+	const [showPicker, setShowPicker] = useState(false)
+
+	  const onEmojiClick = (event, emojiObject) => {
+		  setShowPicker(false)
+		  const currentMsg = formRef.current.getFieldValue().newMsg
+		  const newMsg = currentMsg + emojiObject.emoji
+		  formRef.current.setFieldsValue({newMsg: newMsg})
+	  };
+	  
+	const goToLink = (url) => {
+		window.open(url, "_blank")
+		
+	}
 
 	const sendMessage = (conversationId, newMsgData) => {
 		const newData = chatData.filter(elm => elm._id === conversationId)
@@ -100,6 +123,14 @@ const Conversation = ({ match, chatData, setChatData, socket }) => {
 		switch (obj.msgType) {
 			case 'text':
 				return <span>{obj.content}</span>
+			case 'link':
+				return (
+					<Flex alignItems="center" className="msg-file">
+						<span className="ml-2 font-weight-semibold text-link pointer" onClick={() => goToLink(obj.content)}>
+							<u>{obj.content}</u>
+						</span>
+					</Flex>
+				)
 			case 'image':
 				return <img src={obj.content} alt={obj.content} />
 			case 'file':
@@ -122,10 +153,16 @@ const Conversation = ({ match, chatData, setChatData, socket }) => {
 
 	const onSend = (values) => {
 		if (values.newMsg) {
+			var msgType = "text"
+			
+			if(isValidURL(values.newMsg)){
+				msgType = "link"
+			}
+			
 			const newMsgData = {
 				avatar: avatar,
 				from: "me",
-				msgType: "text",
+				msgType: msgType,
 				content: values.newMsg,
 				unread: false,
 				time: "",
@@ -141,6 +178,7 @@ const Conversation = ({ match, chatData, setChatData, socket }) => {
 	};
 
 	const emptyClick = (e) => {
+		setShowPicker(true)
 		e.preventDefault();
 	};
 
@@ -248,6 +286,7 @@ const Conversation = ({ match, chatData, setChatData, socket }) => {
 							}
 						/>
 					</Form.Item>
+					{showPicker ? <Picker onEmojiClick={onEmojiClick} /> : null}
 				</Form>
 			</div>
 		)
