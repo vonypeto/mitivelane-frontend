@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom";
 import QueueAnim from "rc-queue-anim";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { AUTH_BARANGAY } from "redux/constants/Auth"
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 const { TabPane } = Tabs;
 
@@ -31,17 +31,17 @@ const VIEW = "VIEW";
 const MainFormList = (props) => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
-  const { generateToken} = useAuth();
+  const { generateToken } = useAuth();
 
   const { id } = useParams();
-  const barangay_id = localStorage.getItem(AUTH_BARANGAY)
+  const organization_id = localStorage.getItem(AUTH_ORGANIZATION);
   let history = useHistory();
   const { mode = ADD, param } = props;
   const [residentList, setResidentList] = useState([]);
   const [residentData, setResidentData] = useState([]);
   const [residentFilter, setResidentFilter] = useState([]);
   const [form] = Form.useForm();
-  const [purokList, setPurokList] = useState([])
+  const [purokList, setPurokList] = useState([]);
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -52,22 +52,22 @@ const MainFormList = (props) => {
         (async () => {
           const response = await axios.post(
             "/api/resident/getAll",
-            { barangay_id },
+            { organization_id },
             generateToken()[1],
             { cancelToken }
           );
-  
+
           const ResidentListData = response.data;
-  
+
           const residentID = id;
           setResidentFilter(residentID);
           const residentData = ResidentListData.filter(
             (resident) => resident.resident_id === residentID
           );
-  
+
           const resident = residentData[0];
           setResidentData(residentData[0]);
-  
+
           form.setFieldsValue({
             lastname: resident.lastname,
             firstname: resident.firstname,
@@ -99,8 +99,8 @@ const MainFormList = (props) => {
           setImage(resident.image);
         })();
       } catch (error) {
-        console.log(error)
-        message.error("Error!! Please try again later.")
+        console.log(error);
+        message.error("Error!! Please try again later.");
       }
     }
   }, [form, mode, param, props]);
@@ -109,16 +109,15 @@ const MainFormList = (props) => {
     (async () => {
       const request = await axios.post(
         "/api/purok/getAll",
-        { barangay_id: barangay_id },
+        { organization_id: organization_id },
         generateToken()[1],
         { cancelToken }
       );
-  
-      setPurokList(request.data)
-      console.log(request.data)
-    })()
-  }, [])
-  
+
+      setPurokList(request.data);
+      console.log(request.data);
+    })();
+  }, []);
 
   const handleUploadChange = (info) => {
     if (info.file.status === "uploading") {
@@ -136,19 +135,25 @@ const MainFormList = (props) => {
   const onFinishAdd = async (values) => {
     try {
       await axios
-        .post("/api/resident/add", { values, barangay_id }, generateToken()[1])
+        .post(
+          "/api/resident/add",
+          { values, organization_id },
+          generateToken()[1]
+        )
         .then((res) => {
           console.log(res.data);
         });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       message.error(`Error occurred, please try again later!`);
-      return
+      return;
     }
 
     message.success(`Added ${values.firstname} to Resident list`);
     setTimeout(() => {
-      history.push(`/app/${barangay_id}/residents/resident-information/list`)
+      history.push(
+        `/app/${organization_id}/residents/resident-information/list`
+      );
     }, 2000);
   };
 
@@ -157,20 +162,19 @@ const MainFormList = (props) => {
       await axios
         .post(
           "/api/resident/update",
-          { values, barangay_id, resident_id: id },
+          { values, organization_id, resident_id: id },
           generateToken()[1]
         )
         .then((res) => {
           console.log(res.data);
         });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       message.error(`Error occurred, please try again later!`);
-      return
+      return;
     }
 
     message.success(`Resident information has been updated`);
-
   };
 
   const onFinish = (values) => {
@@ -199,9 +203,9 @@ const MainFormList = (props) => {
 
   const onFailed = (values) => {
     values.errorFields.map((field) => {
-      message.error(field.errors)
-    })
-  }
+      message.error(field.errors);
+    });
+  };
 
   return (
     <>
@@ -230,8 +234,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Resident"
                   : mode === EDIT
-                    ? `Edit Resident`
-                    : "View Resident"}{" "}
+                  ? `Edit Resident`
+                  : "View Resident"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">
@@ -281,7 +285,7 @@ const MainFormList = (props) => {
               ) : (
                 <TabPane tab="Blotter Records" key="4" forceRender>
                   <BlotterRecords
-                    barangay_id={param}
+                    organization_id={param}
                     resident_id={residentFilter}
                   />
                 </TabPane>
@@ -296,12 +300,12 @@ const MainFormList = (props) => {
           <div className="container">
             <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
               <TabPane tab="Resident Details" key="1">
-                <MainFormView residentData={residentData}/>
+                <MainFormView residentData={residentData} />
               </TabPane>
 
               <TabPane tab="Blotter Records" key="2">
                 <BlotterRecords
-                  barangay_id={param}
+                  organization_id={param}
                   resident_id={residentFilter}
                 />
               </TabPane>

@@ -21,7 +21,7 @@ import { APP_NAME } from "configs/AppConfig";
 
 const Footer = () => {
   // console.log("reasdaasddsdsux", props);
-  // console.log("footser", localStorage.getItem("auth_barangay"));
+  // console.log("footser", localStorage.getItem("auth_organization"));
   // useEffect(() => {}, []);
   return (
     <footer className="footer">

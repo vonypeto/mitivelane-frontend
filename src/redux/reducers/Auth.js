@@ -1,6 +1,6 @@
 import {
   AUTH_TOKEN,
-  AUTH_BARANGAY,
+  AUTH_ORGANIZATION,
   AUTHENTICATED,
   SHOW_AUTH_MESSAGE,
   HIDE_AUTH_MESSAGE,
@@ -16,7 +16,7 @@ const initState = {
   showMessage: false,
   redirect: "",
   token: localStorage.getItem(AUTH_TOKEN),
-  barangay: localStorage.getItem(AUTH_BARANGAY),
+  organization: localStorage.getItem(AUTH_ORGANIZATION),
 };
 
 const auth = (state = initState, action) => {
@@ -27,7 +27,7 @@ const auth = (state = initState, action) => {
         loading: false,
         redirect: "/",
         token: action.token,
-        barangay: action.barangay,
+        organization: action.organization,
       };
     case SHOW_AUTH_MESSAGE:
       return {
@@ -68,7 +68,7 @@ const auth = (state = initState, action) => {
         ...state,
         loading: false,
         token: action.token,
-        barangay: action.barangay,
+        organization: action.organization,
       };
     }
     case SIGNIN_WITH_FACEBOOK_AUTHENTICATED: {
@@ -76,7 +76,7 @@ const auth = (state = initState, action) => {
         ...state,
         loading: false,
         token: action.token,
-        barangay: action.barangay,
+        organization: action.organization,
       };
     }
     default:

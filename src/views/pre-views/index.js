@@ -8,8 +8,8 @@ export const PreViews = () => {
     <Suspense fallback={<Loading cover="page" />}>
       <Switch>
         <Route
-          path={`${PRE_PREFIX_PATH}/create-barangay`}
-          component={lazy(() => import(`./barangay-register`))}
+          path={`${PRE_PREFIX_PATH}/create-organization`}
+          component={lazy(() => import(`./organization-register`))}
         />{" "}
         <Route
           path={`${PRE_PREFIX_PATH}/help-center`}
@@ -21,7 +21,7 @@ export const PreViews = () => {
         /> */}
         <Redirect
           from={`${PRE_PREFIX_PATH}`}
-          to={`${PRE_PREFIX_PATH}/create-barangay`}
+          to={`${PRE_PREFIX_PATH}/create-organization`}
         />
       </Switch>
     </Suspense>

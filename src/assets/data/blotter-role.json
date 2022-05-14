@@ -1,27 +1,26 @@
 [
-
-    {
-        "blotter_role_id": 19,
-        "blotter_id": 21,
-        "resident_id": 1,
-        "barangay_id": 1002,
-        "role": "Reporter",
-        "classification": "Rape",
-        "status": "Ongoing",
-        "date_incident": "08/04/2021",
-        "incident_location": "Baras",
-        "date_reported": "08/05/2021"
-    },
-    {
-        "blotter_role_id": 20,
-        "blotter_id": 18,
-        "barangay_id": 1003,
-        "resident_id": 1,
-        "role": "Assailant",
-        "classification": "Rape",
-        "status": "Settled",
-        "date_incident": "08/04/2021",
-        "incident_location": "Baras",
-        "date_reported": "08/05/2021"
-    }
+  {
+    "blotter_role_id": 19,
+    "blotter_id": 21,
+    "resident_id": 1,
+    "organization_id": 1002,
+    "role": "Reporter",
+    "classification": "Rape",
+    "status": "Ongoing",
+    "date_incident": "08/04/2021",
+    "incident_location": "Baras",
+    "date_reported": "08/05/2021"
+  },
+  {
+    "blotter_role_id": 20,
+    "blotter_id": 18,
+    "organization_id": 1003,
+    "resident_id": 1,
+    "role": "Assailant",
+    "classification": "Rape",
+    "status": "Settled",
+    "date_incident": "08/04/2021",
+    "incident_location": "Baras",
+    "date_reported": "08/05/2021"
+  }
 ]

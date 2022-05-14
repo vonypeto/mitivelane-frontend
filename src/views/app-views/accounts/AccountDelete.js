@@ -19,7 +19,7 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 const AccountDelete = () => {
-  const onDeleteBarangay = () => {
+  const onDeleteOrganization = () => {
     message.info("Clicked on Yes.");
   };
   return (
@@ -41,8 +41,8 @@ const AccountDelete = () => {
               <Col xs={24} sm={24} md={24} className="pt-2 text-left ">
                 <Popconfirm
                   placement="top"
-                  title="Are you sure to delete this Barangay?"
-                  onConfirm={onDeleteBarangay}
+                  title="Are you sure to delete this Organization?"
+                  onConfirm={onDeleteOrganization}
                   okText="Yes"
                   cancelText="No"
                   icon={<QuestionCircleOutlined style={{ color: "red" }} />}

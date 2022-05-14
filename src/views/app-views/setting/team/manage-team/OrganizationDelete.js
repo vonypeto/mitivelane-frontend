@@ -18,8 +18,8 @@ import {
   UploadOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-const BarangayDelete = () => {
-  const onDeleteBarangay = () => {
+const OrganizationDelete = () => {
+  const onDeleteOrganization = () => {
     message.info("Clicked on Yes.");
   };
   return (
@@ -28,9 +28,9 @@ const BarangayDelete = () => {
         <div className="pl-1">
           <h3>Delete Baranagay</h3>
           <p className="mt-1 text-sm text-gray-600">
-            Once the Barangay is deleted, all of its resources and data will be
-            permanently deleted. Before deleting your account, please download
-            any data or information that you wish to retain.
+            Once the Organization is deleted, all of its resources and data will
+            be permanently deleted. Before deleting your account, please
+            download any data or information that you wish to retain.
           </p>
         </div>
       </Col>
@@ -41,13 +41,13 @@ const BarangayDelete = () => {
               <Col xs={24} sm={24} md={24} className="pt-2 text-left ">
                 <Popconfirm
                   placement="top"
-                  title="Are you sure to delete this Barangay?"
-                  onConfirm={onDeleteBarangay}
+                  title="Are you sure to delete this Organization?"
+                  onConfirm={onDeleteOrganization}
                   okText="Yes"
                   cancelText="No"
                   icon={<QuestionCircleOutlined style={{ color: "red" }} />}
                 >
-                  <Button className="btn-danger">Delete Barangay</Button>
+                  <Button className="btn-danger">Delete Organization</Button>
                 </Popconfirm>
               </Col>
             </Row>
@@ -58,4 +58,4 @@ const BarangayDelete = () => {
   );
 };
 
-export default BarangayDelete;
+export default OrganizationDelete;

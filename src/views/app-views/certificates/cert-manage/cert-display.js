@@ -107,8 +107,8 @@ const CertDisplay = (props) => {
       <>
         {certType && templateType ? (
           <SinglePagePDFViewer
-            certType="cert"
-            templateType="simple"
+            certType={certType}
+            templateType={templateType}
             pdf={generatePdfDocumentShow(data)}
             type={"form"}
           />

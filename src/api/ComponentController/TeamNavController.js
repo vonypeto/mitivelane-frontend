@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export async function getBarangay(
+export async function getOrganization(
   currentUser,
-  setBarangayMember,
+  setOrganizationMember,
   generateToken
 ) {
   const user = currentUser?.uid;
@@ -10,13 +10,13 @@ export async function getBarangay(
     .get("/api/app/users/" + user, generateToken()[1])
     .then((response) => {
       if (response.data.length > 0) {
-        const i = [].concat.apply([], response.data[0].barangays);
+        const i = [].concat.apply([], response.data[0].organizations);
         const x = [].concat.apply([], response.data[0].members);
         const a3 = i.map((t1) => ({
           ...t1,
-          ...x.find((t2) => t2.barangay_id === t1._id),
+          ...x.find((t2) => t2.organization_id === t1._id),
         }));
-        return setBarangayMember(a3);
+        return setOrganizationMember(a3);
       }
     })
     .catch((error) => {

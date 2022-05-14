@@ -1,13 +1,10 @@
 [
-    {
-        "barangay_id" : 1,
-        "barangayname" : "Santiago"
-
-    },
-    {
-        "barangay_id" : 2,
-        "barangayname" : "TEST"
-
-    }
-
+  {
+    "organization_id": 1,
+    "organizationname": "Santiago"
+  },
+  {
+    "organization_id": 2,
+    "organizationname": "TEST"
+  }
 ]

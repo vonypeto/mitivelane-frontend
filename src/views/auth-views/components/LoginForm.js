@@ -10,7 +10,7 @@ import Loading from "components/shared-components/Loading";
 import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "contexts/AuthContext";
-import { loginBarangay } from "api/AuthController/LoginController/LoginController";
+import { loginOrganization } from "api/AuthController/LoginController/LoginController";
 import platform from "platform";
 import axios from "axios";
 import {
@@ -26,8 +26,8 @@ import {
 export const LoginForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const {
-    setBarangayMemberList,
-    setBarangay,
+    setOrganizationMemberList,
+    setOrganization,
     currentUser,
     generateToken,
     setPhoto,
@@ -76,14 +76,14 @@ export const LoginForm = (props) => {
     let cancel = true;
     console.log(showMessage);
     if (token !== null && allowRedirect) {
-      // getBarangay(token);
+      // getOrganization(token);
 
       setIsLoading(true);
       if (cancel) {
-        loginBarangay(
+        loginOrganization(
           token,
-          setBarangayMemberList,
-          setBarangay,
+          setOrganizationMemberList,
+          setOrganization,
           redirect,
           history,
           currentUser,
@@ -140,7 +140,7 @@ export const LoginForm = (props) => {
         <Row
           align="middle"
           justify="center"
-          className="barangay-register-container"
+          className="organization-register-container"
           style={{ height: "600px" }}
         >
           {" "}

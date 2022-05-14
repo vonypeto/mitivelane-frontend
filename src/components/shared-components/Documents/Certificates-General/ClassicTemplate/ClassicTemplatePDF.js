@@ -168,19 +168,22 @@ const BasicDocument = (props) => {
           <Header {...props} />
           <View style={styles.container_body}>
             {/* <View style={styles.col_sidename}>
-              <Text>if else if the user enable the show barangay member</Text>
+              <Text>if else if the user enable the show organization member</Text>
             </View> */}
             <View style={styles.col_content}>
-              <Image src={data?.firstLogo} style={styles.pageBackground} />
+              {data?.firstLogo ? (
+                <Image src={data?.firstLogo} style={styles.pageBackground} />
+              ) : null}
+
               <Text style={styles.col_center_space_bold_clearance}>
-                BARANGAY CLEARANCE
+                ORGANIZATION CLEARANCE
               </Text>
               <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
               <Text style={styles.indent}>
                 <RichText note={clean} />
                 {/* This is to certify that
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text>is to
-              bonafide resident of Barangay Fiesishare, talisay, Batangas. */}
+              bonafide resident of Organization Fiesishare, talisay, Batangas. */}
               </Text>
               {/* <Text style={styles.indent}>
               This certification issued upon the request of
@@ -188,7 +191,7 @@ const BasicDocument = (props) => {
               whatever legal purpose this may serve him/her best
             </Text>
             <Text style={styles.indent}>
-              Issuied thus 14th day if January, 2020 at Barangay BUhangin
+              Issuied thus 14th day if January, 2020 at Organization BUhangin
               Proper, Davo CIty, Philippines
             </Text> */}
               <View style={styles.container_sig}>

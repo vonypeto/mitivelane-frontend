@@ -1,51 +1,50 @@
 [
-    {
-        "blotter_id": 1,
-        "reporter": "Rojhon Buenaventura",
-        "avatarColor": "04d182",
-        "status": "Scheduled",
-        "classification": "Rape",
-        "daterecorded": "10/10/2021",
-        "incidentlocation": "Morong",
-        "incidentdate": "10/10/2021",
-        "incidenttime":"9 AM",
-        "barangay_id": 1002
-    },
-    {
-        "blotter_id": 21,
-        "reporter": "Von Aralar",
-        "avatarColor": "fa8c16",
-        "status": "Settled",
-        "classification": "Molested",
-        "daterecorded": "10/10/2021",
-        "incidentlocation": "Morong",
-        "incidentdate": "10/10/2021",
-        "incidenttime":"9 AM",
-        "barangay_id": 1003
-    },
-    {
-        "blotter_id": 24,
-        "reporter": "Von Aralar",
-        "avatarColor": "fa8c16",
-        "status": "Unscheduled",
-        "classification": "Molested",
-        "daterecorded": "10/10/2021",
-        "incidentlocation": "Morong",
-        "incidentdate": "10/10/2021",
-        "incidenttime":"9 AM",
-        "barangay_id": 1003
-    },
-    {
-        "blotter_id": 26,
-        "reporter": "Von Aralar",
-        "avatarColor": "fa8c16",
-        "status": "Unsettled",
-        "classification": "Molested",
-        "daterecorded": "10/10/2021",
-        "incidentlocation": "Morong",
-        "incidentdate": "10/10/2021",
-        "incidenttime":"9 AM",
-        "barangay_id": 1003
-    }
-
+  {
+    "blotter_id": 1,
+    "reporter": "Rojhon Buenaventura",
+    "avatarColor": "04d182",
+    "status": "Scheduled",
+    "classification": "Rape",
+    "daterecorded": "10/10/2021",
+    "incidentlocation": "Morong",
+    "incidentdate": "10/10/2021",
+    "incidenttime": "9 AM",
+    "organization_id": 1002
+  },
+  {
+    "blotter_id": 21,
+    "reporter": "Von Aralar",
+    "avatarColor": "fa8c16",
+    "status": "Settled",
+    "classification": "Molested",
+    "daterecorded": "10/10/2021",
+    "incidentlocation": "Morong",
+    "incidentdate": "10/10/2021",
+    "incidenttime": "9 AM",
+    "organization_id": 1003
+  },
+  {
+    "blotter_id": 24,
+    "reporter": "Von Aralar",
+    "avatarColor": "fa8c16",
+    "status": "Unscheduled",
+    "classification": "Molested",
+    "daterecorded": "10/10/2021",
+    "incidentlocation": "Morong",
+    "incidentdate": "10/10/2021",
+    "incidenttime": "9 AM",
+    "organization_id": 1003
+  },
+  {
+    "blotter_id": 26,
+    "reporter": "Von Aralar",
+    "avatarColor": "fa8c16",
+    "status": "Unsettled",
+    "classification": "Molested",
+    "daterecorded": "10/10/2021",
+    "incidentlocation": "Morong",
+    "incidentdate": "10/10/2021",
+    "incidenttime": "9 AM",
+    "organization_id": 1003
+  }
 ]

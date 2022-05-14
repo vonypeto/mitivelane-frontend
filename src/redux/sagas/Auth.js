@@ -1,8 +1,8 @@
 import { all, takeEvery, put, fork, call } from "redux-saga/effects";
 import {
   AUTH_TOKEN,
-  AUTH_BARANGAY,
-  AUTH_BARANGAY_LIST,
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
   ACCESS_TOKEN,
   PROFILE_URL,
   SESSION_TOKEN,
@@ -54,8 +54,8 @@ export function* signOut() {
       const signOutUser = yield call(FirebaseService.signOutRequest);
       if (signOutUser === undefined) {
         localStorage.removeItem(AUTH_TOKEN);
-        localStorage.removeItem(AUTH_BARANGAY);
-        localStorage.removeItem(AUTH_BARANGAY_LIST);
+        localStorage.removeItem(AUTH_ORGANIZATION);
+        localStorage.removeItem(AUTH_ORGANIZATION_LIST);
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(SESSION_TOKEN);
         localStorage.removeItem(PROFILE_URL);

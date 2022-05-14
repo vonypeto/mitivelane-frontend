@@ -16,8 +16,8 @@ import {
 import useBodyClass from "hooks/useBodyClass";
 import { useAuth } from "../contexts/AuthContext";
 import {
-  AUTH_BARANGAY,
-  AUTH_BARANGAY_LIST,
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
   ACCESS_TOKEN,
   PROFILE_URL,
   SESSION_TOKEN,
@@ -73,8 +73,8 @@ function RoutePreInterceptor({
 export const Views = (props) => {
   const { locale, token, location, direction } = props;
   const {
-    setBarangay,
-    setBarangayMemberList,
+    setOrganization,
+    setOrganizationMemberList,
     authorizationConfig,
     setPhoto,
   } = useAuth();
@@ -84,11 +84,11 @@ export const Views = (props) => {
   useBodyClass(`dir-${direction}`);
   useEffect(() => {
     //set GLobalContext When Refreshed
-    setBarangay(localStorage.getItem(AUTH_BARANGAY));
-    setBarangayMemberList(localStorage.getItem(AUTH_BARANGAY_LIST));
+    setOrganization(localStorage.getItem(AUTH_ORGANIZATION));
+    setOrganizationMemberList(localStorage.getItem(AUTH_ORGANIZATION_LIST));
     authorizationConfig(localStorage.getItem(ACCESS_TOKEN));
     setPhoto(user);
-    // async function getBarangay(token) {
+    // async function getOrganization(token) {
     //   // Make the initial query
     //   console.log("token", token);
     //   const query = await db
@@ -103,7 +103,7 @@ export const Views = (props) => {
     //     // not found
     //   }
     // }
-    // getBarangay(token);
+    // getOrganization(token);
   }, []);
   return (
     <IntlProvider

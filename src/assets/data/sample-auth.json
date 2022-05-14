@@ -1,19 +1,17 @@
 [
-
-    {
-        "barangay_id" : 1002
-    },
-    {
-        "barangay_id" : 1003
-    },
-    {
-        "barangay_id" : 1004
-    },
-    {
-        "barangay_id" : 1005
-    },
-    {
-        "barangay_id" : 1006
-    }
-
+  {
+    "organization_id": 1002
+  },
+  {
+    "organization_id": 1003
+  },
+  {
+    "organization_id": 1004
+  },
+  {
+    "organization_id": 1005
+  },
+  {
+    "organization_id": 1006
+  }
 ]

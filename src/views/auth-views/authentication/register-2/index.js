@@ -57,7 +57,7 @@ const RegisterTwo = (props) => {
                 />
                 <h1 className="text-white">Welcome to MitiveLane</h1>
                 <p className="text-white">
-                  Be part of the community with your barangay anywhere &
+                  Be part of the community with your organization anywhere &
                   anytime. What are you waiting for, register now!!
                 </p>
               </Col>

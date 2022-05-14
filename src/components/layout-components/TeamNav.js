@@ -2,34 +2,37 @@ import { React, useState, useEffect } from "react";
 import { CheckOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import { Menu, Dropdown, message } from "antd";
 import { useAuth } from "contexts/AuthContext";
-import { getBarangay } from "api/ComponentController/TeamNavController";
+import { getOrganization } from "api/ComponentController/TeamNavController";
 import { useHistory } from "react-router-dom";
-import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
+import {
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
+} from "redux/constants/Auth";
 const TeamNav = () => {
   let history = useHistory();
   const {
-    setBarangay,
-    currentBarangay,
-    setBarangayMemberList,
+    setOrganization,
+    currentOrganization,
+    setOrganizationMemberList,
     currentUser,
     generateToken,
   } = useAuth();
   const [visible, setVisible] = useState(false);
-  const [id, setId] = useState(currentBarangay);
-  const [barangayMember, setBarangayMember] = useState([
-    { name: "", barangay_id: "", _id: "" },
+  const [id, setId] = useState(currentOrganization);
+  const [organizationMember, setOrganizationMember] = useState([
+    { name: "", organization_id: "", _id: "" },
   ]);
 
   useEffect(() => {
-    const unsubscribe = setId(currentBarangay);
+    const unsubscribe = setId(currentOrganization);
 
     return unsubscribe;
-  }, [currentBarangay]);
+  }, [currentOrganization]);
 
   useEffect(() => {
-    getBarangay(currentUser, setBarangayMember, generateToken);
+    getOrganization(currentUser, setOrganizationMember, generateToken);
     return () => {
-      setBarangayMember({});
+      setOrganizationMember({});
     };
     // eslint-disable-next-line
   }, []);
@@ -56,7 +59,7 @@ const TeamNav = () => {
     }
   };
 
-  const handleBarangayClick = (e) => {
+  const handleOrganizationClick = (e) => {
     message.info("Click on menu item.");
     var split = e.key.split(",");
 
@@ -65,10 +68,10 @@ const TeamNav = () => {
       setVisible(!visible);
     }, 200);
     console.log(e);
-    setBarangay(split[0]);
-    setBarangayMemberList(split[1]);
-    localStorage.setItem(AUTH_BARANGAY, split[0]);
-    localStorage.setItem(AUTH_BARANGAY_LIST, split[1]);
+    setOrganization(split[0]);
+    setOrganizationMemberList(split[1]);
+    localStorage.setItem(AUTH_ORGANIZATION, split[0]);
+    localStorage.setItem(AUTH_ORGANIZATION_LIST, split[1]);
 
     history.push(`/app/` + split[0] + `/dashboards/home`);
   };
@@ -76,29 +79,29 @@ const TeamNav = () => {
     <div className="nav-profile-header-n">
       <div className="d-flex">
         <div className="pl-1">
-          <span className="text-muted-setting">Manage Barangay</span>
+          <span className="text-muted-setting">Manage Organization</span>
         </div>
       </div>
     </div>
   );
-  const BarangayNames = () => {
+  const OrganizationNames = () => {
     try {
       return (
         <>
-          <Menu onClick={handleBarangayClick} key="2">
-            {barangayMember?.map((item) => (
+          <Menu onClick={handleOrganizationClick} key="2">
+            {organizationMember?.map((item) => (
               // eslint-disable-next-line
-              <Menu.Item key={item?.barangay_id + "," + item?._id}>
+              <Menu.Item key={item?.organization_id + "," + item?._id}>
                 {/* //eslint-disable-next-line */}
                 <a href="#/">
                   <span className="d-flex justify-content-between align-items-center">
                     <div>
                       <span className=" font-weight-normal text-gray">
-                        Barangay {item?.barangay_name}
+                        Organization {item?.organization_name}
                       </span>
                     </div>
-                    {/* {console.log(id, item?.barangay_id)} */}
-                    {id === item?.barangay_id ? (
+                    {/* {console.log(id, item?.organization_id)} */}
+                    {id === item?.organization_id ? (
                       <CheckOutlined className="text-success" />
                     ) : null}
                   </span>{" "}
@@ -119,14 +122,14 @@ const TeamNav = () => {
           <Menu.Item className="ant-dropdown-menu-item-hover" key={1}>
             <a href="#/">
               <span className="font-weight-normal text-gray ">
-                Barangay Settings
+                Organization Settings
               </span>
             </a>
           </Menu.Item>
           <Menu.Item className="ant-dropdown-menu-item-hover" key={2}>
             <a href="#/">
               <span className="font-weight-normal text-gray">
-                Create Barangay
+                Create Organization
               </span>
             </a>
           </Menu.Item>
@@ -143,7 +146,7 @@ const TeamNav = () => {
         <div className="nav-profile-header-n">
           <div className="d-flex">
             <div className="pl-1">
-              <span className="text-muted-setting">Switch Barangay</span>
+              <span className="text-muted-setting">Switch Organization</span>
             </div>
           </div>
         </div>
@@ -151,11 +154,11 @@ const TeamNav = () => {
         <div className="nav-profile-body">
           <div className="pl-1 padding-setting">
             {/* <Menu key="2"> */}
-            <BarangayNames />
+            <OrganizationNames />
             {/* <Menu.Item key={2}>
                 <a href="#">
                   <span className="font-weight-normal text-gray">
-                    Barangay San Andress
+                    Organization San Andress
                   </span>
                 </a>
               </Menu.Item> */}

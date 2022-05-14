@@ -2,8 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 import firebase from "firebase/app";
 import { auth } from "auth/FirebaseAuth";
 import {
-  AUTH_BARANGAY,
-  AUTH_BARANGAY_LIST,
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
   ACCESS_TOKEN,
 } from "redux/constants/Auth";
 import jwt_decode from "jwt-decode";
@@ -17,27 +17,30 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentuser] = useState();
-  const [currentBarangay, setCurrentBarangay] = useState();
+  const [currentOrganization, setCurrentOrganization] = useState();
   const [currentPhoto, setCurrentPhoto] = useState();
 
-  const [currentBarangayMemberList, setCurrentBarangayMemberList] = useState();
+  const [
+    currentOrganizationMemberList,
+    setCurrentOrganizationMemberList,
+  ] = useState();
   const [authorization, setAuthorization] = useState();
 
   const [loading, setLoading] = useState(true);
-  function setBarangay(barangay) {
-    return setCurrentBarangay(barangay);
+  function setOrganization(organization) {
+    return setCurrentOrganization(organization);
   }
 
-  function setBarangayMemberList(barangay) {
-    return setCurrentBarangayMemberList(barangay);
+  function setOrganizationMemberList(organization) {
+    return setCurrentOrganizationMemberList(organization);
   }
   function setPhoto(photo) {
     return setCurrentPhoto(photo);
   }
-  function checkUserBarangay() {
-    const item = localStorage.getItem(AUTH_BARANGAY);
+  function checkUserOrganization() {
+    const item = localStorage.getItem(AUTH_ORGANIZATION);
     if (item) {
-      setCurrentBarangay(item);
+      setCurrentOrganization(item);
     }
   }
   function authorizationConfig(token) {
@@ -53,13 +56,13 @@ export function AuthProvider({ children }) {
   }
   function generateToken() {
     let response = jwt_decode(localStorage.getItem(ACCESS_TOKEN));
-    let auth_barangay = localStorage.getItem(AUTH_BARANGAY);
+    let auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
 
     const date = new Date().getTime() / 1000;
     const unix = Math.round(date);
     const data = {
       auth_id: response.auth_id,
-      auth_barangay: auth_barangay,
+      auth_organization: auth_organization,
       iat: unix,
       exp: unix + 100000,
     };
@@ -88,7 +91,7 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const listener = window.addEventListener("storage", checkUserBarangay);
+    const listener = window.addEventListener("storage", checkUserOrganization);
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       setCurrentuser(user);
       setLoading(false);
@@ -103,11 +106,11 @@ export function AuthProvider({ children }) {
   const value = {
     currentPhoto,
     setPhoto,
-    currentBarangay,
-    setBarangay,
-    setBarangayMemberList,
+    currentOrganization,
+    setOrganization,
+    setOrganizationMemberList,
     currentUser,
-    currentBarangayMemberList,
+    currentOrganizationMemberList,
     authorizationConfig,
     authorization,
     generateToken,

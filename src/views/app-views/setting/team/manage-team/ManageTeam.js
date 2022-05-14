@@ -31,7 +31,7 @@ import utils from "utils";
 const { Option } = Select;
 const ManageMember = (props) => {
   console.log(props);
-  const [editBarangay, setEditBarangay] = useState(false);
+  const [editOrganization, setEditOrganization] = useState(false);
   const [addMember, setAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(0);

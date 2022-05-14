@@ -7,7 +7,7 @@ const Body = (data) => {
     <>
       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
         <Col className="text-center" xs={24} sm={24} md={24} lg={24} xl={24}>
-          <b style={{ letterSpacing: 2 }}>BARANGAY CLEARANCE</b>
+          <b style={{ letterSpacing: 2 }}>ORGANIZATION CLEARANCE</b>
         </Col>
         <br />
         <div>TO WHOM IT CONCERN</div> <br />
@@ -16,7 +16,7 @@ const Body = (data) => {
           <span>
             This is to certify that
             <b> MR & MRS RAFAEL S ESTEBAN </b>is to bonafide resident of
-            Barangay Fiesishare, talisay, Batangas.
+            Organization Fiesishare, talisay, Batangas.
           </span>
           <br />
           <br />
@@ -28,8 +28,8 @@ const Body = (data) => {
           <br />
           <br />
           <span>
-            Issuied thus 14th day if January, 2020 at Barangay BUhangin Proper,
-            Davo CIty, Philippines
+            Issuied thus 14th day if January, 2020 at Organization BUhangin
+            Proper, Davo CIty, Philippines
           </span>
         </div>
       </Col>

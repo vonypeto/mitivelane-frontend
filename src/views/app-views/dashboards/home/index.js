@@ -165,17 +165,17 @@ const tableColumns = [
     ),
   },
   {
-      title: "Date Reported",
-      dataIndex: "createdAt",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-      render: (_, record) => (
-        <div className="d-flex align-items-center">
-          <span className="ml-2">
-            {new Date(record.createdAt).toDateString()}
-          </span>
-        </div>
-      ),
-    },
+    title: "Date Reported",
+    dataIndex: "createdAt",
+    sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+    render: (_, record) => (
+      <div className="d-flex align-items-center">
+        <span className="ml-2">
+          {new Date(record.createdAt).toDateString()}
+        </span>
+      </div>
+    ),
+  },
   {
     title: "Classification",
     dataIndex: "classification",
@@ -204,35 +204,39 @@ const tableColumns = [
 ];
 
 export const DefaultDashboard = () => {
-  const { currentBarangay, generateToken } = useAuth();
-	  
+  const { currentOrganization, generateToken } = useAuth();
+
   const [visitorChartData] = useState(VisitorChartData);
   const [newMembersData] = useState(NewMembersData);
   const [recentBlotterCaseData] = useState(RecentBlotterCaseData);
   const { direction } = useSelector((state) => state.theme);
-  
 
-  
   const [blotterlistrequest, setBlotterListRequest] = useState([]);
   // const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
-  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(true);
-  
+  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
+    true
+  );
+
   useEffect(() => {
-	  getLatestBlotterRequests()
-  }, [])
-  
+    getLatestBlotterRequests();
+  }, []);
+
   const getLatestBlotterRequests = () => {
-	  axios
-      .get("/api/blotter_request/get-latest-blotter-requests/" + currentBarangay, generateToken()[1])
+    axios
+      .get(
+        "/api/blotter_request/get-latest-blotter-requests/" +
+          currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Latest Blotter", response.data);
-		setBlotterListRequest(response.data)
-		setBlotterListRequestLoading(false)
+        setBlotterListRequest(response.data);
+        setBlotterListRequestLoading(false);
       })
       .catch(() => {
         console.log("Error");
       });
-  }
+  };
 
   return (
     <>
@@ -255,7 +259,7 @@ export const DefaultDashboard = () => {
                 extra={cardDropdown(latestRecentBlotterCaseOption)}
               >
                 <Table
-				  loading={blotterlistRequestLoading}
+                  loading={blotterlistRequestLoading}
                   className="no-border-last"
                   columns={tableColumns}
                   dataSource={blotterlistrequest}
@@ -286,7 +290,7 @@ export const DefaultDashboard = () => {
             } */}
             <Col xs={24} sm={24} md={24} lg={24}>
               <Card
-                title="Barangay Members"
+                title="Organization Members"
                 extra={cardDropdown(newJoinMemberOption)}
               >
                 <div className="mt-3">

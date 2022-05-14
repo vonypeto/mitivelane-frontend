@@ -29,22 +29,22 @@ const { Content } = Layout;
 const { useBreakpoint } = Grid;
 
 export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
-  const { currentBarangay, currentUser } = useAuth();
-  const [id, setId] = useState(currentBarangay);
+  const { currentOrganization, currentUser } = useAuth();
+  const [id, setId] = useState(currentOrganization);
 
   const screens = utils.getBreakPoint(useBreakpoint());
   const isMobile = screens.length === 0 ? false : !screens.includes("lg");
   const isNavSide = navType === NAV_TYPE_SIDE;
   const isNavTop = navType === NAV_TYPE_TOP;
   useEffect(() => {
-    // console.log("layout", currentBarangay);
-    return currentBarangay;
+    // console.log("layout", currentOrganization);
+    return currentOrganization;
   });
   useEffect(() => {
-    const unsubscribe = setId(currentBarangay);
+    const unsubscribe = setId(currentOrganization);
 
     return unsubscribe;
-  }, [currentBarangay]);
+  }, [currentOrganization]);
 
   const currentRouteInfo = utils.getRouteInfo(
     navigationConfig,
@@ -88,7 +88,7 @@ export const AppLayout = ({ navCollapsed, navType, location, direction }) => {
               title={currentRouteInfo?.title}
             />
             {/* {console.log(currentUser)} */}
-            {/* {localStorage.getItem("auth_barangay")} */}
+            {/* {localStorage.getItem("auth_organization")} */}
             {/* {id} */}
             {/*
             {currentUser.photoURL}

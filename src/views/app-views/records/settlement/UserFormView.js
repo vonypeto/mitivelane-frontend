@@ -27,46 +27,48 @@ import moment from "moment";
 import { Editor } from "react-draft-wysiwyg";
 import { convertFromRaw, EditorState } from "draft-js";
 const { Option } = Select;
-const caseData = ['Settled', 'Scheduled', 'Unscheduled', 'Unsettled']
+const caseData = ["Settled", "Scheduled", "Unscheduled", "Unsettled"];
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
-
-import { setLocalStorage, getLocalStorage, setLocalStorageObject, updateLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import {
+  setLocalStorage,
+  getLocalStorage,
+  setLocalStorageObject,
+  updateLocalStorageObject,
+} from "api/AppController/LocalStorageController/LocalStorageController";
 import { SETTLEMENT_FORM } from "redux/constants/Record";
 
 const UserFormView = (props) => {
   const history = useHistory();
-  const { currentBarangay, generateToken } = useAuth();
+  const { currentOrganization, generateToken } = useAuth();
   const { caseType, selectOutShow, initialData } = props;
   const [form] = Form.useForm();
 
-  const reporters = initialData.reporters
-  const victims = initialData.victims
-  const suspects = initialData.suspects
-  const respondents = initialData.respondents
+  const reporters = initialData.reporters;
+  const victims = initialData.victims;
+  const suspects = initialData.suspects;
+  const respondents = initialData.respondents;
 
-  const [editBtnDisabled, setEditBtnDisabled] = useState(false)
+  const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 
   const content = {
     entityMap: {},
-    blocks: (initialData.narrative != null)
-      ? initialData.narrative.blocks
-      : []
-  }
+    blocks: initialData.narrative != null ? initialData.narrative.blocks : [],
+  };
 
   const contentState = convertFromRaw(content);
   const editorState = EditorState.createWithContent(contentState);
 
-  const _id = initialData._id
+  const _id = initialData._id;
 
   useEffect(() => {
-    initialData.date_of_incident = new moment(initialData.date_of_incident)
-    initialData.time_of_incident = new moment(initialData.time_of_incident)
-    initialData.createdAt = new moment(initialData.createdAt)
-    form.setFieldsValue(initialData)
-  }, [])
+    initialData.date_of_incident = new moment(initialData.date_of_incident);
+    initialData.time_of_incident = new moment(initialData.time_of_incident);
+    initialData.createdAt = new moment(initialData.createdAt);
+    form.setFieldsValue(initialData);
+  }, []);
 
   const editBlotter = (values) => {
     message.loading("Editing Blotter...", 0);
@@ -93,26 +95,26 @@ const UserFormView = (props) => {
   const onChangeData = (e) => {
     e.preventDefault();
     selectOutShow(true);
-	setLocalStorageObject(SETTLEMENT_FORM, {}, caseType)
+    setLocalStorageObject(SETTLEMENT_FORM, {}, caseType);
   };
   const onBackClick = (e) => {
     console.log("Back");
-    console.log(form, " Form")
+    console.log(form, " Form");
     onChangeData(e);
   };
 
   const onEditClick = (e) => {
     if (editBtnDisabled == false) {
-      console.log("Edit")
+      console.log("Edit");
       form
         .validateFields()
         .then((values) => {
-          setEditBtnDisabled(true)
+          setEditBtnDisabled(true);
 
           setTimeout(() => {
-            delete values.createdAt
+            delete values.createdAt;
             // console.log(values)
-            editBlotter(values)
+            editBlotter(values);
             onChangeData(e);
           }, 1500);
         })
@@ -120,15 +122,14 @@ const UserFormView = (props) => {
           console.log("info", info);
           message.error("please enter all required field ");
         });
-
     }
-
   };
 
-  const ResidentDetail = (barangayId, residentId) => {
-
-    history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
-  }
+  const ResidentDetail = (organizationId, residentId) => {
+    history.push(
+      `/app/${organizationId}/residents/resident-information/${residentId}/view`
+    );
+  };
 
   const uploadProps = {
     onChange(info) {
@@ -153,216 +154,230 @@ const UserFormView = (props) => {
 
   const ResidentResponse = ({ name, resident }) => {
     return (
-      <Card
-        title={name}>
+      <Card title={name}>
         <div className="mt-1">
           <hr />
-          {
-            resident.map((values, i) =>
-              <div key={i}
-                className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between">
-                <div>
-                  <Avatar size={40}
-                    className="font-size-sm"
-                    style={{
-                      backgroundColor: values.avatarColor
-                    }}>
-                    {utils.getNameInitial(`${values.firstname} ${values.lastname}`)}
-                  </Avatar>
-                  <span className="ml-2">{values.firstname} {values.lastname}</span>
-                </div>
-                <Button icon={<InfoCircleOutlined />}
-                  type="default"
-                  size="small"
-                  onClick={() => ResidentDetail(currentBarangay, values.resident_id)}
+          {resident.map((values, i) => (
+            <div
+              key={i}
+              className="mt-3 mb-4 table-row-light d-flex align-items-center justify-content-between"
+            >
+              <div>
+                <Avatar
+                  size={40}
+                  className="font-size-sm"
+                  style={{
+                    backgroundColor: values.avatarColor,
+                  }}
                 >
-                  Details
-                </Button>
+                  {utils.getNameInitial(
+                    `${values.firstname} ${values.lastname}`
+                  )}
+                </Avatar>
+                <span className="ml-2">
+                  {values.firstname} {values.lastname}
+                </span>
               </div>
-            )
-          }
-
+              <Button
+                icon={<InfoCircleOutlined />}
+                type="default"
+                size="small"
+                onClick={() =>
+                  ResidentDetail(currentOrganization, values.resident_id)
+                }
+              >
+                Details
+              </Button>
+            </div>
+          ))}
         </div>
       </Card>
     );
-  }
+  };
 
   return (
-    <div style={{
-      fontSize: "16px !important"
-    }}>
+    <div
+      style={{
+        fontSize: "16px !important",
+      }}
+    >
       <Row>
-        <Col xs={24}
-          sm={24}
-          md={24}>
+        <Col xs={24} sm={24} md={24}>
           <Card
             actions={[
-              <RollbackOutlined
-                onClick={onBackClick}
-                key="back" />,
-              <EditOutlined onClick={onEditClick}
-                key="edit" />,
+              <RollbackOutlined onClick={onBackClick} key="back" />,
+              <EditOutlined onClick={onEditClick} key="edit" />,
               <PrinterOutlined key="summon" />,
             ]}
             title={"Blotter No: 1212"}
           >
-            <Form size="default"
-              form={form}>
-              <Row
-                gutter={16}>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={16}>
+            <Form size="default" form={form}>
+              <Row gutter={16}>
+                <Col xs={24} sm={24} md={16}>
                   <Card>
                     <Row gutter={16}>
-                      <Col
-                        xs={24}
-                        sm={24}
-                        md={15}>
+                      <Col xs={24} sm={24} md={15}>
                         <Form.Item
                           name="incident_type"
                           label="Summon Case For:"
                           labelCol={{
-                            span:
-                              24
-                          }} rules={[{ required: true }]}
-						  onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e.target.value, caseType, "incident_type")}>
+                            span: 24,
+                          }}
+                          rules={[{ required: true }]}
+                          onChange={(e) =>
+                            updateLocalStorageObject(
+                              SETTLEMENT_FORM,
+                              e.target.value,
+                              caseType,
+                              "incident_type"
+                            )
+                          }
+                        >
                           <Input placeholder="Case Type" />
                         </Form.Item>
                       </Col>
-                      <Col xs={24}
-                        sm={24}
-                        md={5}>
+                      <Col xs={24} sm={24} md={5}>
                         <Form.Item
                           name="settlement_status"
                           labelCol={{
-                            span:
-                              24
+                            span: 24,
                           }}
                           label="Case Status"
-                          rules={[{ required: true }]}>
-                          <Select className="w-100"
-                            placeholder="Case Status" onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "settlement_status")}>
+                          rules={[{ required: true }]}
+                        >
+                          <Select
+                            className="w-100"
+                            placeholder="Case Status"
+                            onChange={(e) =>
+                              updateLocalStorageObject(
+                                SETTLEMENT_FORM,
+                                e,
+                                caseType,
+                                "settlement_status"
+                              )
+                            }
+                          >
                             {caseData.map((elm) => (
-                              <Option key={elm}
-                                value={elm}>
+                              <Option key={elm} value={elm}>
                                 {elm}
                               </Option>
                             ))}
                           </Select>
                         </Form.Item>
                       </Col>
-                      <Col
-                        xs={24}
-                        sm={24}
-                        md={20}>
-                        <div
-                          className="mb-4">
+                      <Col xs={24} sm={24} md={20}>
+                        <div className="mb-4">
                           <Form.Item name="narrative">
                             <Editor
                               defaultEditorState={editorState}
                               toolbarClassName="toolbarClassName"
                               wrapperClassName="wrapperClassName"
-                              editorClassName="editorClassName" 
-							  onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "narrative")}/>
+                              editorClassName="editorClassName"
+                              onChange={(e) =>
+                                updateLocalStorageObject(
+                                  SETTLEMENT_FORM,
+                                  e,
+                                  caseType,
+                                  "narrative"
+                                )
+                              }
+                            />
                           </Form.Item>
                         </div>
                       </Col>
-                      <Col xs={24}
-                        sm={24}
-                        md={20}>
-                        <Row
-                          gutter={16}>
-                          <Col
-                            xs={24}
-                            sm={24}
-                            md={9}>
+                      <Col xs={24} sm={24} md={20}>
+                        <Row gutter={16}>
+                          <Col xs={24} sm={24} md={9}>
                             <Form.Item
                               labelCol={{
-                                span:
-                                  24
+                                span: 24,
                               }}
                               name="date_of_incident"
                               label="Date of Incident"
-                              rules={[{ required: true }]}>
-                              <DatePicker className="w-100" onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "date_of_incident")}/>
+                              rules={[{ required: true }]}
+                            >
+                              <DatePicker
+                                className="w-100"
+                                onChange={(e) =>
+                                  updateLocalStorageObject(
+                                    SETTLEMENT_FORM,
+                                    e,
+                                    caseType,
+                                    "date_of_incident"
+                                  )
+                                }
+                              />
                             </Form.Item>
                           </Col>
-                          <Col xs={24}
-                            sm={24}
-                            md={6}>
+                          <Col xs={24} sm={24} md={6}>
                             <Form.Item
                               labelCol={{
-                                span:
-                                  24
+                                span: 24,
                               }}
                               name="time_of_incident"
                               label="Time of Incident"
-                              rules={[{ required: true }]}>
-                              <TimePicker className="w-100" onChange={(e) => updateLocalStorageObject(SETTLEMENT_FORM, e, caseType, "time_of_incident")}/>
+                              rules={[{ required: true }]}
+                            >
+                              <TimePicker
+                                className="w-100"
+                                onChange={(e) =>
+                                  updateLocalStorageObject(
+                                    SETTLEMENT_FORM,
+                                    e,
+                                    caseType,
+                                    "time_of_incident"
+                                  )
+                                }
+                              />
                             </Form.Item>
                           </Col>
                         </Row>
                         <Row gutter={16}>
-                          <Col
-                            xs={24}
-                            sm={24}
-                            md={9}>
+                          <Col xs={24} sm={24} md={9}>
                             <Form.Item
                               labelCol={{
-                                span:
-                                  24
+                                span: 24,
                               }}
                               name="createdAt"
-                              label="Date Recorded">
-                              <DatePicker className="w-100"
-                                disabled />
+                              label="Date Recorded"
+                            >
+                              <DatePicker className="w-100" disabled />
                             </Form.Item>
                           </Col>
-                          <Col xs={24}
-                            sm={24}
-                            md={6}>
+                          <Col xs={24} sm={24} md={6}>
                             <Form.Item
                               labelCol={{
-                                span:
-                                  24
+                                span: 24,
                               }}
                               name="createdAt"
-                              label="Time Recorded">
-                              <TimePicker className="w-100"
-                                disabled />
+                              label="Time Recorded"
+                            >
+                              <TimePicker className="w-100" disabled />
                             </Form.Item>
                           </Col>
                         </Row>
                       </Col>
-                      <Col xs={24}
-                        sm={24}
-                        md={20}>
+                      <Col xs={24} sm={24} md={20}>
                         <Form.Item
                           name="PNP"
                           label="Document Copy to PNP"
                           labelCol={{
-                            span:
-                              24
-                          }}>
+                            span: 24,
+                          }}
+                        >
                           <Input placeholder="Documents Copy" />
                         </Form.Item>
                       </Col>
-                      <Col xs={24}
-                        sm={24}
-                        md={20}>
+                      <Col xs={24} sm={24} md={20}>
                         <Form.Item
                           name="file_id"
                           label="File Upload"
                           labelCol={{
-                            span:
-                              24
-                          }}>
-                          <Upload {...uploadProps}
-                            fileList={[]}>
-                            <Button
-                              icon={<UploadOutlined />}>
+                            span: 24,
+                          }}
+                        >
+                          <Upload {...uploadProps} fileList={[]}>
+                            <Button icon={<UploadOutlined />}>
                               Click to Upload
                             </Button>
                           </Upload>
@@ -371,27 +386,14 @@ const UserFormView = (props) => {
                     </Row>
                   </Card>
                 </Col>
-                <Col xs={24}
-                  sm={24}
-                  md={8}>
+                <Col xs={24} sm={24} md={8}>
                   <Row>
-                    <Col xs={24}
-                      sm={24}
-                      md={24}>
-                      <ResidentResponse
-                        name="Reporter"
-                        resident={reporters}
-                      />
+                    <Col xs={24} sm={24} md={24}>
+                      <ResidentResponse name="Reporter" resident={reporters} />
 
-                      <ResidentResponse
-                        name="Victim"
-                        resident={victims}
-                      />
+                      <ResidentResponse name="Victim" resident={victims} />
 
-                      <ResidentResponse
-                        name="Suspect"
-                        resident={suspects}
-                      />
+                      <ResidentResponse name="Suspect" resident={suspects} />
 
                       <ResidentResponse
                         name="Respondent"

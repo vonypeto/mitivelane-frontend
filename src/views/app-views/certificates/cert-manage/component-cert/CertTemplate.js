@@ -33,7 +33,7 @@ function beforeUpload(file) {
   return isJpgOrPng && isLt2M;
 }
 
-const CertBarangay = React.memo(
+const CertOrganization = React.memo(
   (props) => {
     const {
       setParentData,
@@ -223,7 +223,7 @@ const CertBarangay = React.memo(
       return setParentData(data);
     }, 100);
     useEffect(() => {
-      if (parentData.barangay_id) onImageSignature();
+      if (parentData.organization_id) onImageSignature();
     }, [signatureImage, loading]);
     useEffect(() => {
       form.setFieldsValue(parentData);
@@ -516,4 +516,4 @@ const CertBarangay = React.memo(
     prevProps.parentData === nextProps.parentData && prevProps === nextProps
 );
 
-export default CertBarangay;
+export default CertOrganization;

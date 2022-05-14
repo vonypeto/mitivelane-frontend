@@ -49,7 +49,7 @@ const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
 
 const BlotterRecord = (props) => {
-  const { currentBarangay, generateToken } = useAuth();
+  const { currentOrganization, generateToken } = useAuth();
 
   const { param_url } = props;
   var history = useHistory();
@@ -75,20 +75,23 @@ const BlotterRecord = (props) => {
   const [selectedUser, SetSelectedUser] = useState(null);
 
   useEffect(() => {
-    getBlotters(currentBarangay);
-    getRecordCases(currentBarangay);
+    getBlotters(currentOrganization);
+    getRecordCases(currentOrganization);
 
     setLocalStorage(BLOTTER_FORM, {
       reporters: [],
       victims: [],
       suspects: [],
-      respondents: []
+      respondents: [],
     });
   }, []);
 
-  const getBlotters = (currentBarangay) => {
+  const getBlotters = (currentOrganization) => {
     axios
-      .get("/api/blotter/get-blotters/" + currentBarangay, generateToken()[1])
+      .get(
+        "/api/blotter/get-blotters/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Blotters ", response.data);
         setBlotterList(response.data);
@@ -100,9 +103,12 @@ const BlotterRecord = (props) => {
       });
   };
 
-  const getRecordCases = (currentBarangay) => {
+  const getRecordCases = (currentOrganization) => {
     axios
-      .get("/api/blotter/record-cases/" + currentBarangay, generateToken()[1])
+      .get(
+        "/api/blotter/record-cases/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Record Cases", response.data);
         setSessionData(response.data);
@@ -118,7 +124,7 @@ const BlotterRecord = (props) => {
       .then((response) => {
         // message.destroy()
         if (response.data == "Success") {
-          getRecordCases(currentBarangay);
+          getRecordCases(currentOrganization);
           return message.success("Successfully Deleted");
         } else {
           return message.error("Error, please try again.");
@@ -240,10 +246,10 @@ const BlotterRecord = (props) => {
               record.settlement_status === "Settled"
                 ? "geekblue"
                 : record.settlement_status === "Unsettled"
-                  ? "orange"
-                  : record.settlement_status === "Scheduled"
-                    ? "cyan"
-                    : "gold"
+                ? "orange"
+                : record.settlement_status === "Scheduled"
+                ? "cyan"
+                : "gold"
             }
           >
             {record.settlement_status}
@@ -284,52 +290,52 @@ const BlotterRecord = (props) => {
     setBlotterListLoading(true);
 
     setBlotterList([]);
-    getBlotters(currentBarangay);
+    getBlotters(currentOrganization);
 
     setSessionData([0, 0, 0, 0]);
-    getRecordCases(currentBarangay);
+    getRecordCases(currentOrganization);
   };
 
   const headers = [
     {
       label: "Blotter ID",
-      key: "_id"
+      key: "_id",
     },
     {
       label: "Reporter",
-      key: "reporter_name"
+      key: "reporter_name",
     },
     {
       label: "Time Occured",
-      key: "time_of_incident"
+      key: "time_of_incident",
     },
     {
       label: "Date Occured",
-      key: "date_of_incident"
+      key: "date_of_incident",
     },
     {
       label: "Date Reported",
-      key: "createdAt"
+      key: "createdAt",
     },
     {
       label: "Schedule Time",
-      key: "time_schedule"
+      key: "time_schedule",
     },
     {
       label: "Schedule Date",
-      key: "date_schedule"
+      key: "date_schedule",
     },
     {
       label: "Location",
-      key: "place_incident"
+      key: "place_incident",
     },
     {
       label: "Classification",
-      key: "incident_type"
+      key: "incident_type",
     },
     {
       label: "Case",
-      key: "settlement_status"
+      key: "settlement_status",
     },
   ];
 
@@ -385,13 +391,13 @@ const BlotterRecord = (props) => {
   );
 
   const AddBlotter = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-record/add`);
+    history.push(`/app/${currentOrganization}/records/blotter-record/add`);
   };
 
   const BlottereditwDetails = (row) => {
     setLocalStorage(BLOTTER_FORM, row);
     history.push(
-      `/app/${currentBarangay}/records/blotter-record/${row._id}/edit`
+      `/app/${currentOrganization}/records/blotter-record/${row._id}/edit`
     );
   };
 
@@ -563,25 +569,23 @@ const BlotterRecord = (props) => {
                       </Select>
                     </div>
                   </Flex>
-				  
-				  <Flex className="mb-1" mobileFlex={false}>
-				  <div className="mb-3 mr-md-3">
-                    <Space>
-                      <Col>
-                        <Button
-                          onClick={AddBlotter}
-                          type="primary"
-                          icon={<PlusCircleOutlined />}
-                          block
-                        >
-                          Add Blotter Cases
-                        </Button>
-                      </Col>
-                    </Space>
-                  </div>
-                   
+
+                  <Flex className="mb-1" mobileFlex={false}>
+                    <div className="mb-3 mr-md-3">
+                      <Space>
+                        <Col>
+                          <Button
+                            onClick={AddBlotter}
+                            type="primary"
+                            icon={<PlusCircleOutlined />}
+                            block
+                          >
+                            Add Blotter Cases
+                          </Button>
+                        </Col>
+                      </Space>
+                    </div>
                   </Flex>
-                  
                 </Flex>
 
                 <div className="table-responsive">
@@ -625,4 +629,3 @@ const BlotterRecord = (props) => {
   );
 };
 export default BlotterRecord;
-

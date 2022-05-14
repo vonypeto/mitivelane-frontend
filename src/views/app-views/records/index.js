@@ -12,33 +12,33 @@ import { useParams } from "react-router-dom";
 
 const Resident = (props) => {
   const { match } = props;
-  let { barangay_id } = useParams();
+  let { organization_id } = useParams();
 
   return (
     <Switch>
       <Route
         path={`${match.url}/blotter-record/list`}
-        component={() => <BlotterList param_url={barangay_id} />}
+        component={() => <BlotterList param_url={organization_id} />}
       />
-	  <Route
+      <Route
         path={`${match.url}/blotter-record/request`}
-        component={() => <BlotterRequest param_url={barangay_id} />}
+        component={() => <BlotterRequest param_url={organization_id} />}
       />
       <Route
         path={`${match.url}/blotter-record/add`}
-        component={() => <BlotterAdd param_url={barangay_id} />}
+        component={() => <BlotterAdd param_url={organization_id} />}
       />
       <Route
         path={`${match.url}/blotter-record/:id/edit`}
-        component={() => <BlotterEdit param_url={barangay_id} />}
+        component={() => <BlotterEdit param_url={organization_id} />}
       />
       <Route
         path={`${match.url}/blotter-request-form/add`}
-        component={() => <BlotterRequestForm param_url={barangay_id} />}
+        component={() => <BlotterRequestForm param_url={organization_id} />}
       />
       <Route
         path={`${match.url}/settlement`}
-        component={() => <SettlementCase param_url={barangay_id} />}
+        component={() => <SettlementCase param_url={organization_id} />}
       />
 
       <Redirect

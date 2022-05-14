@@ -13,7 +13,7 @@ import {
   HighlightOutlined,
 } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
-import { AUTH_BARANGAY } from "redux/constants/Auth";
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 const SinglePage = (props) => {
   const [numPages, setNumPages] = useState(null);
@@ -61,6 +61,8 @@ const SinglePage = (props) => {
         break;
       case "form":
         break;
+      case "template":
+        break;
     }
   };
   //  const isLoading = renderedPageNumber !== pageNumber;
@@ -100,7 +102,7 @@ const SinglePage = (props) => {
 
   const navigateData = (data) => {
     return history.push(
-      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/${data}`
+      `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/${data}`
     );
   };
   const dropdownMenu = (row) => (
@@ -196,7 +198,7 @@ const SinglePage = (props) => {
               <p>Edited 1 seconds ago</p>
             </Col>
           </Row>
-        ) : type == "drawer" ? (
+        ) : type == "template" ? (
           <></>
         ) : type == "drawer" ? (
           <></>

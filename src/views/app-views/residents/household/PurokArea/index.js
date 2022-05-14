@@ -1,10 +1,24 @@
-import { React, useEffect, useState, useRef, createRef, } from 'react'
+import { React, useEffect, useState, useRef, createRef } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { Card, Form, Input, InputNumber, Select, Row, Col, Table, Menu, Button, Modal, Space, message } from "antd";
+import {
+  Card,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Row,
+  Col,
+  Table,
+  Menu,
+  Button,
+  Modal,
+  Space,
+  message,
+} from "antd";
 
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
-import axios from 'axios';
-import moment from 'moment'
+import axios from "axios";
+import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
 
 import {
@@ -19,24 +33,24 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 
-import NewAreaForm from "./NewAreaForm"
+import NewAreaForm from "./NewAreaForm";
 
 const PurokArea = (props) => {
   //Initialize
-  const { barangay_id } = props
+  const { organization_id } = props;
 
   //Import
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
   const history = useHistory();
-  const { generateToken, currentBarangay } = useAuth();
+  const { generateToken, currentOrganization } = useAuth();
 
   const purokColumn = [
     {
       title: "Purok",
       dataIndex: "name",
       key: "name",
-      width: "50%"
+      width: "50%",
     },
     {
       title: "Date added",
@@ -45,7 +59,11 @@ const PurokArea = (props) => {
       render: (_, data) => (
         <div className="d-flex align-items-center">
           <span className="ml-2">
-            {new Date(data.createdAt).toDateString().split(' ').slice(1).join(' ')}
+            {new Date(data.createdAt)
+              .toDateString()
+              .split(" ")
+              .slice(1)
+              .join(" ")}
           </span>
         </div>
       ),
@@ -59,194 +77,209 @@ const PurokArea = (props) => {
           <EllipsisDropdown menu={dropdownMenu(elm)} />
         </div>
       ),
-    }
-  ]
+    },
+  ];
 
   const tempData = [
     {
       name: "Unahan",
       createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 1
+      _id: 1,
     },
     {
       name: "Gitna",
       createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 2
+      _id: 2,
     },
     {
       name: "Dulo",
       createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 3
+      _id: 3,
     },
     {
       name: "Kahit Saan",
       createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 4
+      _id: 4,
     },
-  ]
+  ];
 
   //Ref
-  const NewAreaFormRef = createRef()
+  const NewAreaFormRef = createRef();
 
   //State
-  const [showAreaModal, setShowAreaModal] = useState(false)
-  const [purokList, setPurokList] = useState([])
-  const [purokInitialVal, setPurokInitialVal] = useState({})
-  const [submitting, setSubmitting] = useState(false)
+  const [showAreaModal, setShowAreaModal] = useState(false);
+  const [purokList, setPurokList] = useState([]);
+  const [purokInitialVal, setPurokInitialVal] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
-  //UseEffect 
+  //UseEffect
   useEffect(() => {
-    getAreas()
-  }, [])
-
+    getAreas();
+  }, []);
 
   //Axios
   const addNewArea = async (newArea) => {
     try {
       const request = await axios.post(
         "/api/purok/add",
-        { newArea, barangay_id: barangay_id },
+        { newArea, organization_id: organization_id },
         generateToken()[1],
         { cancelToken }
       );
 
-      const data = request.data
-      setPurokList([...purokList, data])
+      const data = request.data;
+      setPurokList([...purokList, data]);
     } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
+      console.log(error);
+      message.error("Error in database connection!!");
     }
-  }
+  };
 
   const getAreas = async () => {
     try {
       const request = await axios.post(
         "/api/purok/getAll",
-        { barangay_id: barangay_id },
+        { organization_id: organization_id },
         generateToken()[1],
         { cancelToken }
       );
 
-      setPurokList(request.data)
+      setPurokList(request.data);
     } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
+      console.log(error);
+      message.error("Error in database connection!!");
     }
-  }
+  };
 
   const deleteArea = async (area_id) => {
     try {
       const request = await axios.post(
         "/api/purok/delete",
-        { barangay_id: barangay_id, area_id },
+        { organization_id: organization_id, area_id },
         generateToken()[1],
         { cancelToken }
       );
     } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
+      console.log(error);
+      message.error("Error in database connection!!");
     }
-  }
+  };
 
   const updateArea = async (newAreaData) => {
-      try {
-        const request = await axios.post(
-          "/api/purok/update",
-          { barangay_id: barangay_id, newAreaData },
-          generateToken()[1],
-          { cancelToken }
-        );
-      } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
-      }
-  }
+    try {
+      const request = await axios.post(
+        "/api/purok/update",
+        { organization_id: organization_id, newAreaData },
+        generateToken()[1],
+        { cancelToken }
+      );
+    } catch (error) {
+      console.log(error);
+      message.error("Error in database connection!!");
+    }
+  };
 
   //Popup
   const handlePopUp = () => {
-    setPurokInitialVal({ action: "added" })
-    setShowAreaModal(true)
-  }
+    setPurokInitialVal({ action: "added" });
+    setShowAreaModal(true);
+  };
 
   // Modal Function
   const handleOk = () => {
-    NewAreaFormRef.current.submit()
+    NewAreaFormRef.current.submit();
   };
 
   const handleCancel = () => {
     setShowAreaModal(false);
-    setPurokInitialVal({})
+    setPurokInitialVal({});
   };
 
   //Components
   const dropdownMenu = (row) => (
     <Menu>
-      <Menu.Item key={1} onClick={() => { editPurok(row) }}>
+      <Menu.Item
+        key={1}
+        onClick={() => {
+          editPurok(row);
+        }}
+      >
         <EditOutlined />
         <span className="ml-2">Edit</span>
       </Menu.Item>
-      <Menu.Item key={2} onClick={() => { deletePurok(row) }}>
+      <Menu.Item
+        key={2}
+        onClick={() => {
+          deletePurok(row);
+        }}
+      >
         <DeleteOutlined />
-        <span className="ml-2" style={{ color: "black" }}>Delete</span>
+        <span className="ml-2" style={{ color: "black" }}>
+          Delete
+        </span>
       </Menu.Item>
     </Menu>
   );
 
   //Function
   const editPurok = (row) => {
-    setPurokInitialVal({ 'name': row.name, action: "edited", purok_id: row.purok_id })
-    setShowAreaModal(true)
-  }
+    setPurokInitialVal({
+      name: row.name,
+      action: "edited",
+      purok_id: row.purok_id,
+    });
+    setShowAreaModal(true);
+  };
 
   const deletePurok = (row) => {
-    deleteArea(row.purok_id)
+    deleteArea(row.purok_id);
 
-    const currentpurokList = [...purokList]
-    var objIndex = currentpurokList.findIndex((obj => obj.purok_id == row.purok_id));
+    const currentpurokList = [...purokList];
+    var objIndex = currentpurokList.findIndex(
+      (obj) => obj.purok_id == row.purok_id
+    );
     currentpurokList.splice(objIndex, 1);
-    setPurokList(currentpurokList)
+    setPurokList(currentpurokList);
 
-    message.success("Success, area has been deleted")
-  }
+    message.success("Success, area has been deleted");
+  };
 
   // Form Function
   const onFinishAddArea = (value) => {
-    value.createdAt = Date.now()
+    value.createdAt = Date.now();
 
     if (value.action == "added") {
-      addNewArea(value)
-      message.success("New Area has been added.")
+      addNewArea(value);
+      message.success("New Area has been added.");
     }
 
     if (value.action == "edited") {
-      updateArea(value)
+      updateArea(value);
 
-      const currentpurokList = [...purokList]
-      var objIndex = currentpurokList.findIndex((obj => obj.purok_id == value.purok_id));
-      currentpurokList[objIndex] = value
-      setPurokList(currentpurokList)
-      message.success("Area data has been updated.")
+      const currentpurokList = [...purokList];
+      var objIndex = currentpurokList.findIndex(
+        (obj) => obj.purok_id == value.purok_id
+      );
+      currentpurokList[objIndex] = value;
+      setPurokList(currentpurokList);
+      message.success("Area data has been updated.");
     }
 
     setShowAreaModal(false);
-  }
+  };
 
   return (
     <div>
-      <p>PurokArea: {barangay_id}</p>
+      <p>PurokArea: {organization_id}</p>
 
       <Card>
-
         <Row justify="space-between">
           <Col>
             <h1>Purok/Area</h1>
           </Col>
 
           <Col>
-            <Button
-              type='primary'
-              onClick={() => handlePopUp()}
-            >
+            <Button type="primary" onClick={() => handlePopUp()}>
               Add Area
             </Button>
           </Col>
@@ -257,13 +290,19 @@ const PurokArea = (props) => {
           dataSource={purokList}
           rowKey={"purok_id"}
           scroll={{ x: "max-content" }}
-        >
-        </Table>
+        ></Table>
       </Card>
 
-      <Modal title="New Area Information" visible={showAreaModal} onOk={handleOk} onCancel={handleCancel} okText={"Submit"} destroyOnClose={true}>
+      <Modal
+        title="New Area Information"
+        visible={showAreaModal}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText={"Submit"}
+        destroyOnClose={true}
+      >
         <Form
-          name='new_area_form'
+          name="new_area_form"
           onFinish={onFinishAddArea}
           ref={NewAreaFormRef}
           initialValues={purokInitialVal}
@@ -272,7 +311,7 @@ const PurokArea = (props) => {
         </Form>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default PurokArea
+export default PurokArea;
