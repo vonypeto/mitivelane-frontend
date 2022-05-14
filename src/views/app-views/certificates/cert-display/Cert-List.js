@@ -42,7 +42,6 @@ const CertList = () => {
 
   //let ratio = 1.41451612903;
   useEffect(() => {
-    console.log("load file");
     setTimeout(() => {
       getCertificateAll(setPdfFile, generateToken()[1], count);
       //  setPdfFile(arrayData);
@@ -59,7 +58,6 @@ const CertList = () => {
     setDrawer(true);
   };
   const closeDrawer = () => {
-    console.log("clicked");
     setDrawer(false);
     SetSelectedUser(null);
   };
@@ -71,7 +69,6 @@ const CertList = () => {
       await axios
         .post("/api/cert-display/create", {}, generateToken()[1])
         .then((res) => {
-          console.log(res.data);
           setLoading(!loading);
           history.push(`/app/${auth_barangay}/cert-display/${res.data.id}`);
         });
@@ -90,11 +87,9 @@ const CertList = () => {
       )
       .then((res) => {
         let data = res.data;
-        console.log(data);
 
         setPdfFile((oldArray) => [...oldArray, ...data]);
 
-        console.log(isEmpty(data));
         if (data.length === 0) setHasMore(false);
       });
   };

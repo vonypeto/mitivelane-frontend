@@ -26,7 +26,7 @@ function beforeUpload(file) {
   if (!isJpgOrPng) {
     message.error("You can only upload JPG/PNG file!");
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 1024 / 1024 < 1;
   if (!isLt2M) {
     message.error("Image must smaller than 2MB!");
   }
@@ -43,21 +43,18 @@ const CertBarangay = React.memo(
       setDropDownForm,
       form,
     } = props;
-    console.log(parentData?.content);
     const content = {
       entityMap: {},
-      blocks:
-        parentData?.content != null && parentData?.content != 0
-          ? parentData?.content.blocks
-          : [],
+      blocks: parentData?.content != null ? parentData?.content.blocks : [],
     };
-    console.log(parentData);
     const contentState = convertFromRaw(content);
     const [loading, setLoading] = useState(false);
     const [signatureImage, setSignatureImage] = useState([]);
-    const [editorState, setEditorStateChange] = useState(
-      EditorState.createWithContent(contentState)
-    );
+    // const [editorState, setEditorStateChange] = useState(
+    //   EditorState.createWithContent(contentState)
+    // );
+    const editorState = EditorState.createWithContent(contentState);
+
     const [logoList, setLogoList] = useState([
       { id: 1, image: "" },
       { id: 2, image: "" },
@@ -178,7 +175,7 @@ const CertBarangay = React.memo(
           const length = editorState?.getCurrentContent().getPlainText("")
             .length;
           if (length <= MAX_LENGTH && 5 >= e.blocks.length) {
-            // setEditorStateChange(e); // or this.setState({ editorState: editorState })
+            //   setEditorStateChange(e); or this.setState({ editorState: editorState })
             let data = parentData;
             form.setFieldsValue({
               [title]: e,
@@ -230,6 +227,11 @@ const CertBarangay = React.memo(
     }, [signatureImage, loading]);
     useEffect(() => {
       form.setFieldsValue(parentData);
+      setSignatureImage(parentData.signatures);
+      setLogoList([
+        { id: 1, image: parentData?.firstLogo },
+        { id: 2, image: parentData?.secondLogo },
+      ]);
     }, [parentData]);
     return (
       <>
@@ -340,7 +342,7 @@ const CertBarangay = React.memo(
                                   toolbarClassName="toolbarClassName"
                                   wrapperClassName="wrapperClassName"
                                   editorClassName="editorClassName"
-                                  onEditorStateChange={setEditorStateChange}
+                                  //     onEditorStateChange={setEditorStateChange}
                                   defaultEditorState={editorState}
                                   toolbar={{
                                     options: [
@@ -484,9 +486,9 @@ const CertBarangay = React.memo(
                                     )
                                   }
                                 >
-                                  {logoList[index].image ? (
+                                  {logoList[index]?.image ? (
                                     <img
-                                      src={logoList[index].image}
+                                      src={logoList[index]?.image}
                                       alt="avatar"
                                       style={{ width: "100%" }}
                                     />

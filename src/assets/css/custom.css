@@ -445,6 +445,48 @@ div[id^="font-picker"]:hover {
   border: 0px;
 }
 
+.mobile-nav-menu {
+  background: rgb(40, 49, 66);
+}
+.exampleCarousel1 {
+  width: 40%;
+}
+.exampleCarousel1 div > button[data-direction="right"] {
+  right: -16px;
+}
+.exampleCarousel1 div > button[data-direction="left"],
+.exampleCarousel1 div > button[data-direction="right"] {
+  background: url(https://cdn.dsmcdn.com/web/production/slick-arrow.svg) 50%
+    no-repeat;
+  border: none;
+  cursor: pointer;
+  height: 80px;
+  outline: 0;
+  position: relative;
+  top: 80px;
+}
+div > button[data-direction="left"],
+.exampleCarousel1 div > button[data-direction="right"] {
+  background: url(https://cdn.dsmcdn.com/web/production/slick-arrow.svg) 50%
+    no-repeat;
+  border: none;
+  cursor: pointer;
+  height: 80px;
+  outline: 0;
+  position: relative;
+  top: 80px;
+}
+.exampleCarousel1 div > button[data-direction="left"] {
+  left: -16px;
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.template-dropdown {
+  width: 1000px !important;
+  display: inline-block;
+}
+
 @media screen and (max-width: 1900px) {
   .pdf-template-font {
     font-size: 8px;
@@ -553,7 +595,4 @@ div[id^="font-picker"]:hover {
   .ant-skeleton-content .ant-skeleton-paragraph > li {
     height: 7px;
   }
-}
-.mobile-nav-menu {
-  background: rgb(40, 49, 66);
 }

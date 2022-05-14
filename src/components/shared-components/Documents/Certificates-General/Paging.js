@@ -99,7 +99,6 @@ const SinglePage = (props) => {
   ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
 
   const navigateData = (data) => {
-    console.log(data);
     return history.push(
       `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/${data}`
     );

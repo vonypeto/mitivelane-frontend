@@ -27,7 +27,9 @@ export const getCertificateData = async (
       delete data["cert_type"];
       delete data["template_type"];
 
-      console.log(data);
+      console.log(data.content[0]?.blocks.length == 0);
+      if (data.content[0]?.blocks.length == 0) delete data["content"];
+
       setParentData(res.data[0]);
     });
   } catch (e) {

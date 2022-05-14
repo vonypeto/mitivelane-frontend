@@ -120,19 +120,22 @@ const CertDisplay = (props) => {
     <Row justify="center">
       <Col xs={24} sm={24} md={24} lg={24}>
         <Card className="custom_cert">
-          <Button
-            icon={<ArrowDownOutlined />}
-            onClick={() => generatePdfDocument(data, "feedata")}
-          >
-            Download
-          </Button>
-          <FontPicker
-            className=" btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
-            apiKey={process.env.REACT_APP_FONT_ACCESS}
-            activeFontFamily={activeFontFamily}
-            limit={10}
-            onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
-          />
+          <div className="d-flex justify-content-between">
+            {" "}
+            <Button
+              icon={<ArrowDownOutlined />}
+              onClick={() => generatePdfDocument(data, "feedata")}
+            >
+              Download
+            </Button>
+            <FontPicker
+              className=" btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
+              apiKey={process.env.REACT_APP_FONT_ACCESS}
+              activeFontFamily={activeFontFamily}
+              limit={10}
+              onChange={(nextFont) => setActiveFontFamily(nextFont.family)}
+            />
+          </div>
         </Card>
       </Col>
       <Col
