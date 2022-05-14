@@ -136,12 +136,6 @@ const SupplyDistribution = (props) => {
         </Col>
       </Row>
 
-<<<<<<< HEAD
-      <GivenList {...tableProps} />
-
-      <ReceievedList {...tableProps} />
-
-=======
       <GivenList
         pageSize={pageSize}
         organization_id={organization_id}
@@ -155,7 +149,6 @@ const SupplyDistribution = (props) => {
         setCurrentSupply={setCurrentSupply}
         currentSupply={currentSupply}
       />
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
     </div>
   );
 };

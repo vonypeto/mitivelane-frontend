@@ -137,7 +137,6 @@ const GivenList = (props) => {
       console.log(error);
       message.error("Error in database connection!!");
     }
-<<<<<<< HEAD
 
     const popSuppliesGiven = async (supplyGivenIDs) => {
         try {
@@ -247,53 +246,6 @@ const GivenList = (props) => {
     //Drawer
     const showGivenDrawer = () => {
         setIsGivenDrawerVisible(true);
-=======
-  };
-
-  const getTotalPage = (val) => {
-    var total = val;
-    var page = 1;
-    while (total > pageSize) {
-      total -= pageSize;
-      page++;
-    }
-    return page;
-  };
-
-  const updateSupplyGiven = async (values) => {
-    try {
-      const currentSupplyGivenList = [...supplyGivenList];
-      var objIndex = currentSupplyGivenList.findIndex(
-        (obj) => obj.supply_given_id == values.supply_given_id
-      );
-
-      var stock_supply =
-        currentSupply + currentSupplyGivenList[objIndex].amount;
-      var given_supply = values.amount;
-      var new_supply_amount = stock_supply - given_supply;
-
-      if (new_supply_amount < 0) {
-        message.error("Cannot give supply that exceeds current supply stock!!");
-        return;
-      }
-
-      await axios
-        .post(
-          "/api/supply/given/update",
-          { newSupplyGiven: values, organization_id, new_supply_amount },
-          generateToken()[1],
-          { cancelToken }
-        )
-        .then((res) => {
-          currentSupplyGivenList[objIndex] = values;
-          setCurrentSupply(new_supply_amount);
-          setSupplyGivenList(currentSupplyGivenList);
-          message.success("Supply Given Table data has been updated.");
-        });
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
     }
   };
 
@@ -526,41 +478,6 @@ const GivenList = (props) => {
     </Menu>
   );
 
-  const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
-    if (selectedRows.length > 0) {
-      let supplyGivenIDs = [];
-
-      selectedRows.map((row) => {
-        supplyGivenIDs.push(row.supply_given_id);
-      });
-
-      console.log(supplyGivenIDs);
-      setGivenSelectedRowKeys(supplyGivenIDs);
-      message.success(`Selected given row ${selectedRows.length}`);
-    }
-  };
-
-<<<<<<< HEAD
-    //Dropdown 
-    const dropdownMenuSupplyGiven = (row) => (
-        <Menu>
-            <Menu.Item key={1} onClick={() => { editSupplyGiven(row) }}>
-                <EditOutlined />
-                <span className="ml-2">Edit</span>
-            </Menu.Item>
-            <Menu.Item key={2} onClick={() => { deleteSupplyGiven(row) }}>
-                <DeleteOutlined />
-                <span className="ml-2" style={{ color: "black" }}>Delete</span>
-            </Menu.Item>
-            {givenSelectedRowKeys.length > 0 &&
-                <Menu.Item key={3} onClick={() => { deleteSuppliesGiven() }}>
-                    <DeleteOutlined />
-                    <span className="ml-2" style={{ color: "black" }}>Delete {`(${givenSelectedRowKeys.length})`}</span>
-                </Menu.Item>
-            }
-        </Menu>
-    );
-
     //Onchange
     const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
         if (selectedRows.length > 0) {
@@ -574,15 +491,9 @@ const GivenList = (props) => {
             setGivenSelectedRowKeys(supplyGivenIDs)
             message.success(`Selected given row ${selectedRows.length}`)
         }
-=======
-  const handleGivenPageChange = async (page) => {
-    if (page != null) {
-      setGivenSupplyCurrentPage(page.current);
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
     }
-  };
+  
 
-<<<<<<< HEAD
     const handleTableChange = (pagination, filters, sorter) => {
         var sorter = {
             field: sorter.field,
@@ -608,22 +519,17 @@ const GivenList = (props) => {
     const handlePageSizeChange = (size) => {
         setSupplyGivenList([])
         setPageSize(size)
-=======
-  const onFinishSupplyGivenForm = (values) => {
-    if (formAction == "added") {
-      addSupplyGiven(values);
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
     }
 
     if (formAction == "edited") {
       updateSupplyGiven(values);
     }
-<<<<<<< HEAD
 
     const SupplyGivenRowSelection = {
         givenSelectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => { onSelectGivenSupplyChange(selectedRowKeys, selectedRows) },
     };
+  
 
     return (
         <>
@@ -700,101 +606,3 @@ const GivenList = (props) => {
 }
 
 export default GivenList
-=======
-
-    setIsGivenModalVisible(false);
-    setIsGivenDrawerVisible(false);
-    setSupplyGivenInitialVal({});
-  };
-  const SupplyGivenRowSelection = {
-    givenSelectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      onSelectGivenSupplyChange(selectedRowKeys, selectedRows);
-    },
-  };
-
-  return (
-    <>
-      <Button
-        onClick={() => {
-          setGivenSupplyCurrentPage(100);
-        }}
-      >
-        Click me
-      </Button>
-      <Card>
-        <Row justify="space-between">
-          <Col>
-            <h1>Supply Given</h1>
-          </Col>
-
-          <Col>
-            <Button type="primary" onClick={() => handleGivenPopUp("added")}>
-              <p style={{ color: "white" }}>Give Supply</p>
-            </Button>
-          </Col>
-        </Row>
-
-        <Table
-          columns={SupplyGivenColumns}
-          dataSource={supplyGivenList}
-          scroll={{ x: "max-content" }}
-          rowKey="supply_given_id"
-          rowSelection={SupplyGivenRowSelection}
-          pagination={{
-            current: givenSupplyCurrentPage,
-            total: givenSupplyTotal,
-            pageSize: pageSize,
-          }}
-          onChange={(page) => handleGivenPageChange(page)}
-          loading={givenTableLoading}
-          bordered
-        />
-      </Card>
-
-      <Modal
-        title="Supply Given Information"
-        visible={isGivenModalVisible}
-        onOk={handleGivenModalOk}
-        onCancel={handleGivenModalCancel}
-        okText={"Submit"}
-        destroyOnClose={true}
-      >
-        {isGivenModalVisible && (
-          <Form
-            name="supply_given_form"
-            onFinish={onFinishSupplyGivenForm}
-            ref={SupplyGivenFormRef}
-            initialValues={supplyGivenInitialVal}
-          >
-            <SupplyGivenForm />
-          </Form>
-        )}
-      </Modal>
-
-      <Drawer
-        title="Supply Given Information"
-        placement="right"
-        onClose={onGivenDrawerClose}
-        visible={isGivenDrawerVisible}
-        width={"100%"}
-        height={"100%"}
-        footer={GivenDrawerFooter()}
-      >
-        {isGivenDrawerVisible && (
-          <Form
-            name="supply_given_form"
-            onFinish={onFinishSupplyGivenForm}
-            ref={SupplyGivenFormRef}
-            initialValues={supplyGivenInitialVal}
-          >
-            <SupplyGivenForm />
-          </Form>
-        )}
-      </Drawer>
-    </>
-  );
-};
-
-export default GivenList;
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
