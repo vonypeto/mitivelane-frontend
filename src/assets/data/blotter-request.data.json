@@ -1,33 +1,31 @@
 [
-    {
-        "blotter_id": 1,
-        "reporter": "Rojhon Buenaventura",
-        "reporterid": 5,
-        "avatarColor": "04d182",
-        "status": "Pending",
-        "classification": "Rape",
-        "daterecorded": "08/01/2000",
-        "incidentlocation": "Morong",
-        "incidentdate": "10/10/2021",
-        "incidenttime":"9 AM",
-        "subjectedpersonid": 4,
-        "barangay_id": 1002,
-        "description": "Any Case Study"
-
-    },
-    {
-        "blotter_id": 2,
-        "reporter": "Rojhon Buenaventura",
-        "avatarColor": "04d182",
-        "status": "Pending",
-        "classification": "Rape",
-        "daterecorded": "10/10/2021",
-        "incidentlocation": "Morong",
-        "incidentdate": "10/10/2021",
-        "incidenttime":"9 AM",
-        "barangay_id": 1002,
-        "subjectedpersonid": 4,
-        "description": "Any Case Study"
-    }
-
+  {
+    "blotter_id": 1,
+    "reporter": "Rojhon Buenaventura",
+    "reporterid": 5,
+    "avatarColor": "04d182",
+    "status": "Pending",
+    "classification": "Rape",
+    "daterecorded": "08/01/2000",
+    "incidentlocation": "Morong",
+    "incidentdate": "10/10/2021",
+    "incidenttime": "9 AM",
+    "subjectedpersonid": 4,
+    "organization_id": 1002,
+    "description": "Any Case Study"
+  },
+  {
+    "blotter_id": 2,
+    "reporter": "Rojhon Buenaventura",
+    "avatarColor": "04d182",
+    "status": "Pending",
+    "classification": "Rape",
+    "daterecorded": "10/10/2021",
+    "incidentlocation": "Morong",
+    "incidentdate": "10/10/2021",
+    "incidenttime": "9 AM",
+    "organization_id": 1002,
+    "subjectedpersonid": 4,
+    "description": "Any Case Study"
+  }
 ]

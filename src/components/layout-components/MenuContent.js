@@ -8,9 +8,9 @@ import { connect } from "react-redux";
 import { SIDE_NAV_LIGHT, NAV_TYPE_SIDE } from "constants/ThemeConstant";
 import utils from "utils";
 import { onMobileNavToggle } from "redux/actions/Theme";
-import Barangay from "assets/data/sample-auth.json";
+import Organization from "assets/data/sample-auth.json";
 import { useAuth } from "../../contexts/AuthContext";
-import { AUTH_BARANGAY } from "../../redux/constants/Auth";
+import { AUTH_ORGANIZATION } from "../../redux/constants/Auth";
 const { SubMenu } = Menu;
 const { useBreakpoint } = Grid;
 
@@ -32,13 +32,13 @@ const setDefaultOpen = (key) => {
 };
 
 const SideNavContent = (props) => {
-  const { currentBarangay } = useAuth();
+  const { currentOrganization } = useAuth();
   // console.log(props);
-  const [id, setId] = useState(localStorage.getItem(AUTH_BARANGAY));
+  const [id, setId] = useState(localStorage.getItem(AUTH_ORGANIZATION));
 
   // useEffect(() => {
   //   const setBaranagayID = () => {
-  //     setTimeout(() => setId(localStorage.getItem(AUTH_BARANGAY)), 500);
+  //     setTimeout(() => setId(localStorage.getItem(AUTH_ORGANIZATION)), 500);
   //   };
   //   // window.addEventListener("storage", () => {
   //   //   // When local storage changes, dump the list to
@@ -47,14 +47,14 @@ const SideNavContent = (props) => {
 
   //   //   console.log(
   //   //     "MENUCONTENT",
-  //   //     JSON.parse(window.localStorage.getItem(AUTH_BARANGAY))
+  //   //     JSON.parse(window.localStorage.getItem(AUTH_ORGANIZATION))
   //   //   );
   //   // });
   //   setBaranagayID();
   //   return () => {
   //     setId({}); // This worked for me
   //   };
-  // }, [localStorage.getItem(AUTH_BARANGAY)]);
+  // }, [localStorage.getItem(AUTH_ORGANIZATION)]);
 
   const {
     sideNavTheme,
@@ -71,7 +71,7 @@ const SideNavContent = (props) => {
   };
   // useEffect(() => {
   //   function checkUserData() {
-  //     const item = localStorage.getItem(AUTH_BARANGAY);
+  //     const item = localStorage.getItem(AUTH_ORGANIZATION);
 
   //     if (item) {
   //       setTimeout(() => setId(item), 500);
@@ -85,10 +85,10 @@ const SideNavContent = (props) => {
   //   };
   // }, []);
   useEffect(() => {
-    const unsubscribe = setId(currentBarangay);
+    const unsubscribe = setId(currentOrganization);
 
     return unsubscribe;
-  }, [currentBarangay]);
+  }, [currentOrganization]);
   return (
     <Menu
       theme={sideNavTheme === SIDE_NAV_LIGHT ? "light" : "dark"}
@@ -191,7 +191,7 @@ const SideNavContent = (props) => {
 
 const TopNavContent = (props) => {
   const { topNavColor, localization } = props;
-  // const [list] = useState(Barangay.filter(d => d.barangay_id === param))
+  // const [list] = useState(Organization.filter(d => d.organization_id === param))
   const [id] = useState();
   return (
     <Menu mode="horizontal" style={{ backgroundColor: topNavColor }}>

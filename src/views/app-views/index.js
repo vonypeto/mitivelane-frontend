@@ -5,36 +5,36 @@ import { APP_PREFIX_PATH, PRE_PREFIX_PATH } from "configs/AppConfig";
 import { useAuth } from "../../contexts/AuthContext";
 
 export const AppViews = () => {
-  const { currentBarangay } = useAuth();
+  const { currentOrganization } = useAuth();
   return (
     <Suspense fallback={<Spin cover="content" />}>
       <Switch>
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/dashboards`}
+          path={`${APP_PREFIX_PATH}/:organization_id/dashboards`}
           component={lazy(() => import(`./dashboards`))}
         />
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/residents`}
+          path={`${APP_PREFIX_PATH}/:organization_id/residents`}
           component={lazy(() => import(`./residents`))}
         />
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/records`}
+          path={`${APP_PREFIX_PATH}/:organization_id/records`}
           component={lazy(() => import(`./records`))}
         />
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/setting`}
+          path={`${APP_PREFIX_PATH}/:organization_id/setting`}
           component={lazy(() => import(`./setting`))}
         />
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/apps`}
+          path={`${APP_PREFIX_PATH}/:organization_id/apps`}
           component={lazy(() => import(`./apps`))}
         />
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/components`}
+          path={`${APP_PREFIX_PATH}/:organization_id/components`}
           component={lazy(() => import(`./components`))}
         />{" "}
         <Route
-          path={`${APP_PREFIX_PATH}/:barangay_id/cert-display`}
+          path={`${APP_PREFIX_PATH}/:organization_id/cert-display`}
           component={lazy(() => import(`./certificates`))}
         />
         <Route
@@ -44,17 +44,17 @@ export const AppViews = () => {
         {/* Redirect From Login to other part of the auth process */}
         <Redirect
           from={`${APP_PREFIX_PATH}`}
-          to={`${APP_PREFIX_PATH}/` + currentBarangay + `/dashboards/home`}
+          to={`${APP_PREFIX_PATH}/` + currentOrganization + `/dashboards/home`}
         />
-        {/* {currentBarangay == null ? (
+        {/* {currentOrganization == null ? (
           <Redirect
             from={`${APP_PREFIX_PATH}`}
-            to={`${PRE_PREFIX_PATH}/create-barangay/`}
+            to={`${PRE_PREFIX_PATH}/create-organization/`}
           />
         ) : (
           <Redirect
             from={`${APP_PREFIX_PATH}`}
-            to={`${APP_PREFIX_PATH}/barangay/`}
+            to={`${APP_PREFIX_PATH}/organization/`}
           />
         )} */}
       </Switch>

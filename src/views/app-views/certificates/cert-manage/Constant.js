@@ -35,10 +35,10 @@ export const defaultGeneralCert = [
       },
       {
         id: 5,
-        formName: "barangay",
+        formName: "organization",
         type: "text",
 
-        titleName: "Barangay",
+        titleName: "Organization",
       },
       {
         id: 6,
@@ -122,10 +122,10 @@ export const defaultGeneralBlotter = [
       },
       {
         id: 5,
-        formName: "barangay",
+        formName: "organization",
         type: "text",
 
-        titleName: "Barangay",
+        titleName: "Organization",
       },
       {
         id: 6,
@@ -179,10 +179,10 @@ export const defaultGeneralBusiness = [
       },
       {
         id: 5,
-        formName: "barangay",
+        formName: "organization",
         type: "text",
 
-        titleName: "Barangay",
+        titleName: "Organization",
       },
       {
         id: 6,

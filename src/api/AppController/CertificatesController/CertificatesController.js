@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AUTH_BARANGAY } from "redux/constants/Auth";
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 export const getCertificateAll = async (setPdf, generateToken, count) => {
   await axios
@@ -35,7 +35,7 @@ export const getCertificateData = async (
   } catch (e) {
     console.log(e);
     history.push(
-      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/list`
+      `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/list`
     );
   }
 };

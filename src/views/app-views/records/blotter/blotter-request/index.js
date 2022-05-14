@@ -50,14 +50,16 @@ const { Option } = Select;
 const categories = ["Pending", "Approved", "Rejected"];
 
 const BlotterRequest = (props) => {
-  const { currentBarangay, generateToken } = useAuth();
+  const { currentOrganization, generateToken } = useAuth();
 
   const { param_url } = props;
   var history = useHistory();
-  
+
   const [blotterlistrequest, setBlotterListRequest] = useState([]);
   const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
-  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(true);
+  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
+    true
+  );
 
   const [sessionData, setSessionData] = useState([0, 0, 0]);
 
@@ -76,20 +78,23 @@ const BlotterRequest = (props) => {
   const [selectedUser, SetSelectedUser] = useState(null);
 
   useEffect(() => {
-    getRecordStatus(currentBarangay);
-	getBlotterRequest(currentBarangay)
+    getRecordStatus(currentOrganization);
+    getBlotterRequest(currentOrganization);
 
     setLocalStorage(BLOTTER_FORM, {
       reporters: [],
       victims: [],
       suspects: [],
-      respondents: []
+      respondents: [],
     });
   }, []);
 
-  const getRecordStatus = (currentBarangay) => {
+  const getRecordStatus = (currentOrganization) => {
     axios
-      .get("/api/blotter_request/record-status/" + currentBarangay, generateToken()[1])
+      .get(
+        "/api/blotter_request/record-status/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Record Status", response.data);
         setSessionData(response.data);
@@ -109,10 +114,13 @@ const BlotterRequest = (props) => {
     SetUserProfileVisible(false);
     SetSelectedUser(null);
   };
-  
+
   const getBlotterRequest = () => {
-	  axios
-      .get("/api/blotter_request/get-blotter-request/" + currentBarangay, generateToken()[1])
+    axios
+      .get(
+        "/api/blotter_request/get-blotter-request/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Blotters Request ", response.data);
         setBlotterListRequest(response.data);
@@ -122,16 +130,20 @@ const BlotterRequest = (props) => {
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-  }
-  
+  };
+
   const deleteBlotterRequest = (_ids) => {
-	  axios
-      .post("/api/blotter_request/delete-blotter-request", { _ids }, generateToken()[1])
+    axios
+      .post(
+        "/api/blotter_request/delete-blotter-request",
+        { _ids },
+        generateToken()[1]
+      )
       .then((response) => {
         // message.destroy()
         if (response.data == "Success") {
-			setSessionData([0, 0, 0]);
-			getRecordStatus(currentBarangay)
+          setSessionData([0, 0, 0]);
+          getRecordStatus(currentOrganization);
           return message.success("Successfully Deleted");
         } else {
           return message.error("Error, please try again.");
@@ -142,8 +154,8 @@ const BlotterRequest = (props) => {
         // message.destroy()
         message.error("The action can't be completed, please try again.");
       });
-  }
-  
+  };
+
   const blotterRequestColumn = [
     {
       title: "ID",
@@ -186,43 +198,43 @@ const BlotterRequest = (props) => {
       ),
     },
     // {
-      // title: "Location",
-      // dataIndex: "incidentlocation",
-      // sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+    // title: "Location",
+    // dataIndex: "incidentlocation",
+    // sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     // },
     {
       title: "Classification",
       dataIndex: "classification",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
-	{
-    title: () => <div className="text-right">Status</div>,
-    key: "status",
-	sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    render: (_, record) => (
-      <div className="text-right">
-        <Tag
-          className="mr-0"
-          color={
-            record.status === "Approved"
-              ? "cyan"
-              : record.status === "Pending"
-              ? "blue"
-              : "volcano"
-          }
-        >
-          {record.status}
-        </Tag>
-      </div>
-    ),
-  },
+    {
+      title: () => <div className="text-right">Status</div>,
+      key: "status",
+      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+      render: (_, record) => (
+        <div className="text-right">
+          <Tag
+            className="mr-0"
+            color={
+              record.status === "Approved"
+                ? "cyan"
+                : record.status === "Pending"
+                ? "blue"
+                : "volcano"
+            }
+          >
+            {record.status}
+          </Tag>
+        </div>
+      ),
+    },
     {
       title: "Actions",
       dataIndex: "actions",
       render: (_, elm) => (
         <div className="text-right">
           <div className="text-right d-flex justify-content-end">
-		  {/*<Tooltip title="Approve">
+            {/*<Tooltip title="Approve">
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
@@ -282,73 +294,75 @@ const BlotterRequest = (props) => {
   };
 
   //EXPORT
-  
+
   const refreshBlotterRequest = () => {
     console.log("Refresh Blotter Request");
     setBlotterListRequestLoading(true);
 
     setBlotterListRequest([]);
-    getBlotterRequest(currentBarangay);
+    getBlotterRequest(currentOrganization);
 
     setSessionData([0, 0, 0]);
-    getRecordStatus(currentBarangay);
+    getRecordStatus(currentOrganization);
   };
-  
+
   const headers = [
     {
       label: "Blotter ID",
-      key: "_id"
+      key: "_id",
     },
     {
       label: "Reporter",
-      key: "reporter_name"
+      key: "reporter_name",
     },
     {
       label: "Time Occured",
-      key: "time_of_incident"
+      key: "time_of_incident",
     },
     {
       label: "Date Occured",
-      key: "date_of_incident"
+      key: "date_of_incident",
     },
     {
       label: "Date Reported",
-      key: "createdAt"
+      key: "createdAt",
     },
     {
       label: "Schedule Time",
-      key: "time_schedule"
+      key: "time_schedule",
     },
     {
       label: "Schedule Date",
-      key: "date_schedule"
+      key: "date_schedule",
     },
     {
       label: "Location",
-      key: "place_incident"
+      key: "place_incident",
     },
     {
       label: "Classification",
-      key: "incident_type"
+      key: "incident_type",
     },
     {
       label: "Case",
-      key: "settlement_status"
+      key: "settlement_status",
     },
-	{
+    {
       label: "Status",
-      key: "status"
+      key: "status",
     },
   ];
 
   const csvLink = useRef(null);
-  
+
   const BlotterRequestList = (
     <Menu>
-      <Menu.Item key="0"
-	   onClick={() => {
+      <Menu.Item
+        key="0"
+        onClick={() => {
           refreshBlotterRequest();
-        }}>
+        }}
+      >
         <span>
           <div className="d-flex align-items-center">
             <ReloadOutlined />
@@ -364,11 +378,12 @@ const BlotterRequest = (props) => {
           </div>
         </span>
       </Menu.Item>
-      <Menu.Item 
-	  key="2"
-	  onClick={() => {
+      <Menu.Item
+        key="2"
+        onClick={() => {
           csvLink.current.link.click();
-        }}>
+        }}
+      >
         <span>
           <div className="d-flex align-items-center">
             <FileExcelOutlined />
@@ -376,7 +391,7 @@ const BlotterRequest = (props) => {
           </div>
         </span>
       </Menu.Item>
-	  <Menu.Item key="3" hidden={true}>
+      <Menu.Item key="3" hidden={true}>
         <CSVLink
           ref={csvLink}
           data={blotterlistrequestData}
@@ -390,7 +405,9 @@ const BlotterRequest = (props) => {
   );
 
   const AddBlotterRequest = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-request-form/add`);
+    history.push(
+      `/app/${currentOrganization}/records/blotter-request-form/add`
+    );
   };
 
   const BlotterRequestDeleteRow = (row) => {
@@ -402,8 +419,8 @@ const BlotterRequest = (props) => {
         setBlotterListRequest(data);
         setSelectedRowsBlotterRequest([]);
       });
-	  
-	  var _ids = [];
+
+      var _ids = [];
       selectedRowsBlotterRequest.map((values) => {
         _ids.push(values._id);
       });
@@ -412,7 +429,7 @@ const BlotterRequest = (props) => {
     } else {
       data = utils.deleteArrayRow(data, objKey, row._id);
       setBlotterListRequest(data);
-	   deleteBlotterRequest([row._id]);
+      deleteBlotterRequest([row._id]);
     }
   };
 
@@ -453,7 +470,7 @@ const BlotterRequest = (props) => {
           data: data,
           label: label,
           color: color,
-		  key: i
+          key: i,
         },
       ];
     }
@@ -522,28 +539,33 @@ const BlotterRequest = (props) => {
       />
     </Card>
   );
-  
+
   // Pending Pending Blotter Request
-  
+
   const [pendingRequest, setPendingRequest] = useState([]);
   const [pendingRequestData, setPendingRequestData] = useState([]);
   const [pendingRequestLoading, setPendingRequestLoading] = useState(true);
 
-  const [selectedRowsPendingRequest, setSelectedRowsPendingRequest] = useState([]);
-  
-   const [
+  const [selectedRowsPendingRequest, setSelectedRowsPendingRequest] = useState(
+    []
+  );
+
+  const [
     selectedRowKeysPendingRequest,
     setSelectedRowKeysPendingRequest,
   ] = useState([]);
-  
+
   useEffect(() => {
-	  getPendingBlotterRequest()
-	  
-  }, [])
-  
+    getPendingBlotterRequest();
+  }, []);
+
   const getPendingBlotterRequest = () => {
-	  axios
-      .get("/api/blotter_request/get-pending-blotter-request/" + currentBarangay, generateToken()[1])
+    axios
+      .get(
+        "/api/blotter_request/get-pending-blotter-request/" +
+          currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Pending Blotters Request ", response.data);
         setPendingRequest(response.data);
@@ -553,20 +575,23 @@ const BlotterRequest = (props) => {
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-	  
-  }
-  
+  };
+
   const approveBlotterRequest = (_ids, data) => {
-	   axios
-      .post("/api/blotter_request/approve-blotter-request", { _ids, data}, generateToken()[1])
+    axios
+      .post(
+        "/api/blotter_request/approve-blotter-request",
+        { _ids, data },
+        generateToken()[1]
+      )
       .then((response) => {
         // message.destroy()
         if (response.data == "Success") {
-			getBlotterRequest(currentBarangay)
-			
-			setSessionData([0, 0, 0]);
-			getRecordStatus(currentBarangay)
-	  setBlotterListRequestLoading(true)
+          getBlotterRequest(currentOrganization);
+
+          setSessionData([0, 0, 0]);
+          getRecordStatus(currentOrganization);
+          setBlotterListRequestLoading(true);
           return message.success("Successfully Approved");
         } else {
           return message.error("Error, please try again.");
@@ -577,50 +602,52 @@ const BlotterRequest = (props) => {
         // message.destroy()
         message.error("The action can't be completed, please try again.");
       });
-	  
-  }
-  
+  };
+
   const approveBlotterRequestBtn = (row) => {
-	  const objKey = "_id";
+    const objKey = "_id";
     let data = pendingRequest;
-	
+
     if (selectedRowsPendingRequest.length > 1) {
       selectedRowsPendingRequest.forEach((elm) => {
         data = utils.deleteArrayRow(data, objKey, elm._id);
         setPendingRequest(data);
         setSelectedRowsPendingRequest([]);
       });
-	  
-	  var _ids = [];
-	  var newBlotterData = selectedRowsPendingRequest
-	  
+
+      var _ids = [];
+      var newBlotterData = selectedRowsPendingRequest;
+
       selectedRowsPendingRequest.map((values, i) => {
         _ids.push(values._id);
-		newBlotterData[i].reporters = [values.reporters[0].resident_id]
+        newBlotterData[i].reporters = [values.reporters[0].resident_id];
       });
 
       approveBlotterRequest(_ids, newBlotterData);
     } else {
       data = utils.deleteArrayRow(data, objKey, row._id);
       setPendingRequest(data);
-	  
-	  row.reporters = [row.reporters[0].resident_id]
-	  approveBlotterRequest([row._id], [row]);
+
+      row.reporters = [row.reporters[0].resident_id];
+      approveBlotterRequest([row._id], [row]);
     }
-  }
-  
-  
+  };
+
   const rejectBlotterRequest = (_ids) => {
-	  axios
-      .post("/api/blotter_request/reject-blotter-request", { _ids }, generateToken()[1])
+    axios
+      .post(
+        "/api/blotter_request/reject-blotter-request",
+        { _ids },
+        generateToken()[1]
+      )
       .then((response) => {
         // message.destroy()
         if (response.data == "Success") {
-			getBlotterRequest(currentBarangay)
-			
-			setSessionData([0, 0, 0]);
-			getRecordStatus(currentBarangay)
-	  setBlotterListRequestLoading(true)
+          getBlotterRequest(currentOrganization);
+
+          setSessionData([0, 0, 0]);
+          getRecordStatus(currentOrganization);
+          setBlotterListRequestLoading(true);
           return message.success("Successfully Approved");
         } else {
           return message.error("Error, please try again.");
@@ -631,11 +658,10 @@ const BlotterRequest = (props) => {
         // message.destroy()
         message.error("The action can't be completed, please try again.");
       });
-	  
-  }
-  
+  };
+
   const rejectBlotterRequestBtn = (row) => {
-	   const objKey = "_id";
+    const objKey = "_id";
     let data = pendingRequest;
     if (selectedRowsPendingRequest.length > 1) {
       selectedRowsPendingRequest.forEach((elm) => {
@@ -643,8 +669,8 @@ const BlotterRequest = (props) => {
         setPendingRequest(data);
         setSelectedRowsPendingRequest([]);
       });
-	  
-	  var _ids = [];
+
+      var _ids = [];
       selectedRowsPendingRequest.map((values) => {
         _ids.push(values._id);
       });
@@ -653,11 +679,10 @@ const BlotterRequest = (props) => {
     } else {
       data = utils.deleteArrayRow(data, objKey, row._id);
       setPendingRequest(data);
-	  rejectBlotterRequest([row._id]);
+      rejectBlotterRequest([row._id]);
     }
-	  
-  }
-  
+  };
+
   const pendingRequestColumn = [
     {
       title: "ID",
@@ -704,7 +729,7 @@ const BlotterRequest = (props) => {
       dataIndex: "incidentlocation",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
-	{
+    {
       title: "Classification",
       dataIndex: "classification",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
@@ -719,11 +744,13 @@ const BlotterRequest = (props) => {
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => { approveBlotterRequestBtn(elm) }}
+                onClick={() => {
+                  approveBlotterRequestBtn(elm);
+                }}
                 size="small"
               />
             </Tooltip>
-			 <Tooltip
+            <Tooltip
               title={
                 selectedRowKeysPendingRequest.length > 0
                   ? `Reject (${selectedRowKeysPendingRequest.length})`
@@ -733,7 +760,7 @@ const BlotterRequest = (props) => {
               <Button
                 danger
                 icon={<CloseCircleOutlined />}
-				 className="mr-2"
+                className="mr-2"
                 onClick={() => {
                   rejectBlotterRequestBtn(elm);
                 }}
@@ -775,23 +802,25 @@ const BlotterRequest = (props) => {
   };
 
   //EXPORT
-  
+
   const refreshPendingRequest = () => {
     console.log("Refresh Pending Blotter Request");
     setPendingRequestLoading(true);
 
-    getPendingBlotterRequest(currentBarangay);
+    getPendingBlotterRequest(currentOrganization);
 
     setSessionData([0, 0, 0]);
-    getRecordStatus(currentBarangay);
+    getRecordStatus(currentOrganization);
   };
-  
+
   const pendingRequestList = (
     <Menu>
-      <Menu.Item key="0"
-	   onClick={() => {
+      <Menu.Item
+        key="0"
+        onClick={() => {
           refreshPendingRequest();
-        }}>
+        }}
+      >
         <span>
           <div className="d-flex align-items-center">
             <ReloadOutlined />
@@ -811,8 +840,8 @@ const BlotterRequest = (props) => {
         setPendingRequest(data);
         setSelectedRowsPendingRequest([]);
       });
-	  
-	  var _ids = [];
+
+      var _ids = [];
       selectedRowsPendingRequest.map((values) => {
         _ids.push(values._id);
       });
@@ -821,10 +850,10 @@ const BlotterRequest = (props) => {
     } else {
       data = utils.deleteArrayRow(data, objKey, row.blotter_id);
       setPendingRequest(data);
-	   deleteBlotterRequest([row._id]);
+      deleteBlotterRequest([row._id]);
     }
   };
-  
+
   // End Pending Pending Blotter Request
 
   return (
@@ -855,7 +884,7 @@ const BlotterRequest = (props) => {
                 </Flex>
                 <div className="table-responsive">
                   <Table
-					loading={pendingRequestLoading}
+                    loading={pendingRequestLoading}
                     columns={pendingRequestColumn}
                     dataSource={pendingRequest}
                     rowKey="_id"
@@ -875,8 +904,8 @@ const BlotterRequest = (props) => {
               </Card>
             </Col>
           </Row>
-		  
-		  <Row>
+
+          <Row>
             <Col xs={24} sm={24} md={24} lg={24}>
               <Card
                 title="Blotter Request Record"
@@ -929,11 +958,10 @@ const BlotterRequest = (props) => {
                       </Space>
                     </div>
                   </Flex>
-
                 </Flex>
                 <div className="table-responsive">
                   <Table
-					loading={blotterlistRequestLoading}
+                    loading={blotterlistRequestLoading}
                     columns={blotterRequestColumn}
                     dataSource={blotterlistrequest}
                     rowKey="_id"
@@ -970,5 +998,3 @@ const BlotterRequest = (props) => {
   );
 };
 export default BlotterRequest;
-
-

@@ -34,7 +34,7 @@ const Header = (data) => {
           <b>Republic of the Philippines</b> <br />
           <b>Province of ____</b> <br />
           <b>Municipality of _____</b> <br />
-          <b>Barangay ______</b> <br />
+          <b>Organization ______</b> <br />
           <b>Office of the ________</b> <br /> <br /> <br />
         </div>
       </Col>

@@ -28,8 +28,8 @@ const ListInformation = (props) => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
 
-  const { generateToken, currentBarangay } = useAuth();
-  const barangay_id = currentBarangay;
+  const { generateToken, currentOrganization } = useAuth();
+  const organization_id = currentOrganization;
 
   const { param_url } = props;
   const [selectShow, setShow] = useState(true);
@@ -47,7 +47,7 @@ const ListInformation = (props) => {
   const getAllResident = async () => {
     try {
       await axios
-        .post("/api/resident/getAll", { barangay_id }, generateToken()[1], {
+        .post("/api/resident/getAll", { organization_id }, generateToken()[1], {
           cancelToken,
         })
         .then((res) => {
@@ -64,15 +64,15 @@ const ListInformation = (props) => {
   };
 
   const deleteResident = async (resident_id) => {
-    console.log(resident_id)
+    console.log(resident_id);
     await axios.post(
       "/api/resident/delete",
       { resident_id },
       generateToken()[1]
     );
 
-    console.log(resident_id)
-  }
+    console.log(resident_id);
+  };
 
   const dropdownMenu = (row) => (
     <Menu>
@@ -129,7 +129,6 @@ const ListInformation = (props) => {
   };
 
   const deleteRow = async (row) => {
-
     //deleting resident in table
     const objKey = "resident_id";
     let data = list;
@@ -140,15 +139,14 @@ const ListInformation = (props) => {
         data = utils.deleteArrayRow(data, objKey, elm.resident_id);
         setList(data);
         setSelectedRows([]);
-        residentIdArray.push(elm.resident_id)
+        residentIdArray.push(elm.resident_id);
       }); //end of loop
-      deleteResident(residentIdArray)
-
+      deleteResident(residentIdArray);
     } else {
       data = utils.deleteArrayRow(data, objKey, row.resident_id);
       setList(data);
-      residentIdArray.push(row.resident_id)
-      deleteResident(residentIdArray)
+      residentIdArray.push(row.resident_id);
+      deleteResident(residentIdArray);
     }
   };
 

@@ -7,7 +7,7 @@ export async function updateAccount(
   currentUser,
   setDisplayName,
   setProfileAvatar,
-  setEditBarangay,
+  setEditOrganization,
   setLoadingButton,
   generateToken
 ) {
@@ -33,7 +33,7 @@ export async function updateAccount(
           displayName: response.data?.full_name,
         });
         setLoadingButton(false);
-        setEditBarangay(false);
+        setEditOrganization(false);
       }, 1000);
     })
     .catch((error) => {

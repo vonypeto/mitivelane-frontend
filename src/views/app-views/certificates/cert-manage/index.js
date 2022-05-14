@@ -6,7 +6,7 @@ import InputCert from "./input-display";
 import { Col, Row, Button, Input } from "antd";
 import { ArrowDownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
-import { AUTH_BARANGAY } from "redux/constants/Auth";
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 import { useParams } from "react-router-dom";
 import {
   getCertificateData,
@@ -38,7 +38,7 @@ const Certificates = () => {
   };
   const navigate = () => {
     history.push(
-      `/app/${localStorage.getItem(AUTH_BARANGAY)}/cert-display/list`
+      `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/list`
     );
   };
   //useEffects

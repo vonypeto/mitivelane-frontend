@@ -58,8 +58,8 @@ const LoginTwo = (props) => {
                 />
                 <h1 className="text-white">Welcome to MitiveLane</h1>
                 <p className="text-white">
-                  We provide platform to help you connect to your barangay at
-                  the comfort of your home.With fast and efficient data
+                  We provide platform to help you connect to your organization
+                  at the comfort of your home.With fast and efficient data
                   reporting.
                 </p>
               </Col>

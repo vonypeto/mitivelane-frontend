@@ -104,10 +104,10 @@ const CertDisplay = (props) => {
                 <b>Republic of the Philippines</b> <b>Province of ____</b>{" "}
                 <br />
                 <b>Municipality of _____</b> <br />
-                <b>Barangay ______</b> <br />
+                <b>Organization ______</b> <br />
                 <b>Office of the ________</b> <br /> <br /> <br />
                 <b style={{ letterSpacing: 2, fontSize: 13 }}>
-                  BARANGAY CLEARANCE
+                  ORGANIZATION CLEARANCE
                 </b>
               </div>
             </Col>

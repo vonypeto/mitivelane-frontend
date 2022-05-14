@@ -1,6 +1,6 @@
 import {
-  AUTH_BARANGAY,
-  AUTH_BARANGAY_LIST,
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
   ACCESS_TOKEN,
   SESSION_TOKEN,
   PROFILE_URL,
@@ -11,10 +11,10 @@ import jwt_decode from "jwt-decode";
 import sign from "jwt-encode";
 import publicIp from "react-public-ip";
 
-export async function loginBarangay(
+export async function loginOrganization(
   token,
-  setBarangayMemberList,
-  setBarangay,
+  setOrganizationMemberList,
+  setOrganization,
   redirect,
   history,
   currentUser,
@@ -27,7 +27,7 @@ export async function loginBarangay(
 ) {
   const ipv4 = (await publicIp.v4()) || "";
 
-  let role_id, barangay_id;
+  let role_id, organization_id;
   const date = new Date().getTime() / 1000;
   const unix = Math.round(date);
   const data = {
@@ -75,25 +75,25 @@ export async function loginBarangay(
         profile_data: res.data?.profileUrl,
         profile_color: response.profileLogo,
       });
-      if (response.barangays[0] && response.members[0]) {
-        if (response.barangays[0].length > 0) {
-          response.barangays[0].map(
-            (barangay) => (barangay_id = barangay.barangay_id)
+      if (response.organizations[0] && response.members[0]) {
+        if (response.organizations[0].length > 0) {
+          response.organizations[0].map(
+            (organization) => (organization_id = organization.organization_id)
           );
-          localStorage.setItem(AUTH_BARANGAY, barangay_id);
-          setBarangay(barangay_id);
+          localStorage.setItem(AUTH_ORGANIZATION, organization_id);
+          setOrganization(organization_id);
           response.members[0].map(
-            (member) => (role_id = member.barangay_member_id)
+            (member) => (role_id = member.organization_member_id)
           );
-          localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
-          setBarangayMemberList(role_id);
+          localStorage.setItem(AUTH_ORGANIZATION_LIST, role_id);
+          setOrganizationMemberList(role_id);
           return history.push(redirect);
         }
       } else {
-        localStorage.setItem(AUTH_BARANGAY_LIST, null);
-        localStorage.setItem(AUTH_BARANGAY, null);
-        setBarangayMemberList(null);
-        setBarangay(null);
+        localStorage.setItem(AUTH_ORGANIZATION_LIST, null);
+        localStorage.setItem(AUTH_ORGANIZATION, null);
+        setOrganizationMemberList(null);
+        setOrganization(null);
         return history.push(PRE_PREFIX_PATH);
       }
     })

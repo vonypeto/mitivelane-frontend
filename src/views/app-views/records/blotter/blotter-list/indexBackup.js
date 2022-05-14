@@ -49,7 +49,7 @@ const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
 
 const BlotterRecord = (props) => {
-  const { currentBarangay, generateToken } = useAuth();
+  const { currentOrganization, generateToken } = useAuth();
 
   const { param_url } = props;
   var history = useHistory();
@@ -75,21 +75,24 @@ const BlotterRecord = (props) => {
   const [selectedUser, SetSelectedUser] = useState(null);
 
   useEffect(() => {
-    getBlotters(currentBarangay);
-    getRecordCases(currentBarangay);
-	getBlotterRequest(currentBarangay)
+    getBlotters(currentOrganization);
+    getRecordCases(currentOrganization);
+    getBlotterRequest(currentOrganization);
 
     setLocalStorage(BLOTTER_FORM, {
       reporters: [],
       victims: [],
       suspects: [],
-      respondents: []
+      respondents: [],
     });
   }, []);
 
-  const getBlotters = (currentBarangay) => {
+  const getBlotters = (currentOrganization) => {
     axios
-      .get("/api/blotter/get-blotters/" + currentBarangay, generateToken()[1])
+      .get(
+        "/api/blotter/get-blotters/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Blotters ", response.data);
         setBlotterList(response.data);
@@ -101,9 +104,12 @@ const BlotterRecord = (props) => {
       });
   };
 
-  const getRecordCases = (currentBarangay) => {
+  const getRecordCases = (currentOrganization) => {
     axios
-      .get("/api/blotter/record-cases/" + currentBarangay, generateToken()[1])
+      .get(
+        "/api/blotter/record-cases/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Record Cases", response.data);
         setSessionData(response.data);
@@ -119,7 +125,7 @@ const BlotterRecord = (props) => {
       .then((response) => {
         // message.destroy()
         if (response.data == "Success") {
-          getRecordCases(currentBarangay);
+          getRecordCases(currentOrganization);
           return message.success("Successfully Deleted");
         } else {
           return message.error("Error, please try again.");
@@ -241,10 +247,10 @@ const BlotterRecord = (props) => {
               record.settlement_status === "Settled"
                 ? "geekblue"
                 : record.settlement_status === "Unsettled"
-                  ? "orange"
-                  : record.settlement_status === "Scheduled"
-                    ? "cyan"
-                    : "gold"
+                ? "orange"
+                : record.settlement_status === "Scheduled"
+                ? "cyan"
+                : "gold"
             }
           >
             {record.settlement_status}
@@ -285,52 +291,52 @@ const BlotterRecord = (props) => {
     setBlotterListLoading(true);
 
     setBlotterList([]);
-    getBlotters(currentBarangay);
+    getBlotters(currentOrganization);
 
     setSessionData([0, 0, 0, 0]);
-    getRecordCases(currentBarangay);
+    getRecordCases(currentOrganization);
   };
 
   const headers = [
     {
       label: "Blotter ID",
-      key: "_id"
+      key: "_id",
     },
     {
       label: "Reporter",
-      key: "reporter_name"
+      key: "reporter_name",
     },
     {
       label: "Time Occured",
-      key: "time_of_incident"
+      key: "time_of_incident",
     },
     {
       label: "Date Occured",
-      key: "date_of_incident"
+      key: "date_of_incident",
     },
     {
       label: "Date Reported",
-      key: "createdAt"
+      key: "createdAt",
     },
     {
       label: "Schedule Time",
-      key: "time_schedule"
+      key: "time_schedule",
     },
     {
       label: "Schedule Date",
-      key: "date_schedule"
+      key: "date_schedule",
     },
     {
       label: "Location",
-      key: "place_incident"
+      key: "place_incident",
     },
     {
       label: "Classification",
-      key: "incident_type"
+      key: "incident_type",
     },
     {
       label: "Case",
-      key: "settlement_status"
+      key: "settlement_status",
     },
   ];
 
@@ -386,13 +392,13 @@ const BlotterRecord = (props) => {
   );
 
   const AddBlotter = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-record/add`);
+    history.push(`/app/${currentOrganization}/records/blotter-record/add`);
   };
 
   const BlottereditwDetails = (row) => {
     setLocalStorage(BLOTTER_FORM, row);
     history.push(
-      `/app/${currentBarangay}/records/blotter-record/${row._id}/edit`
+      `/app/${currentOrganization}/records/blotter-record/${row._id}/edit`
     );
   };
 
@@ -421,14 +427,19 @@ const BlotterRecord = (props) => {
   };
 
   // Blotter Request
-  
+
   const [blotterlistrequest, setBlotterListRequest] = useState([]);
   const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
-  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(true);
-  
+  const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
+    true
+  );
+
   const getBlotterRequest = () => {
-	  axios
-      .get("/api/blotter_request/get-blotter-request/" + currentBarangay, generateToken()[1])
+    axios
+      .get(
+        "/api/blotter_request/get-blotter-request/" + currentOrganization,
+        generateToken()[1]
+      )
       .then((response) => {
         console.log("Blotters Request ", response.data);
         setBlotterListRequest(response.data);
@@ -438,11 +449,15 @@ const BlotterRecord = (props) => {
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-  }
-  
+  };
+
   const deleteBlotterRequest = (_ids) => {
-	  axios
-      .post("/api/blotter_request/delete-blotter-request", { _ids }, generateToken()[1])
+    axios
+      .post(
+        "/api/blotter_request/delete-blotter-request",
+        { _ids },
+        generateToken()[1]
+      )
       .then((response) => {
         // message.destroy()
         if (response.data == "Success") {
@@ -456,8 +471,8 @@ const BlotterRecord = (props) => {
         // message.destroy()
         message.error("The action can't be completed, please try again.");
       });
-  }
-  
+  };
+
   const BlotterRequest = [
     {
       title: "ID",
@@ -512,7 +527,7 @@ const BlotterRecord = (props) => {
               <Button
                 className="mr-2 btn-success background"
                 icon={<CheckCircleOutlined className="approve" />}
-                onClick={() => { }}
+                onClick={() => {}}
                 size="small"
               />
             </Tooltip>
@@ -598,7 +613,9 @@ const BlotterRecord = (props) => {
   );
 
   const AddBlotterRequest = () => {
-    history.push(`/app/${currentBarangay}/records/blotter-request-form/add`);
+    history.push(
+      `/app/${currentOrganization}/records/blotter-request-form/add`
+    );
   };
 
   const BlotterRequestDeleteRow = (row) => {
@@ -610,8 +627,8 @@ const BlotterRecord = (props) => {
         setBlotterListRequest(data);
         setSelectedRowsBlotterRequest([]);
       });
-	  
-	  var _ids = [];
+
+      var _ids = [];
       selectedRowsBlotterRequest.map((values) => {
         _ids.push(values._id);
       });
@@ -620,7 +637,7 @@ const BlotterRecord = (props) => {
     } else {
       data = utils.deleteArrayRow(data, objKey, row.blotter_id);
       setBlotterListRequest(data);
-	   deleteBlotterRequest([row._id]);
+      deleteBlotterRequest([row._id]);
     }
   };
 
@@ -827,4 +844,3 @@ const BlotterRecord = (props) => {
   );
 };
 export default BlotterRecord;
-

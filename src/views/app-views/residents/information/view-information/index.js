@@ -6,7 +6,7 @@ const ViewResident = (props) => {
   console.log("Add Second Loop: " + param_url);
   return (
     <div>
-      <ResidentForm mode="VIEW" param={props.match.params.barangay_id} />
+      <ResidentForm mode="VIEW" param={props.match.params.organization_id} />
     </div>
   );
 };

@@ -19,8 +19,8 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import ManageMember from "./ManageTeam";
-import ManageBarangay from "./ManageBarangay";
-import BarangayDelete from "./BarangayDelete";
+import ManageOrganization from "./ManageOrganization";
+import OrganizationDelete from "./OrganizationDelete";
 
 const ManageTeam = (props) => {
   console.log(props);
@@ -35,14 +35,14 @@ const ManageTeam = (props) => {
             justifyContent="between"
             alignItems="center"
           >
-            <h2 className="mb-3">Barangay Team</h2>
+            <h2 className="mb-3">Organization Team</h2>
           </Flex>
         </div>
       </PageHeaderAlt>
 
       <div className="container" style={{ marginTop: 95 }}>
         <Row gutter={16}>
-          <ManageBarangay data={props} />
+          <ManageOrganization data={props} />
         </Row>
         <Divider />
         <Row gutter={16}>
@@ -50,7 +50,7 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />
         <Row gutter={16}>
-          <BarangayDelete />
+          <OrganizationDelete />
         </Row>
       </div>
     </div>

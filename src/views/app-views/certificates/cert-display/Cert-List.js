@@ -11,7 +11,7 @@ import Flex from "components/shared-components/Flex";
 import CertDrawer from "./Cert-Drawer";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { useHistory } from "react-router-dom";
-import { AUTH_BARANGAY } from "redux/constants/Auth";
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 import FileTest from "assets/files/test.pdf";
 import CreateLayout from "assets/files/create.pdf";
 import axios from "axios";
@@ -23,7 +23,7 @@ import Spin from "components/shared-components/Loading";
 const CertList = () => {
   const history = useHistory();
   const { generateToken } = useAuth();
-  const auth_barangay = localStorage.getItem(AUTH_BARANGAY);
+  const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
 
   const [loading, setLoading] = useState(false);
   const arrayData = [
@@ -70,7 +70,7 @@ const CertList = () => {
         .post("/api/cert-display/create", {}, generateToken()[1])
         .then((res) => {
           setLoading(!loading);
-          history.push(`/app/${auth_barangay}/cert-display/${res.data.id}`);
+          history.push(`/app/${auth_organization}/cert-display/${res.data.id}`);
         });
     }
   };

@@ -6,7 +6,7 @@ import { AiOutlineLeft } from "react-icons/ai";
 
 const { TextArea } = Input;
 
-const BarangayInfoForm = () => {
+const OrganizationInfoForm = () => {
   return (
     <Row gutter={12}>
       <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
@@ -24,9 +24,9 @@ const BarangayInfoForm = () => {
       <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
         <Form.Item
           className="form2-items"
-          name="barangay"
-          rules={[{ required: true, message: "Need barangay!" }]}
-          label="Barangay:"
+          name="organization"
+          rules={[{ required: true, message: "Need organization!" }]}
+          label="Organization:"
           hasFeedback
         >
           <Input />
@@ -72,9 +72,9 @@ const BarangayInfoForm = () => {
       <Col span={24}>
         <Form.Item
           className="form2-items"
-          name="barangay_address"
-          rules={[{ required: true, message: "Need barangay address!" }]}
-          label="Barangay address: "
+          name="organization_address"
+          rules={[{ required: true, message: "Need organization address!" }]}
+          label="Organization address: "
           hasFeedback
         >
           <TextArea autoSize />
@@ -84,4 +84,4 @@ const BarangayInfoForm = () => {
   );
 };
 
-export default BarangayInfoForm;
+export default OrganizationInfoForm;

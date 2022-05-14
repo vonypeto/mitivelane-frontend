@@ -14,19 +14,19 @@ const DynamicCases = (props) => {
   const [blotterlistData, setBlotterlistData] = useState([]);
   const [blotterlistLoading, setBlotterListLoading] = useState(true);
 
-  const { barangay_id, caseType } = props;
+  const { organization_id, caseType } = props;
   const [testText, setTestText] = useState("[arent");
   const selectTestText = (event) => {
     return setTestText(event);
   };
 
   useEffect(() => {
-    getBlotters(barangay_id);
+    getBlotters(organization_id);
   }, []);
 
-  const getBlotters = (barangayId) => {
+  const getBlotters = (organizationId) => {
     axios
-      .get("/api/blotter/get-blotters/" + barangayId, generateToken()[1], {
+      .get("/api/blotter/get-blotters/" + organizationId, generateToken()[1], {
         cancelToken,
       })
       .then((response) => {
@@ -42,7 +42,8 @@ const DynamicCases = (props) => {
 
   const blotterData = blotterlist.filter(
     (data) =>
-      data.barangay_id == barangay_id && data.settlement_status == caseType
+      data.organization_id == organization_id &&
+      data.settlement_status == caseType
   );
   return (
     <div>
@@ -52,8 +53,8 @@ const DynamicCases = (props) => {
 
           <BlotterTable
             testout={selectTestText.bind(this)}
-			caseType={caseType}
-            barangay_id={barangay_id}
+            caseType={caseType}
+            organization_id={organization_id}
             blotterData={blotterData}
             blotterlistLoading={blotterlistLoading}
           />

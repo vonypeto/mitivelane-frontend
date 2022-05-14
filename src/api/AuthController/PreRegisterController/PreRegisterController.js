@@ -1,16 +1,19 @@
 import moment from "moment";
 import { DATE_FORMAT_YYYY_MM_DD } from "constants/DateConstant";
 import axios from "axios";
-import { AUTH_BARANGAY, AUTH_BARANGAY_LIST } from "redux/constants/Auth";
+import {
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
+} from "redux/constants/Auth";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
-export async function createBarangay(
+export async function createOrganization(
   history,
   currentUser,
   values,
   user_id,
-  setBarangay,
-  setBarangayMemberList,
+  setOrganization,
+  setOrganizationMemberList,
   firstTime,
   generateToken
 ) {
@@ -22,12 +25,12 @@ export async function createBarangay(
   console.log(values);
   if (firstTime) {
     dataInfo = {
-      barangay_name: values.barangay,
+      organization_name: values.organization,
       email: currentUser?.email,
       auth_id: user_id,
       province: values.province,
       municipality: values.municipality,
-      address: values.barangay_address,
+      address: values.organization_address,
       country: values.country,
       role: "Administrator",
       //UserProfile
@@ -47,36 +50,39 @@ export async function createBarangay(
     };
   } else {
     dataInfo = {
-      barangay_name: values.barangay,
+      organization_name: values.organization,
       email: currentUser?.email,
       auth_id: user_id,
       province: values.province,
       municipality: values.municipality,
-      address: values.barangay_address,
+      address: values.organization_address,
       country: values.country,
       role: "Administrator",
     };
   }
 
   await axios
-    .post("/api/pre/create-barangay", dataInfo, token[1])
+    .post("/api/pre/create-organization", dataInfo, token[1])
     .then((response) => {
       if (response.data.length > 0) {
         console.log(response.data);
-        console.log(response.data[0].barangay_id);
+        console.log(response.data[0].organization_id);
         if (firstTime) {
           currentUser.updateProfile({
             displayName: values.first_name + " " + values.last_name,
           });
         }
 
-        setBarangay(response.data[0].barangay_id);
-        setBarangayMemberList(response.data[0].barangay_member_id);
+        setOrganization(response.data[0].organization_id);
+        setOrganizationMemberList(response.data[0].organization_member_id);
         localStorage.setItem(
-          AUTH_BARANGAY_LIST,
-          response.data[0].barangay_member_id
+          AUTH_ORGANIZATION_LIST,
+          response.data[0].organization_member_id
         );
-        localStorage.setItem(AUTH_BARANGAY, response.data[0].barangay_id);
+        localStorage.setItem(
+          AUTH_ORGANIZATION,
+          response.data[0].organization_id
+        );
         return history.push(APP_PREFIX_PATH);
       }
     })

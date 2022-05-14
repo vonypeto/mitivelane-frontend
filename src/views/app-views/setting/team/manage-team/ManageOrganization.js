@@ -18,30 +18,30 @@ import {
   UploadOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-const ManageBarangay = (props) => {
+const ManageOrganization = (props) => {
   console.log(props);
-  const [editBarangay, setEditBarangay] = useState(false);
+  const [editOrganization, setEditOrganization] = useState(false);
 
   const onClickEdit = () => {
-    setEditBarangay(!editBarangay);
+    setEditOrganization(!editOrganization);
   };
 
-  const onDeleteBarangay = () => {
+  const onDeleteOrganization = () => {
     message.info("Clicked on Yes.");
   };
   return (
     <>
       <Col xs={24} sm={24} md={8}>
         <div className="pl-1">
-          <h3>Manage Barangay</h3>
+          <h3>Manage Organization</h3>
           <p className="mt-1 text-sm text-gray-600">
-            Update your Barangay, Slug, Logo, and Members.
+            Update your Organization, Slug, Logo, and Members.
           </p>
         </div>
       </Col>
       <Col xs={24} sm={24} md={15} className="ant-body-pt">
         <Form>
-          <Card title="Barangay Details">
+          <Card title="Organization Details">
             <Col xs={24} sm={24} md={24} className="w-100">
               <Row className="pt-2 border-top ">
                 <Col xs={24} sm={24} md={4} className="pt-2 text-left ">
@@ -54,10 +54,12 @@ const ManageBarangay = (props) => {
                   className="text-left form-input-mb"
                 >
                   <Form.Item>
-                    {editBarangay ? (
-                      <Input placeholder="Barangay Name" />
+                    {editOrganization ? (
+                      <Input placeholder="Organization Name" />
                     ) : (
-                      <div className="font-size-md">Barangay test label</div>
+                      <div className="font-size-md">
+                        Organization test label
+                      </div>
                     )}
                   </Form.Item>
                 </Col>
@@ -73,10 +75,12 @@ const ManageBarangay = (props) => {
                   className="text-left form-input-mb"
                 >
                   <Form.Item>
-                    {editBarangay ? (
+                    {editOrganization ? (
                       <Input placeholder="Url Name" />
                     ) : (
-                      <div className="font-size-md">Barangay test label</div>
+                      <div className="font-size-md">
+                        Organization test label
+                      </div>
                     )}
                   </Form.Item>
                 </Col>
@@ -99,7 +103,7 @@ const ManageBarangay = (props) => {
                       icon={<UserOutlined />}
                     />
 
-                    {editBarangay ? (
+                    {editOrganization ? (
                       <Button icon={<UploadOutlined />} size="medium">
                         Upload image
                       </Button>
@@ -125,7 +129,7 @@ const ManageBarangay = (props) => {
                       icon={<UserOutlined />}
                     />
 
-                    {editBarangay ? (
+                    {editOrganization ? (
                       <Button icon={<UploadOutlined />} size="medium">
                         Upload image
                       </Button>
@@ -133,7 +137,7 @@ const ManageBarangay = (props) => {
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
-                  {editBarangay ? (
+                  {editOrganization ? (
                     <>
                       <Button className="mr-2" type="primary">
                         Save
@@ -155,4 +159,4 @@ const ManageBarangay = (props) => {
   );
 };
 
-export default ManageBarangay;
+export default ManageOrganization;
