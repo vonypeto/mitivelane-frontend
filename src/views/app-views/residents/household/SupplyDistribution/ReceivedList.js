@@ -31,121 +31,6 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import SupplyReceivedForm from "./SupplyReceivedForm";
 
 const ReceievedList = (props) => {
-<<<<<<< HEAD
-    const { barangay_id, currentSupply, setCurrentSupply } = props
-
-    //Import
-    const source = axios.CancelToken.source();
-    const cancelToken = source.token;
-    const history = useHistory();
-    const { generateToken, currentBarangay } = useAuth();
-
-    //State
-    const [pageSize, setPageSize] = useState(4)
-    const [tableScreen, setTableScreen] = useState({})
-    const [isReceivedModalVisible, setisReceivedModalVisible] = useState(false);
-    const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
-    const [supplyReceivedList, setSupplyReceivedList] = useState([]);
-    const [supplyReceivedInitialVal, setSupplyReceivedInitialVal] = useState({})
-    const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState(0)
-    const [receivedSupplyCurrentPage, setReceivedSupplyCurrentPage] = useState(1)
-    const [receivedSupplyTotal, setReceivedSupplyTotal] = useState(0)
-    const [formAction, setFormAction] = useState('')
-    const [submitting, setSubmitting] = useState(false)
-    const [receiveTableLoading, setReceivedTableLoading] = useState(false)
-
-    //Ref
-    const SupplyReceivedFormRef = createRef()
-
-    //UseEffect
-    useEffect(() => {
-        getAllSupplies()
-    }, [])
-
-    useEffect(() => {
-        getPage()
-    }, [receivedSupplyCurrentPage, pageSize, tableScreen])
-
-    useEffect(() => {
-        console.log("supplyReceivedList", supplyReceivedList)
-    }, [supplyReceivedList])
-
-    //Axios
-    const getAllSupplies = async () => {
-        try {
-            await axios.post(
-                '/api/supply/receive/getAll',
-                { barangay_id, pageSize },
-                generateToken()[1],
-                { cancelToken }
-            ).then((res) => {
-                var SupplyReceived = res.data.SupplyReceived
-                SupplyReceived.map((data) => {
-                    data.date = moment(new Date(data.date))
-                })
-
-                var suppliesReceivedCount = res.data.suppliesReceivedCount
-                setReceivedSupplyTotal(suppliesReceivedCount)
-                setSupplyReceivedList(SupplyReceived)
-            })
-
-        } catch (error) {
-            console.log(error)
-            message.error("Error in database connection!!")
-        }
-    }
-
-    const getPage = async () => {
-        setReceivedTableLoading(true)
-        console.log("loading page:", receivedSupplyCurrentPage)
-            await axios.post(
-                `/api/supply/receive/getPage/${barangay_id}/${receivedSupplyCurrentPage}/${pageSize}`,
-                { tableScreen },
-                generateToken()[1],
-                { cancelToken }
-            )
-            .then((res) => {
-                var data = res.data
-                setSupplyReceivedList(data)
-                setReceivedTableLoading(false)
-            })
-    }
-
-    const addSupplyReceived = async (newSupplyReceived) => {
-        try {
-            const new_supply_amount = currentSupply + newSupplyReceived.amount
-            setCurrentSupply(new_supply_amount)
-
-            await axios.post(
-                '/api/supply/receive/add',
-                { newSupplyReceived, barangay_id: barangay_id, new_supply_amount },
-                generateToken()[1],
-                { cancelToken }
-            )
-            .then((res) => {
-                const data = res.data
-
-                newSupplyReceived.supply_receive_id = data.supply_receive_id
-                var newTotal = (receivedSupplyTotal + 1)
-                setReceivedSupplyTotal(newTotal)
-
-                if (supplyReceivedList.length < pageSize) {
-                    setSupplyReceivedList([...supplyReceivedList, newSupplyReceived])
-                }
-
-                if (supplyReceivedList.length == pageSize) {
-                    setReceivedSupplyCurrentPage(getTotalPage(newTotal))
-                }
-
-                message.success(" New Supply Received data has been added.")
-            })
-
-
-        } catch (error) {
-            console.log(error);
-            message.error("Error in database connection!!")
-        }
-=======
   const { pageSize, organization_id, currentSupply, setCurrentSupply } = props;
 
   //Import
@@ -202,7 +87,6 @@ const ReceievedList = (props) => {
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
     }
   };
 

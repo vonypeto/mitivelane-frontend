@@ -42,23 +42,6 @@ const SupplyDistribution = (props) => {
   const { generateToken, currentOrganization } = useAuth();
 
   //State
-<<<<<<< HEAD
-  const [currentSupply, setCurrentSupply] = useState(0);
-
-  //Props
-  const tableProps = {
-    barangay_id,
-    setCurrentSupply,
-    currentSupply,
-  }
-
-  //UseEffect
-  useEffect(() => {
-    getCurrentSupply()
-  }, [])
-
-  //Axios
-=======
   const [isReceivedModalVisible, setisReceivedModalVisible] = useState(false);
   const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
   const [supplyReceivedList, setSupplyReceivedList] = useState([]);
@@ -108,7 +91,6 @@ const SupplyDistribution = (props) => {
     }
   };
 
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
   const getCurrentSupply = async () => {
     const request = await axios.post(
       "/api/supply/get/current",

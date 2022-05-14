@@ -24,87 +24,6 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import SupplyGivenForm from "./SupplyGivenForm";
 
 const GivenList = (props) => {
-<<<<<<< HEAD
-    //Import
-    const source = axios.CancelToken.source();
-    const cancelToken = source.token;
-    const history = useHistory();
-    const { generateToken, currentBarangay } = useAuth();
-
-    const { barangay_id, currentSupply, setCurrentSupply } = props
-
-    //State
-    const [pageSize, setPageSize] = useState(4)
-    const [tableScreen, setTableScreen] = useState({})
-    const [isGivenModalVisible, setIsGivenModalVisible] = useState(false);
-    const [isGivenDrawerVisible, setIsGivenDrawerVisible] = useState(false);
-    const [supplyGivenList, setSupplyGivenList] = useState([]);
-    const [supplyGivenInitialVal, setSupplyGivenInitialVal] = useState({})
-    const [givenSelectedRowKeys, setGivenSelectedRowKeys] = useState(0)
-    const [givenSupplyCurrentPage, setGivenSupplyCurrentPage] = useState(1)
-    const [givenSupplyTotal, setGivenSupplyTotal] = useState(0)
-    const [givenTotalPage, setGivenTotalPage] = useState(0)
-    const [givenTableLoading, setGivenTableLoading] = useState(false)
-    const [formAction, setFormAction] = useState('')
-
-    //Ref
-    const SupplyGivenFormRef = createRef()
-
-    //UseEffect
-    useEffect(() => {
-        getAllSupplies()
-    }, [])
-
-    useEffect(() => {
-        getPage()
-    }, [givenSupplyCurrentPage, pageSize, tableScreen])
-
-    useEffect(() => {
-        console.log("supplyGivenList", supplyGivenList)
-    }, [supplyGivenList])
-
-    //Axios
-    const getAllSupplies = async () => {
-        try {
-            await axios.post(
-                '/api/supply/given/getAll',
-                { barangay_id, pageSize },
-                generateToken()[1],
-                { cancelToken }
-            ).then((res) => {
-                var SupplyGiven = res.data.SupplyGiven
-                SupplyGiven.map((data) => {
-                    data.date = moment(new Date(data.date))
-                })
-
-                var suppliesGivenCount = res.data.suppliesGivenCount
-                setGivenSupplyTotal(suppliesGivenCount)
-                setSupplyGivenList(SupplyGiven)
-            })
-
-        } catch (error) {
-            console.log(error)
-            message.error("Error in database connection!!")
-        }
-    }
-
-    const getPage = async () => {
-
-        setGivenTableLoading(true)
-        console.log("loading page:", givenSupplyCurrentPage)
-        // console.log("loading pageSize:", pageSize)
-        await axios.post(
-            `/api/supply/given/getPage/${barangay_id}/${givenSupplyCurrentPage}/${pageSize}`,
-            { tableScreen },
-            generateToken()[1],
-            { cancelToken }
-        )
-            .then((res) => {
-                var data = res.data
-                setSupplyGivenList(data)
-                setGivenTableLoading(false)
-            })
-=======
   //Import
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
@@ -158,7 +77,6 @@ const GivenList = (props) => {
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
->>>>>>> e1004f667b66f1dbf55581512ebcf6a93cffc0f0
     }
   };
 
