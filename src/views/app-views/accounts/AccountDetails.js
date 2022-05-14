@@ -90,7 +90,7 @@ const AccountDetails = () => {
       form
         .validateFields()
         .then((values) => {
-          updateAccount({
+          updateAccount(
             values,
             profileAvatar,
             currentUser,
@@ -98,8 +98,8 @@ const AccountDetails = () => {
             setProfileAvatar,
             setEditOrganization,
             setLoadingButton,
-            generateToken,
-          });
+            generateToken
+          );
         })
         .catch((errorInfo) => {
           console.log(errorInfo);

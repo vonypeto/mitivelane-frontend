@@ -171,7 +171,10 @@ const BasicDocument = (props) => {
               <Text>if else if the user enable the show organization member</Text>
             </View> */}
             <View style={styles.col_content}>
-              <Image src={data?.firstLogo} style={styles.pageBackground} />
+              {data?.firstLogo ? (
+                <Image src={data?.firstLogo} style={styles.pageBackground} />
+              ) : null}
+
               <Text style={styles.col_center_space_bold_clearance}>
                 ORGANIZATION CLEARANCE
               </Text>

@@ -61,6 +61,8 @@ const SinglePage = (props) => {
         break;
       case "form":
         break;
+      case "template":
+        break;
     }
   };
   //  const isLoading = renderedPageNumber !== pageNumber;
@@ -196,7 +198,7 @@ const SinglePage = (props) => {
               <p>Edited 1 seconds ago</p>
             </Col>
           </Row>
-        ) : type == "drawer" ? (
+        ) : type == "template" ? (
           <></>
         ) : type == "drawer" ? (
           <></>

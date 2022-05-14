@@ -7,8 +7,10 @@ import ChatMenu from "./ChatMenu";
 import { withRouter } from "react-router-dom";
 import { AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
+
 import { useAuth } from "contexts/AuthContext";
-import { socket } from "api/AppController/SocketController/SocketController";
+import { SocketContext, socket } from "contexts/SocketContext";
+import { ChatContext } from "contexts/ChatContext";
 
 var conversationData = [];
 var alreadyRun = false;
@@ -17,15 +19,13 @@ const Chat = (props) => {
   const { currentOrganization, generateToken } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
   const [chatData, setChatData] = useState(conversationData);
-
   useEffect(() => {
     if (alreadyRun == false) {
       getConversations();
       alreadyRun = true;
-      console.log("Test 1 Chat muna sa console");
+      console.log("Socket IO Connection in Context API");
     }
   }, []);
-
   useEffect(() => {
     conversationData = chatData;
   }, [chatData]);
@@ -47,24 +47,7 @@ const Chat = (props) => {
           (elm) => elm._id !== conversationId
         );
 
-        var finalValue = newData.concat(currentData);
-
         setChatData(finalValue);
-
-        {
-          /*
-			const newData = conversationData.filter(elm => elm._id === conversationId)
-			
-			newData[0].messages.push(message)
-		
-
-			var currentData = conversationData.filter((elm) => elm._id !== conversationId)
-
-			var finalValue = newData.concat(currentData)
-
-			setChatData(finalValue)
-				*/
-        }
       });
   }, [socket]);
 
@@ -73,7 +56,7 @@ const Chat = (props) => {
       .post("/api/chat/start-conversation", values, generateToken()[1])
       .then((response) => {
         if (response.data == "Success") {
-          return message.success(`Added new Blotter`);
+          return message.success(`Added new aralotter`);
         } else {
           return message.error("Error, please try again.");
         }
@@ -98,29 +81,19 @@ const Chat = (props) => {
         message.error("Could not fetch the data in the server!");
       });
   };
-
   return (
     <div className="chat">
-      <InnerAppLayout
-        sideContent={
-          <ChatMenu
-            match={props.match}
-            location={props.location}
-            chatData={chatData}
+      <SocketContext.Provider value={socket}>
+        <ChatContext.Provider value={{ chatData, setChatData }}>
+          <InnerAppLayout
+            sideContent={<ChatMenu {...props} />}
+            mainContent={<ChatContent {...props} />}
+            sideContentWidth={450}
+            sideContentGutter={false}
+            border
           />
-        }
-        mainContent={
-          <ChatContent
-            {...props}
-            chatData={chatData}
-            setChatData={setChatData}
-            socket={socket}
-          />
-        }
-        sideContentWidth={450}
-        sideContentGutter={false}
-        border
-      />
+        </ChatContext.Provider>
+      </SocketContext.Provider>
     </div>
   );
 };

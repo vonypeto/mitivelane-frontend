@@ -19,6 +19,8 @@ import { useAuth } from "contexts/AuthContext";
 import { getCertificateAll } from "api/AppController/CertificatesController/CertificatesController";
 import InfinitScroll from "react-infinite-scroll-component";
 import Spin from "components/shared-components/Loading";
+import BasicDocument from "components/shared-components/Documents/Certificates-General/";
+import { pdf } from "@react-pdf/renderer";
 
 const CertList = () => {
   const history = useHistory();
@@ -75,9 +77,9 @@ const CertList = () => {
     }
   };
 
-  function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-  }
+  // function isEmpty(obj) {
+  //   return Object.keys(obj).length === 0;
+  // }
   const getCertificateNext = async () => {
     setStart(start + count);
     await axios
@@ -87,48 +89,102 @@ const CertList = () => {
       )
       .then((res) => {
         let data = res.data;
+        console.log(data);
 
+        data.map((elem) => {
+          elem.content =
+            elem.content[0]?.blocks.length == 0
+              ? {
+                  entityMap: {},
+                  blocks: [],
+                }
+              : elem.age;
+          return elem;
+        });
+        console.log(data);
         setPdfFile((oldArray) => [...oldArray, ...data]);
 
         if (data.length === 0) setHasMore(false);
       });
   };
 
-  const dropdownMenu = (row) => (
-    <Menu>
-      <Menu.Item key={1}>
-        <Flex alignItems="center">
-          <EditOutlined />
-          <span className="ml-2"> Edit</span>
-        </Flex>
-      </Menu.Item>
-      <Menu.Item key={2}>
-        <Flex alignItems="center">
-          <HighlightOutlined />
-          <span className="ml-2">Rename</span>
-        </Flex>
-      </Menu.Item>
-      <Menu.Item key={3}>
-        <Flex alignItems="center">
-          <ArrowDownOutlined />
-          <span className="ml-2">Download</span>
-        </Flex>
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key={4}>
-        <Flex alignItems="center">
-          <DeleteOutlined />
-          <span className="ml-2">Delete</span>
-        </Flex>
-      </Menu.Item>
-      <Menu.Item key={5}>
-        <Flex alignItems="center">
-          <CopyOutlined />
-          <span className="ml-2">Duplicate</span>
-        </Flex>
-      </Menu.Item>
-    </Menu>
-  );
+  // const dropdownMenu = (row) => (
+  //   <Menu>
+  //     <Menu.Item key={1}>
+  //       <Flex alignItems="center">
+  //         <EditOutlined />
+  //         <span className="ml-2"> Edit</span>
+  //       </Flex>
+  //     </Menu.Item>
+  //     <Menu.Item key={2}>
+  //       <Flex alignItems="center">
+  //         <HighlightOutlined />
+  //         <span className="ml-2">Rename</span>
+  //       </Flex>
+  //     </Menu.Item>
+  //     <Menu.Item key={3}>
+  //       <Flex alignItems="center">
+  //         <ArrowDownOutlined />
+  //         <span className="ml-2">Download</span>
+  //       </Flex>
+  //     </Menu.Item>
+  //     <Menu.Divider />
+  //     <Menu.Item key={4}>
+  //       <Flex alignItems="center">
+  //         <DeleteOutlined />
+  //         <span className="ml-2">Delete</span>
+  //       </Flex>
+  //     </Menu.Item>
+  //     <Menu.Item key={5}>
+  //       <Flex alignItems="center">
+  //         <CopyOutlined />
+  //         <span className="ml-2">Duplicate</span>
+  //       </Flex>
+  //     </Menu.Item>
+  //   </Menu>
+  // );
+  const generatePdfDocumentShow = async (data) => {
+    console.log(data);
+    let blob;
+    if (data)
+      try {
+        blob = await pdf(
+          <BasicDocument
+            data={data}
+            fontType={"Tinos"}
+            certType="cert"
+            templateType="simple_border"
+            type="pdf"
+          />
+        ).toBlob();
+        // console.log(URL.createObjectURL(blob));
+        return URL.createObjectURL(blob);
+      } catch (e) {
+        console.log(e);
+      }
+    else return;
+    // var reader = new FileReader();
+    // reader.readAsDataURL(blob);
+    // return new Promise((resolve) => {
+    //   reader.onloadend = () => {
+    //     resolve(reader.result);
+    //   };
+    // });
+  };
+  // const GetCertificate = () => {
+  //   return (
+  //     <>
+  //       {certType && templateType ? (
+  //         <SinglePagePDFViewer
+  //           certType="cert"
+  //           templateType="simple"
+  //           pdf={generatePdfDocumentShow(data)}
+  //           type={"form"}
+  //         />
+  //       ) : null}
+  //     </>
+  //   );
+  // };
   return (
     <div className="container">
       <CertDrawer
@@ -161,7 +217,7 @@ const CertList = () => {
               //    onClick={(e) => onHandle(e, CreateLayout)}
               >
                 <PDFTemplate
-                  data={{ name: "text" }}
+                  data={0}
                   certType="cert"
                   templateType="simple"
                   min={4}
@@ -191,17 +247,19 @@ const CertList = () => {
                   >
                     <div>
                       <div>
-                        <PDFTemplate
-                          data={item.certificate_id}
-                          certType="cert"
-                          templateType="simple"
-                          min={4}
-                          max={9}
-                          pdf={FileTest}
-                          type={"view"}
-                          counterClick={counterClick}
-                          onHandle={onHandle}
-                        />
+                        {console.log(item)}
+                        {item.certificate_id ? (
+                          <PDFTemplate
+                            data={item.certificate_id}
+                            certType="cert"
+                            templateType="simple"
+                            min={4}
+                            max={9}
+                            pdf={generatePdfDocumentShow(item)}
+                            type={"view"}
+                            onHandle={onHandle}
+                          />
+                        ) : null}
                       </div>
                     </div>
                   </Col>
