@@ -42,6 +42,7 @@ const Certificates = () => {
     );
   };
   //useEffects
+  console.log(parentData);
   useEffect(() => {
     setParentData(parentData);
     updateCertificateData(parentData, generateToken()[1]);

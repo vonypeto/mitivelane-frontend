@@ -77,7 +77,7 @@ const BasicDocument = (props) => {
     col_sidename: {
       width: "20%",
       float: "left",
-      padding: "20px",
+      //  padding: "20px",
       //  border: "2px solid red",
     },
     col_content: {
@@ -85,7 +85,8 @@ const BasicDocument = (props) => {
       width: "100%",
       float: "left",
       padding: "20px",
-
+      paddingLeft: 5,
+      // backgroundImage: `url(${data?.firstLogo})`,
       //   border: "2px solid red",
 
       textAlign: "justify",
@@ -137,10 +138,24 @@ const BasicDocument = (props) => {
     bold: {
       fontWeight: "bold",
     },
+    pageBackground: {
+      position: "absolute",
+      minWidth: "100%",
+      minHeight: "100%",
+      display: "block",
+      height: "80%",
+      marginLeft: "auto",
+      marginRight: "auto",
+      width: "100%",
+      left: 50,
+      top: " 22%",
+      transform: "translate(-50%, -50%)",
+      objectFit: "cover",
+      opacity: 0.3,
+      marginLeft: 8,
+    },
   });
-  let container;
-  if (data.content.length != 0) container = DraftToHtml(data);
-  else container = "<><>";
+  let container = DraftToHtml(data);
 
   let clean = DOMPurify.sanitize(container);
 
@@ -153,14 +168,14 @@ const BasicDocument = (props) => {
           <Header {...props} />
           <View style={styles.container_body}>
             {/* <View style={styles.col_sidename}>
-            <Text>if else if the user enable the show barangay member</Text>
-          </View> */}
+              <Text>if else if the user enable the show barangay member</Text>
+            </View> */}
             <View style={styles.col_content}>
+              <Image src={data?.firstLogo} style={styles.pageBackground} />
               <Text style={styles.col_center_space_bold_clearance}>
                 BARANGAY CLEARANCE
               </Text>
               <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
-
               <Text style={styles.indent}>
                 <RichText note={clean} />
                 {/* This is to certify that
