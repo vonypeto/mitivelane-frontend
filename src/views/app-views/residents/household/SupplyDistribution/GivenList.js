@@ -21,7 +21,11 @@ const GivenList = (props) => {
     const history = useHistory();
     const { generateToken, currentBarangay } = useAuth();
 
-    const { pageSize, barangay_id, currentSupply, setCurrentSupply } = props
+    const { barangay_id, currentSupply, setCurrentSupply } = props
+
+    //State
+    const [pageSize, setPageSize] = useState(4)
+    const [tableScreen, setTableScreen] = useState({})
     const [isGivenModalVisible, setIsGivenModalVisible] = useState(false);
     const [isGivenDrawerVisible, setIsGivenDrawerVisible] = useState(false);
     const [supplyGivenList, setSupplyGivenList] = useState([]);
@@ -43,7 +47,11 @@ const GivenList = (props) => {
 
     useEffect(() => {
         getPage()
-    }, [givenSupplyCurrentPage])
+    }, [givenSupplyCurrentPage, pageSize, tableScreen])
+
+    useEffect(() => {
+        console.log("supplyGivenList", supplyGivenList)
+    }, [supplyGivenList])
 
     //Axios
     const getAllSupplies = async () => {
@@ -71,10 +79,13 @@ const GivenList = (props) => {
     }
 
     const getPage = async () => {
+
         setGivenTableLoading(true)
         console.log("loading page:", givenSupplyCurrentPage)
-        await axios.get(
+        // console.log("loading pageSize:", pageSize)
+        await axios.post(
             `/api/supply/given/getPage/${barangay_id}/${givenSupplyCurrentPage}/${pageSize}`,
+            { tableScreen },
             generateToken()[1],
             { cancelToken }
         )
@@ -83,7 +94,6 @@ const GivenList = (props) => {
                 setSupplyGivenList(data)
                 setGivenTableLoading(false)
             })
-
     }
 
     //Axios
@@ -239,7 +249,7 @@ const GivenList = (props) => {
 
 
                     if (length == deleteLength && givenSupplyTotal > 1) {
-                        var newPage = givenSupplyCurrentPage    
+                        var newPage = givenSupplyCurrentPage
 
                         if (newPage == 1) {
                             getPage()
@@ -273,6 +283,7 @@ const GivenList = (props) => {
             title: "Amount",
             dataIndex: "amount",
             key: "amount",
+            sorter: (a, b) => a.amount - b.amount,
         },
         {
             title: "Date",
@@ -285,6 +296,7 @@ const GivenList = (props) => {
                     </span>
                 </div>
             ),
+            sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix()
         },
         {
             title: "Actions",
@@ -383,6 +395,7 @@ const GivenList = (props) => {
         </Menu>
     );
 
+    //Onchange
     const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
         if (selectedRows.length > 0) {
             let supplyGivenIDs = []
@@ -397,12 +410,31 @@ const GivenList = (props) => {
         }
     }
 
-    const handleGivenPageChange = async (page) => {
-
-        if (page != null) {
-            setGivenSupplyCurrentPage(page.current)
+    const handleTableChange = (pagination, filters, sorter) => {
+        var sorter = {
+            field: sorter.field,
+            order: sorter.order
         }
 
+        if (sorter.order != null) {
+            setTableScreen({sorter})
+        }
+
+        if (sorter.order == null) {
+            setTableScreen({})
+        }
+
+    }
+
+    const handleGivenPageChange = async (page) => {
+        if (page != null) {
+            setGivenSupplyCurrentPage(page)
+        }
+    }
+
+    const handlePageSizeChange = (size) => {
+        setSupplyGivenList([])
+        setPageSize(size)
     }
 
     const onFinishSupplyGivenForm = (values) => {
@@ -419,6 +451,7 @@ const GivenList = (props) => {
         setIsGivenDrawerVisible(false)
         setSupplyGivenInitialVal({})
     }
+
     const SupplyGivenRowSelection = {
         givenSelectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => { onSelectGivenSupplyChange(selectedRowKeys, selectedRows) },
@@ -426,11 +459,6 @@ const GivenList = (props) => {
 
     return (
         <>
-            <Button
-                onClick={() => {
-                    setGivenSupplyCurrentPage(100)
-                }}
-            >Click me</Button>
             <Card>
                 <Row justify='space-between'>
                     <Col><h1>Supply Given</h1></Col>
@@ -455,9 +483,16 @@ const GivenList = (props) => {
                         current: givenSupplyCurrentPage,
                         total: givenSupplyTotal,
                         pageSize: pageSize,
+                        showSizeChanger: true,
+                        defaultPageSize: 4,
+                        pageSizeOptions: [4, 10, 20, 50, 100],
+                        onShowSizeChange: (current, size) => {
+                            handlePageSizeChange(size)
+                        },
+                        onChange: (page) => handleGivenPageChange(page)
                     }}
 
-                    onChange={(page) => handleGivenPageChange(page)}
+                    onChange={handleTableChange}
                     loading={givenTableLoading}
                     bordered
                 />

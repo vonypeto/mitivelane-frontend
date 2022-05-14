@@ -35,54 +35,21 @@ const SupplyDistribution = (props) => {
   const { generateToken, currentBarangay } = useAuth();
 
   //State
-  const [isReceivedModalVisible, setisReceivedModalVisible] = useState(false);
-  const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
-  const [supplyReceivedList, setSupplyReceivedList] = useState([]);
-  const [supplyReceivedInitialVal, setSupplyReceivedInitialVal] = useState({})
   const [currentSupply, setCurrentSupply] = useState(0);
-  const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState(0)
-  const [receiveSupplyCurrentPage, setReceiveSupplyCurrentPage] = useState([])
-  const [receiveSupplyTotal, setReceiveSupplyTotal] = useState()
-  const [formAction, setFormAction] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [receiveTableLoading, setReceivedTableLoading] = useState(false)
-  const [pageSize, setPageSize] = useState(3)
 
-  //Ref
-  const SupplyReceivedFormRef = createRef()
+  //Props
+  const tableProps = {
+    barangay_id,
+    setCurrentSupply,
+    currentSupply,
+  }
 
   //UseEffect
   useEffect(() => {
-    getAllSupplies()
     getCurrentSupply()
   }, [])
 
   //Axios
-  const getAllSupplies = async () => {
-    try {
-      await axios.post(
-        '/api/supply/receive/getAll',
-        { barangay_id, pageSize },
-        generateToken()[1],
-        { cancelToken }
-      ).then((res) => {
-        console.log("res", res)
-        var SupplyReceived = res.data.SupplyReceived
-        SupplyReceived.map((data) => {
-          data.date = moment(new Date(data.date))
-        })
-
-        var suppliesReceivedCount = res.data.suppliesReceivedCount
-        setReceiveSupplyTotal(suppliesReceivedCount)
-        setSupplyReceivedList(SupplyReceived)
-      })
-
-    } catch (error) {
-      console.log(error)
-      message.error("Error in database connection!!")
-    }
-  }
-
   const getCurrentSupply = async () => {
     const request = await axios.post(
       '/api/supply/get/current',
@@ -129,9 +96,9 @@ const SupplyDistribution = (props) => {
         </Col>
       </Row>
 
-      <GivenList pageSize={pageSize} barangay_id={barangay_id} setCurrentSupply={setCurrentSupply} currentSupply={currentSupply}/>
+      <GivenList {...tableProps} />
 
-      <ReceievedList pageSize={pageSize} barangay_id={barangay_id} setCurrentSupply={setCurrentSupply} currentSupply={currentSupply}/>
+      <ReceievedList {...tableProps} />
 
     </div>
   )

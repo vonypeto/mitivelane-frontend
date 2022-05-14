@@ -25,7 +25,7 @@ import SupplyReceivedForm from './SupplyReceivedForm';
 
 
 const ReceievedList = (props) => {
-    const { pageSize, barangay_id, currentSupply, setCurrentSupply } = props
+    const { barangay_id, currentSupply, setCurrentSupply } = props
 
     //Import
     const source = axios.CancelToken.source();
@@ -34,6 +34,8 @@ const ReceievedList = (props) => {
     const { generateToken, currentBarangay } = useAuth();
 
     //State
+    const [pageSize, setPageSize] = useState(4)
+    const [tableScreen, setTableScreen] = useState({})
     const [isReceivedModalVisible, setisReceivedModalVisible] = useState(false);
     const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
     const [supplyReceivedList, setSupplyReceivedList] = useState([]);
@@ -55,7 +57,11 @@ const ReceievedList = (props) => {
 
     useEffect(() => {
         getPage()
-    }, [receivedSupplyCurrentPage])
+    }, [receivedSupplyCurrentPage, pageSize, tableScreen])
+
+    useEffect(() => {
+        console.log("supplyReceivedList", supplyReceivedList)
+    }, [supplyReceivedList])
 
     //Axios
     const getAllSupplies = async () => {
@@ -66,7 +72,6 @@ const ReceievedList = (props) => {
                 generateToken()[1],
                 { cancelToken }
             ).then((res) => {
-                console.log("res", res)
                 var SupplyReceived = res.data.SupplyReceived
                 SupplyReceived.map((data) => {
                     data.date = moment(new Date(data.date))
@@ -85,8 +90,10 @@ const ReceievedList = (props) => {
 
     const getPage = async () => {
         setReceivedTableLoading(true)
-            await axios.get(
+        console.log("loading page:", receivedSupplyCurrentPage)
+            await axios.post(
                 `/api/supply/receive/getPage/${barangay_id}/${receivedSupplyCurrentPage}/${pageSize}`,
+                { tableScreen },
                 generateToken()[1],
                 { cancelToken }
             )
@@ -273,6 +280,7 @@ const ReceievedList = (props) => {
             title: "Amount",
             dataIndex: "amount",
             key: "amount",
+            sorter: (a, b) => a.amount - b.amount,
         },
         {
             title: "Date",
@@ -285,6 +293,7 @@ const ReceievedList = (props) => {
                     </span>
                 </div>
             ),
+            sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix()
         },
         {
             title: "Actions",
@@ -359,8 +368,6 @@ const ReceievedList = (props) => {
         popSupplyReceived([row.supply_receive_id])
     }
 
-
-
     const dropdownMenuSupplyReceived = (row) => (
         <Menu>
             <Menu.Item key={1} onClick={() => { editSupplyReceived(row) }}>
@@ -396,14 +403,35 @@ const ReceievedList = (props) => {
         }
     }
 
+    const handleTableChange = (pagination, filters, sorter) => {
+        var sorter = {
+            field: sorter.field,
+            order: sorter.order
+        }
+
+        if (sorter.order != null) {
+            setTableScreen({sorter})
+        }
+
+        if (sorter.order == null) {
+            setTableScreen({})
+        }
+
+    }
+
     const handleReceivedPageChange = async (page) => {
 
         if (page != null) {
-            setReceivedSupplyCurrentPage(page.current)
+            setReceivedSupplyCurrentPage(page)
         }
     }
 
+    const handlePageSizeChange = (size) => {
+        setSupplyReceivedList([])
+        setPageSize(size)
+    }
 
+    //OnFinish
     const onFinishSupplyReceivedForm = (values) => {
         console.log(values);
 
@@ -452,9 +480,16 @@ const ReceievedList = (props) => {
                     pagination={{
                         total: receivedSupplyTotal,
                         pageSize: pageSize,
-                        current: receivedSupplyCurrentPage
+                        current: receivedSupplyCurrentPage,
+                        showSizeChanger: true,
+                        pageSizeOptions: [4, 10, 20, 50, 100],
+                        onShowSizeChange: (current, size) => {
+                            handlePageSizeChange(size)
+                        },
+                        onChange: (page) => handleReceivedPageChange(page)
                     }}
-                    onChange={(page) => handleReceivedPageChange(page)}
+
+                    onChange={handleTableChange}
                     loading={receiveTableLoading}
                     bordered
                 />
