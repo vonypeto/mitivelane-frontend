@@ -7,7 +7,7 @@ import countryList from "react-select-country-list";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const BarangayRegisterForm = () => {
+const OrganizationRegisterForm = () => {
   const options = useMemo(() => countryList().getData(), []);
   const [country, setCountry] = useState("");
 
@@ -174,4 +174,4 @@ const BarangayRegisterForm = () => {
   );
 };
 
-export default BarangayRegisterForm;
+export default OrganizationRegisterForm;

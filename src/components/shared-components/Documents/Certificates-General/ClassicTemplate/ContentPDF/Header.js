@@ -85,10 +85,10 @@ const Header = (props) => {
             MUNICIPALITY OF MARAGONDON
           </Text>
           <Text style={styles.col_center_space_bold}>
-            BARANGAY Moro {data?.barangay}
+            ORGANIZATION Moro {data?.organization}
           </Text>
           <Text style={styles.col_center_space_bold}>
-            OFFICE OF THE BARANGAY CAPTAIN {data?.office}
+            OFFICE OF THE ORGANIZATION CAPTAIN {data?.office}
           </Text>
         </View>
         <View style={styles.col_image}>

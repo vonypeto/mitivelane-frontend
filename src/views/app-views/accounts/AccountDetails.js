@@ -29,7 +29,7 @@ const AccountDetails = () => {
   const [initialVal, setInitialVal] = useState({});
   const hiddenFileInput = useRef(null);
   const [fileLarge, setFileLarge] = useState(false);
-  const [editBarangay, setEditBarangay] = useState(false);
+  const [editOrganization, setEditOrganization] = useState(false);
   const [profileAvatar, setProfileAvatar] = useState(false);
   const [displayName, setDisplayName] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +64,7 @@ const AccountDetails = () => {
     if (showResetPassword)
       setTimeout(() => {
         setShowResetPassword(false);
-        setEditBarangay(false);
+        setEditOrganization(false);
       }, 3000);
   }, [showResetPassword]);
   useEffect(() => {
@@ -81,32 +81,32 @@ const AccountDetails = () => {
   }, [form, initialVal]);
   //cancel edit
   const onClickEdit = () => {
-    setEditBarangay(!editBarangay);
+    setEditOrganization(!editOrganization);
   };
   //submit edit
   const handleSubmitAccount = () => {
-    if (editBarangay) {
+    if (editOrganization) {
       setLoadingButton(true);
       form
         .validateFields()
         .then((values) => {
-          updateAccount({
+          updateAccount(
             values,
             profileAvatar,
             currentUser,
             setDisplayName,
             setProfileAvatar,
-            setEditBarangay,
+            setEditOrganization,
             setLoadingButton,
-            generateToken,
-          });
+            generateToken
+          );
         })
         .catch((errorInfo) => {
           console.log(errorInfo);
         });
     }
 
-    if (!editBarangay) setEditBarangay(!editBarangay);
+    if (!editOrganization) setEditOrganization(!editOrganization);
   };
   //hidden file set upload
   const handleClick = (_) => {
@@ -193,7 +193,7 @@ const AccountDetails = () => {
                     icon={<UserOutlined />}
                     src={profileAvatar}
                   />
-                  {editBarangay ? (
+                  {editOrganization ? (
                     <>
                       <Button
                         icon={<UploadOutlined />}
@@ -238,7 +238,7 @@ const AccountDetails = () => {
                 className="text-left form-input-mb"
               >
                 <Form.Item name="name">
-                  {editBarangay ? (
+                  {editOrganization ? (
                     <Input placeholder="" maxLength="20" />
                   ) : (
                     <div className="font-size-md">{displayName}</div>
@@ -266,7 +266,7 @@ const AccountDetails = () => {
                 className="text-left form-input-mb"
               >
                 <Form.Item name="email">
-                  {editBarangay ? (
+                  {editOrganization ? (
                     <Input disabled placeholder="" />
                   ) : (
                     <div className="font-size-md">{currentUser?.email}</div>
@@ -294,7 +294,7 @@ const AccountDetails = () => {
                 className="text-left form-input-mb"
               >
                 <Form.Item>
-                  {editBarangay ? (
+                  {editOrganization ? (
                     <>
                       {" "}
                       <Button
@@ -320,7 +320,7 @@ const AccountDetails = () => {
             </Row>
             <Row>
               <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
-                {editBarangay ? (
+                {editOrganization ? (
                   <>
                     <Button
                       loading={loadingButton}

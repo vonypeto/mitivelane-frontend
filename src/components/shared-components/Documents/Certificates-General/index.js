@@ -9,6 +9,7 @@ const index = React.memo(
   (props) => {
     const { selectedForm, type, pdf, certType } = props;
     //    console.log("Rendering", props);
+    console.log(props);
     const [getResolve, setGetResolve] = useState(null);
     let size = 9;
     let lineHeight = "16px";
@@ -25,7 +26,13 @@ const index = React.memo(
                 return result;
               });
             }
-            if (type == "view" || type == "create" || type == "drawer") {
+            if (type == "view") {
+              pdf.then(function (result) {
+                setGetResolve(result);
+                return result;
+              });
+            }
+            if (type == "create" || type == "drawer" || type == "template") {
               setGetResolve(pdf);
             }
           }, 1100);
@@ -40,6 +47,7 @@ const index = React.memo(
           {type == "form" ||
           type == "view" ||
           type == "drawer" ||
+          type == "template" ||
           type == "create" ? (
             <>
               <Paging {...props} size={size} type={type} pdf={getResolve} />
@@ -61,7 +69,8 @@ const index = React.memo(
       </>
     );
   },
-  (prevProps, nextProps) => prevProps.pdf === nextProps.pdf
+  (prevProps, nextProps) =>
+    prevProps.certificate_id === nextProps.certificate_id
 );
 
 export default index;

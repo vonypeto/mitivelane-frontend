@@ -1,7 +1,10 @@
 import { React, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import SettlementFormItem from "./SettlementFormItem";
-import { getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import {
+  getLocalStorage,
+  setLocalStorageObject,
+} from "api/AppController/LocalStorageController/LocalStorageController";
 import { BLOTTER_FORM } from "redux/constants/Record";
 import Flex from "components/shared-components/Flex";
 import utils from "utils";
@@ -19,7 +22,7 @@ import {
   InputNumber,
   message,
   Select,
-  Avatar
+  Avatar,
 } from "antd";
 import {
   InfoCircleOutlined,
@@ -28,7 +31,14 @@ import {
 } from "@ant-design/icons";
 const { Option } = Select;
 
-const ResidentInvolvement = ({ selectionType, involvementType, residentData, isLoading, initialData, barangayId }) => {
+const ResidentInvolvement = ({
+  selectionType,
+  involvementType,
+  residentData,
+  isLoading,
+  initialData,
+  organizationId,
+}) => {
   const history = useHistory();
 
   const [residentlist, setResidentList] = useState([]);
@@ -39,20 +49,22 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
   const [residentselectedRowKeys, setResidentSelectedRowKeys] = useState([]);
 
   useEffect(() => {
-    setResidentList(residentData)
-    setResidentListData(residentData)
-
-  }, [residentData, residentlistData])
+    setResidentList(residentData);
+    setResidentListData(residentData);
+  }, [residentData, residentlistData]);
 
   useEffect(() => {
-    setResidentSelectedRows(getLocalStorage(BLOTTER_FORM)[involvementType])
-    setResidentSelectedRowKeys(getLocalStorage(BLOTTER_FORM)[`${involvementType}_id`])
-
+    setResidentSelectedRows(getLocalStorage(BLOTTER_FORM)[involvementType]);
+    setResidentSelectedRowKeys(
+      getLocalStorage(BLOTTER_FORM)[`${involvementType}_id`]
+    );
   }, []);
 
   const ResidentDetail = (residentId) => {
-    history.push(`/app/${barangayId}/residents/resident-information/${residentId}/view`)
-  }
+    history.push(
+      `/app/${organizationId}/residents/resident-information/${residentId}/view`
+    );
+  };
 
   const rowSelectionResident = {
     onChange: (key, rows) => {
@@ -77,12 +89,11 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
 
       final = [].concat.apply([], tags);
 
-      setLocalStorageObject(BLOTTER_FORM, rows, involvementType)
-      setLocalStorageObject(BLOTTER_FORM, residentIds, `${involvementType}_id`)
+      setLocalStorageObject(BLOTTER_FORM, rows, involvementType);
+      setLocalStorageObject(BLOTTER_FORM, residentIds, `${involvementType}_id`);
       console.log(involvementType, " ", residentIds);
 
       setResidentPick(final);
-
     },
   };
 
@@ -134,7 +145,7 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
 
     const onClose = () => {
       setResidentSelectedRowKeys([]);
-      setResidentSelectedRows([])
+      setResidentSelectedRows([]);
     };
     return (
       <Tag
@@ -147,7 +158,7 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
         {label}
       </Tag>
     );
-  }
+  };
 
   return (
     <Row gutter={16}>
@@ -200,7 +211,7 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
         <SettlementFormItem />
 
         <Card title="Reporter">
-		{/* <Select
+          {/* <Select
             maxTagCount="responsive"
             mode="multiple"
             style={{ width: "100%" }}
@@ -213,7 +224,7 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
 		*/}
 
           <div className="mt-3">
-		  {/*<hr />*/}
+            {/*<hr />*/}
             {residentselectedRows.map((elm, i) => (
               <div
                 key={i}
@@ -224,14 +235,18 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
                 }
               >
                 <div>
-                  <Avatar size={40}
+                  <Avatar
+                    size={40}
                     className="font-size-sm"
                     style={{
-                      backgroundColor: elm.avatarColor
-                    }}>
+                      backgroundColor: elm.avatarColor,
+                    }}
+                  >
                     {utils.getNameInitial(`${elm.firstname} ${elm.lastname}`)}
                   </Avatar>
-                  <span className="ml-2">{elm.firstname} {elm.lastname}</span>
+                  <span className="ml-2">
+                    {elm.firstname} {elm.lastname}
+                  </span>
                 </div>
                 <div>
                   <Button
@@ -252,4 +267,3 @@ const ResidentInvolvement = ({ selectionType, involvementType, residentData, isL
   );
 };
 export default ResidentInvolvement;
-

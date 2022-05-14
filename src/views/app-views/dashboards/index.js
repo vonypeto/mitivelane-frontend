@@ -4,25 +4,25 @@ import Loading from "components/shared-components/Loading";
 import { useParams } from "react-router-dom";
 import Home from "./home";
 import Campaign from "./campaign";
-import Chat from "./chat"
+import Chat from "./chat";
 
 const Dashboards = ({ match }) => {
-  let { barangay_id } = useParams();
-  // console.log(barangay_id);
+  let { organization_id } = useParams();
+  // console.log(organization_id);
   return (
     <Suspense fallback={<Loading cover="content" />}>
       <Switch>
         <Route
           path={`${match.url}/home`}
-          component={() => <Home param_url={barangay_id} />}
+          component={() => <Home param_url={organization_id} />}
         />
         <Route
           path={`${match.url}/campaign`}
-          component={() => <Campaign param_url={barangay_id} />}
+          component={() => <Campaign param_url={organization_id} />}
         />
-		<Route
+        <Route
           path={`${match.url}/chat`}
-          component={() => <Chat param_url={barangay_id} />}
+          component={() => <Chat param_url={organization_id} />}
         />
 
         {/* <Route path={`${match.url}/default`} component={lazy(() => import(`./default`))} />

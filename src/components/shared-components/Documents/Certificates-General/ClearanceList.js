@@ -3,6 +3,7 @@ import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
 
 const ClearanceList = (props) => {
   const { templateType } = props;
+  console.log(props);
   const Templates = (type) => {
     switch (type.type) {
       case "simple_border":

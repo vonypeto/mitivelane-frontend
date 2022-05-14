@@ -12,7 +12,7 @@ const Body = () => {
   return (
     <>
       <Text style={styles.col_center_space_bold_clearance}>
-        BARANGAY CLEARANCE
+        ORGANIZATION CLEARANCE
       </Text>
       <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
 
@@ -20,7 +20,7 @@ const Body = () => {
         <RichText note={clean} />
         {/* This is to certify that
               <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text>is to
-              bonafide resident of Barangay Fiesishare, talisay, Batangas. */}
+              bonafide resident of Organization Fiesishare, talisay, Batangas. */}
       </Text>
     </>
   );

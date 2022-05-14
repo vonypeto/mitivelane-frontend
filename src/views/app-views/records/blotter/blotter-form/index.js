@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import {
+  getLocalStorage,
+  setLocalStorageObject,
+} from "api/AppController/LocalStorageController/LocalStorageController";
 import { BLOTTER_FORM } from "redux/constants/Record";
 import { AUTH_TOKEN } from "redux/constants/Auth";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
@@ -12,7 +15,7 @@ import { useParams } from "react-router-dom";
 import ChildrenConflictWithLaw from "./ChildrenConflict";
 import NarrativeReport from "./Narrative";
 import Receipt from "./Receipt";
-import ResidentInvolvement from "./ResidentInvolvement"
+import ResidentInvolvement from "./ResidentInvolvement";
 
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
@@ -30,7 +33,7 @@ const EDIT = "EDIT";
 const VIEW = "VIEW";
 
 const MainFormList = (props) => {
-  const { currentBarangay, generateToken } = useAuth();
+  const { currentOrganization, generateToken } = useAuth();
 
   const { id } = useParams();
   const authToken = localStorage.getItem(AUTH_TOKEN);
@@ -46,15 +49,15 @@ const MainFormList = (props) => {
   const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
-    getResidents(currentBarangay);
+    getResidents(currentOrganization);
     setBlotterInitialValue();
   }, [form, mode, param, props]);
 
-  const getResidents = (currentBarangay) => {
+  const getResidents = (currentOrganization) => {
     axios
       .post(
         "/api/resident/getAll",
-        { barangay_id: currentBarangay },
+        { organization_id: currentOrganization },
         generateToken()[1]
       )
       .then((response) => {
@@ -68,7 +71,7 @@ const MainFormList = (props) => {
   };
 
   const setBlotterInitialValue = () => {
-    const blotterLocalStorage = getLocalStorage(BLOTTER_FORM)
+    const blotterLocalStorage = getLocalStorage(BLOTTER_FORM);
 
     form.setFieldsValue({
       blotter_id: blotterLocalStorage.blotter_id,
@@ -85,12 +88,12 @@ const MainFormList = (props) => {
           [keyName]: new moment(blotterLocalStorage[keyName]),
         });
       }
-    }
+    };
 
-    validateDate("time_of_incident")
-    validateDate("date_of_incident")
-    validateDate("time_schedule")
-    validateDate("date_schedule")
+    validateDate("time_of_incident");
+    validateDate("date_of_incident");
+    validateDate("time_schedule");
+    validateDate("date_schedule");
 
     // form.setFieldsValue({
     // time_of_incident: new moment(blotterLocalStorage.time_of_incident),
@@ -101,9 +104,9 @@ const MainFormList = (props) => {
   };
 
   const blotterForm = (values, formMode) => {
-    const blotterLocalStorage = getLocalStorage(BLOTTER_FORM)
+    const blotterLocalStorage = getLocalStorage(BLOTTER_FORM);
 
-    values.barangay_id = currentBarangay;
+    values.organization_id = currentOrganization;
     values.uuid = authToken;
 
     values.reporters = blotterLocalStorage.reporters_id;
@@ -119,9 +122,7 @@ const MainFormList = (props) => {
     ) {
       message.error("Please enter all required field ");
     } else {
-
-
-      console.log("Form Data ", values)
+      console.log("Form Data ", values);
 
       if (formMode == ADD) {
         setSubmitLoading(true);
@@ -133,9 +134,7 @@ const MainFormList = (props) => {
             message.destroy();
             if (response.data == "Success") {
               history.goBack();
-              return message.success(
-                `Added new Blotter`
-              );
+              return message.success(`Added new Blotter`);
             } else {
               return message.error("Error, please try again.");
             }
@@ -145,9 +144,7 @@ const MainFormList = (props) => {
             message.destroy();
             message.error("The action can't be completed, please try again.");
           });
-
-      }
-      else if (formMode == EDIT) {
+      } else if (formMode == EDIT) {
         setSubmitLoading(true);
         message.loading("Editing Blotter...", 0);
 
@@ -167,16 +164,14 @@ const MainFormList = (props) => {
             message.destroy();
             message.error("The action can't be completed, please try again.");
           });
-
       }
     }
-
-  }
+  };
 
   const onClickTab = (key) => {
-    setLocalStorageObject(BLOTTER_FORM, key, "tabActiveKey")
+    setLocalStorageObject(BLOTTER_FORM, key, "tabActiveKey");
     // console.log("Current Tab Key ", key)
-  }
+  };
 
   const handleUploadChange = (info) => {
     if (info.file.status === "uploading") {
@@ -230,8 +225,8 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Case"
                   : mode === EDIT
-                    ? `Edit Cases`
-                    : "View Cases"}{" "}
+                  ? `Edit Cases`
+                  : "View Cases"}{" "}
               </h2>
               <div className="mb-3">
                 <Button onClick={history.goBack} className="mr-2">
@@ -259,39 +254,47 @@ const MainFormList = (props) => {
               onChange={(key) => onClickTab(key)}
             >
               <TabPane tab="Reporter Data" key="1">
-                <ResidentInvolvement selectionType="radio"
+                <ResidentInvolvement
+                  selectionType="radio"
                   involvementType="reporters"
                   residentData={residentlists}
                   isLoading={residentlistLoading}
                   initialData={[]}
-                  barangayId={currentBarangay} />
+                  organizationId={currentOrganization}
+                />
               </TabPane>
 
               <TabPane tab="Victim Data" key="2">
-                <ResidentInvolvement selectionType="checkbox"
+                <ResidentInvolvement
+                  selectionType="checkbox"
                   involvementType="victims"
                   residentData={residentlists}
                   isLoading={residentlistLoading}
                   initialData={[]}
-                  barangayId={currentBarangay} />
+                  organizationId={currentOrganization}
+                />
               </TabPane>
 
               <TabPane tab="Suspect Data" key="3">
-                <ResidentInvolvement selectionType="checkbox"
+                <ResidentInvolvement
+                  selectionType="checkbox"
                   involvementType="suspects"
                   residentData={residentlists}
                   isLoading={residentlistLoading}
                   initialData={[]}
-                  barangayId={currentBarangay} />
+                  organizationId={currentOrganization}
+                />
               </TabPane>
 
               <TabPane tab="Respondent Data" key="4">
-                <ResidentInvolvement selectionType="checkbox"
+                <ResidentInvolvement
+                  selectionType="checkbox"
                   involvementType="respondents"
                   residentData={residentlists}
                   isLoading={residentlistLoading}
                   initialData={[]}
-                  barangayId={currentBarangay} />
+                  organizationId={currentOrganization}
+                />
               </TabPane>
 
               <TabPane tab="Child Conflict with Law" key="5">

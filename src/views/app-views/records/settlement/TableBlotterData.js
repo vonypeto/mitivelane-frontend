@@ -5,7 +5,11 @@ import Userview from "./UserFormView";
 import Flex from "components/shared-components/Flex";
 import utils from "utils";
 
-import { setLocalStorage, getLocalStorage, setLocalStorageObject } from "api/AppController/LocalStorageController/LocalStorageController";
+import {
+  setLocalStorage,
+  getLocalStorage,
+  setLocalStorageObject,
+} from "api/AppController/LocalStorageController/LocalStorageController";
 import { SETTLEMENT_FORM } from "redux/constants/Record";
 
 import {
@@ -14,7 +18,13 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 const TableBlotterData = (props) => {
-  const { testout, caseType, barangay_id, blotterData, blotterlistLoading } = props;
+  const {
+    testout,
+    caseType,
+    organization_id,
+    blotterData,
+    blotterlistLoading,
+  } = props;
   const [blotterlist, setBlotterList] = useState(blotterData);
   const [blotterlistData, setBlotterListData] = useState(blotterData);
   const [selectShow, setShow] = useState(true);
@@ -23,16 +33,15 @@ const TableBlotterData = (props) => {
   const [selectedUserData, setSelectedUserData] = useState({});
 
   useEffect(() => {
-    setBlotterList(blotterData)
-    setBlotterListData(blotterData)
+    setBlotterList(blotterData);
+    setBlotterListData(blotterData);
+  }, [blotterData, blotterlistData]);
 
-  }, [blotterData, blotterlistData])
-  
   useEffect(() => {
-	  if(Object.keys(getLocalStorage(SETTLEMENT_FORM)[caseType]).length != 0){
-		  currentRenderData(getLocalStorage(SETTLEMENT_FORM)[caseType])
-	  }
-  }, [])
+    if (Object.keys(getLocalStorage(SETTLEMENT_FORM)[caseType]).length != 0) {
+      currentRenderData(getLocalStorage(SETTLEMENT_FORM)[caseType]);
+    }
+  }, []);
 
   const selectOutShow = (event) => {
     return setShow(event);
@@ -68,18 +77,26 @@ const TableBlotterData = (props) => {
     {
       title: () => <div className="text-center">Cases</div>,
       key: "incident_type",
-      render: (_, data) => <div className="text-center">{data.incident_type}</div>,
+      render: (_, data) => (
+        <div className="text-center">{data.incident_type}</div>
+      ),
     },
 
     {
       title: () => <div className="text-center">Location</div>,
       key: "place_incident",
-      render: (_, data) => <div className="text-center">{data.place_incident}</div>,
+      render: (_, data) => (
+        <div className="text-center">{data.place_incident}</div>
+      ),
     },
     {
       title: () => <div className="text-center">Date Incident</div>,
       key: "date_of_incident",
-      render: (_, data) => <div className="text-center">{new Date(data.date_of_incident).toDateString()}</div>,
+      render: (_, data) => (
+        <div className="text-center">
+          {new Date(data.date_of_incident).toDateString()}
+        </div>
+      ),
     },
     {
       title: () => <div className="text-center"> Action</div>,
@@ -93,15 +110,14 @@ const TableBlotterData = (props) => {
   ];
 
   const renderData = (e) => {
-    const data = e.row
+    const data = e.row;
     setShow(!selectShow);
 
-    console.log("Data ", data)
+    console.log("Data ", data);
     setSelectedUserData(data);
-	setLocalStorageObject(SETTLEMENT_FORM, data, caseType)
-
+    setLocalStorageObject(SETTLEMENT_FORM, data, caseType);
   };
-  
+
   const currentRenderData = (data) => {
     setShow(!selectShow);
     setSelectedUserData(data);
@@ -137,7 +153,7 @@ const TableBlotterData = (props) => {
                   </div>
 
                   <div className="table-responsive">
-                    {/* {barangay_id}
+                    {/* {organization_id}
                 <Button onClick={Onclick}> change</Button> */}
 
                     <Table
@@ -146,12 +162,12 @@ const TableBlotterData = (props) => {
                       dataSource={blotterlist}
                       scroll={{ x: "max-content" }}
                       rowKey="_id"
-                    //  rowSelection={{
-                    //  selectedRowKeys: blotterselectedRowKeys,
-                    //  type: 'checkbox',
-                    //  preserveSelectedRowKeys: false,
-                    //  ...rowSelectioBlotter,
-                    //  }}
+                      //  rowSelection={{
+                      //  selectedRowKeys: blotterselectedRowKeys,
+                      //  type: 'checkbox',
+                      //  preserveSelectedRowKeys: false,
+                      //  ...rowSelectioBlotter,
+                      //  }}
                     />
                   </div>
                 </Card>
@@ -168,7 +184,11 @@ const TableBlotterData = (props) => {
             >
               {!selectShow ? (
                 <div key="c">
-                  <Userview selectOutShow={selectOutShow.bind(this)} initialData={selectedUserData} caseType={caseType}/>
+                  <Userview
+                    selectOutShow={selectOutShow.bind(this)}
+                    initialData={selectedUserData}
+                    caseType={caseType}
+                  />
                 </div>
               ) : null}
             </QueueAnim>

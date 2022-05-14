@@ -12,17 +12,17 @@ const UserView = (props) => {
   // const victim = VictimRequest.filter(
   // (victimdata) =>
   // victimdata.blotter_id === data?.blotter_id &&
-  // victimdata.barangay_id === data?.barangay_id
+  // victimdata.organization_id === data?.organization_id
   // );
   // const subject = SubjectRequest.filter(
   // (subjectdata) =>
   // subjectdata.blotter_id === data?.blotter_id &&
-  // subjectdata.barangay_id === data?.barangay_id
+  // subjectdata.organization_id === data?.organization_id
   // );
   // const respondent = RespondentRequest.filter(
   // (respondentdata) =>
   // respondentdata.blotter_id === data?.blotter_id &&
-  // respondentdata.barangay_id === data?.barangay_id
+  // respondentdata.organization_id === data?.organization_id
   // );
 
   let countercolor = 0;
@@ -41,29 +41,24 @@ const UserView = (props) => {
       return "gold";
     }
   };
-  
+
   const residentFullName = (record) => {
-	  if(record?.reporters.length == 0)
-		  return "No Resident"
-	  
-	  return `${record?.reporters[0].firstname} ${record?.reporters[0].lastname}`
-  }
-  
+    if (record?.reporters.length == 0) return "No Resident";
+
+    return `${record?.reporters[0].firstname} ${record?.reporters[0].lastname}`;
+  };
+
   const residentAvatarColor = (record) => {
-	  if(record?.reporters.length == 0)
-		  return "#04d182"
-	  
-	  return record?.reporters[0].avatarColor
-	  
-  }
-  
+    if (record?.reporters.length == 0) return "#04d182";
+
+    return record?.reporters[0].avatarColor;
+  };
+
   const residentAddress = (record) => {
-	  if(record?.reporters.length == 0)
-		  return "No Address"
-	  
-	  return record?.reporters[0].address_1
-	  
-  }
+    if (record?.reporters.length == 0) return "No Address";
+
+    return record?.reporters[0].address_1;
+  };
 
   return (
     <Drawer
@@ -80,14 +75,10 @@ const UserView = (props) => {
           style={{ backgroundColor: residentAvatarColor(data) }}
         >
           <div className="font-size-lg">
-            {utils.getNameInitial(
-              residentFullName(data)
-            )}
+            {utils.getNameInitial(residentFullName(data))}
           </div>
         </Avatar>
-        <h3 className="mt-2 mb-0">
-		{residentFullName(data)}
-        </h3>
+        <h3 className="mt-2 mb-0">{residentFullName(data)}</h3>
         <span className="text-muted">{residentAddress(data)}</span>
       </div>
       <div className="pt-1 text-center">

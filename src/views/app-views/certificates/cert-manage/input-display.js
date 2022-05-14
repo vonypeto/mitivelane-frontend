@@ -5,7 +5,7 @@ import CertDrawer from "../cert-display/Cert-Drawer";
 import {
   ArrowDownOutlined,
   ArrowRightOutlined,
-  UserSwitchOutlined,
+  SnippetsOutlined,
 } from "@ant-design/icons";
 import CertficiateTemplate from "./component-cert/CertTemplate";
 import {
@@ -112,7 +112,7 @@ const CertDisplay = (props) => {
                         min={4}
                         max={9}
                         pdf={FileTest}
-                        type={"drawer"}
+                        type={"template"}
                       />
                     </Col>
                     <Col
@@ -130,7 +130,7 @@ const CertDisplay = (props) => {
                         min={4}
                         max={9}
                         pdf={FileTest}
-                        type={"drawer"}
+                        type={"template"}
                       />
                     </Col>
                     <Col
@@ -148,7 +148,7 @@ const CertDisplay = (props) => {
                         min={4}
                         max={9}
                         pdf={FileTest}
-                        type={"drawer"}
+                        type={"template"}
                       />
                     </Col>
                     <Col
@@ -166,7 +166,7 @@ const CertDisplay = (props) => {
                         min={4}
                         max={9}
                         pdf={FileTest}
-                        type={"drawer"}
+                        type={"template"}
                       />
                     </Col>
                     <Col
@@ -184,7 +184,7 @@ const CertDisplay = (props) => {
                         min={4}
                         max={9}
                         pdf={FileTest}
-                        type={"drawer"}
+                        type={"template"}
                       />
                     </Col>
                   </Carousel>
@@ -222,12 +222,12 @@ const CertDisplay = (props) => {
                 trigger={["click"]}
                 overlay={TESTDATA}
                 T
-                icon={<UserSwitchOutlined />}
+                icon={<SnippetsOutlined />}
               >
                 <Menu mode="horizontal">
                   <Menu.Item key="language">
                     <a>
-                      <UserSwitchOutlined className="mr-0 nav-icon" /> Templates
+                      <SnippetsOutlined className="mr-0 nav-icon" /> Templates
                     </a>
                   </Menu.Item>
                 </Menu>

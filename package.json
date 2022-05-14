@@ -22,6 +22,7 @@
     "draft-convert": "^2.1.12",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
+    "emoji-picker-react": "^3.5.1",
     "emotion": "^11.0.0",
     "externalip": "^1.0.2",
     "fetch-jsonp": "^1.1.3",

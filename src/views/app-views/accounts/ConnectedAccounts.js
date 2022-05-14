@@ -11,7 +11,7 @@ const ConnectedAccount = () => {
   const auth = firebase.auth();
 
   const { currentUser } = useAuth();
-  const [editBarangay, setEditBarangay] = useState(false);
+  const [editOrganization, setEditOrganization] = useState(false);
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const facebookProvider = new firebase.auth.FacebookAuthProvider();
   const [isLoading, setIsLoading] = useState(true);
@@ -90,7 +90,7 @@ const ConnectedAccount = () => {
               (provider) => provider.providerId === "facebook.com"
             )
           );
-          setEditBarangay(false);
+          setEditOrganization(false);
           setIsLoading(false);
           console.log("Unlinked successfully!");
         }, 1000);
@@ -99,7 +99,7 @@ const ConnectedAccount = () => {
         console.error(error);
         setTimeout(() => {
           setConnectAccount(false);
-          setEditBarangay(false);
+          setEditOrganization(false);
           setIsLoading(false);
         }, 1000);
       });
@@ -134,7 +134,7 @@ const ConnectedAccount = () => {
               (provider) => provider.providerId === "facebook.com"
             )
           );
-          setEditBarangay(false);
+          setEditOrganization(false);
           setIsLoading(false);
 
           console.log("Accounts linked successfully!");
@@ -148,13 +148,13 @@ const ConnectedAccount = () => {
         console.log(error);
         setTimeout(() => {
           setConnectAccount(false);
-          setEditBarangay(false);
+          setEditOrganization(false);
           setIsLoading(false);
         }, 1000);
       });
   };
   const onClickEdit = () => {
-    setEditBarangay(!editBarangay);
+    setEditOrganization(!editOrganization);
   };
 
   const ConnectedAccountData = () => {
@@ -188,7 +188,7 @@ const ConnectedAccount = () => {
             className="text-left form-input-mb"
           >
             <Form.Item>
-              {editBarangay ? (
+              {editOrganization ? (
                 <div className="d-flex justify-content-between">
                   {getFaceBookProvider[0]?.uid ? (
                     <>
@@ -254,7 +254,7 @@ const ConnectedAccount = () => {
             className="text-left form-input-mb"
           >
             <Form.Item>
-              {editBarangay ? (
+              {editOrganization ? (
                 <div className="d-flex justify-content-between ">
                   {getGoogleProvider[0]?.uid ? (
                     <>
@@ -289,7 +289,7 @@ const ConnectedAccount = () => {
         </Row>
         <Row>
           <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
-            {editBarangay ? (
+            {editOrganization ? (
               <>
                 <Button onClick={() => onClickEdit()}>Cancel</Button>
               </>

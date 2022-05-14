@@ -5,7 +5,7 @@ import { Button, Form, Input, Alert, Divider, Row } from "antd";
 import { useHistory } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "contexts/AuthContext";
-import { registerBarangay } from "api/AuthController/RegisterController/RegisterController";
+import { registerOrganization } from "api/AuthController/RegisterController/RegisterController";
 import PropTypes from "prop-types";
 import { GoogleSVG, FacebookSVG } from "assets/svg/icon";
 import Loading from "components/shared-components/Loading";
@@ -58,8 +58,8 @@ export const RegisterForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
-    setBarangay,
-    setBarangayMemberList,
+    setOrganization,
+    setOrganizationMemberList,
     currentUser,
     generateToken,
     setPhoto,
@@ -138,10 +138,10 @@ export const RegisterForm = (props) => {
       if (cancel) {
         setIsLoading(true);
         cancel = false;
-        registerBarangay(
+        registerOrganization(
           token,
-          setBarangay,
-          setBarangayMemberList,
+          setOrganization,
+          setOrganizationMemberList,
           redirect,
           history,
           currentUser,
@@ -169,7 +169,7 @@ export const RegisterForm = (props) => {
         <Row
           align="middle"
           justify="center"
-          className="barangay-register-container"
+          className="organization-register-container"
           style={{ height: "600px" }}
         >
           {" "}

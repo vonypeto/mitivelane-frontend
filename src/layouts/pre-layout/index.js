@@ -15,7 +15,7 @@ export const AuthLayout = () => {
     <div className="auth-container">
       <Switch>
         <Route path="" component={PreViews} />
-        <Redirect from="/pre" to="/pre/create-barangay" />
+        <Redirect from="/pre" to="/pre/create-organization" />
       </Switch>
     </div>
   );

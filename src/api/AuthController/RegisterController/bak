@@ -1,6 +1,6 @@
 import {
-  AUTH_BARANGAY,
-  AUTH_BARANGAY_LIST,
+  AUTH_ORGANIZATION,
+  AUTH_ORGANIZATION_LIST,
   ACCESS_TOKEN,
   SESSION_TOKEN,
   CODE_TOKEN,
@@ -11,10 +11,10 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import sign from "jwt-encode";
 
-export async function registerBarangay(
+export async function registerOrganization(
   token,
-  setBarangay,
-  setBarangayMemberList,
+  setOrganization,
+  setOrganizationMemberList,
   redirect,
   history,
   currentUser,
@@ -75,36 +75,36 @@ export async function registerBarangay(
     localStorage.removeItem(CODE_TOKEN);
     localStorage.removeItem(PROFILE_URL);
     if (!querylist) {
-      localStorage.setItem(AUTH_BARANGAY_LIST, null);
-      localStorage.setItem(AUTH_BARANGAY, null);
-      setBarangayMemberList(null);
-      setBarangay(null);
+      localStorage.setItem(AUTH_ORGANIZATION_LIST, null);
+      localStorage.setItem(AUTH_ORGANIZATION, null);
+      setOrganizationMemberList(null);
+      setOrganization(null);
       // user.updateProfile({
       //   displayName: firstNameRef.current.value + " " + lastNameRef.current.value,
       //   // photoURL: "https://example.com/jane-q-user/profile.jpg",
       // });
       return history.push(redirect);
     } else {
-      let role_id, barangay_id;
+      let role_id, organization_id;
       querylist.then(
         (result) => {
-          if (result.barangays[0]) {
-            result.barangays[0].map(
-              (barangay) => (barangay_id = barangay.barangay_id)
+          if (result.organizations[0]) {
+            result.organizations[0].map(
+              (organization) => (organization_id = organization.organization_id)
             );
-            localStorage.setItem(AUTH_BARANGAY, barangay_id);
-            setBarangay(barangay_id);
+            localStorage.setItem(AUTH_ORGANIZATION, organization_id);
+            setOrganization(organization_id);
             result.members[0].map(
-              (member) => (role_id = member.barangay_member_id)
+              (member) => (role_id = member.organization_member_id)
             );
-            localStorage.setItem(AUTH_BARANGAY_LIST, role_id);
-            setBarangayMemberList(role_id);
+            localStorage.setItem(AUTH_ORGANIZATION_LIST, role_id);
+            setOrganizationMemberList(role_id);
             return history.push(redirect);
           } else {
-            localStorage.setItem(AUTH_BARANGAY_LIST, null);
-            localStorage.setItem(AUTH_BARANGAY, null);
-            setBarangayMemberList(null);
-            setBarangay(null);
+            localStorage.setItem(AUTH_ORGANIZATION_LIST, null);
+            localStorage.setItem(AUTH_ORGANIZATION, null);
+            setOrganizationMemberList(null);
+            setOrganization(null);
             return history.push(PRE_PREFIX_PATH);
           }
         },

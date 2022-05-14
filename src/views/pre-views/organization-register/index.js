@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import UserInfoForm from "views/pre-views/components/barangay-register-form/UserInfoForm";
-import BarangayInfoForm from "views/pre-views/components/barangay-register-form/BarangayInfoForm";
-import { createBarangay } from "api/AuthController/PreRegisterController/PreRegisterController";
+import UserInfoForm from "views/pre-views/components/organization-register-form/UserInfoForm";
+import OrganizationInfoForm from "views/pre-views/components/organization-register-form/OrganizationInfoForm";
+import { createOrganization } from "api/AuthController/PreRegisterController/PreRegisterController";
 import Loading from "components/shared-components/Loading";
 import { Row, Col, Card, Form, Button, Input } from "antd";
 import axios from "axios";
@@ -21,11 +21,11 @@ import {
   signInWithFacebook,
 } from "redux/actions/Auth";
 
-const BarangayRegister = (props) => {
+const OrganizationRegister = (props) => {
   const {
     currentUser,
-    setBarangay,
-    setBarangayMemberList,
+    setOrganization,
+    setOrganizationMemberList,
     authorizationConfig,
     generateToken,
   } = useAuth();
@@ -94,7 +94,7 @@ const BarangayRegister = (props) => {
           first_name: response.data[0].first_name,
           last_name: response.data[0].last_name,
         });
-        // if (response.data[0].barangays) {
+        // if (response.data[0].organizations) {
         if (APIFetch) {
           // console.log(response.data[0].first_time);
           setIsLoading(!isLoading);
@@ -122,13 +122,13 @@ const BarangayRegister = (props) => {
 
   const handleSubmit = async (values) => {
     console.log(values);
-    createBarangay(
+    createOrganization(
       history,
       currentUser,
       values,
       user_id,
-      setBarangay,
-      setBarangayMemberList,
+      setOrganization,
+      setOrganizationMemberList,
       firstTime,
       generateToken
     );
@@ -216,7 +216,7 @@ const BarangayRegister = (props) => {
         <Row
           align="middle"
           justify="center"
-          className="barangay-register-container"
+          className="organization-register-container"
           style={{ height: "600px" }}
         >
           {" "}
@@ -226,7 +226,7 @@ const BarangayRegister = (props) => {
         <Row
           align="middle"
           justify="center"
-          className="barangay-register-container"
+          className="organization-register-container"
         >
           <Col>
             {console.log(platform.os.family)}
@@ -248,7 +248,7 @@ const BarangayRegister = (props) => {
             >
               {" "}
               {firstTime ? (
-                <Card className="barangay-register-card">
+                <Card className="organization-register-card">
                   <div style={{ textAlign: "center", margin: "auto 15%" }}>
                     <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
                       Personal Info
@@ -261,18 +261,18 @@ const BarangayRegister = (props) => {
                   <UserInfoForm />
                 </Card>
               ) : null}
-              <Card className="barangay-register-card">
+              <Card className="organization-register-card">
                 <div style={{ textAlign: "center", margin: "auto 15%" }}>
                   <h1 style={{ fontWeight: "bolder", fontFamily: "Roboto" }}>
-                    Register Barangay
+                    Register Organization
                   </h1>
                   <p>
-                    Enter the data accordingly to your barangay. You can always
-                    update your barnagay's data anytime.
+                    Enter the data accordingly to your organization. You can
+                    always update your barnagay's data anytime.
                   </p>
                 </div>
 
-                <BarangayInfoForm />
+                <OrganizationInfoForm />
               </Card>
               <Button
                 htmlType="submit"
@@ -302,4 +302,7 @@ const mapDispatchToProps = {
   signInWithGoogle,
   signInWithFacebook,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(BarangayRegister);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OrganizationRegister);

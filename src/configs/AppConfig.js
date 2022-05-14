@@ -1,13 +1,13 @@
 import { SIDE_NAV_DARK, NAV_TYPE_SIDE, DIR_LTR } from "constants/ThemeConstant";
 import { env } from "./EnvironmentConfig";
 
-export const APP_NAME = "Barangay";
+export const APP_NAME = "Organization";
 export const API_BASE_URL = env.API_ENDPOINT_URL;
 export const APP_PREFIX_PATH = "/app";
 export const AUTH_PREFIX_PATH = "/auth";
 export const PRE_PREFIX_PATH = "/pre";
 
-export const BARANGAY_ID = "100";
+export const ORGANIZATION_ID = "100";
 
 export const THEME_CONFIG = {
   navCollapsed: false,
