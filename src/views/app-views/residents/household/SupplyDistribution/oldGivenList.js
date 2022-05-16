@@ -30,11 +30,8 @@ const GivenList = (props) => {
   const history = useHistory();
   const { generateToken, currentOrganization } = useAuth();
 
-  //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply } = props;
-  
-  //State
-  const [tableScreen, setTableScreen] = useState({});
+  const { pageSize, organization_id, currentSupply, setCurrentSupply } = props;
+  const [tableScreen, SetTableScreen] = useState({});
   const [isGivenModalVisible, setIsGivenModalVisible] = useState(false);
   const [isGivenDrawerVisible, setIsGivenDrawerVisible] = useState(false);
   const [supplyGivenList, setSupplyGivenList] = useState([]);
@@ -56,7 +53,44 @@ const GivenList = (props) => {
 
   useEffect(() => {
     getPage();
-  }, [givenSupplyCurrentPage, pageSize, tableScreen]);
+  }, [givenSupplyCurrentPage]);
+
+  //Table
+  const SupplyGivenColumns = [
+    {
+      title: "Household Name",
+      dataIndex: "household_name",
+      key: "household_name",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      sorter: (a, b) => a.amount - b.amount,
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (_, data) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">
+            {new Date(data.date).toDateString().split(' ').slice(1).join(' ')}
+          </span>
+        </div>
+      ),
+      sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix()
+    },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      render: (_, elm) => (
+        <div className="text-right">
+          <EllipsisDropdown menu={dropdownMenuSupplyGiven(elm)} />
+        </div>
+      ),
+    }
+  ];
 
   //Axios
   const getAllSupplies = async () => {
@@ -88,9 +122,8 @@ const GivenList = (props) => {
     setGivenTableLoading(true);
     console.log("loading page:", givenSupplyCurrentPage);
     await axios
-      .post(
+      .get(
         `/api/supply/given/getPage/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
-        { tableScreen },
         generateToken()[1],
         { cancelToken }
       )
@@ -101,10 +134,10 @@ const GivenList = (props) => {
       });
   };
 
-  //Axios
   const addSupplyGiven = async (newSupplyGiven) => {
     try {
       setGivenTableLoading(true);
+      
       var new_supply_amount = currentSupply - newSupplyGiven.amount;
       if (new_supply_amount < 0) {
         message.error("Cannot give supply that exceeds current supply stock!!");
@@ -137,52 +170,6 @@ const GivenList = (props) => {
 
           setGivenTableLoading(false);
           message.success(" New Supply Given data has been added.");
-        });
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  };
-
-  const getTotalPage = (val) => {
-    var total = val;
-    var page = 1;
-    while (total > pageSize) {
-      total -= pageSize;
-      page++;
-    }
-    return page;
-  };
-
-  const updateSupplyGiven = async (values) => {
-    try {
-      const currentSupplyGivenList = [...supplyGivenList];
-      var objIndex = currentSupplyGivenList.findIndex(
-        (obj) => obj.supply_given_id == values.supply_given_id
-      );
-
-      var stock_supply =
-        currentSupply + currentSupplyGivenList[objIndex].amount;
-      var given_supply = values.amount;
-      var new_supply_amount = stock_supply - given_supply;
-
-      if (new_supply_amount < 0) {
-        message.error("Cannot give supply that exceeds current supply stock!!");
-        return;
-      }
-
-      await axios
-        .post(
-          "/api/supply/given/update",
-          { newSupplyGiven: values, organization_id, new_supply_amount },
-          generateToken()[1],
-          { cancelToken }
-        )
-        .then((res) => {
-          currentSupplyGivenList[objIndex] = values;
-          setCurrentSupply(new_supply_amount);
-          setSupplyGivenList(currentSupplyGivenList);
-          message.success("Supply Given Table data has been updated.");
         });
     } catch (error) {
       console.log(error);
@@ -277,42 +264,6 @@ const GivenList = (props) => {
     }
   };
 
-  //Table
-  const SupplyGivenColumns = [
-    {
-      title: "Household Name",
-      dataIndex: "household_name",
-      key: "household_name",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      sorter: (a, b) => a.amount - b.amount,
-    },
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (_, data) => (
-        <div className="d-flex align-items-center">
-          <span className="ml-2">
-            {new Date(data.date).toDateString().split(" ").slice(1).join(" ")}
-          </span>
-        </div>
-      ),
-      sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix()
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      render: (_, elm) => (
-        <div className="text-right">
-          <EllipsisDropdown menu={dropdownMenuSupplyGiven(elm)} />
-        </div>
-      ),
-    },
-  ];
 
   //Modal
   const showGivenModal = () => {
@@ -420,12 +371,22 @@ const GivenList = (props) => {
       )}
     </Menu>
   );
-  
+
   //Onchange
-  const handlePageSizeChange = (size) => {
-    setSupplyGivenList([])
-    setPageSize(size)
+  const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
+    if (selectedRows.length > 0) {
+      let supplyGivenIDs = []
+
+      selectedRows.map((row) => {
+        supplyGivenIDs.push(row.supply_given_id)
+      })
+
+      console.log(supplyGivenIDs);
+      setGivenSelectedRowKeys(supplyGivenIDs)
+      message.success(`Selected given row ${selectedRows.length}`)
+    }
   }
+
 
   const handleTableChange = (pagination, filters, sorter) => {
     var sorter = {
@@ -434,7 +395,6 @@ const GivenList = (props) => {
     }
 
     if (sorter.order != null) {
-      setSupplyGivenList([])
       setTableScreen({ sorter })
     }
 
@@ -444,26 +404,27 @@ const GivenList = (props) => {
 
   }
 
-  const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
-    if (selectedRows.length > 0) {
-      let supplyGivenIDs = [];
-
-      selectedRows.map((row) => {
-        supplyGivenIDs.push(row.supply_given_id);
-      });
-
-      console.log(supplyGivenIDs);
-      setGivenSelectedRowKeys(supplyGivenIDs);
-      message.success(`Selected given row ${selectedRows.length}`);
-    }
-  };
-
   const handleGivenPageChange = async (page) => {
     if (page != null) {
-      setGivenSupplyCurrentPage(page);
+      setGivenSupplyCurrentPage(page)
     }
+  }
+
+  const handlePageSizeChange = (size) => {
+    setSupplyGivenList([])
+    setPageSize(size)
+  }
+
+  if (formAction == "edited") {
+    updateSupplyGiven(values);
+  }
+
+  const SupplyGivenRowSelection = {
+    givenSelectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows) => { onSelectGivenSupplyChange(selectedRowKeys, selectedRows) },
   };
 
+  //OnFinish
   const onFinishSupplyGivenForm = (values) => {
     if (formAction == "added") {
       addSupplyGiven(values);
@@ -478,23 +439,18 @@ const GivenList = (props) => {
     setSupplyGivenInitialVal({});
   };
 
-  const SupplyGivenRowSelection = {
-    givenSelectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      onSelectGivenSupplyChange(selectedRowKeys, selectedRows);
-    },
-  };
 
   return (
     <>
       <Card>
-        <Row justify="space-between">
-          <Col>
-            <h1>Supply Given</h1>
-          </Col>
+        <Row justify='space-between'>
+          <Col><h1>Supply Given</h1></Col>
 
           <Col>
-            <Button type="primary" onClick={() => handleGivenPopUp("added")}>
+            <Button
+              type='primary'
+              onClick={() => handleGivenPopUp("added")}
+            >
               <p style={{ color: "white" }}>Give Supply</p>
             </Button>
           </Col>
@@ -518,54 +474,44 @@ const GivenList = (props) => {
             },
             onChange: (page) => handleGivenPageChange(page)
           }}
+
           onChange={handleTableChange}
           loading={givenTableLoading}
           bordered
         />
       </Card>
 
-      <Modal
-        title="Supply Given Information"
-        visible={isGivenModalVisible}
-        onOk={handleGivenModalOk}
-        onCancel={handleGivenModalCancel}
-        okText={"Submit"}
-        destroyOnClose={true}
-      >
-        {isGivenModalVisible && (
+      <Modal title='Supply Given Information' visible={isGivenModalVisible} onOk={handleGivenModalOk}
+        onCancel={handleGivenModalCancel} okText={'Submit'} destroyOnClose={true}>
+
+        {isGivenModalVisible &&
           <Form
-            name="supply_given_form"
+            name='supply_given_form'
             onFinish={onFinishSupplyGivenForm}
             ref={SupplyGivenFormRef}
             initialValues={supplyGivenInitialVal}
           >
             <SupplyGivenForm />
           </Form>
-        )}
+        }
+
       </Modal>
 
-      <Drawer
-        title="Supply Given Information"
-        placement="right"
-        onClose={onGivenDrawerClose}
-        visible={isGivenDrawerVisible}
-        width={"100%"}
-        height={"100%"}
-        footer={GivenDrawerFooter()}
-      >
-        {isGivenDrawerVisible && (
+      <Drawer title='Supply Given Information' placement='right' onClose={onGivenDrawerClose}
+        visible={isGivenDrawerVisible} width={'100%'} height={'100%'} footer={GivenDrawerFooter()}>
+        {isGivenDrawerVisible &&
           <Form
-            name="supply_given_form"
+            name='supply_given_form'
             onFinish={onFinishSupplyGivenForm}
             ref={SupplyGivenFormRef}
             initialValues={supplyGivenInitialVal}
           >
             <SupplyGivenForm />
           </Form>
-        )}
+        }
       </Drawer>
     </>
-  );
-};
+  )
+}
 
-export default GivenList;
+export default GivenList

@@ -14,11 +14,16 @@ import {
   Menu,
   message,
 } from "antd";
+import SupplyChart from "./SupplyChart";
+import DataDisplayWidget from "components/shared-components/DataDisplayWidget";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import { useAuth } from "contexts/AuthContext";
+
+//Icons
+import { FaBoxes } from "react-icons/fa";
 
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -26,6 +31,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import SupplyReceivedForm from "./SupplyReceivedForm";
 
 const ReceievedList = (props) => {
+  const { pageSize, organization_id, currentSupply, setCurrentSupply } = props;
 
   //Import
   const source = axios.CancelToken.source();
@@ -33,11 +39,7 @@ const ReceievedList = (props) => {
   const history = useHistory();
   const { generateToken, currentOrganization } = useAuth();
 
-  //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply } = props;
-
   //State
-  const [tableScreen, setTableScreen] = useState({});
   const [isReceivedModalVisible, setisReceivedModalVisible] = useState(false);
   const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
   const [supplyReceivedList, setSupplyReceivedList] = useState([]);
@@ -59,7 +61,7 @@ const ReceievedList = (props) => {
 
   useEffect(() => {
     getPage();
-  }, [receivedSupplyCurrentPage, pageSize, tableScreen]);
+  }, [receivedSupplyCurrentPage]);
 
   //Axios
   const getAllSupplies = async () => {
@@ -91,9 +93,8 @@ const ReceievedList = (props) => {
   const getPage = async () => {
     setReceivedTableLoading(true);
     await axios
-      .post(
+      .get(
         `/api/supply/receive/getPage/${organization_id}/${receivedSupplyCurrentPage}/${pageSize}`,
-        { tableScreen },
         generateToken()[1],
         { cancelToken }
       )
@@ -286,7 +287,6 @@ const ReceievedList = (props) => {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
-      sorter: (a, b) => a.amount - b.amount,
     },
     {
       title: "Date",
@@ -299,7 +299,6 @@ const ReceievedList = (props) => {
           </span>
         </div>
       ),
-      sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix()
     },
     {
       title: "Actions",
@@ -381,190 +380,166 @@ const ReceievedList = (props) => {
     popSupplyReceived([row.supply_receive_id]);
   };
 
-  const dropdownMenuSupplyReceived = (row) => (
-    <Menu>
-      <Menu.Item
-        key={1}
-        onClick={() => {
-          editSupplyReceived(row);
-        }}
-      >
-        <EditOutlined />
-        <span className="ml-2">Edit</span>
-      </Menu.Item>
-      <Menu.Item
-        key={2}
-        onClick={() => {
-          deleteSupplyReceived(row);
-        }}
-      >
-        <DeleteOutlined />
-        <span className="ml-2" style={{ color: "black" }}>
-          Delete
-        </span>
-      </Menu.Item>
-      {receivedSelectedRowKeys.length > 0 && (
-        <Menu.Item
-          key={3}
-          onClick={() => {
-            deleteSuppliesReceived();
-          }}
-        >
-          <DeleteOutlined />
-          <span className="ml-2" style={{ color: "black" }}>
-            Delete {`(${receivedSelectedRowKeys.length})`}
-          </span>
-        </Menu.Item>
-      )}
-    </Menu>
-  );
 
-  //OnChange
-  const onSelectReceivedSupplyChange = (selectedRowKeys, selectedRows) => {
-    if (selectedRows.length > 0) {
-      let supplyReceiveIDs = [];
+    const dropdownMenuSupplyReceived = (row) => (
+        <Menu>
+            <Menu.Item key={1} onClick={() => { editSupplyReceived(row) }}>
+                <EditOutlined />
+                <span className="ml-2">Edit</span>
+            </Menu.Item>
+            <Menu.Item key={2} onClick={() => { deleteSupplyReceived(row) }}>
+                <DeleteOutlined />
+                <span className="ml-2" style={{ color: "black" }}>Delete</span>
+            </Menu.Item>
+            {receivedSelectedRowKeys.length > 0 &&
+                <Menu.Item key={3} onClick={() => { deleteSuppliesReceived() }}>
+                    <DeleteOutlined />
+                    <span className="ml-2" style={{ color: "black" }}>Delete {`(${receivedSelectedRowKeys.length})`}</span>
+                </Menu.Item>
+            }
+        </Menu>
+    );
 
-      selectedRows.map((row) => {
-        supplyReceiveIDs.push(row.supply_receive_id);
-      });
+    //OnChange
+    const onSelectReceivedSupplyChange = (selectedRowKeys, selectedRows) => {
+        if (selectedRows.length > 0) {
+            let supplyReceiveIDs = []
 
-      console.log(supplyReceiveIDs);
-      setReceivedSelectedRowKeys(supplyReceiveIDs);
-      message.success(`Selected receive row ${selectedRows.length}`);
-    }
-  };
+            selectedRows.map((row) => {
+                supplyReceiveIDs.push(row.supply_receive_id)
+            })
 
-  const handleTableChange = (pagination, filters, sorter) => {
-    var sorter = {
-      field: sorter.field,
-      order: sorter.order
+            console.log(supplyReceiveIDs);
+            setReceivedSelectedRowKeys(supplyReceiveIDs)
+            message.success(`Selected receive row ${selectedRows.length}`)
+
+        }
     }
 
-    if (sorter.order != null) {
-      setSupplyReceivedList([])
-      setTableScreen({ sorter })
+    const handleTableChange = (pagination, filters, sorter) => {
+        var sorter = {
+            field: sorter.field,
+            order: sorter.order
+        }
+
+        if (sorter.order != null) {
+            setTableScreen({sorter})
+        }
+
+        if (sorter.order == null) {
+            setTableScreen({})
+        }
+
     }
 
-    if (sorter.order == null) {
-      setTableScreen({})
-    }
-  }
+    const handleReceivedPageChange = async (page) => {
 
-  const handlePageSizeChange = (size) => {
-    setSupplyReceivedList([])
-    setPageSize(size)
-  }
-
-  const handleReceivedPageChange = async (page) => {
-    if (page != null) {
-      setReceivedSupplyCurrentPage(page);
-    }
-  };
-
-  const onFinishSupplyReceivedForm = (values) => {
-    console.log(values);
-
-    if (formAction == "added") {
-      addSupplyReceived(values);
+        if (page != null) {
+            setReceivedSupplyCurrentPage(page)
+        }
     }
 
-    if (formAction == "edited") {
-      updateSupplyReceived(values);
+    const handlePageSizeChange = (size) => {
+        setSupplyReceivedList([])
+        setPageSize(size)
     }
 
-    setisReceivedModalVisible(false);
-    setisReceivedDrawerVisible(false);
-    setSupplyReceivedInitialVal({});
-  };
+    //OnFinish
+    const onFinishSupplyReceivedForm = (values) => {
+        console.log(values);
 
-  const SupplyReceivedRowSelection = {
-    receivedSelectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      onSelectReceivedSupplyChange(selectedRowKeys, selectedRows);
-    },
-  };
+        if (formAction == "added") {
+            addSupplyReceived(values)
+        }
 
-  return (
-    <>
-      <Card>
-        <Row justify="space-between">
-          <Col>
-            <h1>Received Supply</h1>
-          </Col>
+        if (formAction == "edited") {
+            updateSupplyReceived(values)
+        }
 
-          <Col>
-            <Button type="primary" onClick={() => handleReceivePopUp("added")}>
-              <p style={{ color: "white" }}>Add Stock</p>
-            </Button>
-          </Col>
-        </Row>
+        setisReceivedModalVisible(false)
+        setisReceivedDrawerVisible(false)
+        setSupplyReceivedInitialVal({})
+    }
 
-        <Table
-          columns={SupplyReceivedColumns}
-          dataSource={supplyReceivedList}
-          scroll={{ x: "max-content" }}
-          rowKey="supply_receive_id"
-          rowSelection={SupplyReceivedRowSelection}
-          pagination={{
-            total: receivedSupplyTotal,
-            pageSize: pageSize,
-            current: receivedSupplyCurrentPage,
-            showSizeChanger: true,
-            defaultPageSize: 4,
-            pageSizeOptions: [4, 10, 20, 50, 100],
-            onShowSizeChange: (current, size) => {
-              handlePageSizeChange(size)
-            },
-            onChange: (page) => handleReceivedPageChange(page)
-          }}
-          onChange={handleTableChange}
-          loading={receiveTableLoading}
-          bordered
-        />
-      </Card>
+    const SupplyReceivedRowSelection = {
+        receivedSelectedRowKeys,
+        onChange: (selectedRowKeys, selectedRows) => { onSelectReceivedSupplyChange(selectedRowKeys, selectedRows) },
+    };
 
-      <Modal
-        title="Supply Received Information"
-        visible={isReceivedModalVisible}
-        onOk={handleReceiveModalOk}
-        onCancel={handleReceiveModalCancel}
-        okText={"Submit"}
-        destroyOnClose={true}
-      >
-        {isReceivedModalVisible && (
-          <Form
-            name="supply_Received_form"
-            onFinish={onFinishSupplyReceivedForm}
-            ref={SupplyReceivedFormRef}
-            initialValues={supplyReceivedInitialVal}
-          >
-            <SupplyReceivedForm />
-          </Form>
-        )}
-      </Modal>
+    return (
+        <>
+            <Card>
+                <Row justify='space-between'>
+                    <Col>
+                        <h1>Received Supply</h1>
+                    </Col>
 
-      <Drawer
-        title="Supply Received Information"
-        placement="right"
-        onClose={onReceiveDrawerClose}
-        visible={isReceivedDrawerVisible}
-        width={"100%"}
-        height={"100%"}
-        footer={ReceiveDrawerFooter()}
-      >
-        {isReceivedDrawerVisible && (
-          <Form
-            name="supply_received_form"
-            onFinish={onFinishSupplyReceivedForm}
-            ref={SupplyReceivedFormRef}
-            initialValues={supplyReceivedInitialVal}
-          >
-            <SupplyReceivedForm />
-          </Form>
-        )}
-      </Drawer>
-    </>
-  );
-};
+                    <Col>
+                        <Button
+                            type='primary'
+                            onClick={() => handleReceivePopUp("added")}
+                        >
+                            <p style={{ color: "white" }}>Add Stock</p>
+                        </Button>
+                    </Col>
+                </Row>
 
-export default ReceievedList;
+                <Table
+                    columns={SupplyReceivedColumns}
+                    dataSource={supplyReceivedList}
+                    scroll={{ x: "max-content" }}
+                    rowKey="supply_receive_id"
+                    rowSelection={SupplyReceivedRowSelection}
+                    pagination={{
+                        total: receivedSupplyTotal,
+                        pageSize: pageSize,
+                        current: receivedSupplyCurrentPage,
+                        showSizeChanger: true,
+                        pageSizeOptions: [4, 10, 20, 50, 100],
+                        onShowSizeChange: (current, size) => {
+                            handlePageSizeChange(size)
+                        },
+                        onChange: (page) => handleReceivedPageChange(page)
+                    }}
+
+                    onChange={handleTableChange}
+                    loading={receiveTableLoading}
+                    bordered
+                />
+            </Card>
+
+            <Modal title='Supply Received Information' visible={isReceivedModalVisible} onOk={handleReceiveModalOk}
+                onCancel={handleReceiveModalCancel} okText={'Submit'} destroyOnClose={true}>
+
+                {isReceivedModalVisible &&
+                    <Form
+                        name='supply_Received_form'
+                        onFinish={onFinishSupplyReceivedForm}
+                        ref={SupplyReceivedFormRef}
+                        initialValues={supplyReceivedInitialVal}
+                    >
+                        <SupplyReceivedForm />
+                    </Form>
+                }
+
+            </Modal>
+
+            <Drawer title='Supply Received Information' placement='right' onClose={onReceiveDrawerClose}
+                visible={isReceivedDrawerVisible} width={'100%'} height={'100%'} footer={ReceiveDrawerFooter()}>
+                {isReceivedDrawerVisible &&
+                    <Form
+                        name='supply_received_form'
+                        onFinish={onFinishSupplyReceivedForm}
+                        ref={SupplyReceivedFormRef}
+                        initialValues={supplyReceivedInitialVal}
+                    >
+                        <SupplyReceivedForm />
+                    </Form>
+                }
+            </Drawer>
+        </>
+    )
+}
+
+export default ReceievedList
+
