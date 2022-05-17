@@ -3,7 +3,10 @@ import { Form, Input, InputNumber, Select, Row, Col } from "antd";
 
 const { Option } = Select;
 
-const HouseholdForm = () => {
+const HouseholdForm = (props) => {
+  const { purokList } = props
+
+  console.log("purokList", purokList)
 
   const numberFilter = (e) => {
     if (!/[0-9]/.test(e.key)) {
@@ -83,7 +86,13 @@ const HouseholdForm = () => {
           label="Purok"
           rules={rules.purok}
         >
-          <Input />
+          <Select className="w-100" placeholder="Select">
+            {
+              purokList.map(elm => (
+                <Option key={elm.name} value={elm.name}>{elm.name}</Option>
+              ))
+            }
+          </Select>
         </Form.Item>
       </Col>
 

@@ -214,7 +214,6 @@ const GivenList = (props) => {
 
           if (supplyGivenList.length == 1 && givenSupplyTotal > 1) {
             setGivenSupplyCurrentPage(givenSupplyCurrentPage - 1);
-            // handleGivenPageChange()
           }
 
           message.success("Success, data has been deleted");

@@ -22,18 +22,12 @@ import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
 
 import {
-  EyeOutlined,
-  EllipsisOutlined,
   DeleteOutlined,
-  SearchOutlined,
-  PlusCircleOutlined,
-  FileExcelOutlined,
-  PrinterOutlined,
   EditOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 
 import NewAreaForm from "./NewAreaForm";
+import RowSelectionCustom from "views/app-views/components/data-display/table/RowSelectionCustom";
 
 const PurokArea = (props) => {
   //Initialize
@@ -67,6 +61,7 @@ const PurokArea = (props) => {
           </span>
         </div>
       ),
+      sorter: (a, b) => moment(a.createdAt).unix() - moment(b.createdAt).unix()
     },
     {
       title: "Actions",
@@ -80,29 +75,6 @@ const PurokArea = (props) => {
     },
   ];
 
-  const tempData = [
-    {
-      name: "Unahan",
-      createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 1,
-    },
-    {
-      name: "Gitna",
-      createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 2,
-    },
-    {
-      name: "Dulo",
-      createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 3,
-    },
-    {
-      name: "Kahit Saan",
-      createdAt: "2022-04-06T07:36:41.475Z",
-      _id: 4,
-    },
-  ];
-
   //Ref
   const NewAreaFormRef = createRef();
 
@@ -110,12 +82,34 @@ const PurokArea = (props) => {
   const [showAreaModal, setShowAreaModal] = useState(false);
   const [purokList, setPurokList] = useState([]);
   const [purokInitialVal, setPurokInitialVal] = useState({});
-  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  //Pagination State
+  const [tableScreen, setTableScreen] = useState({})
+  const [currentPage, setCurrentPage] = useState(1)
+  const [total, setTotal] = useState(1)
+  const [pageSize, setPageSize] = useState(4)
 
   //UseEffect
   useEffect(() => {
-    getAreas();
+    getTotal();
+    getAreasPage();
   }, []);
+
+  useEffect(() => {
+    getAreasPage();
+  }, [currentPage, pageSize, tableScreen])
+
+  //Initial Function
+  const getTotalPage = (val) => {
+    var total = val;
+    var page = 1;
+    while (total > pageSize) {
+      total -= pageSize;
+      page++;
+    }
+    return page;
+  };
 
   //Axios
   const addNewArea = async (newArea) => {
@@ -128,28 +122,59 @@ const PurokArea = (props) => {
       );
 
       const data = request.data;
-      setPurokList([...purokList, data]);
+      var newTotal = total + 1;
+      setTotal(newTotal);
+
+      if (purokList.length < pageSize) {
+        setPurokList([...purokList, data]);
+      }
+
+      if (purokList.length == pageSize) {
+        setCurrentPage(getTotalPage(newTotal));
+      }
+
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
   };
 
-  const getAreas = async () => {
+  const getAreasPage = async () => {
     try {
-      const request = await axios.post(
-        "/api/purok/getAll",
-        { organization_id: organization_id },
+      setLoading(true)
+      await axios.post(
+        "/api/purok/getPage",
+        { organization_id: organization_id, page: currentPage, tableScreen, pageSize },
         generateToken()[1],
         { cancelToken }
-      );
+      )
+        .then((result) => {
+          var data = result.data
+          setPurokList(data)
+          setLoading(false)
+        })
 
-      setPurokList(request.data);
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
   };
+
+  const getTotal = async () => {
+    try {
+      await axios.get(
+        `/api/purok/getTotal/${organization_id}`,
+        generateToken()[1],
+        { cancelToken }
+      )
+        .then((result) => {
+          setTotal(result.data)
+        })
+    } catch (error) {
+      console.log(error);
+      message.error("Error in database connection!!");
+    }
+  }
 
   const deleteArea = async (area_id) => {
     try {
@@ -223,15 +248,18 @@ const PurokArea = (props) => {
 
   //Function
   const editPurok = (row) => {
+    setLoading(true)
     setPurokInitialVal({
       name: row.name,
       action: "edited",
       purok_id: row.purok_id,
     });
     setShowAreaModal(true);
+    setLoading(false)
   };
 
   const deletePurok = (row) => {
+    setLoading(false)
     deleteArea(row.purok_id);
 
     const currentpurokList = [...purokList];
@@ -241,8 +269,47 @@ const PurokArea = (props) => {
     currentpurokList.splice(objIndex, 1);
     setPurokList(currentpurokList);
 
+    var newTotal = total - 1
+    setTotal(newTotal);
+
+    if (purokList.length == 1 && total > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+
     message.success("Success, area has been deleted");
+    setLoading(false)
   };
+
+  //Onchange
+  const handlePageSizeChange = (size) => {
+    //set state list to []
+    setPageSize(size)
+  }
+
+  const handlePageChange = async (page) => {
+    if (page != null) {
+      console.log("page", page)
+      setCurrentPage(page);
+    }
+  }
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log("sorter", sorter)
+    var sorter = {
+      field: sorter.field,
+      order: sorter.order
+    }
+
+    if (sorter.order != null) {
+      setPurokList([])
+      setTableScreen({ sorter })
+    }
+
+    if (sorter.order == null) {
+      setTableScreen({})
+    }
+
+  }
 
   // Form Function
   const onFinishAddArea = (value) => {
@@ -270,8 +337,6 @@ const PurokArea = (props) => {
 
   return (
     <div>
-      <p>PurokArea: {organization_id}</p>
-
       <Card>
         <Row justify="space-between">
           <Col>
@@ -290,7 +355,23 @@ const PurokArea = (props) => {
           dataSource={purokList}
           rowKey={"purok_id"}
           scroll={{ x: "max-content" }}
-        ></Table>
+          loading={loading}
+          pagination={{
+            current: currentPage,
+            total: total,
+            pageSize: pageSize,
+            showSizeChanger: true,
+            defaultPageSize: pageSize,
+            pageSizeOptions: [pageSize, 10, 20, 50, 100],
+            onShowSizeChange: (current, size) => {
+              handlePageSizeChange(size)
+            },
+            onChange: (page) => handlePageChange(page)
+          }}
+          onChange={handleTableChange}
+        >
+
+        </Table>
       </Card>
 
       <Modal
@@ -310,7 +391,7 @@ const PurokArea = (props) => {
           <NewAreaForm />
         </Form>
       </Modal>
-    </div>
+    </div >
   );
 };
 
