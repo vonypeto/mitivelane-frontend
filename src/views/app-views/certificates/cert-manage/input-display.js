@@ -12,11 +12,12 @@ import {
   defaultGeneralCert,
   defaultGeneralBlotter,
   defaultGeneralBusiness,
+  defaultTemplateCert,
+  defaultTemplateBlotter,
 } from "./Constant";
 import { Menu, Dropdown, Space, Tooltip } from "antd";
 import { Carousel } from "@trendyol-js/react-carousel";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
-import FileTest from "assets/files/test.pdf";
 
 const { Option } = Select;
 
@@ -29,14 +30,16 @@ const CertDisplay = (props) => {
     certType,
     setCertType,
     templateType,
+    setTemplateType,
   } = props;
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
   const [dropDownForm, setDropDownForm] = useState([]);
+  const [templateState, setTemplateState] = useState([]);
+
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag) => {
-    console.log("click");
     setVisible(flag);
   };
   const onFinish = () => {
@@ -64,6 +67,14 @@ const CertDisplay = (props) => {
   };
   // Change this to caroasel later
   const handleChange = (value) => {
+    let data = parentData;
+
+    data.cert_type = value;
+    if (value == "cert") {
+      data.template_type = "simple_border";
+    }
+
+    setParentData(data);
     setCertType(value);
   };
 
@@ -72,16 +83,28 @@ const CertDisplay = (props) => {
     switch (certType) {
       case "cert":
         setDropDownForm(defaultGeneralCert);
+        setTemplateState(defaultTemplateCert);
         break;
       case "blotter":
         setDropDownForm(defaultGeneralBlotter);
+        setTemplateState(defaultTemplateBlotter);
+
         break;
       case "business":
         setDropDownForm(defaultGeneralBusiness);
         break;
     }
   }, [certType]);
+  const onHandleTemplateChange = (e, data) => {
+    e.preventDefault();
 
+    let templateType = data;
+
+    let parent = parentData;
+    parent.template_type = templateType;
+    setTemplateType(data);
+    setParentData(parent);
+  };
   const TESTDATA = () => {
     return (
       <div>
@@ -90,104 +113,81 @@ const CertDisplay = (props) => {
             <div className="d-flex" style={{ display: "inline-block" }}>
               <Col lg={24}>
                 <Card>
-                  <Carousel
-                    show={3.5}
-                    slide={2}
-                    swiping={true}
-                    className="exampleCarousel1"
-                    style={{ display: "inline-block" }}
-                  >
-                    <Col
-                      xs={18}
-                      sm={18}
-                      md={18}
-                      lg={18}
-                      xl={18}
-                      xxl={18}
-                      justify="center"
+                  {certType == "cert" ? (
+                    <Carousel
+                      show={3.5}
+                      slide={2}
+                      swiping={true}
+                      responsive={true}
+                      dynamic={true}
+                      className="exampleCarousel1"
+                      style={{ display: "inline-block" }}
                     >
-                      <PDFTemplate
-                        certType="cert"
-                        templateType="simple"
-                        min={4}
-                        max={9}
-                        pdf={FileTest}
-                        type={"template"}
-                      />
-                    </Col>
-                    <Col
-                      xs={18}
-                      sm={18}
-                      md={18}
-                      lg={18}
-                      xl={18}
-                      xxl={18}
-                      justify="center"
+                      {templateState.map((item) => {
+                        return (
+                          <Col
+                            onClick={(e) =>
+                              onHandleTemplateChange(e, item.templateType)
+                            }
+                            key={item.template_id}
+                            xs={18}
+                            sm={18}
+                            md={18}
+                            lg={18}
+                            xl={18}
+                            xxl={18}
+                            justify="center"
+                          >
+                            <PDFTemplate
+                              style={{ cursor: "pointer" }}
+                              templateId={item.template_id}
+                              certType="cert"
+                              templateType={item.templateType}
+                              min={4}
+                              max={9}
+                              pdf={item.pdf}
+                              type={"template"}
+                            />
+                          </Col>
+                        );
+                      })}
+                    </Carousel>
+                  ) : certType == "blotter" ? (
+                    <Carousel
+                      show={3.5}
+                      slide={2}
+                      swiping={true}
+                      responsive={true}
+                      dynamic={true}
+                      className="exampleCarousel1"
+                      style={{ display: "inline-block" }}
                     >
-                      <PDFTemplate
-                        certType="cert"
-                        templateType="simple"
-                        min={4}
-                        max={9}
-                        pdf={FileTest}
-                        type={"template"}
-                      />
-                    </Col>
-                    <Col
-                      xs={18}
-                      sm={18}
-                      md={18}
-                      lg={18}
-                      xl={18}
-                      xxl={18}
-                      justify="center"
-                    >
-                      <PDFTemplate
-                        certType="cert"
-                        templateType="simple"
-                        min={4}
-                        max={9}
-                        pdf={FileTest}
-                        type={"template"}
-                      />
-                    </Col>
-                    <Col
-                      xs={18}
-                      sm={18}
-                      md={18}
-                      lg={18}
-                      xl={18}
-                      xxl={18}
-                      justify="center"
-                    >
-                      <PDFTemplate
-                        certType="cert"
-                        templateType="simple"
-                        min={4}
-                        max={9}
-                        pdf={FileTest}
-                        type={"template"}
-                      />
-                    </Col>
-                    <Col
-                      xs={18}
-                      sm={18}
-                      md={18}
-                      lg={18}
-                      xl={18}
-                      xxl={18}
-                      justify="center"
-                    >
-                      <PDFTemplate
-                        certType="cert"
-                        templateType="simple"
-                        min={4}
-                        max={9}
-                        pdf={FileTest}
-                        type={"template"}
-                      />
-                    </Col>
-                  </Carousel>
+                      {templateState.map((item) => {
+                        return (
+                          <Col
+                            key={item.template_id}
+                            xs={18}
+                            sm={18}
+                            md={18}
+                            lg={18}
+                            xl={18}
+                            xxl={18}
+                            justify="center"
+                          >
+                            <PDFTemplate
+                              templateId={item.template_id}
+                              certType="cert"
+                              templateType={item.templateType}
+                              min={4}
+                              max={9}
+                              pdf={item.pdf}
+                              type={"template"}
+                            />
+                          </Col>
+                        );
+                      })}
+                    </Carousel>
+                  ) : null}
                 </Card>
               </Col>
             </div>
@@ -220,6 +220,7 @@ const CertDisplay = (props) => {
                 onVisibleChange={handleVisibleChange}
                 visible={visible}
                 trigger={["click"]}
+                className="border-bottom-0"
                 overlay={TESTDATA}
                 T
                 icon={<SnippetsOutlined />}

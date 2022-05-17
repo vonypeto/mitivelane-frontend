@@ -89,7 +89,6 @@ const CertList = () => {
       )
       .then((res) => {
         let data = res.data;
-        console.log(data);
 
         data.map((elem) => {
           elem.content =
@@ -98,10 +97,10 @@ const CertList = () => {
                   entityMap: {},
                   blocks: [],
                 }
-              : elem.age;
+              : elem.content;
           return elem;
         });
-        console.log(data);
+        //    console.log(data);
         setPdfFile((oldArray) => [...oldArray, ...data]);
 
         if (data.length === 0) setHasMore(false);
@@ -144,7 +143,6 @@ const CertList = () => {
   //   </Menu>
   // );
   const generatePdfDocumentShow = async (data) => {
-    console.log(data);
     let blob;
     if (data)
       try {
@@ -152,8 +150,8 @@ const CertList = () => {
           <BasicDocument
             data={data}
             fontType={"Tinos"}
-            certType="cert"
-            templateType="simple_border"
+            certType={data.cert_type}
+            templateType={data.template_type}
             type="pdf"
           />
         ).toBlob();
@@ -247,12 +245,11 @@ const CertList = () => {
                   >
                     <div>
                       <div>
-                        {console.log(item)}
                         {item.certificate_id ? (
                           <PDFTemplate
                             data={item.certificate_id}
-                            certType="cert"
-                            templateType="simple"
+                            certType={item.certType}
+                            templateType={item.templateType}
                             min={4}
                             max={9}
                             pdf={generatePdfDocumentShow(item)}

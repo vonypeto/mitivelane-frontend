@@ -42,15 +42,14 @@ const Certificates = () => {
     );
   };
   //useEffects
-  console.log(parentData);
   useEffect(() => {
     setParentData(parentData);
     updateCertificateData(parentData, generateToken()[1]);
-    if (loading) {
-      setTimeout(() => {
-        setLoading(!loading);
-      }, 1000);
-    }
+    // if (loading) {
+    //   setTimeout(() => {
+    //     setLoading(!loading);
+    //   }, 1000);
+    // }
   }, [parentData, loading]);
 
   useEffect(() => {

@@ -1,19 +1,17 @@
-import React, { useEffect, useState, useMemo } from "react";
-import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
-import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
+import React, { useEffect, useState } from "react";
 import Clearances from "./ClearanceList";
 import Paging from "./Paging";
-import { Textfit } from "react-textfit";
+//import { Textfit } from "react-textfit";
 
 const index = React.memo(
   (props) => {
-    const { selectedForm, type, pdf, certType } = props;
+    const { type, pdf, certType } = props;
     //    console.log("Rendering", props);
-    console.log(props);
+    //  console.log(props);
     const [getResolve, setGetResolve] = useState(null);
     let size = 9;
     let lineHeight = "16px";
-    const ratio = 1.41451612903;
+    //  const ratio = 1.41451612903;
     useEffect(() => {
       let cancel = true;
 
@@ -70,7 +68,9 @@ const index = React.memo(
     );
   },
   (prevProps, nextProps) =>
-    prevProps.certificate_id === nextProps.certificate_id
+    prevProps.certificate_id === nextProps.certificate_id ||
+    prevProps.templateId === nextProps.templateId ||
+    prevProps.template_type === nextProps.template_type
 );
 
 export default index;

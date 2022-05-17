@@ -15,7 +15,7 @@ export const getCertificateAll = async (setPdf, generateToken, count) => {
                 entityMap: {},
                 blocks: [],
               }
-            : elem.age;
+            : elem.content;
         return elem;
       });
       console.log(data);
@@ -55,6 +55,8 @@ export const getCertificateData = async (
 };
 export const updateCertificateData = async (data, generateToken) => {
   try {
+    if (Object.keys(data).length === 0) return;
+
     await axios
       .post(`/api/cert-display/${data.certificate_id}`, data, generateToken)
       .then((_) => {

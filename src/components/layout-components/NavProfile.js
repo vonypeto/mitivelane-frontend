@@ -42,13 +42,24 @@ export const NavProfile = ({ signOut }) => {
   const [profile, setProfile] = useState(
     JSON.parse(localStorage.getItem(PROFILE_URL) || "[]")
   );
-  // const profileImg = "/img/avatars/thumb-1.jpg";
   const user =
     currentUser?.displayName != null ? currentUser.displayName : "N/A";
   const signOutNode = () => {
     logOut(signOut, generateToken);
-    // signOut();
   };
+
+  const [timer, setTimer] = useState(false);
+  useEffect(() => {
+    let mount = true;
+    if (!timer)
+      setTimeout(() => {
+        setTimer(true);
+      }, 1500);
+    return () => {
+      setTimer(true);
+      mount = false;
+    };
+  }, []);
   useEffect(() => {
     let mount = true;
     if (mount)
@@ -110,25 +121,33 @@ export const NavProfile = ({ signOut }) => {
     </div>
   );
   return (
-    <Dropdown placement="bottomRight" overlay={profileMenu} trigger={["click"]}>
-      <Menu className="d-flex align-item-center" mode="horizontal">
-        <Menu.Item key="profile">
-          {profile?.profile_data ? (
-            <Avatar src={profile?.profile_data} size={45}>
-              <b> {utils.getNameInitial(user)} </b>{" "}
-            </Avatar>
-          ) : (
-            <Avatar
-              src={profile?.profile_data}
-              size={45}
-              style={{ backgroundColor: profile?.profile_color }}
-            >
-              <b> {utils.getNameInitial(user)} </b>{" "}
-            </Avatar>
-          )}
-        </Menu.Item>
-      </Menu>
-    </Dropdown>
+    <>
+      {timer ? (
+        <Dropdown
+          placement="bottomRight"
+          overlay={profileMenu}
+          trigger={["click"]}
+        >
+          <Menu className="d-flex align-item-center" mode="horizontal">
+            <Menu.Item key="profile">
+              {profile?.profile_data ? (
+                <Avatar src={profile?.profile_data} size={45}>
+                  <b> {utils.getNameInitial(user)} </b>{" "}
+                </Avatar>
+              ) : (
+                <Avatar
+                  src={profile?.profile_data}
+                  size={45}
+                  style={{ backgroundColor: profile?.profile_color }}
+                >
+                  <b> {utils.getNameInitial(user)} </b>{" "}
+                </Avatar>
+              )}
+            </Menu.Item>
+          </Menu>
+        </Dropdown>
+      ) : null}
+    </>
   );
 };
 

@@ -68,11 +68,9 @@ const UserView = (props) => {
           lg={22}
           xl={22}
           style={{
-            height: Math.floor(size * ratio),
             display: "flex",
           }}
         >
-          {" "}
           {data ? (
             <PDFTemplate
               data={{ name: "text" }}
