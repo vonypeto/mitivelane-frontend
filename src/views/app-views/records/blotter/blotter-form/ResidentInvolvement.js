@@ -30,6 +30,7 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 const { Option } = Select;
+const residentLimit = 2;
 
 const ResidentInvolvement = ({
   selectionType,
