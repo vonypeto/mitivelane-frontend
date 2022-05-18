@@ -248,8 +248,10 @@ const CertList = () => {
                         {item.certificate_id ? (
                           <PDFTemplate
                             data={item.certificate_id}
-                            certType={item.certType}
-                            templateType={item.templateType}
+                            certType={item.cert_type}
+                            createdAt={item.createdAt}
+                            updatedAt={item.updatedAt}
+                            templateType={item.template_type}
                             min={4}
                             max={9}
                             pdf={generatePdfDocumentShow(item)}

@@ -19,11 +19,11 @@ const SinglePage = (props) => {
   const [numPages, setNumPages] = useState(null);
   const documentWrapperRef = useRef();
   const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
-  const { pdf, type } = props;
+  const { pdf, type, templateType, createdAt, updatedAt } = props;
   const [renderedPageNumber, setRenderedPageNumber] = useState(null);
   let history = useHistory();
   // const data = useMemo(() => ({ pdf }), [pdf]);
-
+  console.log(props);
   function handleClick(pdf) {
     props.counterClick(pdf);
   }
@@ -99,7 +99,32 @@ const SinglePage = (props) => {
   // console.log(getResolve);
 
   ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
-
+  const timeSince = (date) => {
+    var time = new Date(date);
+    var seconds = Math.floor((new Date() - time) / 1000);
+    // seconds -= +28800;
+    var interval = seconds / 31536000;
+    if (interval > 1) {
+      return Math.floor(interval) + " years";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + " months";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + " days";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + " hours";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+  };
   const navigateData = (data) => {
     return history.push(
       `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/${data}`
@@ -185,7 +210,6 @@ const SinglePage = (props) => {
                       textAlign: "left",
                       padding: "0",
                       width: "100%",
-
                       backgroundColor: "#FAFAFB",
                       margin: 0,
                       fontWeight: 900,
@@ -195,16 +219,26 @@ const SinglePage = (props) => {
                   />
                 </b>
               </p>
-              <p>Edited 1 seconds ago</p>
+              <p>Edited {timeSince(updatedAt)} ago</p>
             </Col>
           </Row>
         ) : type == "template" ? (
-          <></>
+          <div>
+            <TemplateType />
+          </div>
         ) : type == "drawer" ? (
           <></>
         ) : null}
       </>
     );
+  };
+  const TemplateType = () => {
+    switch (templateType) {
+      case "simple_border":
+        return <div>Classic Bordered</div>;
+      case "simple_noBorder":
+        return <div>Classic Borderless</div>;
+    }
   };
   const PdfRender = (data) => {
     return (
@@ -230,7 +264,7 @@ const SinglePage = (props) => {
                   <Card className="cert_loading">
                     <Skeleton
                       size={"small"}
-                      paragraph={{ rows: 9 }}
+                      paragraph={{ rows: 7 }}
                       className="position-absolute h-100 w-100 cert_loading"
                     ></Skeleton>
 

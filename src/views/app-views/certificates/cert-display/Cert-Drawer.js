@@ -4,7 +4,7 @@ import { EditOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 
 const UserView = (props) => {
-  const { data, visible, close } = props;
+  const { data, visible, close, createdAt, updatedAt } = props;
   let ratio = 1.41451612903;
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
