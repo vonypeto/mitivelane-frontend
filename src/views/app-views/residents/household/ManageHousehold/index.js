@@ -26,15 +26,8 @@ import HouseholdForm from "./HouseholdForm";
 import NewHouseholdMemberForm from "./NewHouseholdMemberForm";
 
 import {
-  EyeOutlined,
-  EllipsisOutlined,
   DeleteOutlined,
-  SearchOutlined,
-  PlusCircleOutlined,
-  FileExcelOutlined,
-  PrinterOutlined,
   EditOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 
 const ManageHousehold = (props) => {
@@ -121,61 +114,6 @@ const ManageHousehold = (props) => {
     },
   ];
 
-  const ResidentTableData = [
-    {
-      id: "1",
-      name: "John Smith",
-      birthday: "12-30-1957",
-      age: "69",
-      sex: "Male",
-      blood_type: "B",
-      civil_status: "Married",
-      educational_attainment: "High School Grad.",
-      occupation: "n/a",
-      ofw: "no",
-      illness: "none",
-    },
-    {
-      id: "2",
-      name: "Michael Myers",
-      birthday: "12-30-1980",
-      age: "41",
-      sex: "Male",
-      blood_type: "A",
-      civil_status: "Single",
-      educational_attainment: "College Grad.",
-      occupation: "n/a",
-      ofw: "no",
-      illness: "none",
-    },
-    {
-      id: "3",
-      name: "Juan Dela Cruz",
-      birthday: "12-30-1990",
-      age: "31",
-      sex: "Male",
-      blood_type: "0",
-      civil_status: "Married",
-      educational_attainment: "College Grad.",
-      occupation: "Computer Engineer",
-      ofw: "Japan",
-      illness: "none",
-    },
-    {
-      id: "4",
-      name: "James Robles",
-      birthday: "12-30-1960",
-      age: "61",
-      sex: "Male",
-      blood_type: "AB",
-      civil_status: "Married",
-      educational_attainment: "Elementary School Grad.",
-      occupation: "Freelance",
-      ofw: "no",
-      illness: "none",
-    },
-  ];
-
   const householdDefault = {
     house_status: "owned",
     water_source: "pipe",
@@ -198,6 +136,7 @@ const ManageHousehold = (props) => {
     householdMemberDefault
   );
   const [deletedMembers, setDeletedMembers] = useState([]);
+  const [purokList, setPurokList] = useState([]);
   const [residentList, setResidentList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -299,6 +238,18 @@ const ManageHousehold = (props) => {
     }
   };
 
+  const getAllPurok = async () => {
+      await axios.post(
+        "/api/purok/getAll",
+        { organization_id: organization_id },
+        generateToken()[1],
+        { cancelToken }
+      )
+      .then((result) => {
+        setPurokList(result.data)
+      })
+  }
+
   //UseEffect
   useEffect(() => {
     if (mode == "EDIT") {
@@ -306,6 +257,7 @@ const ManageHousehold = (props) => {
     }
 
     getAllResident();
+    getAllPurok()
   }, []);
 
   useEffect(() => {
@@ -561,7 +513,7 @@ const ManageHousehold = (props) => {
         initialValues={householdInitialVal}
       >
         <Card title={<h1>Household Info</h1>}>
-          <HouseholdForm />
+          <HouseholdForm purokList={purokList}/>
         </Card>
       </Form>
 
