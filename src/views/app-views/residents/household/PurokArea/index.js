@@ -20,6 +20,7 @@ import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
+import { handleAddPage, handleDeletePage } from "../../../../../helper/pagination"
 
 import {
   DeleteOutlined,
@@ -83,6 +84,7 @@ const PurokArea = (props) => {
   const [purokList, setPurokList] = useState([]);
   const [purokInitialVal, setPurokInitialVal] = useState({});
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   //Pagination State
   const [tableScreen, setTableScreen] = useState({})
@@ -100,45 +102,10 @@ const PurokArea = (props) => {
     getAreasPage();
   }, [currentPage, pageSize, tableScreen])
 
-  //Initial Function
-  const getTotalPage = (val) => {
-    var total = val;
-    var page = 1;
-    while (total > pageSize) {
-      total -= pageSize;
-      page++;
-    }
-    return page;
-  };
 
   //Axios
-  const addNewArea = async (newArea) => {
-    try {
-      const request = await axios.post(
-        "/api/purok/add",
-        { newArea, organization_id: organization_id },
-        generateToken()[1],
-        { cancelToken }
-      );
 
-      const data = request.data;
-      var newTotal = total + 1;
-      setTotal(newTotal);
-
-      if (purokList.length < pageSize) {
-        setPurokList([...purokList, data]);
-      }
-
-      if (purokList.length == pageSize) {
-        setCurrentPage(getTotalPage(newTotal));
-      }
-
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  };
-
+  //AxiosTable
   const getAreasPage = async () => {
     try {
       setLoading(true)
@@ -151,13 +118,14 @@ const PurokArea = (props) => {
         .then((result) => {
           var data = result.data
           setPurokList(data)
-          setLoading(false)
         })
 
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
+
+    setLoading(false)
   };
 
   const getTotal = async () => {
@@ -176,6 +144,24 @@ const PurokArea = (props) => {
     }
   }
 
+  //Axios CRUD
+  const addNewArea = async (newArea) => {
+    try {
+      const request = await axios.post(
+        "/api/purok/add",
+        { newArea, organization_id: organization_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+
+      const data = request.data;
+      await handleAddPage(total, setTotal, getAreasPage)
+    } catch (error) {
+      console.log(error);
+      message.error("Error in database connection!!");
+    }
+  };
+
   const deleteArea = async (area_id) => {
     try {
       const request = await axios.post(
@@ -189,7 +175,7 @@ const PurokArea = (props) => {
       message.error("Error in database connection!!");
     }
   };
-
+  
   const updateArea = async (newAreaData) => {
     try {
       const request = await axios.post(
@@ -259,7 +245,7 @@ const PurokArea = (props) => {
   };
 
   const deletePurok = (row) => {
-    setLoading(false)
+    setSubmitting(true)
     deleteArea(row.purok_id);
 
     const currentpurokList = [...purokList];
@@ -269,15 +255,10 @@ const PurokArea = (props) => {
     currentpurokList.splice(objIndex, 1);
     setPurokList(currentpurokList);
 
-    var newTotal = total - 1
-    setTotal(newTotal);
-
-    if (purokList.length == 1 && total > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    handleDeletePage(total, setTotal, currentPage, setCurrentPage, pageSize, purokList, getAreasPage)
 
     message.success("Success, area has been deleted");
-    setLoading(false)
+    setSubmitting(false)
   };
 
   //Onchange
@@ -294,7 +275,6 @@ const PurokArea = (props) => {
   }
 
   const handleTableChange = (pagination, filters, sorter) => {
-    console.log("sorter", sorter)
     var sorter = {
       field: sorter.field,
       order: sorter.order
@@ -317,7 +297,6 @@ const PurokArea = (props) => {
 
     if (value.action == "added") {
       addNewArea(value);
-      message.success("New Area has been added.");
     }
 
     if (value.action == "edited") {

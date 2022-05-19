@@ -22,6 +22,7 @@ import { useAuth } from "contexts/AuthContext";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 import SupplyGivenForm from "./SupplyGivenForm";
+import { getTotalPage } from "helper/pagination";
 
 const GivenList = (props) => {
   //Import
@@ -32,7 +33,7 @@ const GivenList = (props) => {
 
   //Props
   const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply } = props;
-  
+
   //State
   const [tableScreen, setTableScreen] = useState({});
   const [isGivenModalVisible, setIsGivenModalVisible] = useState(false);
@@ -51,32 +52,35 @@ const GivenList = (props) => {
 
   //UseEffect
   useEffect(() => {
-    getAllSupplies();
+    getSuppliesTotal();
   }, []);
 
   useEffect(() => {
     getPage();
   }, [givenSupplyCurrentPage, pageSize, tableScreen]);
 
+  useEffect(() => {
+    var length = Object.keys(supplyGivenList).length
+    if (length > 0) {
+      supplyGivenList.map((data) => {
+        data.date = moment(new Date(data.date));
+      });
+    }
+  }, [supplyGivenList]);
+
   //Axios
-  const getAllSupplies = async () => {
+  const getSuppliesTotal = async () => {
     try {
       await axios
         .post(
-          "/api/supply/given/getAll",
-          { organization_id, pageSize },
+          "/api/supply/given/getTotal",
+          { organization_id },
           generateToken()[1],
           { cancelToken }
         )
         .then((res) => {
-          var SupplyGiven = res.data.SupplyGiven;
-          SupplyGiven.map((data) => {
-            data.date = moment(new Date(data.date));
-          });
-
           var suppliesGivenCount = res.data.suppliesGivenCount;
           setGivenSupplyTotal(suppliesGivenCount);
-          setSupplyGivenList(SupplyGiven);
         });
     } catch (error) {
       console.log(error);
@@ -86,19 +90,24 @@ const GivenList = (props) => {
 
   const getPage = async () => {
     setGivenTableLoading(true);
-    console.log("loading page:", givenSupplyCurrentPage);
-    await axios
-      .post(
-        `/api/supply/given/getPage/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
-        { tableScreen },
-        generateToken()[1],
-        { cancelToken }
-      )
-      .then((res) => {
-        var data = res.data;
-        setSupplyGivenList(data);
-        setGivenTableLoading(false);
-      });
+
+    try {
+      await axios
+        .post(
+          `/api/supply/given/getPage/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
+          { tableScreen },
+          generateToken()[1],
+          { cancelToken }
+        )
+        .then((res) => {
+          var data = res.data;
+          setSupplyGivenList(data);
+        });
+    } catch (error) {
+      console.log(error);
+      message.error("Error in database connection!!");
+    }
+    setGivenTableLoading(false);
   };
 
   //Axios
@@ -126,15 +135,7 @@ const GivenList = (props) => {
           newSupplyGiven.supply_given_id = data.supply_given_id;
           var newTotal = givenSupplyTotal + 1;
           setGivenSupplyTotal(newTotal);
-
-          if (supplyGivenList.length < pageSize) {
-            setSupplyGivenList([...supplyGivenList, newSupplyGiven]);
-          }
-
-          if (supplyGivenList.length == pageSize) {
-            setGivenSupplyCurrentPage(getTotalPage(newTotal));
-          }
-
+          getPage()
           setGivenTableLoading(false);
           message.success(" New Supply Given data has been added.");
         });
@@ -142,16 +143,6 @@ const GivenList = (props) => {
       console.log(error);
       message.error("Error in database connection!!");
     }
-  };
-
-  const getTotalPage = (val) => {
-    var total = val;
-    var page = 1;
-    while (total > pageSize) {
-      total -= pageSize;
-      page++;
-    }
-    return page;
   };
 
   const updateSupplyGiven = async (values) => {
@@ -209,11 +200,16 @@ const GivenList = (props) => {
         )
         .then(() => {
           setCurrentSupply(new_supply_amount);
-          setSupplyGivenList(currentSupplyGivenList);
+          // setSupplyGivenList(currentSupplyGivenList);
           setGivenSupplyTotal(givenSupplyTotal - 1);
 
           if (supplyGivenList.length == 1 && givenSupplyTotal > 1) {
             setGivenSupplyCurrentPage(givenSupplyCurrentPage - 1);
+          }
+
+          var page = getTotalPage(givenSupplyTotal, pageSize)
+          if (page > 1) {
+            getPage()
           }
 
           message.success("Success, data has been deleted");
@@ -251,21 +247,23 @@ const GivenList = (props) => {
         )
         .then(() => {
           setCurrentSupply(new_supply_amount);
-          setSupplyGivenList(currentSupplyGivenList);
+          // setSupplyGivenList(currentSupplyGivenList);
           var newTotal = givenSupplyTotal - deleteLength;
           setGivenSupplyTotal(newTotal);
           setGivenSelectedRowKeys(0);
 
+          var newPage = givenSupplyCurrentPage;
+          var lastPage = getTotalPage(givenSupplyTotal, pageSize)
+
           if (length == deleteLength && givenSupplyTotal > 1) {
-            var newPage = givenSupplyCurrentPage;
 
-            if (newPage == 1) {
-              getPage();
-            }
-
-            if (newPage > 1) {
+            if (newPage != 1 && newPage == lastPage) {
               setGivenSupplyCurrentPage(newPage - 1);
             }
+          }
+
+          if (length != deleteLength) {
+            getPage()
           }
 
           message.success("Success, data has been deleted");
@@ -419,7 +417,7 @@ const GivenList = (props) => {
       )}
     </Menu>
   );
-  
+
   //Onchange
   const handlePageSizeChange = (size) => {
     setSupplyGivenList([])
