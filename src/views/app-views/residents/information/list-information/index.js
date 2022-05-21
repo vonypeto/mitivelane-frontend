@@ -193,6 +193,7 @@ const ListInformation = (props) => {
           autoFocus
             placeholder={`Type text here`}
             onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            value={selectedKeys}
             style={{ marginBottom: 8, display: 'block' }}
           />
           <Space>
@@ -205,7 +206,7 @@ const ListInformation = (props) => {
             >
               Search
             </Button>
-            <Button size="small" style={{ width: 90 }}>
+            <Button size="small" style={{ width: 90 }} onClick={() => {clearFilters()}}>
               Reset
             </Button>
           </Space>

@@ -40,7 +40,7 @@ const GivenList = (props) => {
   const [isGivenDrawerVisible, setIsGivenDrawerVisible] = useState(false);
   const [supplyGivenList, setSupplyGivenList] = useState([]);
   const [supplyGivenInitialVal, setSupplyGivenInitialVal] = useState({});
-  const [givenSelectedRowKeys, setGivenSelectedRowKeys] = useState(0);
+  const [givenSelectedRowKeys, setGivenSelectedRowKeys] = useState([]);
   const [givenSupplyCurrentPage, setGivenSupplyCurrentPage] = useState(1);
   const [givenSupplyTotal, setGivenSupplyTotal] = useState(0);
   const [givenTotalPage, setGivenTotalPage] = useState(0);
@@ -200,7 +200,7 @@ const GivenList = (props) => {
         )
         .then(() => {
           setCurrentSupply(new_supply_amount);
-          // setSupplyGivenList(currentSupplyGivenList);
+          setSupplyGivenList(currentSupplyGivenList);
           setGivenSupplyTotal(givenSupplyTotal - 1);
 
           if (supplyGivenList.length == 1 && givenSupplyTotal > 1) {
@@ -247,10 +247,10 @@ const GivenList = (props) => {
         )
         .then(() => {
           setCurrentSupply(new_supply_amount);
-          // setSupplyGivenList(currentSupplyGivenList);
+          setSupplyGivenList(currentSupplyGivenList);
           var newTotal = givenSupplyTotal - deleteLength;
           setGivenSupplyTotal(newTotal);
-          setGivenSelectedRowKeys(0);
+          setGivenSelectedRowKeys([]);
 
           var newPage = givenSupplyCurrentPage;
           var lastPage = getTotalPage(givenSupplyTotal, pageSize)

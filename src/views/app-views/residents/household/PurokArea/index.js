@@ -20,7 +20,7 @@ import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
-import { handleAddPage, handleDeletePage } from "../../../../../helper/pagination"
+import { handleAddPage, handleDeletePages } from "../../../../../helper/pagination"
 
 import {
   DeleteOutlined,
@@ -92,6 +92,9 @@ const PurokArea = (props) => {
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(4)
 
+  //Checkbox State
+  const [selectedArray, setSelectedArray] = useState([])
+
   //UseEffect
   useEffect(() => {
     getTotal();
@@ -162,11 +165,12 @@ const PurokArea = (props) => {
     }
   };
 
-  const deleteArea = async (area_id) => {
+  const deleteArea = async () => {
     try {
+      console.log("selectedArray", selectedArray)
       const request = await axios.post(
         "/api/purok/delete",
-        { organization_id: organization_id, area_id },
+        { organization_id: organization_id, selectedArray },
         generateToken()[1],
         { cancelToken }
       );
@@ -175,7 +179,7 @@ const PurokArea = (props) => {
       message.error("Error in database connection!!");
     }
   };
-  
+
   const updateArea = async (newAreaData) => {
     try {
       const request = await axios.post(
@@ -226,11 +230,33 @@ const PurokArea = (props) => {
       >
         <DeleteOutlined />
         <span className="ml-2" style={{ color: "black" }}>
-          Delete
+          Delete {selectedArray.length > 1 && `(${selectedArray.length})`}
         </span>
       </Menu.Item>
     </Menu>
   );
+
+  //Component for checkbox
+  const tableRowSelection = {
+    selectedArray,
+    onChange: (selectedRowKeys, selectedRows) => {
+      onSelectChange(selectedRowKeys, selectedRows);
+    },
+  };
+
+  //OnChange checkbox
+  const onSelectChange = (selectedRowKeys, selectedRows) => {
+    if (selectedRows.length > 0) {
+      let tempSelectedRows = [];
+
+      selectedRows.map((row) => {
+        tempSelectedRows.push(row.purok_id);
+      });
+
+      console.log(tempSelectedRows);
+      setSelectedArray(tempSelectedRows);
+    }
+  };
 
   //Function
   const editPurok = (row) => {
@@ -246,17 +272,31 @@ const PurokArea = (props) => {
 
   const deletePurok = (row) => {
     setSubmitting(true)
-    deleteArea(row.purok_id);
-
     const currentpurokList = [...purokList];
-    var objIndex = currentpurokList.findIndex(
-      (obj) => obj.purok_id == row.purok_id
-    );
-    currentpurokList.splice(objIndex, 1);
+
+    if (selectedArray.length == 0) {
+      setSelectedArray(row.purok_id)
+
+      var objIndex = currentpurokList.findIndex(
+        (obj) => obj.purok_id == row.purok_id
+      );
+      currentpurokList.splice(objIndex, 1);
+    }
+
+    if (selectedArray.length > 0) {
+      var objIndex
+
+      selectedArray.forEach(id => {
+        objIndex = currentpurokList.findIndex(
+          (obj) => obj.purok_id == id
+        );
+        currentpurokList.splice(objIndex, 1);
+      })
+    }
+
+    deleteArea()
     setPurokList(currentpurokList);
-
-    handleDeletePage(total, setTotal, currentPage, setCurrentPage, pageSize, purokList, getAreasPage)
-
+    handleDeletePages(selectedArray, total, setTotal, pageSize, currentPage, setCurrentPage, purokList, getAreasPage)
     message.success("Success, area has been deleted");
     setSubmitting(false)
   };
@@ -333,6 +373,7 @@ const PurokArea = (props) => {
           columns={purokColumn}
           dataSource={purokList}
           rowKey={"purok_id"}
+          rowSelection={tableRowSelection}
           scroll={{ x: "max-content" }}
           loading={loading}
           pagination={{

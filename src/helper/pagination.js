@@ -38,22 +38,20 @@ export const handleDeletePages = (arrayIdList, total, setTotal, pageSize, curren
   var lastPage = getTotalPage(total, pageSize)
   var newTotal = total - deleteLength;
   setTotal(newTotal);
-  
+
   // setGivenSelectedRowKeys(0); tba dis is for checkbox
   console.log(length)
   console.log(deleteLength
-    )
-    
+  )
+
   if (length == deleteLength && total > 1) {
 
     if (currentPage != 1 && currentPage == lastPage) {
-      console.log("minus 1 page")
       setCurrentPage(currentPage - 1);
     }
   }
 
   if (currentPage != lastPage) {
-    console.log("getting page")
     getPage()
   }
 }
@@ -72,6 +70,10 @@ export const handleTableChange = (sorter, filter, setListState, setTableScreenSt
 
   console.log("sorter", sorter)
   console.log("filter", filter)
+
+  // for (var i = 0; i < filters.length; i++) {
+  //   query.where(filters[i].fieldName).equals(filters[i].value)
+  // }
 
   if (sorter.order != null) {
     setListState([])

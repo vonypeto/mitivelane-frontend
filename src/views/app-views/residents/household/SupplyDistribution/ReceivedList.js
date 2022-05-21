@@ -43,7 +43,7 @@ const ReceievedList = (props) => {
   const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
   const [supplyReceivedList, setSupplyReceivedList] = useState([]);
   const [supplyReceivedInitialVal, setSupplyReceivedInitialVal] = useState({});
-  const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState(0);
+  const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState([]);
   const [receivedSupplyCurrentPage, setReceivedSupplyCurrentPage] = useState(1);
   const [receivedSupplyTotal, setReceivedSupplyTotal] = useState(0);
   const [formAction, setFormAction] = useState("");
@@ -187,7 +187,7 @@ const ReceievedList = (props) => {
         )
         .then(() => {
           setCurrentSupply(new_supply_amount);
-          //setReceivedSupplyTotal(receivedSupplyTotal - 1);
+          setReceivedSupplyTotal(receivedSupplyTotal - 1);
           setSupplyReceivedList(currentSupplyReceivedList);
 
           if (supplyReceivedList.length == 1 && receivedSupplyTotal > 1) {
@@ -237,11 +237,11 @@ const ReceievedList = (props) => {
         )
         .then(() => {
           setCurrentSupply(new_supply_amount);
-          //setSupplyReceivedList(currentSupplyReceivedList);
+          setSupplyReceivedList(currentSupplyReceivedList);
           console.log("receivedSupplyTotal", receivedSupplyTotal);
           var newTotal = receivedSupplyTotal - deleteLength;
           setReceivedSupplyTotal(newTotal);
-          setReceivedSelectedRowKeys(0);
+          setReceivedSelectedRowKeys([]);
 
 
           var newPage = receivedSupplyCurrentPage;

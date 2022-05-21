@@ -1,33 +1,64 @@
-// //Import Statement
-// import { handleTableChange, handlePageSizeChange, handlePageChange } from "helper/pagination";
-// //Pagination State
-// const [tableScreen, setTableScreen] = useState({})
-// const [currentPage, setCurrentPage] = useState(1)
-// const [total, setTotal]  = useState(0)
-// const [pageSize, setPageSize] = useState(4)
+//Import Statement
+import { handleTableChange, handlePageSizeChange, handlePageChange } from "helper/pagination";
+//Pagination State
+const [tableScreen, setTableScreen] = useState({})
+const [currentPage, setCurrentPage] = useState(1)
+const [total, setTotal]  = useState(0)
+const [pageSize, setPageSize] = useState(4)
 
-// //Table pagination
-// pagination={{
-// current: currentPage,
-// total: total,
-// pageSize: pageSize,
-// showSizeChanger: true,
-// defaultPageSize: pageSize,
-// pageSizeOptions: [pageSize, 10, 20, 50, 100],
-// onShowSizeChange: (current, size) => {
-// handlePageSizeChange(size, setListState, setPageSizeState)
-// },
-// onChange: (page) => handlePageChange(page, setCurrentPageState)
-// }}
+//Checkbox State
+const [selectedArray, setSelectedArray] = useState([])
 
-// //Table onChange
-// onChange = {(sorter) => handleTableChange(sorter, setListState, tableScreenState)}
+//Table
 
-// //Things to do
-// //Create useEffect for tableScreen
-// //Create backend for getPage
-// //Import function from pagination.js after crud operation
+//Table Checkbox
+rowSelection={tableRowSelection}
 
+//Table pagination
+pagination={{
+current: currentPage,
+total: total,
+pageSize: pageSize,
+showSizeChanger: true,
+defaultPageSize: pageSize,
+pageSizeOptions: [pageSize, 10, 20, 50, 100],
+onShowSizeChange: (current, size) => {
+handlePageSizeChange(size, setListState, setPageSizeState)
+},
+onChange: (page) => handlePageChange(page, setCurrentPageState)
+}}
+
+//Table onChange
+onChange = {(sorter) => handleTableChange(sorter, setListState, tableScreenState)}
+
+//Component for checkbox
+const tableRowSelection = {
+  selectedArray,
+  onChange: (selectedRowKeys, selectedRows) => {
+    onSelectChange(selectedRowKeys, selectedRows);
+  },
+};
+
+//OnChange checkbox
+const onSelectChange = (selectedRowKeys, selectedRows) => {
+  if (selectedRows.length > 0) {
+    let tempSelectedRows = [];
+
+    selectedRows.map((row) => {
+      tempSelectedRows.push(row.id_name);
+    });
+
+    console.log(tempSelectedRows);
+    setSelectedArray(tempSelectedRows);
+  }
+};
+
+
+
+//Things to do
+//Create useEffect for tableScreen
+//Create backend for getPage
+//Import function from pagination.js after crud operation
 
 
 //UseEffect
