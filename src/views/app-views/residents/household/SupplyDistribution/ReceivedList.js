@@ -254,7 +254,7 @@ const ReceievedList = (props) => {
             }
           }
 
-          if (length != deleteLength) {
+          if (newPage != lastPage) {
             getPage()
           }
 

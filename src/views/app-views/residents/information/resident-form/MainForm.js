@@ -195,9 +195,10 @@ const MainForm = (props) => {
 
                         <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
                           <Form.Item name="height" label="Height"
-                            rules={rules.height}
+                            rules={rules.height} initialValue={0}
                           >
                             <InputNumber
+                              min={0}
                               className="w-100"
                               placeholder="Height"
                               onKeyPress={(e) => { numberFilter(e) }}
@@ -226,9 +227,10 @@ const MainForm = (props) => {
 
                         <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
                           <Form.Item name="weight" label="Weight"
-                            rules={rules.height}
+                            rules={rules.height} initialValue={0}
                           >
                             <InputNumber
+                              min={0}
                               className="w-100"
                               placeholder="Weight"
                               onKeyPress={(e) => { numberFilter(e) }}
@@ -258,21 +260,22 @@ const MainForm = (props) => {
                         name="birthday"
                         label="Birthday"
                         rules={rules.birthday}
+                        initialValue={moment(
+                          `${current.getFullYear()}/${current.getMonth() + 1
+                          }/${current.getDate()}`,
+                          dateFormat
+                        )}
                       >
                         <DatePicker
                           className="w-100"
-                          initialValues={moment(
-                            `${current.getFullYear()}/${current.getMonth() + 1
-                            }/${current.getDate()}`,
-                            dateFormat
-                          )}
                           format={dateFormat}
                         />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="age" label="Age" rules={rules.age}>
+                      <Form.Item name="age" label="Age" rules={rules.age} initialValue={1}>
                         <InputNumber
+                          min={1}
                           className="w-100"
                           onKeyPress={(e) => { numberFilter(e) }}
                           placeholder="Age"
@@ -295,7 +298,7 @@ const MainForm = (props) => {
               <div key="c">
                 <Card title="Miscellaneous">
                   <Row gutter={16}>
-                    <Col xs={24} sm={24} md={24}>
+                    {/* <Col xs={24} sm={24} md={24}>
                       <Form.Item name="salary" label="Salary">
                         <Input.Group className="w-100" compact>
                           <Select className="w-15" defaultValue="1">
@@ -337,7 +340,7 @@ const MainForm = (props) => {
                           />
                         </Input.Group>
                       </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item name="occupation" label="Occupation">
                         <Input className="w-100" placeholder="Occupation" />
@@ -392,7 +395,7 @@ const MainForm = (props) => {
               <div key="b">
                 {" "}
                 <Card title="Additional Details">
-                  <Form.Item name="voter_status" label="Voter Status">
+                  <Form.Item name="voter_status" label="Voter Status" initialValue={"Registered"}>
                     <Select className="w-100" placeholder="Voter Status">
                       <Option key={1} value={"Registered"}>
                         Registered
@@ -402,7 +405,7 @@ const MainForm = (props) => {
                       </Option>
                     </Select>
                   </Form.Item>
-                  <Form.Item name="civil_status" label="Civil Status">
+                  <Form.Item name="civil_status" label="Civil Status" initialValue={"Single"}>
                     <Select className="w-100" placeholder="Civil Status">
 
                       <Option key={1} value={"Single"}>

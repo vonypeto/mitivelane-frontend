@@ -262,7 +262,7 @@ const GivenList = (props) => {
             }
           }
 
-          if (length != deleteLength) {
+          if (newPage != lastPage) {
             getPage()
           }
 

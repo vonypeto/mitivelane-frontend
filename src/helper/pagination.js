@@ -32,51 +32,60 @@ export const handleDeletePage = (total, setTotal, currentPage, setCurrentPage, p
 }
 
 //For deleting multiple
-export const handleDeletePages = () => {
-  var length = ListState.length;
-  var deleteLength = ArrayID.length; // Arrays of id to delete
+export const handleDeletePages = (arrayIdList, total, setTotal, pageSize, currentPage, setCurrentPage, listState, getPage) => {
+  var length = listState.length;
+  var deleteLength = arrayIdList.length; // Arrays of id to delete
+  var lastPage = getTotalPage(total, pageSize)
   var newTotal = total - deleteLength;
   setTotal(newTotal);
+  
   // setGivenSelectedRowKeys(0); tba dis is for checkbox
-
+  console.log(length)
+  console.log(deleteLength
+    )
+    
   if (length == deleteLength && total > 1) {
-    var newPage = currentPage;
 
-    if (newPage == 1) {
-      //insert funtion for getting page
+    if (currentPage != 1 && currentPage == lastPage) {
+      console.log("minus 1 page")
+      setCurrentPage(currentPage - 1);
     }
+  }
 
-    if (newPage > 1) {
-      setCurrentPage(newPage - 1);
-    }
+  if (currentPage != lastPage) {
+    console.log("getting page")
+    getPage()
   }
 }
 
 //Onchange
-export const handlePageSizeChange = (size) => {
-  //set state list to []
-  setPageSize(size)
+export const handlePageSizeChange = (size, setListState, setPageSizeState) => {
+  setListState([])
+  setPageSizeState(size)
 }
 
-export const handleTableChange = (pagination, filters, sorter) => {
+export const handleTableChange = (sorter, filter, setListState, setTableScreenState) => {
   var sorter = {
     field: sorter.field,
     order: sorter.order
   }
 
+  console.log("sorter", sorter)
+  console.log("filter", filter)
+
   if (sorter.order != null) {
-    setSupplyGivenList([])
-    setTableScreen({ sorter })
+    setListState([])
+    setTableScreenState({ sorter })
   }
 
   if (sorter.order == null) {
-    setTableScreen({})
+    setTableScreenState({})
   }
 
 }
 
-export const handlePageChange = async (page, setCurrentPage) => {
+export const handlePageChange = async (page, setCurrentPageState) => {
   if (page != null) {
-    setCurrentPage(page);
+    setCurrentPageState(page);
   }
 }
