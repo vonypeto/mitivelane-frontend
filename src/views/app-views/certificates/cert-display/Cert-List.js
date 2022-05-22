@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Layout, Menu } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CopyOutlined,
-  ArrowDownOutlined,
-  HighlightOutlined,
-} from "@ant-design/icons";
-import Flex from "components/shared-components/Flex";
+import { Col, Row, Button } from "antd";
 import CertDrawer from "./Cert-Drawer";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { useHistory } from "react-router-dom";
@@ -21,9 +13,15 @@ import InfinitScroll from "react-infinite-scroll-component";
 import Spin from "components/shared-components/Loading";
 import BasicDocument from "components/shared-components/Documents/Certificates-General/";
 import { pdf } from "@react-pdf/renderer";
+import { updateCertificateData } from "api/AppController/CertificatesController/CertificatesController";
+import utils from "utils";
+import { useCert } from "contexts/CertificateContext";
 
-const CertList = () => {
+const CertList = (props) => {
   const history = useHistory();
+
+  const { currentList, setCurrentFunctionList } = useCert();
+  const { pdfFile, setPdfFile } = props;
   const { generateToken } = useAuth();
   const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
 
@@ -33,30 +31,44 @@ const CertList = () => {
     { id: 2, pdf: FileTest, type: "view", selectedform: 1 },
     { id: 3, pdf: FileTest, type: "view", selectedform: 1 },
   ];
-  const [pdfFile, setPdfFile] = useState([]);
   const [drawer, setDrawer] = useState(false);
   const [selectedUser, SetSelectedUser] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+
   const [count, setCount] = useState(6);
   const [start, setStart] = useState(7);
   const [hasMore, setHasMore] = useState(true);
-  const [counter, setCounter] = useState(true);
-  //const [loading, setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(true);
 
   //let ratio = 1.41451612903;
   useEffect(() => {
+    let isApiSubscribed = true;
     setTimeout(() => {
-      getCertificateAll(setPdfFile, generateToken()[1], count);
-      //  setPdfFile(arrayData);
+      if (isApiSubscribed) {
+        getCertificateAll(setPdfFile, generateToken()[1], count);
+        //  setPdfFile(arrayData);
+      }
     }, 1000);
+    return () => {
+      // cancel the subscription
+      isApiSubscribed = false;
+    };
   }, []);
+
+  console.log(pdfFile);
   //Handle Drawer
-  const counterClick = (elm) => {
-    setCounter(counter + 1);
-    console.log(counter);
+  useEffect(() => {
+    setCurrentFunctionList(pdfFile);
+    //   setPdfFile(currentList);
+  }, [pdfFile]);
+  const onHandleCertificate = (title, id) => {
+    let data = { certificate_id: id, title: title };
+    updateCertificateData(data, generateToken()[1]);
   };
-  const onHandle = (elm) => {
+
+  const onHandle = (elm, created, updated, title) => {
     // setDrawer(true);
-    SetSelectedUser(elm);
+    SetSelectedUser({ elm, created, updated, title });
     setDrawer(true);
   };
   const closeDrawer = () => {
@@ -67,13 +79,26 @@ const CertList = () => {
   //   counterClick();
   // }, []);
   const createDocument = async () => {
+    setLoading(true);
+    let isApiSubscribed = true;
     if (!loading) {
       await axios
         .post("/api/cert-display/create", {}, generateToken()[1])
         .then((res) => {
-          setLoading(!loading);
-          history.push(`/app/${auth_organization}/cert-display/${res.data.id}`);
+          if (isApiSubscribed) {
+            setLoading(!loading);
+            history.push(
+              `/app/${auth_organization}/cert-display/${res.data.id}`
+            );
+          }
+        })
+        .catch((err) => {
+          return console.error(err);
         });
+      return () => {
+        // cancel the subscription
+        isApiSubscribed = false;
+      };
     }
   };
 
@@ -142,6 +167,43 @@ const CertList = () => {
   //     </Menu.Item>
   //   </Menu>
   // );
+
+  // useEffect(() => {
+  //   let isApiSubscribed = true;
+
+  //   if (isApiSubscribed) {
+  //     const listener = document
+  //       .getElementById(selectedRow)
+  //       .addEventListener("click", deleteRow);
+  //     updateWindowDimensions();
+  //     return listener;
+  //   }
+  //   return () => {
+  //     // cancel the subscription
+  //     isApiSubscribed = false;
+  //   };
+  // }, [selectedRow]);
+  const deleteRow = (row, currentList) => {
+    //deleting resident in table
+
+    // let clone = [...currentList];
+    // clone.splice(row, 1);
+    // setData(clone);
+    // console.log(pdfFile);
+    // let data = currentList;
+    // setRefresh(!refresh);
+    // splice(index, 1);
+    let data = currentList.filter((item) => item.certificate_id !== row);
+    setPdfFile([...data]);
+    setCurrentFunctionList([...data]);
+    // console.log("click");
+    // console.log(pdfFile, row);
+    // setRefresh(!refresh);
+    // setSelectedRow(row);
+
+    //  deleteResident(residentIdArray);
+  };
+
   const generatePdfDocumentShow = async (data) => {
     let blob;
     if (data)
@@ -149,7 +211,7 @@ const CertList = () => {
         blob = await pdf(
           <BasicDocument
             data={data}
-            fontType={"Tinos"}
+            fontType={data.font_family}
             certType={data.cert_type}
             templateType={data.template_type}
             type="pdf"
@@ -161,28 +223,13 @@ const CertList = () => {
         console.log(e);
       }
     else return;
-    // var reader = new FileReader();
-    // reader.readAsDataURL(blob);
-    // return new Promise((resolve) => {
-    //   reader.onloadend = () => {
-    //     resolve(reader.result);
-    //   };
-    // });
   };
-  // const GetCertificate = () => {
-  //   return (
-  //     <>
-  //       {certType && templateType ? (
-  //         <SinglePagePDFViewer
-  //           certType="cert"
-  //           templateType="simple"
-  //           pdf={generatePdfDocumentShow(data)}
-  //           type={"form"}
-  //         />
-  //       ) : null}
-  //     </>
-  //   );
-  // };
+
+  const setData = (data) => {
+    setRefresh(!refresh);
+    let x = data;
+    return setPdfFile(x);
+  };
   return (
     <div className="container">
       <CertDrawer
@@ -192,48 +239,52 @@ const CertList = () => {
           closeDrawer();
         }}
       />
-
-      <InfinitScroll
-        dataLength={pdfFile.length}
-        hasMore={hasMore}
-        loader={<Spin />}
-        next={getCertificateNext}
-      >
-        <Row gutter={[0, 40]}>
-          <Col
-            justify="right"
-            className="pr-1 pdf-input-hover"
-            xs={11}
-            sm={11}
-            md={8}
-            lg={8}
-            xl={6}
-            xxl={5}
-          >
-            <div onClick={createDocument}>
+      {pdfFile ? (
+        <InfinitScroll
+          dataLength={pdfFile.length}
+          hasMore={hasMore}
+          loader={<Spin />}
+          next={getCertificateNext}
+          style={{ overflow: "auto" }}
+        >
+          <Row gutter={[0, 40]}>
+            <Col
+              justify="right"
+              className="pr-1 pdf-input-hover"
+              xs={11}
+              sm={11}
+              md={8}
+              lg={8}
+              xl={6}
+              xxl={5}
+            >
               <div
-              //    onClick={(e) => onHandle(e, CreateLayout)}
+                onClick={createDocument}
+                className={`${loading ? "pointer-events" : ""}`}
               >
-                <PDFTemplate
-                  data={0}
-                  certType="cert"
-                  templateType="simple"
-                  min={4}
-                  max={9}
-                  pdf={CreateLayout}
-                  type={"create"}
-                  // counterClick={counterClick}
-                  // onHandle={onHandle}
-                />
+                <div
+                //    onClick={(e) => onHandle(e, CreateLayout)}
+                >
+                  <PDFTemplate
+                    data={0}
+                    certType="cert"
+                    templateType="simple"
+                    min={4}
+                    max={9}
+                    pdf={CreateLayout}
+                    type={"create"}
+                    // counterClick={counterClick}
+                    // onHandle={onHandle}
+                  />
+                </div>
               </div>
-            </div>
-          </Col>
-          {pdfFile ? (
+            </Col>
+
             <>
               {pdfFile.map((item, i) => {
                 return (
                   <Col
-                    key={i}
+                    key={item?.certificate_id}
                     justify="right"
                     className="pr-1 pdf-input-hover"
                     xs={11}
@@ -244,10 +295,21 @@ const CertList = () => {
                     xxl={5}
                   >
                     <div>
-                      <div>
-                        {item.certificate_id ? (
+                      <div id={item?.certificate_id}>
+                        {/* <Button
+                          onClick={() => {
+                            deleteRow(item?.certificate_id);
+                            console.log(pdfFile);
+                          }}
+                          type="primary"
+                        >
+                          <span>Download</span>
+                        </Button> */}
+                        {item?.certificate_id ? (
                           <PDFTemplate
                             data={item.certificate_id}
+                            title={item?.title}
+                            index={i}
                             certType={item.cert_type}
                             createdAt={item.createdAt}
                             updatedAt={item.updatedAt}
@@ -257,6 +319,8 @@ const CertList = () => {
                             pdf={generatePdfDocumentShow(item)}
                             type={"view"}
                             onHandle={onHandle}
+                            deleteRow={deleteRow}
+                            onHandleCertificate={onHandleCertificate}
                           />
                         ) : null}
                       </div>
@@ -265,10 +329,11 @@ const CertList = () => {
                 );
               })}
             </>
-          ) : null}
-          {/* ) : null} */}
-        </Row>{" "}
-      </InfinitScroll>
+
+            {/* ) : null} */}
+          </Row>{" "}
+        </InfinitScroll>
+      ) : null}
     </div>
   );
 };

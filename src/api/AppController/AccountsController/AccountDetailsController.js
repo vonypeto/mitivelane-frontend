@@ -20,7 +20,6 @@ export async function updateAccount(
     .post("/api/app/user/update", data, generateToken()[1])
     .then((response) => {
       setTimeout(() => {
-        console.log(response.data.profile_url);
         let data = JSON.parse(localStorage.getItem(PROFILE_URL));
         data.profile_data = response.data.profile_url;
         // localStorage.setitem(PROFILE_URL, JSON.stringify(data));

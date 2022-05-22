@@ -29,7 +29,6 @@ const ListInformation = () => {
   const [list, setList] = useState(CertList);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  console.log(selectShow);
 
   const dropdownMenu = (row) => (
     <Menu>

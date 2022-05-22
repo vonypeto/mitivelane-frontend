@@ -12,11 +12,13 @@ import {
 } from "@ant-design/icons";
 import CertList from "./Cert-List";
 import CertRequest from "./Cert-Request";
+import { useAuth } from "contexts/AuthContext";
+import { getCertificateAll } from "api/AppController/CertificatesController/CertificatesController";
+import { AuthProvider } from "contexts/CertificateContext";
 
 const Certificates = () => {
-  const refs = useRef();
-  const [parentData, setParentData] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [pdfFile, setPdfFile] = useState([]);
+  const { generateToken } = useAuth();
   const [switchCert, setSwitchCert] = useState(true);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
@@ -53,18 +55,11 @@ const Certificates = () => {
   };
 
   useEffect(() => {
-    console.log(parentData);
-    setParentData(parentData);
-    if (loading) {
-      setTimeout(() => {
-        setLoading(!loading);
-      }, 1000);
-    }
-  }, [parentData, loading]);
+    setPdfFile(pdfFile);
+  }, [pdfFile]);
 
   return (
     <div>
-      {" "}
       <PageHeaderAlt className="padding-none border-bottom" overlap>
         {/* <div className="container-fluid">
           <Flex
@@ -152,7 +147,11 @@ const Certificates = () => {
         ) : (
           <>
             <div className="container">
-              <CertList width={width} />
+              <CertList
+                width={width}
+                pdfFile={pdfFile}
+                setPdfFile={setPdfFile}
+              />
             </div>
           </>
         )}

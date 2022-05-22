@@ -6,8 +6,8 @@ import Paging from "./Paging";
 const index = React.memo(
   (props) => {
     const { type, pdf, certType } = props;
-    //    console.log("Rendering", props);
-    //  console.log(props);
+    console.log("Rendering", props);
+
     const [getResolve, setGetResolve] = useState(null);
     let size = 9;
     let lineHeight = "16px";
@@ -68,7 +68,7 @@ const index = React.memo(
     );
   },
   (prevProps, nextProps) =>
-    prevProps.certificate_id === nextProps.certificate_id ||
+    prevProps.pdf === nextProps.pdf ||
     prevProps.templateId === nextProps.templateId ||
     prevProps.template_type === nextProps.template_type
 );
