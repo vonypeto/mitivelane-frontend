@@ -22,7 +22,7 @@ const Chat = props => {
 		if (alreadyRun == false) {
 			getConversations()
 			alreadyRun = true
-			console.log("Test 1 Chat muna sa console")
+			console.log("Chat muna sa console")
 		}
 
 	}, [])
@@ -35,33 +35,15 @@ const Chat = props => {
 		socket.off("chat:receive-message").on("chat:receive-message", (conversationId, message) => {
 			message.from = "opposite"
 			console.log(message)
-			
+
 			const newData = conversationData.filter(elm => elm._id === conversationId)
-			
 			newData[0].messages.push(message)
-		
 
 			var currentData = conversationData.filter((elm) => elm._id !== conversationId)
 
 			var finalValue = newData.concat(currentData)
 
 			setChatData(finalValue)
-			
-			{
-				/*
-			const newData = conversationData.filter(elm => elm._id === conversationId)
-			
-			newData[0].messages.push(message)
-		
-
-			var currentData = conversationData.filter((elm) => elm._id !== conversationId)
-
-			var finalValue = newData.concat(currentData)
-
-			setChatData(finalValue)
-				*/
-			}
-
 		})
 
 	}, [socket])

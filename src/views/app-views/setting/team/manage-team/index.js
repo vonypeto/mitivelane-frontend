@@ -23,8 +23,6 @@ import ManageOrganization from "./ManageOrganization";
 import OrganizationDelete from "./OrganizationDelete";
 
 const ManageTeam = (props) => {
-  console.log(props);
-
   return (
     <div>
       <PageHeaderAlt className="padding-none border-bottom" overlap>

@@ -19,7 +19,6 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 const ManageOrganization = (props) => {
-  console.log(props);
   const [editOrganization, setEditOrganization] = useState(false);
 
   const onClickEdit = () => {
