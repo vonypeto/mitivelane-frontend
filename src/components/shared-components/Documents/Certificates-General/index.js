@@ -6,7 +6,6 @@ import Paging from "./Paging";
 const index = React.memo(
   (props) => {
     const { type, pdf, certType } = props;
-    console.log("Rendering", props);
 
     const [getResolve, setGetResolve] = useState(null);
     let size = 9;

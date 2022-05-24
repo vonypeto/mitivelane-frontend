@@ -20,8 +20,7 @@ import { useCert } from "contexts/CertificateContext";
 
 const SinglePage = React.memo(
   (props) => {
-    const { currentList } = useCert();
-    console.log(currentList);
+    //  const { currentList } = useCert();
     let myInp = null;
     let history = useHistory();
     const [numPages, setNumPages] = useState(null);
@@ -35,14 +34,16 @@ const SinglePage = React.memo(
       updatedAt,
       createdAt,
       title,
-      index,
       deleteRow,
+      pdfFile,
+      setPdfFile,
+      index,
     } = props;
     let id = data;
     const [renderedPageNumber, setRenderedPageNumber] = useState(null);
 
     // const data = useMemo(() => ({ pdf }), [pdf]);
-    // console.log(props);
+    console.log(deleteRow);
     // function handleClick(pdf) {
     //   props.counterClick(pdf);
     // }
@@ -157,7 +158,9 @@ const SinglePage = React.memo(
     const downloadFile = () => {
       saveAs(pdf, title);
     };
-
+    const DeleteFile = () => {
+      deleteRow.onClick();
+    };
     const dropdownMenu = (row) => (
       <Menu>
         <Menu.Item onClick={() => navigateData(row.data)} key={1}>
@@ -186,7 +189,7 @@ const SinglePage = React.memo(
           </Flex>
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item onClick={() => deleteRow(id, currentList)} key={4}>
+        <Menu.Item onClick={() => DeleteFile()} key={4}>
           <Flex alignItems="center">
             <DeleteOutlined />
             <span className="ml-2">Delete</span>
@@ -461,6 +464,6 @@ const SinglePage = React.memo(
       </>
     );
   },
-  (prevProps, nextProps) => prevProps.pdf === nextProps.pdf
+  (prevProps, nextProps) => prevProps === nextProps
 );
 export default React.memo(SinglePage);
