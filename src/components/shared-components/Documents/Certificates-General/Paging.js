@@ -43,7 +43,7 @@ const SinglePage = React.memo(
     const [renderedPageNumber, setRenderedPageNumber] = useState(null);
 
     // const data = useMemo(() => ({ pdf }), [pdf]);
-    console.log(deleteRow);
+
     // function handleClick(pdf) {
     //   props.counterClick(pdf);
     // }

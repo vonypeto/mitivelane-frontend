@@ -13,7 +13,10 @@ import InfinitScroll from "react-infinite-scroll-component";
 import Spin from "components/shared-components/Loading";
 import BasicDocument from "components/shared-components/Documents/Certificates-General/";
 import { pdf } from "@react-pdf/renderer";
-import { updateCertificateData } from "api/AppController/CertificatesController/CertificatesController";
+import {
+  updateCertificateData,
+  deleteCertificateData,
+} from "api/AppController/CertificatesController/CertificatesController";
 import utils from "utils";
 import { useCert } from "contexts/CertificateContext";
 import { conforms } from "lodash";
@@ -60,7 +63,6 @@ const CertList = React.memo(
     //Handle Drawer
     useEffect(() => {
       // setCurrentFunctionList(pdfFile);
-      console.log(pdfFile);
       localStorage.setItem("pdfFile", JSON.stringify(pdfFile));
       setPdfFile(pdfFile);
     }, [pdfFile, refresh]);
@@ -135,81 +137,18 @@ const CertList = React.memo(
         });
     };
 
-    // const dropdownMenu = (row) => (
-    //   <Menu>
-    //     <Menu.Item key={1}>
-    //       <Flex alignItems="center">
-    //         <EditOutlined />
-    //         <span className="ml-2"> Edit</span>
-    //       </Flex>
-    //     </Menu.Item>
-    //     <Menu.Item key={2}>
-    //       <Flex alignItems="center">
-    //         <HighlightOutlined />
-    //         <span className="ml-2">Rename</span>
-    //       </Flex>
-    //     </Menu.Item>
-    //     <Menu.Item key={3}>
-    //       <Flex alignItems="center">
-    //         <ArrowDownOutlined />
-    //         <span className="ml-2">Download</span>
-    //       </Flex>
-    //     </Menu.Item>
-    //     <Menu.Divider />
-    //     <Menu.Item key={4}>
-    //       <Flex alignItems="center">
-    //         <DeleteOutlined />
-    //         <span className="ml-2">Delete</span>
-    //       </Flex>
-    //     </Menu.Item>
-    //     <Menu.Item key={5}>
-    //       <Flex alignItems="center">
-    //         <CopyOutlined />
-    //         <span className="ml-2">Duplicate</span>
-    //       </Flex>
-    //     </Menu.Item>
-    //   </Menu>
-    // );
-
-    // useEffect(() => {
-    //   let isApiSubscribed = true;
-
-    //   if (isApiSubscribed) {
-    //     const listener = document
-    //       .getElementById(selectedRow)
-    //       .addEventListener("click", deleteRow);
-    //     updateWindowDimensions();
-    //     return listener;
-    //   }
-    //   return () => {
-    //     // cancel the subscription
-    //     isApiSubscribed = false;
-    //   };
-    // }, [selectedRow]);
-    const deleteRow = (row) => {
+    const deleteRow = (row, i) => {
       //deleting resident in table
-      console.log(localStorage.getItem("pdfFile"));
+      deleteCertificateData(row, generateToken()[1]);
       let clone = JSON.parse(localStorage.getItem("pdfFile"));
-      clone.splice(row, 1);
-      console.log(clone);
+      clone.splice(i, 1);
+      console.log(row);
       setPdfFile(clone);
+
       localStorage.setItem("pdfFile", clone);
       setTimeout(() => {
         setRefresh(!refresh);
       }, 1000);
-      // console.log(pdfFile);
-      // let data = currentList;
-      // setRefresh(!refresh);
-      // splice(index, 1);
-      let data = pdfFile.filter((item) => item.certificate_id !== row);
-      // setPdfFile([...clone]);
-      ///  setCurrentFunctionList([...data]);
-      // console.log("click");
-      // console.log(pdfFile, row);
-      // setRefresh(!refresh);
-      // setSelectedRow(row);
-
-      //  deleteResident(residentIdArray);
     };
 
     const generatePdfDocumentShow = async (data) => {
@@ -319,8 +258,7 @@ const CertList = React.memo(
                               onHandle={onHandle}
                               deleteRow={{
                                 onClick: function () {
-                                  deleteRow(item?.certificate_id);
-                                  console.log(pdfFile);
+                                  deleteRow(item?.certificate_id, i);
                                 },
                               }}
                               pdfFile={pdfFile}

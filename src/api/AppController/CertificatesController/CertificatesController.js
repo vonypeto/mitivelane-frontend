@@ -92,3 +92,18 @@ export const updateCertificateData = async (data, generateToken) => {
     isApiSubscribed = false;
   };
 };
+export const deleteCertificateData = async (data, generateToken) => {
+  console.log(data);
+  try {
+    await axios.delete(`/api/cert-display/${data}`, generateToken).then((_) => {
+      console.log("delete");
+    });
+  } catch (e) {
+    console.log(e);
+  }
+
+  return () => {
+    // cancel the subscription
+    isApiSubscribed = false;
+  };
+};
