@@ -154,7 +154,8 @@ const MainFormList = (props) => {
       history.push(
         `/app/${organization_id}/residents/resident-information/list`
       );
-    }, 2000);
+      setSubmitLoading(false);
+    }, 1000);
   };
 
   const onFinishUpdate = async (values) => {
@@ -167,14 +168,14 @@ const MainFormList = (props) => {
         )
         .then((res) => {
           console.log(res.data);
+          message.success(`Resident information has been updated`);
+          setSubmitLoading(false);
         });
     } catch (error) {
       console.log(error);
       message.error(`Error occurred, please try again later!`);
       return;
     }
-
-    message.success(`Resident information has been updated`);
   };
 
   const onFinish = (values) => {
@@ -183,7 +184,6 @@ const MainFormList = (props) => {
       .validateFields()
       .then((values) => {
         setTimeout(() => {
-          setSubmitLoading(false);
           if (mode === ADD) {
             //RESIDENT INSERT ADD
             onFinishAdd(values);

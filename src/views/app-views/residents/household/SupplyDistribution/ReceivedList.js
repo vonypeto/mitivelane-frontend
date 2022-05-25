@@ -24,6 +24,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 //Components
 import SupplyReceivedForm from "./SupplyReceivedForm";
+import { getTotalPage } from "helper/pagination";
 
 const ReceievedList = (props) => {
 
@@ -42,7 +43,7 @@ const ReceievedList = (props) => {
   const [isReceivedDrawerVisible, setisReceivedDrawerVisible] = useState(false);
   const [supplyReceivedList, setSupplyReceivedList] = useState([]);
   const [supplyReceivedInitialVal, setSupplyReceivedInitialVal] = useState({});
-  const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState(0);
+  const [receivedSelectedRowKeys, setReceivedSelectedRowKeys] = useState([]);
   const [receivedSupplyCurrentPage, setReceivedSupplyCurrentPage] = useState(1);
   const [receivedSupplyTotal, setReceivedSupplyTotal] = useState(0);
   const [formAction, setFormAction] = useState("");
@@ -54,33 +55,36 @@ const ReceievedList = (props) => {
 
   //UseEffect
   useEffect(() => {
-    getAllSupplies();
+    getSuppliesTotal();
   }, []);
 
   useEffect(() => {
     getPage();
   }, [receivedSupplyCurrentPage, pageSize, tableScreen]);
 
+  
+  useEffect(() => {
+    var length = Object.keys(supplyReceivedList).length
+    if (length > 0) {
+      supplyReceivedList.map((data) => {
+        data.date = moment(new Date(data.date));
+      });
+    }
+  }, [supplyReceivedList]);
+
   //Axios
-  const getAllSupplies = async () => {
+  const getSuppliesTotal = async () => {
     try {
       await axios
         .post(
-          "/api/supply/receive/getAll",
-          { organization_id, pageSize },
+          "/api/supply/receive/getTotal",
+          { organization_id },
           generateToken()[1],
           { cancelToken }
         )
         .then((res) => {
-          console.log("res", res);
-          var SupplyReceived = res.data.SupplyReceived;
-          SupplyReceived.map((data) => {
-            data.date = moment(new Date(data.date));
-          });
-
           var suppliesReceivedCount = res.data.suppliesReceivedCount;
           setReceivedSupplyTotal(suppliesReceivedCount);
-          setSupplyReceivedList(SupplyReceived);
         });
     } catch (error) {
       console.log(error);
@@ -126,33 +130,13 @@ const ReceievedList = (props) => {
           newSupplyReceived.supply_receive_id = data.supply_receive_id;
           var newTotal = receivedSupplyTotal + 1;
           setReceivedSupplyTotal(newTotal);
-
-          if (supplyReceivedList.length < pageSize) {
-            setSupplyReceivedList([...supplyReceivedList, newSupplyReceived]);
-          }
-
-          if (supplyReceivedList.length == pageSize) {
-            setReceivedSupplyCurrentPage(getTotalPage(newTotal));
-          }
-
+          getPage()
           message.success(" New Supply Received data has been added.");
         });
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
-  };
-
-  const getTotalPage = (val) => {
-    var total = val;
-    var page = 1;
-    while (total > pageSize) {
-      total -= pageSize;
-      page++;
-    }
-    console.log("val", val);
-    console.log("page", page);
-    return page;
   };
 
   const updateSupplyReceived = async (values) => {
@@ -183,7 +167,7 @@ const ReceievedList = (props) => {
       message.error("Error in database connection!!");
     }
   };
-
+  
   const popSupplyReceived = async (supplyReceivedIDs) => {
     try {
       const currentSupplyReceivedList = [...supplyReceivedList];
@@ -207,8 +191,12 @@ const ReceievedList = (props) => {
           setSupplyReceivedList(currentSupplyReceivedList);
 
           if (supplyReceivedList.length == 1 && receivedSupplyTotal > 1) {
-            setGivenSupplyCurrentPage(receivedSupplyCurrentPage - 1);
-            // handleGivenPageChange()
+            setReceivedSupplyCurrentPage(receivedSupplyCurrentPage - 1);
+          }
+
+          var page = getTotalPage(receivedSupplyTotal, pageSize)
+          if (page > 1) {
+            getPage()
           }
 
           message.success("Success, data has been deleted");
@@ -253,18 +241,21 @@ const ReceievedList = (props) => {
           console.log("receivedSupplyTotal", receivedSupplyTotal);
           var newTotal = receivedSupplyTotal - deleteLength;
           setReceivedSupplyTotal(newTotal);
-          setReceivedSelectedRowKeys(0);
+          setReceivedSelectedRowKeys([]);
+
+
+          var newPage = receivedSupplyCurrentPage;
+          var lastPage = getTotalPage(receivedSupplyTotal, pageSize)
 
           if (length == deleteLength && receivedSupplyTotal > 1) {
-            var newPage = receivedSupplyCurrentPage;
 
-            if (newPage == 1) {
-              getPage();
-            }
-
-            if (newPage > 1) {
+            if (newPage != 1 && newPage == lastPage) {
               setReceivedSupplyCurrentPage(newPage - 1);
             }
+          }
+
+          if (newPage != lastPage) {
+            getPage()
           }
 
           message.success("Success, data has been deleted");

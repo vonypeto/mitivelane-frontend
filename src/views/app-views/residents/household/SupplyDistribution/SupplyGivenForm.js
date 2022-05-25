@@ -1,5 +1,6 @@
 import React from 'react'
 import { Form, Input, InputNumber, DatePicker, Select, Row, Col, Button } from "antd";
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -40,6 +41,7 @@ const SupplyGivenForm = () => {
                     name="date"
                     label="Date"
                     rules={[{ required: true, message: "Need date of this transaction!" }]}
+                    initialValue={moment(Date.now())}
                 >
                     <DatePicker className='w-100'/>
                 </Form.Item>

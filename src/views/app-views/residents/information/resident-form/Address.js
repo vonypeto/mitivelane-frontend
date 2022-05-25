@@ -38,12 +38,12 @@ const AddressField = (props) => {
 
 							<Row gutter={16}>
 								<Col xs={24} sm={24} md={24}>
-									<Form.Item name="address_1" label="Address 1" rules={rules.address_1}>
+									<Form.Item name="address_1" label="Address 1">
 										<Input placeholder="Address 1" />
 									</Form.Item>
 								</Col>
 								<Col xs={24} sm={24} md={24}>
-									<Form.Item name="address_2" label="Address 2" rules={rules.address_2}>
+									<Form.Item name="address_2" label="Address 2" >
 										<Input placeholder="Address 2" />
 									</Form.Item>
 								</Col>

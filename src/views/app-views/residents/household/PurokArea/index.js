@@ -20,6 +20,7 @@ import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
+import { handleAddPage, handleDeletePages } from "../../../../../helper/pagination"
 
 import {
   DeleteOutlined,
@@ -83,12 +84,16 @@ const PurokArea = (props) => {
   const [purokList, setPurokList] = useState([]);
   const [purokInitialVal, setPurokInitialVal] = useState({});
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   //Pagination State
   const [tableScreen, setTableScreen] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(4)
+
+  //Checkbox State
+  const [selectedArray, setSelectedArray] = useState([])
 
   //UseEffect
   useEffect(() => {
@@ -100,45 +105,10 @@ const PurokArea = (props) => {
     getAreasPage();
   }, [currentPage, pageSize, tableScreen])
 
-  //Initial Function
-  const getTotalPage = (val) => {
-    var total = val;
-    var page = 1;
-    while (total > pageSize) {
-      total -= pageSize;
-      page++;
-    }
-    return page;
-  };
 
   //Axios
-  const addNewArea = async (newArea) => {
-    try {
-      const request = await axios.post(
-        "/api/purok/add",
-        { newArea, organization_id: organization_id },
-        generateToken()[1],
-        { cancelToken }
-      );
 
-      const data = request.data;
-      var newTotal = total + 1;
-      setTotal(newTotal);
-
-      if (purokList.length < pageSize) {
-        setPurokList([...purokList, data]);
-      }
-
-      if (purokList.length == pageSize) {
-        setCurrentPage(getTotalPage(newTotal));
-      }
-
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  };
-
+  //AxiosTable
   const getAreasPage = async () => {
     try {
       setLoading(true)
@@ -151,13 +121,14 @@ const PurokArea = (props) => {
         .then((result) => {
           var data = result.data
           setPurokList(data)
-          setLoading(false)
         })
 
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
+
+    setLoading(false)
   };
 
   const getTotal = async () => {
@@ -176,11 +147,30 @@ const PurokArea = (props) => {
     }
   }
 
-  const deleteArea = async (area_id) => {
+  //Axios CRUD
+  const addNewArea = async (newArea) => {
     try {
       const request = await axios.post(
+        "/api/purok/add",
+        { newArea, organization_id: organization_id },
+        generateToken()[1],
+        { cancelToken }
+      );
+
+      const data = request.data;
+      await handleAddPage(total, setTotal, getAreasPage)
+    } catch (error) {
+      console.log(error);
+      message.error("Error in database connection!!");
+    }
+  };
+
+  const deleteArea = async () => {
+    try {
+      console.log("selectedArray", selectedArray)
+      const request = await axios.post(
         "/api/purok/delete",
-        { organization_id: organization_id, area_id },
+        { organization_id: organization_id, selectedArray },
         generateToken()[1],
         { cancelToken }
       );
@@ -240,11 +230,33 @@ const PurokArea = (props) => {
       >
         <DeleteOutlined />
         <span className="ml-2" style={{ color: "black" }}>
-          Delete
+          Delete {selectedArray.length > 1 && `(${selectedArray.length})`}
         </span>
       </Menu.Item>
     </Menu>
   );
+
+  //Component for checkbox
+  const tableRowSelection = {
+    selectedArray,
+    onChange: (selectedRowKeys, selectedRows) => {
+      onSelectChange(selectedRowKeys, selectedRows);
+    },
+  };
+
+  //OnChange checkbox
+  const onSelectChange = (selectedRowKeys, selectedRows) => {
+    if (selectedRows.length > 0) {
+      let tempSelectedRows = [];
+
+      selectedRows.map((row) => {
+        tempSelectedRows.push(row.purok_id);
+      });
+
+      console.log(tempSelectedRows);
+      setSelectedArray(tempSelectedRows);
+    }
+  };
 
   //Function
   const editPurok = (row) => {
@@ -259,25 +271,34 @@ const PurokArea = (props) => {
   };
 
   const deletePurok = (row) => {
-    setLoading(false)
-    deleteArea(row.purok_id);
-
+    setSubmitting(true)
     const currentpurokList = [...purokList];
-    var objIndex = currentpurokList.findIndex(
-      (obj) => obj.purok_id == row.purok_id
-    );
-    currentpurokList.splice(objIndex, 1);
-    setPurokList(currentpurokList);
 
-    var newTotal = total - 1
-    setTotal(newTotal);
+    if (selectedArray.length == 0) {
+      setSelectedArray(row.purok_id)
 
-    if (purokList.length == 1 && total > 1) {
-      setCurrentPage(currentPage - 1);
+      var objIndex = currentpurokList.findIndex(
+        (obj) => obj.purok_id == row.purok_id
+      );
+      currentpurokList.splice(objIndex, 1);
     }
 
+    if (selectedArray.length > 0) {
+      var objIndex
+
+      selectedArray.forEach(id => {
+        objIndex = currentpurokList.findIndex(
+          (obj) => obj.purok_id == id
+        );
+        currentpurokList.splice(objIndex, 1);
+      })
+    }
+
+    deleteArea()
+    setPurokList(currentpurokList);
+    handleDeletePages(selectedArray, total, setTotal, pageSize, currentPage, setCurrentPage, purokList, getAreasPage)
     message.success("Success, area has been deleted");
-    setLoading(false)
+    setSubmitting(false)
   };
 
   //Onchange
@@ -294,7 +315,6 @@ const PurokArea = (props) => {
   }
 
   const handleTableChange = (pagination, filters, sorter) => {
-    console.log("sorter", sorter)
     var sorter = {
       field: sorter.field,
       order: sorter.order
@@ -317,7 +337,6 @@ const PurokArea = (props) => {
 
     if (value.action == "added") {
       addNewArea(value);
-      message.success("New Area has been added.");
     }
 
     if (value.action == "edited") {
@@ -354,6 +373,7 @@ const PurokArea = (props) => {
           columns={purokColumn}
           dataSource={purokList}
           rowKey={"purok_id"}
+          rowSelection={tableRowSelection}
           scroll={{ x: "max-content" }}
           loading={loading}
           pagination={{

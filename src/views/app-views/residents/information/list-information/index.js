@@ -19,7 +19,7 @@ import utils from "utils";
 import { Col, Dropdown } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-
+import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/pagination";
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
@@ -27,51 +27,60 @@ const categories = [1, 2, 3, "Watches", "Devices"];
 const ListInformation = (props) => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
-
   const { generateToken, currentOrganization } = useAuth();
   const organization_id = currentOrganization;
-
   const { param_url } = props;
-  const [selectShow, setShow] = useState(true);
   let history = useHistory();
+
+  //Pagination State
+  const [tableScreen, setTableScreen] = useState({})
+  const [currentPage, setCurrentPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [pageSize, setPageSize] = useState(2)
+
+  //State
+  const [selectShow, setShow] = useState(true);
   const [list, setList] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isResidentLoading, setIsResidentLoading] = useState(true);
 
   useEffect(() => {
-    getAllResident();
-  }, []);
+    getPage();
+  }, [currentPage, pageSize, tableScreen]);
 
   //Axios Funtion
-  const getAllResident = async () => {
+  const getPage = async () => {
+    setIsResidentLoading(true);
+
     try {
       await axios
-        .post("/api/resident/getAll", { organization_id }, generateToken()[1], {
-          cancelToken,
-        })
+        .post(
+          "/api/resident/getPage",
+          { organization_id: organization_id, page: currentPage, tableScreen, pageSize },
+          generateToken()[1],
+          { cancelToken }
+        )
         .then((res) => {
-          setList(res.data);
-          setIsResidentLoading(false);
+          var data = res.data;
+          console.log("data", data)
+          setTotal(data.total)
+          setList(data.residentList);
         });
-
-      return () => {
-        source.cancel();
-      };
     } catch (error) {
-      message.error("Could not fetch data from server!!");
+      console.log(error);
+      message.error("Error in database connection!!");
     }
+
+    setIsResidentLoading(false);
   };
 
   const deleteResident = async (resident_id) => {
-    console.log(resident_id);
     await axios.post(
       "/api/resident/delete",
       { resident_id },
       generateToken()[1]
     );
-
-    console.log(resident_id);
   };
 
   const dropdownMenu = (row) => (
@@ -136,17 +145,19 @@ const ListInformation = (props) => {
 
     if (selectedRows.length > 1) {
       selectedRows.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm.resident_id);
-        setList(data);
+        // data = utils.deleteArrayRow(data, objKey, elm.resident_id);
+        // setList(data);
         setSelectedRows([]);
         residentIdArray.push(elm.resident_id);
       }); //end of loop
       deleteResident(residentIdArray);
+      handleDeletePages(residentIdArray, total, setTotal, pageSize, currentPage, setCurrentPage, list, getPage)
     } else {
-      data = utils.deleteArrayRow(data, objKey, row.resident_id);
-      setList(data);
+      // data = utils.deleteArrayRow(data, objKey, row.resident_id);
+      // setList(data);
       residentIdArray.push(row.resident_id);
       deleteResident(residentIdArray);
+      handleDeletePage(total, setTotal, currentPage, setCurrentPage, pageSize, list, getPage)
     }
   };
 
@@ -155,26 +166,39 @@ const ListInformation = (props) => {
       title: "Last Name",
       dataIndex: "lastname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
+      filterDropdown: searchBar,
+      filterIcon: searchIcon
     },
     {
       title: "First Name",
       dataIndex: "firstname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "firstname"),
+      filterDropdown: searchBar,
+      filterIcon: searchIcon
     },
     {
       title: "Middle Name",
       dataIndex: "middlename",
       sorter: (a, b) => utils.antdTableSorter(a, b, "middlename"),
+      filterDropdown: searchBarDate,
+      filterIcon: searchIcon
     },
     {
       title: "Age",
       dataIndex: "age",
       sorter: (a, b) => utils.antdTableSorter(a, b, "age"),
+      filterDropdown: searchBarNumber,
+      filterIcon: searchIcon
     },
     {
       title: "Civil Status",
       dataIndex: "civil_status",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "civil_status"),
+      filters: [
+        { text: 'Single', value: 'Single' },
+        { text: 'Married', value: 'Married' },
+        { text: 'Widowed', value: 'Widowed' },
+        { text: 'Divorced', value: 'Divorced' },
+      ],
     },
     {
       title: "Actions",
@@ -186,6 +210,7 @@ const ListInformation = (props) => {
       ),
     },
   ];
+
   const ResidentList = (
     <Menu>
       <Menu.Item key="0">
@@ -239,6 +264,7 @@ const ListInformation = (props) => {
       setList(ResidentListData);
     }
   };
+
   const cardDropdown = (menu) => (
     <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
       <a
@@ -250,6 +276,7 @@ const ListInformation = (props) => {
       </a>
     </Dropdown>
   );
+
   return (
     <QueueAnim
       type={["right", "left"]}
@@ -319,9 +346,19 @@ const ListInformation = (props) => {
                 }}
                 loading={isResidentLoading}
                 pagination={{
-                  defaultPageSize: 10,
+                  current: currentPage,
+                  total: total,
+                  pageSize: pageSize,
                   showSizeChanger: true,
+                  defaultPageSize: pageSize,
+                  pageSizeOptions: [pageSize, 10, 20, 50, 100],
+                  onShowSizeChange: (current, size) => {
+                    handlePageSizeChange(size, setList, setPageSize)
+                  },
+                  onChange: (page) => handlePageChange(page, setCurrentPage)
                 }}
+
+                onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setList, setTableScreen)}
               />
             </div>
           </Card>
