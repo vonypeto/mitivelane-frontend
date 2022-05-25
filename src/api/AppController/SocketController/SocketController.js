@@ -23,3 +23,10 @@ socket.on("connect_error", (err) => {
 socket.on("socket:new-user", authToken => {
   console.log("New user connected with authToken ", authToken)
 })
+
+const checkProduction = (prodTrue, prodFalse) => {
+  if (process.env.NODE_ENV === "production")
+    return prodTrue
+    
+  return prodFalse
+}

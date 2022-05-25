@@ -11,7 +11,6 @@ import { useParams } from "react-router-dom";
 const Resident = (props) => {
   const { match } = props;
   let { organization_id } = useParams();
-  console.log("First Loop: " + organization_id);
 
   return (
     <Switch>

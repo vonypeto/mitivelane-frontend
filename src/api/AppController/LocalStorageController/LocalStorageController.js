@@ -10,7 +10,7 @@ export const getLocalStorage = (itemName) => {
 export const setLocalStorageObject = (itemName, data, key) => {
 	var localStorageData = JSON.parse(localStorage.getItem(itemName))
 	localStorageData[key] = data
-	
+
 	return localStorage.setItem(itemName, JSON.stringify(localStorageData))
 }
 
@@ -18,7 +18,7 @@ export const setLocalStorageObject = (itemName, data, key) => {
 export const updateLocalStorageObject = (itemName, data, key, childKey) => {
 	var localStorageData = JSON.parse(localStorage.getItem(itemName))
 	localStorageData[key][childKey] = data
-	
+
 	return localStorage.setItem(itemName, JSON.stringify(localStorageData))
 }
 
