@@ -28,25 +28,24 @@ import {
 } from "@ant-design/icons";
 import MemberSample from "assets/data/member-sample.data.json";
 import utils from "utils";
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
 const { Option } = Select;
+
+const { Step } = Steps;
+
 const ManageMember = (props) => {
-  console.log(props);
+  const { currentOrganization, generateToken, currentUser } = useAuth();
+  
   const [editOrganization, setEditOrganization] = useState(false);
+  const [memberRequest, setMemberRequest] = useState([])
   const [addMember, setAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(0);
   const [selectEmail, setSelectEmail] = useState([]);
-  const [selectStage2, setSelectStage2] = useState([]);
-  const [selectStage3, setSelectStage3] = useState([]);
-  const [roleSelect, setRoleSelect] = useState([]);
-  const [firstPush, setFirstPush] = useState(true);
+  const [newMember, setNewMember] = useState([])
+  const [sending, setSending] = useState(false)
 
-  const { Step } = Steps;
-  let emailPick = [];
-  let tmpRole = [];
-  let listRole = [];
-  let rolePick = [];
-  let setDataEmail = [];
   const getUnique = (arr, index) => {
     const unique = arr
       .map((e) => e[index])
@@ -60,18 +59,19 @@ const ManageMember = (props) => {
 
     return unique;
   };
+
   const tableMember = [
     {
       title: "Member Name",
-      dataIndex: "member_name",
-      key: "member_name",
+      dataIndex: "email",
+      key: "email",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
       render: (text, member) => (
         <div className="d-flex align-items-center">
           <Avatar
             size={40}
             className="font-size-sm"
-            style={{ backgroundColor: "#" + member.avatarColor }}
+            style={{ backgroundColor: member.avatarColor }}
           >
             {utils.getNameInitial(text)}
           </Avatar>
@@ -81,9 +81,9 @@ const ManageMember = (props) => {
     },
 
     {
-      title: "Permission",
-      dataIndex: "permission",
-      key: "permission",
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
       sorter: (a, b) => utils.antdTableSorter(a, b, "firstname"),
       render: (_, elm) => (
         <>
@@ -92,12 +92,27 @@ const ManageMember = (props) => {
             className="text-center avatar-status d-flex align-items-center"
           >
             <div className="ml-2">
-              <div>
-                <div className="avatar-status-name">{elm.permission}</div>
-              </div>
-              <div className="text-muted avatar-status-subtitle">
-                Administrator can perform any Action{" "}
-              </div>
+              {
+                (elm.role == "Administrator") ? (
+                  <>
+                    <div>
+                      <div className="avatar-status-name">{elm.role}</div>
+                    </div>
+                    <div className="text-muted avatar-status-subtitle">
+                      Administrator can perform any Action
+                    </div></>
+
+                )
+                  : (
+                    <>
+                      <div>
+                        <div className="avatar-status-name">{elm.role}</div>
+                      </div>
+                      <div className="text-muted avatar-status-subtitle">
+                        Editor is limited to perform Action
+                      </div></>
+                  )}
+
             </div>
           </div>
         </>
@@ -115,10 +130,10 @@ const ManageMember = (props) => {
                 elm.status === "Active"
                   ? "cyan"
                   : elm.status === "Pending"
-                  ? "orange"
-                  : elm.status === "Inactive"
-                  ? "volcano"
-                  : null
+                    ? "orange"
+                    : elm.status === "Inactive"
+                      ? "volcano"
+                      : null
               }
             >
               {elm.status}
@@ -134,7 +149,6 @@ const ManageMember = (props) => {
 
       render: (_, elm) => (
         <div className="text-right">
-          {console.log("actio9n" + elm.blotter_id)}
           <div className="text-right d-flex justify-content-end">
             <Tooltip title="View">
               <Button
@@ -170,13 +184,18 @@ const ManageMember = (props) => {
   ];
 
   const roleMember = (event) => {
-    console.log(event);
+    var tempNewMember = newMember
+    var tempRole = event.split(",");
 
-    tmpRole = event.split(",");
-    rolePick.push({ member_id: tmpRole[0], role_id: tmpRole[1] });
-    rolePick = getUnique(rolePick, "member_id");
-    // listRole.push(tmpRole[1]);
+    if (parseInt(tempRole[1]) == 1) {
+      tempNewMember[tempRole[0]].role = "Administrator"
+    } else {
+      tempNewMember[tempRole[0]].role = "Editor"
+    }
+
+    setNewMember(tempNewMember)
   };
+
   const roleTable = [
     {
       title: "Member Name",
@@ -187,7 +206,7 @@ const ManageMember = (props) => {
           <Avatar
             size={40}
             className="font-size-sm"
-            style={{ backgroundColor: "#" + member.avatarColor }}
+            style={{ backgroundColor: member.avatarColor }}
           >
             {utils.getNameInitial(text)}
           </Avatar>
@@ -199,7 +218,7 @@ const ManageMember = (props) => {
     {
       title: "Role",
       dataIndex: "role",
-
+	  key: "role",
       render: (_, elm) => (
         <>
           <div key={elm} className="text-center align-items-center">
@@ -209,7 +228,7 @@ const ManageMember = (props) => {
               placeholder="Search to Select"
               optionFilterProp="children"
               onChange={roleMember}
-              defaultValue={roleSelect[elm.member_id]}
+              defaultValue={elm.role}
               id="roleid"
             >
               <Option value={elm.member_id + ",1"}>Administrator</Option>
@@ -232,7 +251,7 @@ const ManageMember = (props) => {
           <Avatar
             size={40}
             className="font-size-sm"
-            style={{ backgroundColor: "#" + member.avatarColor }}
+            style={{ backgroundColor: member.avatarColor }}
           >
             {utils.getNameInitial(text)}
           </Avatar>
@@ -243,22 +262,22 @@ const ManageMember = (props) => {
 
     {
       title: "Role",
-      dataIndex: "role",
-
+      dataIndex: "role_id",
+      key: "role_id",
       render: (_, elm) => (
         <>
           <div key={elm} className="text-center align-items-center">
-            {elm.role_id === 1 ? "Administrator" : "Editor"}
+            {elm.role}
           </div>
         </>
       ),
     },
   ];
+
   const onChangeMember = (value) => {
-    console.log(`selected ${value}`);
-    emailPick = value;
-    // console.log(selectEmail)
+    setSelectEmail(value)
   };
+
   const steps = [
     {
       title: "First",
@@ -302,13 +321,13 @@ const ManageMember = (props) => {
             <div className="mt-3 mb-4">
               <h3>Member roles</h3>
               <span className="text-muted">
-                Manage the limitation or permission of the member that will be
+                Manage the limitation or role of the member that will be
                 invited
               </span>
             </div>
             <div className="mb-2 table-responsive ">
               <Table
-                dataSource={selectStage2}
+                dataSource={newMember}
                 columns={roleTable}
                 rowKey="member_id"
                 scroll={{ x: "max-content" }}
@@ -336,12 +355,13 @@ const ManageMember = (props) => {
             </div>
             <div className="mb-2 table-responsive ">
               <Table
-                dataSource={selectStage3}
+                dataSource={newMember}
                 columns={finishedTabled}
                 rowKey="member_id"
                 scroll={{ x: "max-content" }}
                 pagination={false}
                 showHeader={false}
+				loading={sending}
               />
             </div>
           </div>
@@ -354,108 +374,104 @@ const ManageMember = (props) => {
   ];
 
   const next = () => {
-    // sendEmail = emailPick.toString().split(',');
-    // selectEmail = [].concat.apply([], selectEmail);
-    // setSelectEmail(selectEmail)
-    // console.log(listRole);
-    // console.log(emailPick);
-    if (rolePick.length || listRole.length) {
-      let roleTmpSelect = roleSelect;
-      let tmpArrayRole = selectStage3;
-      console.log(tmpArrayRole);
-      rolePick.map((elm, i) => {
-        if (firstPush) {
-          roleTmpSelect.push(elm.member_id + "," + elm.role_id);
+    if (current == 0 && selectEmail.length != 0) {
+      setCurrent(current + 1);
 
-          tmpArrayRole.push({
-            member_id: elm.member_id,
-            email: selectStage2[i].email,
-            role_id: elm.role_id,
-          });
-        } else {
-          try {
-            for (let x = 0; x <= roleTmpSelect.length - 1; x++) {
-              if (selectStage3[x].member_id === elm.member_id) {
-                tmpArrayRole[x].role_id = elm.role_id;
-                roleTmpSelect[x] = elm.member_id + "," + elm.role_id;
-                console.log(tmpArrayRole[x].role_id);
-              }
-            }
+      var finalData = []
 
-            // console.log(elm.role_id + ":" + tmpArrayRole[i].role_id);
-            console.log("RUN ");
-            console.log("selectTmpRole", tmpArrayRole);
-            console.log("roleTmpSelect", roleTmpSelect);
-            console.log("_______________-");
-          } catch (e) {
-            console.error(e);
-          }
-          console.log(selectStage3.length + ":" + (elm.member_id + 1));
+      selectEmail.map((value, i) => {
+        let colortag = [
+          "#0085c3",
+          "#7ab800",
+          "#f2af00",
+          "#dc5034",
+          "#ce1126",
+          "#0085c3",
+          "#FF1493",
+          "#AA47BC",
+        ];
+        const randomNum = Math.floor(Math.random() * colortag.length);
+        const avatarColor = colortag[randomNum];
 
-          if (selectStage3.length < elm.member_id + 1) {
-            roleTmpSelect.push(elm.member_id + "," + elm.role_id);
+        finalData.push(
+          {
+            member_id: i,
+            avatarColor: avatarColor,
+            email: value,
+            role: "Editor",
+            status: "Pending"
+          })
+      })
 
-            tmpArrayRole.push({
-              member_id: elm.member_id,
-              email: selectStage2[i].email,
-              role_id: elm.role_id,
-            });
-          }
-        }
-        return null;
-      });
-      rolePick = [];
-
-      if (firstPush) {
-        setFirstPush(!firstPush);
-      }
-      let tmp = [].concat.apply([], tmpArrayRole);
-      console.group(tmp);
-      setRoleSelect(roleTmpSelect);
-      setSelectStage3(tmp);
-      roleTmpSelect = [];
-      tmpArrayRole = [];
+      setNewMember(finalData)
+    } else if (current == 0 && selectEmail.length == 0) {
+      message.error("Email!")
     }
-    if (emailPick.length) {
-      emailPick.map((elm, i) => {
-        return setDataEmail.push({ member_id: i, email: elm });
-      });
 
-      let tmp = [].concat.apply([], setDataEmail);
-      setSelectStage2(tmp);
-      setSelectEmail(emailPick);
-      console.log(tmp[0].member_id);
-      setDataEmail = [];
+    if (current == 1) {
+      setCurrent(current + 1);
     }
-    setCurrent(current + 1);
   };
 
   const prev = () => {
     setCurrent(current - 1);
   };
 
-  const onClickMember = () => {
-    // setAddMember(!addMember)
+  const done = () => {
+	setSending(true)
+	  
+    console.log(newMember)
+    setMemberRequest(newMember)
+	
+	const values = {
+		new_member: newMember,
+		organization_id: currentOrganization,
+		current_user_name: currentUser.displayName
+	}
+	
+	axios
+    .post("/api/organization_setting/add-member", values, generateToken()[1])
+    .then((response) => {
+    if (response.data == "Success") {
+		setSending(false)
+		setAddMember(!addMember)
+		setSelectEmail([]);
+		setNewMember([])
+		setCurrent(0)
+		return message.success("Processing complete!")
+    } else {
+		return message.error("Error, please try again.");
+    }
+    })
+    .catch((error) => {
+    console.log(error);
+    message.destroy();
+    message.error("The action can't be completed, please try again.");
+    });
+  }
 
-    setTimeout(() => {
-      setAddMember(!addMember);
-      setLoading(!loading);
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }, 500);
-    setSelectStage2([]);
-    setSelectStage3([]);
+  const onClickMember = () => {
+    setAddMember(!addMember)
     setSelectEmail([]);
-    setRoleSelect([]);
+    setNewMember([])
+    setCurrent(0)
+
+    // setTimeout(() => {
+    // setAddMember(!addMember);
+    // setLoading(!loading);
+    // setTimeout(() => {
+    // setLoading(false);
+    // }, 1000);
+    // }, 500);
   };
+  
   return (
     <>
       <Col xs={24} sm={24} md={8}>
         <div className="pl-1">
           <h3>Manage Member</h3>
           <p className="mt-1 text-sm text-gray-600">
-            Manage the members permission and Add a new team member to your
+            Manage the members role and Add a new team member to your
             team, allowing them to collaborate with you.
           </p>
         </div>
@@ -494,7 +510,7 @@ const ManageMember = (props) => {
                           <Button
                             type="primary"
                             onClick={() =>
-                              message.success("Processing complete!")
+                              done()
                             }
                           >
                             Done
@@ -513,7 +529,7 @@ const ManageMember = (props) => {
                   ) : (
                     <div className="table-responsive">
                       <Table
-                        dataSource={MemberSample}
+                        dataSource={memberRequest}
                         columns={tableMember}
                         rowKey="member_id"
                         scroll={{ x: "max-content" }}

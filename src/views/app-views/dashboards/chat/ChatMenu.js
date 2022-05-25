@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Badge, Input, Avatar } from 'antd';
 import utils from "utils";
 import AvatarStatus from 'components/shared-components/AvatarStatus';
@@ -6,11 +6,7 @@ import { COLOR_1 } from 'constants/ChartConstant';
 import { SearchOutlined } from '@ant-design/icons';
 import { useHistory } from "react-router-dom";
 
-import { ChatContext } from "contexts/ChatContext";
-
-const ChatMenu = ({ match, location }) => {
-	const { chatData } = useContext(ChatContext)
-	
+const ChatMenu = ({ match, location, chatData }) => {
 	const [list, setList] = useState([]);
 
 	useEffect(() => {

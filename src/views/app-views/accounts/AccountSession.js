@@ -90,23 +90,33 @@ const AccountSession = () => {
       auth_id: localStorage.getItem(AUTH_TOKEN),
       limit: limit,
     };
+    let isApiSubscribed = true;
     await axios
       .post("/api/app/user/sessions", data, generateToken()[1])
       .then((response) => {
-        setIsLoading(false);
-        setSessionDataAll(response.data.session);
-        setTotalSession(response.data.session.length);
-        loopWithSlice(0, postsPerPage, response.data.session);
+        if (isApiSubscribed) {
+          setIsLoading(false);
+          setSessionDataAll(response.data.session);
+          setTotalSession(response.data.session.length);
+          loopWithSlice(0, postsPerPage, response.data.session);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
+    return () => {
+      // cancel the subscription
+      isApiSubscribed = false;
+    };
   };
   useEffect(() => {
     if (showMessage)
       setTimeout(() => {
         setShowMessage(!showMessage);
       }, 3000);
+    return () => {
+      setShowMessage(false);
+    };
   }, [showMessage]);
   useEffect(() => {
     let mount = true;

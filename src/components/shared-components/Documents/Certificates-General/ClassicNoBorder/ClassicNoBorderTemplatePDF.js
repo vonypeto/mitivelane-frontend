@@ -35,12 +35,10 @@ const BasicDocument = (props) => {
     },
     body: {
       padding: 5,
-      //can be dynamic chang color
-      backgroundColor: "black",
-      borderColor: "white",
       borderWidth: 15,
       outlineColor: "white",
       outlineStyle: "solid",
+      borderColor: "white",
       outlineWidth: 0,
     },
     borders: { backgroundColor: "white" },

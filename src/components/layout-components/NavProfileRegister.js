@@ -39,12 +39,10 @@ export const NavProfile = ({ signOut }) => {
     JSON.parse(localStorage.getItem(PROFILE_URL) || "[]")
   );
   const [timer, setTimer] = useState(false);
-  // const profileImg = "/img/avatars/thumb-1.jpg";
   const user =
     currentUser?.displayName != null ? currentUser.displayName : "N/A";
   const signOutNode = () => {
     logOut(signOut, generateToken);
-    // signOut();
   };
   useEffect(() => {
     let mount = true;

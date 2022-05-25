@@ -37,6 +37,11 @@ const ConnectedAccount = () => {
       setTimeout(() => {
         setIsLoading(!isLoading);
       }, 1000);
+    return () => {
+      setIsLoading();
+      setGoogleProvider();
+      setFaceBookProvider();
+    };
   }, [isLoading, currentDataUser]);
   const mergeAndUnmergeWithFacebook = () => {
     setIsLoading(true);

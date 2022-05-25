@@ -11,10 +11,17 @@ const ConversationEmpty = () => (
   </div>
 )
 
-const ChatContent = ({ match }) => {
+const ChatContent = ({ match, chatData, setChatData, socket }) => {
+  const [conversation, setConversation] = useState([])
+
+  useEffect(() => {
+    setConversation(chatData)
+  }, [chatData])
+
   return (
     <Switch>
-      <Route path={`${match.url}/:_id`} component={Conversation} />
+      <Route path={`${match.url}/:_id`}
+        render={result => <Conversation match={result.match} chatData={conversation} setChatData={setChatData} socket={socket}></Conversation>} />
       <Route path={`${match.url}`} component={ConversationEmpty} />
     </Switch>
   )

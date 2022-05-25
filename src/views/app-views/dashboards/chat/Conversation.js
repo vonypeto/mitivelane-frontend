@@ -20,13 +20,7 @@ import { useAuth } from "contexts/AuthContext";
 import { isValidURL } from "components/util-components/URL";
 import Picker from "emoji-picker-react";
 
-import { SocketContext } from "contexts/SocketContext";
-import { ChatContext } from "contexts/ChatContext";
-
-const Conversation = ({ match }) => {
-  const socket = useContext(SocketContext);
-  const { chatData, setChatData } = useContext(ChatContext);
-
+const Conversation = ({ match, chatData, setChatData, socket }) => {
   const { currentOrganization, generateToken } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
   const formRef = useRef(null);
@@ -217,13 +211,12 @@ const Conversation = ({ match }) => {
           {props.map((elm, i) => (
             <div
               key={`msg-${_id}-${i}`}
-              className={`msg ${elm.msgType === "date" ? "datetime" : ""} ${
-                elm.from === "opposite"
-                  ? "msg-recipient"
-                  : elm.from === "me"
+              className={`msg ${elm.msgType === "date" ? "datetime" : ""} ${elm.from === "opposite"
+                ? "msg-recipient"
+                : elm.from === "me"
                   ? "msg-sent"
                   : ""
-              }`}
+                }`}
             >
               {
                 elm.avatar && elm.from === "opposite" ? (

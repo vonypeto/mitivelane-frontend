@@ -336,11 +336,10 @@ div[id^="font-picker"]:hover {
   margin: 0;
 }
 .bottom-right-Drawer {
-  position: absolute;
-
-  margin-bottom: 0px;
-  bottom: 0px;
-  right: 0px;
+  position: absolute !important;
+  margin-bottom: 0px !important;
+  bottom: 0px !important;
+  right: 0px !important;
 }
 .custom-ant-header .ant-drawer-header {
   background-color: #283142;
@@ -392,9 +391,11 @@ div[id^="font-picker"]:hover {
   flex-direction: column;
   align-items: center;
 }
-
+.pointer-events {
+  pointer-events: none;
+}
 .PDFDocument {
-  display: flex;
+  /* // display: flex; */
   flex-direction: column;
   align-items: center;
 }
