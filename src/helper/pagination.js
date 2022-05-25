@@ -1,3 +1,7 @@
+import { Input, Space, Button, InputNumber, DatePicker  } from "antd";
+import moment from "moment";
+import { SearchOutlined } from "@ant-design/icons";
+
 //Total Function
 export const getTotalPage = (total, pageSize) => {
   var page = 1;
@@ -7,6 +11,98 @@ export const getTotalPage = (total, pageSize) => {
   }
   return page;
 };
+
+export const searchBar = ({ setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
+  return (
+    <div style={{ padding: 8 }}>
+      <Input
+        autoFocus
+        placeholder={`Type text here`}
+        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+        value={selectedKeys}
+        style={{ marginBottom: 8, display: 'block' }}
+      />
+      <Space>
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          size="small"
+          style={{ width: 100 }}
+          onClick={() => confirm()}
+        >
+          Search
+        </Button>
+        <Button size="small" style={{ width: 90 }} onClick={() => { clearFilters() }}>
+          Reset
+        </Button>
+      </Space>
+    </div>
+  )
+}
+
+export const searchBarNumber = ({ setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
+  return (
+    <div style={{ padding: 8 }}>
+      <InputNumber
+        className="w-100"
+        controls={false}
+        autoFocus
+        placeholder={`Type text here`}
+        onChange={value => setSelectedKeys(value ? [value] : [])}
+        value={selectedKeys}
+        style={{ marginBottom: 8, display: 'block' }}
+      />
+      <Space>
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          size="small"
+          style={{ width: 100 }}
+          onClick={() => confirm()}
+        >
+          Search
+        </Button>
+        <Button size="small" style={{ width: 90 }} onClick={() => { clearFilters() }}>
+          Reset
+        </Button>
+      </Space>
+    </div>
+  )
+}
+
+export const searchBarDate = ({ setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
+  return (
+    <div style={{ padding: 8 }}>
+      <DatePicker
+        className="w-100"
+        controls={false}
+        autoFocus
+        placeholder={`Type text here`}
+        onChange={value => setSelectedKeys(value ? [value] : [])}
+        defaultValue={null}
+        style={{ marginBottom: 8, display: 'block' }}
+      />
+      <Space>
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          size="small"
+          style={{ width: 100 }}
+          onClick={() => confirm()}
+        >
+          Search
+        </Button>
+        <Button size="small" style={{ width: 90 }} onClick={() => { clearFilters() }}>
+          Reset
+        </Button>
+      </Space>
+    </div>
+  )
+}
+
+export const searchIcon = () => {
+  return(<SearchOutlined/>)
+}
 
 //For adding additional
 export const handleAddPage = (total, setTotal, getPage) => {
@@ -75,13 +171,14 @@ export const handleTableChange = (sorter, filter, setListState, setTableScreenSt
   //   query.where(filters[i].fieldName).equals(filters[i].value)
   // }
 
+  setListState([])
+
   if (sorter.order != null) {
-    setListState([])
-    setTableScreenState({ sorter })
+    setTableScreenState({ sorter, filter })
   }
 
   if (sorter.order == null) {
-    setTableScreenState({})
+    setTableScreenState({ filter })
   }
 
 }

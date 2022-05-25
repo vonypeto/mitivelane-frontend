@@ -19,7 +19,7 @@ import utils from "utils";
 import { Col, Dropdown } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages } from "helper/pagination";
+import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/pagination";
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
@@ -46,32 +46,10 @@ const ListInformation = (props) => {
   const [isResidentLoading, setIsResidentLoading] = useState(true);
 
   useEffect(() => {
-    getResidentTotal();
-  }, []);
-
-  useEffect(() => {
     getPage();
   }, [currentPage, pageSize, tableScreen]);
 
   //Axios Funtion
-  const getResidentTotal = async () => {
-    try {
-      await axios
-        .get(
-          `/api/resident/getTotal/${organization_id}`,
-          generateToken()[1],
-          { cancelToken }
-        )
-        .then((res) => {
-          console.log(res.data)
-          setTotal(res.data);
-        });
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  };
-
   const getPage = async () => {
     setIsResidentLoading(true);
 
@@ -86,7 +64,8 @@ const ListInformation = (props) => {
         .then((res) => {
           var data = res.data;
           console.log("data", data)
-          setList(data);
+          setTotal(data.total)
+          setList(data.residentList);
         });
     } catch (error) {
       console.log(error);
@@ -187,60 +166,39 @@ const ListInformation = (props) => {
       title: "Last Name",
       dataIndex: "lastname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-        <div style={{ padding: 8 }}>
-          <Input
-          autoFocus
-            placeholder={`Type text here`}
-            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-            value={selectedKeys}
-            style={{ marginBottom: 8, display: 'block' }}
-          />
-          <Space>
-            <Button
-              type="primary"
-              icon={<SearchOutlined />}
-              size="small"
-              style={{ width: 100 }}
-              onClick={() => confirm()}
-            >
-              Search
-            </Button>
-            <Button size="small" style={{ width: 90 }} onClick={() => {clearFilters()}}>
-              Reset
-            </Button>
-          </Space>
-        </div>
-      ),
-      filterIcon: () => {return <SearchOutlined />},
-      // onFilter: (value, record) =>
-      // record.lastname
-      //   ? record.lastname.toString().toLowerCase().includes(value.toLowerCase())
-      //   : '',
-
+      filterDropdown: searchBar,
+      filterIcon: searchIcon
     },
     {
       title: "First Name",
       dataIndex: "firstname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "firstname"),
-      filters: [
-        { text: 'Joe', value: 'Joe' },
-        { text: 'Jim', value: 'Jim' },
-      ],
+      filterDropdown: searchBar,
+      filterIcon: searchIcon
     },
     {
       title: "Middle Name",
       dataIndex: "middlename",
       sorter: (a, b) => utils.antdTableSorter(a, b, "middlename"),
+      filterDropdown: searchBarDate,
+      filterIcon: searchIcon
     },
     {
       title: "Age",
       dataIndex: "age",
       sorter: (a, b) => utils.antdTableSorter(a, b, "age"),
+      filterDropdown: searchBarNumber,
+      filterIcon: searchIcon
     },
     {
       title: "Civil Status",
       dataIndex: "civil_status",
+      filters: [
+        { text: 'Single', value: 'Single' },
+        { text: 'Married', value: 'Married' },
+        { text: 'Widowed', value: 'Widowed' },
+        { text: 'Divorced', value: 'Divorced' },
+      ],
     },
     {
       title: "Actions",
