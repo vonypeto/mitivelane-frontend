@@ -133,36 +133,37 @@ const ReceievedList = (props) => {
       const new_supply_amount = stock_supply + new_receive_supply;
       setCurrentSupply(new_supply_amount);
 
-      const request = await axios.post(
+      await axios.post(
         "/api/supply/receive/update",
         { newSupplyReceived: values, organization_id, new_supply_amount },
         generateToken()[1],
         { cancelToken }
-      );
+      ).then((res) => {
+        currentSupplyReceivedList[objIndex] = values;
+        getPage()
+        message.success("Supply Received Table data has been updated.");
+      })
 
-      currentSupplyReceivedList[objIndex] = values;
-      setSupplyReceivedList(currentSupplyReceivedList);
-      message.success("Supply Received Table data has been updated.");
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
   };
 
-  const popSupplyReceived = async (supplyReceivedIDs) => {
+  const popSupplyReceived = async (receivedSelectedRowKey) => {
     try {
       const currentSupplyReceivedList = [...supplyReceivedList];
       var objIndex = currentSupplyReceivedList.findIndex(
-        (obj) => obj.supply_receive_id == supplyReceivedIDs
+        (obj) => obj.supply_receive_id == receivedSelectedRowKey[0]._id
       );
-      var remove_supply = currentSupplyReceivedList[objIndex].amount;
-      var new_supply_amount = currentSupply - remove_supply;
+      var supply_remove = currentSupplyReceivedList[objIndex].amount;
+      var new_supply_amount = currentSupply - supply_remove;
       currentSupplyReceivedList.splice(objIndex, 1);
 
       await axios
         .post(
           "/api/supply/receive/delete",
-          { supplyReceivedIDs, organization_id, new_supply_amount, supply_remove, year },
+          { selectedRowKeys: receivedSelectedRowKey, organization_id, new_supply_amount, supply_remove, year },
           generateToken()[1],
           { cancelToken }
         )
@@ -189,30 +190,30 @@ const ReceievedList = (props) => {
   };
 
   const deleteSuppliesReceived = () => {
-    popSuppliesReceived(receivedSelectedRowKeys);
+    popSuppliesReceived();
   };
 
-  const popSuppliesReceived = async (supplyReceivedIDs) => {
+  const popSuppliesReceived = async () => {
     try {
       const currentSupplyReceivedList = [...supplyReceivedList];
       const length = currentSupplyReceivedList.length;
-      var deleteLength = supplyReceivedIDs.length;
-      var remove_supply = 0;
+      var deleteLength = receivedSelectedRowKeys.length;
+      var supply_remove = 0;
 
       receivedSelectedRowKeys.map((row) => {
         var objIndex = currentSupplyReceivedList.findIndex(
-          (obj) => obj.supply_receive_id == row
+          (obj) => obj.supply_receive_id == row._id
         );
-        remove_supply += currentSupplyReceivedList[objIndex].amount;
+        supply_remove += currentSupplyReceivedList[objIndex].amount;
         currentSupplyReceivedList.splice(objIndex, 1);
       });
 
-      var new_supply_amount = currentSupply - remove_supply;
+      var new_supply_amount = currentSupply - supply_remove;
 
       await axios
         .post(
           "/api/supply/receive/delete",
-          { supplyReceivedIDs, organization_id, new_supply_amount, supply_remove, year },
+          { selectedRowKeys: receivedSelectedRowKeys, organization_id, new_supply_amount, supply_remove, year },
           generateToken()[1],
           { cancelToken }
         )
@@ -262,7 +263,7 @@ const ReceievedList = (props) => {
       dataIndex: "amount",
       key: "amount",
       sorter: (a, b) => a.amount - b.amount,
-            filterDropdown: searchBarNumber,
+      filterDropdown: searchBarNumber,
       filterIcon: searchIcon,
       sorter: (a, b) => utils.antdTableSorter(a, b, "amount")
     },
@@ -356,7 +357,7 @@ const ReceievedList = (props) => {
   };
 
   const deleteSupplyReceived = (row) => {
-    popSupplyReceived([row.supply_receive_id]);
+    popSupplyReceived([{ _id: row.supply_receive_id, amount: row.amount, date: row.date }]);
   };
 
   const dropdownMenuSupplyReceived = (row) => (
@@ -400,15 +401,14 @@ const ReceievedList = (props) => {
   //OnChange
   const onSelectReceivedSupplyChange = (selectedRowKeys, selectedRows) => {
     if (selectedRows.length > 0) {
-      let supplyReceiveIDs = [];
+      let tempSelectedRows = [];
+      let tempRow = {}
 
       selectedRows.map((row) => {
-        supplyReceiveIDs.push(row.supply_receive_id);
+        tempRow = { _id: row.supply_receive_id, amount: row.amount, date: row.date }
+        tempSelectedRows.push(tempRow);
       });
-
-      console.log(supplyReceiveIDs);
-      setReceivedSelectedRowKeys(supplyReceiveIDs);
-      message.success(`Selected receive row ${selectedRows.length}`);
+      setReceivedSelectedRowKeys(tempSelectedRows);
     }
   };
 
@@ -500,7 +500,7 @@ const ReceievedList = (props) => {
             ref={SupplyReceivedFormRef}
             initialValues={supplyReceivedInitialVal}
           >
-            <SupplyReceivedForm action={formAction}/>
+            <SupplyReceivedForm action={formAction} />
           </Form>
         )}
       </Modal>
@@ -521,7 +521,7 @@ const ReceievedList = (props) => {
             ref={SupplyReceivedFormRef}
             initialValues={supplyReceivedInitialVal}
           >
-            <SupplyReceivedForm action={formAction}/>
+            <SupplyReceivedForm action={formAction} />
           </Form>
         )}
       </Drawer>

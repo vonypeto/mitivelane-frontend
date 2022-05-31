@@ -163,11 +163,11 @@ const GivenList = (props) => {
     }
   };
 
-  const popSupplyGiven = async (givenSelectedRowKeys) => {
+  const popSupplyGiven = async (givenSelectedRowKey) => {
     try {
       const currentSupplyGivenList = [...supplyGivenList];
       var objIndex = currentSupplyGivenList.findIndex(
-        (obj) => obj.supply_given_id == givenSelectedRowKeys[0]._id
+        (obj) => obj.supply_given_id == givenSelectedRowKey[0]._id
       );
       var supply_remove = currentSupplyGivenList[objIndex].amount;
       var new_supply_amount = currentSupply + supply_remove;
@@ -176,7 +176,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { selectedRowKeys: givenSelectedRowKeys, organization_id, new_supply_amount, supply_remove, year},
+          { selectedRowKeys: givenSelectedRowKey, organization_id, new_supply_amount, supply_remove, year},
           generateToken()[1],
           { cancelToken }
         )
