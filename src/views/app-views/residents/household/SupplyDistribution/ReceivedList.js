@@ -24,7 +24,8 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 //Components
 import SupplyReceivedForm from "./SupplyReceivedForm";
-import { getTotalPage } from "helper/pagination";
+import { getTotalPage, searchBar, searchBarNumber, searchBarDate, searchIcon, handleTableChange } from "helper/pagination";
+import utils from "utils";
 
 const ReceievedList = (props) => {
 
@@ -35,7 +36,7 @@ const ReceievedList = (props) => {
   const { generateToken, currentOrganization } = useAuth();
 
   //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply } = props;
+  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, year } = props;
 
   //State
   const [tableScreen, setTableScreen] = useState({});
@@ -54,15 +55,12 @@ const ReceievedList = (props) => {
   const SupplyReceivedFormRef = createRef();
 
   //UseEffect
-  useEffect(() => {
-    getSuppliesTotal();
-  }, []);
 
   useEffect(() => {
     getPage();
-  }, [receivedSupplyCurrentPage, pageSize, tableScreen]);
+  }, [receivedSupplyCurrentPage, pageSize, tableScreen, year]);
 
-  
+
   useEffect(() => {
     var length = Object.keys(supplyReceivedList).length
     if (length > 0) {
@@ -73,39 +71,22 @@ const ReceievedList = (props) => {
   }, [supplyReceivedList]);
 
   //Axios
-  const getSuppliesTotal = async () => {
-    try {
-      await axios
-        .post(
-          "/api/supply/receive/getTotal",
-          { organization_id },
-          generateToken()[1],
-          { cancelToken }
-        )
-        .then((res) => {
-          var suppliesReceivedCount = res.data.suppliesReceivedCount;
-          setReceivedSupplyTotal(suppliesReceivedCount);
-        });
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  };
 
   const getPage = async () => {
     setReceivedTableLoading(true);
     await axios
       .post(
         `/api/supply/receive/getPage/${organization_id}/${receivedSupplyCurrentPage}/${pageSize}`,
-        { tableScreen },
+        { tableScreen, year },
         generateToken()[1],
         { cancelToken }
       )
       .then((res) => {
         var data = res.data;
-        setSupplyReceivedList(data);
-        setReceivedTableLoading(false);
+        setReceivedSupplyTotal(data.total)
+        setSupplyReceivedList(data.list);
       });
+    setReceivedTableLoading(false);
   };
 
   const addSupplyReceived = async (newSupplyReceived) => {
@@ -167,7 +148,7 @@ const ReceievedList = (props) => {
       message.error("Error in database connection!!");
     }
   };
-  
+
   const popSupplyReceived = async (supplyReceivedIDs) => {
     try {
       const currentSupplyReceivedList = [...supplyReceivedList];
@@ -181,7 +162,7 @@ const ReceievedList = (props) => {
       await axios
         .post(
           "/api/supply/receive/delete",
-          { supplyReceivedIDs, organization_id, new_supply_amount },
+          { supplyReceivedIDs, organization_id, new_supply_amount, supply_remove, year },
           generateToken()[1],
           { cancelToken }
         )
@@ -231,7 +212,7 @@ const ReceievedList = (props) => {
       await axios
         .post(
           "/api/supply/receive/delete",
-          { supplyReceivedIDs, organization_id, new_supply_amount },
+          { supplyReceivedIDs, organization_id, new_supply_amount, supply_remove, year },
           generateToken()[1],
           { cancelToken }
         )
@@ -272,12 +253,18 @@ const ReceievedList = (props) => {
       title: "Source",
       dataIndex: "source",
       key: "source",
+      filterDropdown: searchBar,
+      filterIcon: searchIcon,
+      sorter: (a, b) => utils.antdTableSorter(a, b, "source")
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
       sorter: (a, b) => a.amount - b.amount,
+            filterDropdown: searchBarNumber,
+      filterIcon: searchIcon,
+      sorter: (a, b) => utils.antdTableSorter(a, b, "amount")
     },
     {
       title: "Date",
@@ -425,22 +412,6 @@ const ReceievedList = (props) => {
     }
   };
 
-  const handleTableChange = (pagination, filters, sorter) => {
-    var sorter = {
-      field: sorter.field,
-      order: sorter.order
-    }
-
-    if (sorter.order != null) {
-      setSupplyReceivedList([])
-      setTableScreen({ sorter })
-    }
-
-    if (sorter.order == null) {
-      setTableScreen({})
-    }
-  }
-
   const handlePageSizeChange = (size) => {
     setSupplyReceivedList([])
     setPageSize(size)
@@ -508,7 +479,7 @@ const ReceievedList = (props) => {
             },
             onChange: (page) => handleReceivedPageChange(page)
           }}
-          onChange={handleTableChange}
+          onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setSupplyReceivedList, setTableScreen)}
           loading={receiveTableLoading}
           bordered
         />
@@ -529,7 +500,7 @@ const ReceievedList = (props) => {
             ref={SupplyReceivedFormRef}
             initialValues={supplyReceivedInitialVal}
           >
-            <SupplyReceivedForm />
+            <SupplyReceivedForm action={formAction}/>
           </Form>
         )}
       </Modal>
@@ -550,7 +521,7 @@ const ReceievedList = (props) => {
             ref={SupplyReceivedFormRef}
             initialValues={supplyReceivedInitialVal}
           >
-            <SupplyReceivedForm />
+            <SupplyReceivedForm action={formAction}/>
           </Form>
         )}
       </Drawer>

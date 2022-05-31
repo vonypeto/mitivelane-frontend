@@ -4,7 +4,8 @@ import { handleTableChange, handlePageSizeChange, handlePageChange } from "helpe
 const [tableScreen, setTableScreen] = useState({})
 const [currentPage, setCurrentPage] = useState(1)
 const [total, setTotal]  = useState(0)
-const [pageSize, setPageSize] = useState(4)
+const defaultPageSize = 4
+const [pageSize, setPageSize] = useState(defaultPageSize)
 
 //Checkbox State
 const [selectedArray, setSelectedArray] = useState([])
@@ -20,8 +21,8 @@ current: currentPage,
 total: total,
 pageSize: pageSize,
 showSizeChanger: true,
-defaultPageSize: pageSize,
-pageSizeOptions: [pageSize, 10, 20, 50, 100],
+defaultPageSize: defaultPageSize,
+pageSizeOptions: [defaultPageSize, 10, 20, 50, 100],
 onShowSizeChange: (current, size) => {
 handlePageSizeChange(size, setListState, setPageSizeState)
 },
@@ -29,7 +30,7 @@ onChange: (page) => handlePageChange(page, setCurrentPageState)
 }}
 
 //Table onChange
-onChange = {(sorter) => handleTableChange(sorter, setListState, tableScreenState)}
+onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setPurokList, setTableScreen)}
 
 //Component for checkbox
 const tableRowSelection = {
@@ -53,8 +54,6 @@ const onSelectChange = (selectedRowKeys, selectedRows) => {
   }
 };
 
-
-
 //Things to do
 //Create useEffect for tableScreen
 //Create backend for getPage
@@ -62,10 +61,6 @@ const onSelectChange = (selectedRowKeys, selectedRows) => {
 
 
 //UseEffect
-useEffect(() => {
-    getStateTotal();
-}, []);
-
 useEffect(() => {
     getPage();
 }, [currentPage, pageSize, tableScreen]);
@@ -80,24 +75,6 @@ useEffect(() => {
     }
 }, [supplyGivenList]);
 
-//Axios Table
-const getStateTotal = async () => {
-    try {
-        await axios
-            .post(
-                "/api/link/getTotal",
-                { organization_id },
-                generateToken()[1],
-                { cancelToken }
-            )
-            .then((res) => {
-                setTotal(res.data);
-            });
-    } catch (error) {
-        console.log(error);
-        message.error("Error in database connection!!");
-    }
-};
 
 const getPage = async () => {
     setloading(true);
@@ -111,8 +88,9 @@ const getPage = async () => {
                 { cancelToken }
             )
             .then((res) => {
-                var data = res.data;
-                setStateList(data);
+              var data = res.data
+              setTotal(data.total)
+              setPurokList(data.list)
             });
     } catch (error) {
         console.log(error);
@@ -123,60 +101,92 @@ const getPage = async () => {
 };
 
 //backend
+exports.getResidentPage = async (req, res) => {
+  try {
+    // console.log("req.body", req.body)
+    var page = parseInt(req.body.page) - 1;
+    var pageSize = parseInt(req.body.pageSize);
+    var organization_id = req.body.organization_id;
+    organization_id = mongoose.Types.ObjectId(organization_id);
 
-exports.getResidentTotal = async (req, res) => {
-    try {
-      var organization_id = req.params.organization_id;
-      organization_id = mongoose.Types.ObjectId(organization_id);
-  
-      await Resident.countDocuments({ organization_id }).then((result) => {
-          res.json(result);
+    var tableScreen = req.body.tableScreen
+    var tableScreenLength = Object.keys(tableScreen).length
+    var sorter = null
+    var filter = { organization_id: organization_id }
+    var doesFilterExist = tableScreen.hasOwnProperty("filter")
+    var doesSorterExist = tableScreen.hasOwnProperty("sorter")
+    var numberKeys = [""] // put here keys that are number fields
+    var dateKeys = [""] // put here keys that are date fields
+
+    if (doesFilterExist != false) {
+      var tempFilter = tableScreen.filter
+      var isKeyNumber = false
+      var isKeyDate = false
+
+      for (const [key, value] of Object.entries(tempFilter)) {
+        if (value != null) {
+          isKeyNumber = numberKeys.includes(key)
+          isKeyDate = dateKeys.includes(key)
+
+          if (isKeyNumber == true) {
+            filter = { ...filter, [key]: value }
+          }
+
+          if (isKeyDate == true) {
+            var today = moment(value[0]).startOf('day')
+            var endDate = moment(value[0]).endOf('day')
+
+            var dateFilter = {
+              [key]: {
+                $gte: today,
+                $lte: endDate
+              }
+            }
+
+            filter = { ...filter, ...dateFilter}
+          }
+
+          if (isKeyDate == false && isKeyNumber == false) {
+            filter = { ...filter, [key]: { $regex: value.join("|"), $options: "i" } }
+          }
         }
-      );
-  
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "error" });
-    }
-  };
-  
-  exports.getResidentPage = async (req, res) => {
-    try {
-      console.log("req.body", req.body)
-      var tableScreen = req.body.tableScreen
-      var tableScreenLength = Object.keys(tableScreen).length
-      var page = parseInt(req.body.page) - 1;
-      var pageSize = parseInt(req.body.pageSize);
-      var organization_id = req.body.organization_id;
-      organization_id = mongoose.Types.ObjectId(organization_id);
-  
-      if (tableScreenLength > 0) {
-        console.log("has filter")
-        var sorter = tableScreen.sorter
-        var order = sorter.order + "ing" // either ascend or descend, ing is need for mongoose
-        var field = sorter.field
-  
-        await Resident.find({ organization_id })
-        .skip(page * pageSize)
-        .limit(pageSize)
-        .sort({[field]: order})
-        .then((result) => {
-          res.status(200).send(result);
-        })
       }
-  
-      if (tableScreenLength <= 0) {
-        console.log("no filter")
-        await Resident.find({ organization_id })
-        .skip(page * pageSize)
-        .limit(pageSize)
-        .then((result) => {
-          res.status(200).send(result);
-        })
-      }
-  
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ error: "error" });
     }
-  };
+
+    if(doesSorterExist != false) {
+      var tempSorter = tableScreen.sorter
+      var field = tempSorter.field
+      var order = tempSorter.order + 'ing'
+      sorter = { [field]: order }
+    }
+
+    //console.log("filter", filter)
+    // console.log("sorter", sorter)
+
+    await DB.find(filter)
+      .skip(page * pageSize)
+      .limit(pageSize)
+      .sort(sorter)
+      .then(async (result) => {
+        var dbList = result
+        await DB.countDocuments(filter)
+          .then((result) => {
+            var total = result
+            res.json({ dbList, total });
+          });
+      })
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error: "error" });
+  }
+};
+
+//filter and sorter
+import { searchBar, searchBarNumber, searchBarDate, searchIcon  } from "helper/pagination";
+import utils from "utils";
+
+//inside column
+filterDropdown: searchBar,
+filterIcon: searchIcon,
+sorter: (a, b) => utils.antdTableSorter(a, b, "key name")
