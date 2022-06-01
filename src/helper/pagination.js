@@ -1,4 +1,7 @@
+
 import { Input, Space, Button, InputNumber, DatePicker  } from "antd";
+
+const { RangePicker } = DatePicker;
 import moment from "moment";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -16,7 +19,6 @@ export const searchBar = ({ setSelectedKeys, selectedKeys, confirm, clearFilters
   return (
     <div style={{ padding: 8 }}>
       <Input
-        autoFocus
         placeholder={`Type text here`}
         onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
         value={selectedKeys}
@@ -46,7 +48,6 @@ export const searchBarNumber = ({ setSelectedKeys, selectedKeys, confirm, clearF
       <InputNumber
         className="w-100"
         controls={false}
-        autoFocus
         placeholder={`Type text here`}
         onChange={value => setSelectedKeys(value ? [value] : [])}
         value={selectedKeys}
@@ -71,15 +72,20 @@ export const searchBarNumber = ({ setSelectedKeys, selectedKeys, confirm, clearF
 }
 
 export const searchBarDate = ({ setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
+  var length = selectedKeys.length
   return (
     <div style={{ padding: 8 }}>
       <DatePicker
         className="w-100"
-        controls={false}
-        autoFocus
-        placeholder={`Type text here`}
-        onChange={value => setSelectedKeys(value ? [value] : [])}
-        defaultValue={null}
+        onChange={value => {
+          console.log("value", value)
+          if (value == null) {
+            setSelectedKeys([])
+          }
+          else {
+            setSelectedKeys(value ? [value] : [])
+          }
+        }}
         style={{ marginBottom: 8, display: 'block' }}
       />
       <Space>
@@ -88,11 +94,14 @@ export const searchBarDate = ({ setSelectedKeys, selectedKeys, confirm, clearFil
           icon={<SearchOutlined />}
           size="small"
           style={{ width: 100 }}
+          disabled={length <= 0}
           onClick={() => confirm()}
         >
           Search
         </Button>
-        <Button size="small" style={{ width: 90 }} onClick={() => { clearFilters() }}>
+        <Button size="small" style={{ width: 90 }} onClick={() => { clearFilters() 
+
+        }}>
           Reset
         </Button>
       </Space>

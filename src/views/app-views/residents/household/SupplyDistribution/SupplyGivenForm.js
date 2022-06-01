@@ -4,7 +4,18 @@ import moment from 'moment';
 
 const { Option } = Select;
 
-const SupplyGivenForm = () => {
+const SupplyGivenForm = (props) => {
+    const { action } = props
+    var datePickerAttr = {
+        name: "date",
+        label: "Date",
+        rules: [{ required: true, message: "Need date of this transaction!" }]
+    }
+
+    if (action == "added") {
+        datePickerAttr["initialValue"] = moment(Date.now())
+    }
+
     return (
         <Row >
             <Form.Item
@@ -30,20 +41,16 @@ const SupplyGivenForm = () => {
                     name="amount"
                     label="Amount"
                     rules={[{ required: true, message: "Insert supply amount to be given!" }]}
-
                 >
-                    <InputNumber className="w-100" placeholder="Enter supply amount to be given" min={0}/>
+                    <InputNumber className="w-100" placeholder="Enter supply amount to be given" min={0} />
                 </Form.Item>
             </Col>
 
             <Col span={24}>
                 <Form.Item
-                    name="date"
-                    label="Date"
-                    rules={[{ required: true, message: "Need date of this transaction!" }]}
-                    initialValue={moment(Date.now())}
+                    {...datePickerAttr}
                 >
-                    <DatePicker className='w-100'/>
+                    <DatePicker className='w-100' />
                 </Form.Item>
             </Col>
 

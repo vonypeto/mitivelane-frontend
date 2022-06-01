@@ -22,7 +22,8 @@ import { useAuth } from "contexts/AuthContext";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 import SupplyGivenForm from "./SupplyGivenForm";
-import { getTotalPage } from "helper/pagination";
+import { getTotalPage, searchBar, searchBarNumber, searchBarDate, searchIcon, handleTableChange } from "helper/pagination";
+import utils from "utils";
 
 const GivenList = (props) => {
   //Import
@@ -32,7 +33,7 @@ const GivenList = (props) => {
   const { generateToken, currentOrganization } = useAuth();
 
   //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply } = props;
+  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, year} = props;
 
   //State
   const [tableScreen, setTableScreen] = useState({});
@@ -51,13 +52,11 @@ const GivenList = (props) => {
   const SupplyGivenFormRef = createRef();
 
   //UseEffect
-  useEffect(() => {
-    getSuppliesTotal();
-  }, []);
 
   useEffect(() => {
     getPage();
-  }, [givenSupplyCurrentPage, pageSize, tableScreen]);
+    console.log("tableScreen", tableScreen)
+  }, [givenSupplyCurrentPage, pageSize, tableScreen, year]);
 
   useEffect(() => {
     var length = Object.keys(supplyGivenList).length
@@ -69,25 +68,6 @@ const GivenList = (props) => {
   }, [supplyGivenList]);
 
   //Axios
-  const getSuppliesTotal = async () => {
-    try {
-      await axios
-        .post(
-          "/api/supply/given/getTotal",
-          { organization_id },
-          generateToken()[1],
-          { cancelToken }
-        )
-        .then((res) => {
-          var suppliesGivenCount = res.data.suppliesGivenCount;
-          setGivenSupplyTotal(suppliesGivenCount);
-        });
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  };
-
   const getPage = async () => {
     setGivenTableLoading(true);
 
@@ -95,13 +75,14 @@ const GivenList = (props) => {
       await axios
         .post(
           `/api/supply/given/getPage/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
-          { tableScreen },
+          { tableScreen, year },
           generateToken()[1],
           { cancelToken }
         )
         .then((res) => {
           var data = res.data;
-          setSupplyGivenList(data);
+          setSupplyGivenList(data.list);
+          setGivenSupplyTotal(data.total)
         });
     } catch (error) {
       console.log(error);
@@ -156,6 +137,7 @@ const GivenList = (props) => {
         currentSupply + currentSupplyGivenList[objIndex].amount;
       var given_supply = values.amount;
       var new_supply_amount = stock_supply - given_supply;
+      var supply_balance = new_supply_amount - currentSupply
 
       if (new_supply_amount < 0) {
         message.error("Cannot give supply that exceeds current supply stock!!");
@@ -165,14 +147,14 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/update",
-          { newSupplyGiven: values, organization_id, new_supply_amount },
+          { newSupplyGiven: values, organization_id, new_supply_amount},
           generateToken()[1],
           { cancelToken }
         )
         .then((res) => {
           currentSupplyGivenList[objIndex] = values;
           setCurrentSupply(new_supply_amount);
-          setSupplyGivenList(currentSupplyGivenList);
+          getPage()
           message.success("Supply Given Table data has been updated.");
         });
     } catch (error) {
@@ -181,11 +163,11 @@ const GivenList = (props) => {
     }
   };
 
-  const popSupplyGiven = async (supplyGivenIDs) => {
+  const popSupplyGiven = async (givenSelectedRowKey) => {
     try {
       const currentSupplyGivenList = [...supplyGivenList];
       var objIndex = currentSupplyGivenList.findIndex(
-        (obj) => obj.supply_given_id == supplyGivenIDs
+        (obj) => obj.supply_given_id == givenSelectedRowKey[0]._id
       );
       var supply_remove = currentSupplyGivenList[objIndex].amount;
       var new_supply_amount = currentSupply + supply_remove;
@@ -194,7 +176,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { supplyGivenIDs, organization_id, new_supply_amount },
+          { selectedRowKeys: givenSelectedRowKey, organization_id, new_supply_amount, supply_remove, year},
           generateToken()[1],
           { cancelToken }
         )
@@ -220,16 +202,16 @@ const GivenList = (props) => {
     }
   };
 
-  const popSuppliesGiven = async (supplyGivenIDs) => {
+  const popSuppliesGiven = async () => {
     try {
       const currentSupplyGivenList = [...supplyGivenList];
       const length = currentSupplyGivenList.length;
-      var deleteLength = supplyGivenIDs.length;
+      var deleteLength = givenSelectedRowKeys.length;
       var remove_supply = 0;
 
-      givenSelectedRowKeys.map((supply_given_id) => {
+      givenSelectedRowKeys.map((row) => {
         var objIndex = currentSupplyGivenList.findIndex(
-          (obj) => obj.supply_given_id == supply_given_id
+          (obj) => obj.supply_given_id == row._id
         );
         console.log("objIndex", objIndex);
         remove_supply += currentSupplyGivenList[objIndex].amount;
@@ -241,7 +223,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { supplyGivenIDs, organization_id, new_supply_amount },
+          { selectedRowKeys: givenSelectedRowKeys, organization_id, new_supply_amount, remove_supply, year},
           generateToken()[1],
           { cancelToken }
         )
@@ -280,25 +262,30 @@ const GivenList = (props) => {
       title: "Household Name",
       dataIndex: "household_name",
       key: "household_name",
+      filterDropdown: searchBar,
+      filterIcon: searchIcon,
+      sorter: (a, b) => utils.antdTableSorter(a, b, "household_name")
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
-      sorter: (a, b) => a.amount - b.amount,
+      filterDropdown: searchBarNumber,
+      filterIcon: searchIcon,
+      sorter: (a, b) => utils.antdTableSorter(a, b, "amount")
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      sorter: (a, b) => utils.antdTableSorter(a, b, "date"),
       render: (_, data) => (
         <div className="d-flex align-items-center">
           <span className="ml-2">
             {new Date(data.date).toDateString().split(" ").slice(1).join(" ")}
           </span>
         </div>
-      ),
-      sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix()
+      )
     },
     {
       title: "Actions",
@@ -372,11 +359,11 @@ const GivenList = (props) => {
   };
 
   const deleteSupplyGiven = (row) => {
-    popSupplyGiven([row.supply_given_id]);
+    popSupplyGiven([{_id: row.supply_given_id, amount: row.amount, date: row.date}]);
   };
 
   const deleteSuppliesGiven = () => {
-    popSuppliesGiven(givenSelectedRowKeys);
+    popSuppliesGiven();
   };
 
   //Dropdown
@@ -424,34 +411,18 @@ const GivenList = (props) => {
     setPageSize(size)
   }
 
-  const handleTableChange = (pagination, filters, sorter) => {
-    var sorter = {
-      field: sorter.field,
-      order: sorter.order
-    }
-
-    if (sorter.order != null) {
-      setSupplyGivenList([])
-      setTableScreen({ sorter })
-    }
-
-    if (sorter.order == null) {
-      setTableScreen({})
-    }
-
-  }
-
   const onSelectGivenSupplyChange = (selectedRowKeys, selectedRows) => {
     if (selectedRows.length > 0) {
-      let supplyGivenIDs = [];
+      let tempSelectedRows = [];
+      let tempRow = {}
 
       selectedRows.map((row) => {
-        supplyGivenIDs.push(row.supply_given_id);
+        tempRow = {_id: row.supply_given_id, amount: row.amount, date: row.date}
+        tempSelectedRows.push(tempRow);
       });
 
-      console.log(supplyGivenIDs);
-      setGivenSelectedRowKeys(supplyGivenIDs);
-      message.success(`Selected given row ${selectedRows.length}`);
+
+      setGivenSelectedRowKeys(tempSelectedRows);
     }
   };
 
@@ -515,7 +486,7 @@ const GivenList = (props) => {
             },
             onChange: (page) => handleGivenPageChange(page)
           }}
-          onChange={handleTableChange}
+          onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setSupplyGivenList, setTableScreen)}
           loading={givenTableLoading}
           bordered
         />
@@ -536,7 +507,7 @@ const GivenList = (props) => {
             ref={SupplyGivenFormRef}
             initialValues={supplyGivenInitialVal}
           >
-            <SupplyGivenForm />
+            <SupplyGivenForm action={formAction}/>
           </Form>
         )}
       </Modal>
@@ -557,7 +528,7 @@ const GivenList = (props) => {
             ref={SupplyGivenFormRef}
             initialValues={supplyGivenInitialVal}
           >
-            <SupplyGivenForm />
+            <SupplyGivenForm action={formAction}/>
           </Form>
         )}
       </Drawer>

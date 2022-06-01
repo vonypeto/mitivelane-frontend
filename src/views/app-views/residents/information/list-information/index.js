@@ -36,7 +36,8 @@ const ListInformation = (props) => {
   const [tableScreen, setTableScreen] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(0)
-  const [pageSize, setPageSize] = useState(2)
+  const defaultPageSize = 4
+  const [pageSize, setPageSize] = useState(defaultPageSize)
 
   //State
   const [selectShow, setShow] = useState(true);
@@ -181,6 +182,7 @@ const ListInformation = (props) => {
       dataIndex: "middlename",
       sorter: (a, b) => utils.antdTableSorter(a, b, "middlename"),
       filterDropdown: searchBarDate,
+      defaultFilteredValue: null,
       filterIcon: searchIcon
     },
     {
@@ -350,8 +352,8 @@ const ListInformation = (props) => {
                   total: total,
                   pageSize: pageSize,
                   showSizeChanger: true,
-                  defaultPageSize: pageSize,
-                  pageSizeOptions: [pageSize, 10, 20, 50, 100],
+                  defaultPageSize: defaultPageSize,
+                  pageSizeOptions: [defaultPageSize, 10, 20, 50, 100],
                   onShowSizeChange: (current, size) => {
                     handlePageSizeChange(size, setList, setPageSize)
                   },

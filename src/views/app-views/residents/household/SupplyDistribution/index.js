@@ -11,6 +11,7 @@ import SupplyChart from "./SupplyChart";
 import DataDisplayWidget from "components/shared-components/DataDisplayWidget";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
 
 //Icons
@@ -32,9 +33,21 @@ const SupplyDistribution = (props) => {
   //State
   const [currentSupply, setCurrentSupply] = useState(0);
   const [pageSize, setPageSize] = useState(4);
+  const currentDate = moment();
+  const [year, setYear] = useState(currentDate);
 
   //Ref
   const SupplyReceivedFormRef = createRef();
+
+  //Child Components
+  const childComponents = {
+    pageSize,
+    organization_id,
+    setPageSize,
+    setCurrentSupply,
+    currentSupply,
+    year
+  }
 
   //UseEffect
   useEffect(() => {
@@ -62,7 +75,13 @@ const SupplyDistribution = (props) => {
           </Col>
 
           <Col>
-            <DatePicker picker="year" />
+            <DatePicker picker="year"
+              defaultValue={currentDate}
+              onChange={(value) => {
+                if (value != null) {
+                  setYear(value)
+                }
+              }} />
           </Col>
         </Row>
       </Card>
@@ -88,19 +107,11 @@ const SupplyDistribution = (props) => {
       </Row>
 
       <GivenList
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-        organization_id={organization_id}
-        setCurrentSupply={setCurrentSupply}
-        currentSupply={currentSupply}
+      {...childComponents}
       />
 
       <ReceievedList
-        pageSize={pageSize}
-        organization_id={organization_id}
-        setPageSize={setPageSize}
-        setCurrentSupply={setCurrentSupply}
-        currentSupply={currentSupply}
+      {...childComponents}
       />
     </div>
   );

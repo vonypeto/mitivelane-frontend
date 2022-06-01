@@ -19,8 +19,9 @@ import {
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import moment from "moment";
+import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
-import { handleAddPage, handleDeletePages } from "../../../../../helper/pagination"
+import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/pagination";
 
 import {
   DeleteOutlined,
@@ -28,7 +29,6 @@ import {
 } from "@ant-design/icons";
 
 import NewAreaForm from "./NewAreaForm";
-import RowSelectionCustom from "views/app-views/components/data-display/table/RowSelectionCustom";
 
 const PurokArea = (props) => {
   //Initialize
@@ -46,11 +46,17 @@ const PurokArea = (props) => {
       dataIndex: "name",
       key: "name",
       width: "50%",
+      filterDropdown: searchBar,
+      filterIcon: searchIcon,
+      sorter: (a, b) => utils.antdTableSorter(a, b, "name")
     },
     {
       title: "Date added",
       dataIndex: "createdAt",
       key: "createdAt",
+      filterDropdown: searchBarDate,
+      filterIcon: searchIcon,
+      sorter: (a, b) => utils.antdTableSorter(a, b, "createdAt"),
       render: (_, data) => (
         <div className="d-flex align-items-center">
           <span className="ml-2">
@@ -62,7 +68,7 @@ const PurokArea = (props) => {
           </span>
         </div>
       ),
-      sorter: (a, b) => moment(a.createdAt).unix() - moment(b.createdAt).unix()
+
     },
     {
       title: "Actions",
@@ -90,21 +96,17 @@ const PurokArea = (props) => {
   const [tableScreen, setTableScreen] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(1)
-  const [pageSize, setPageSize] = useState(4)
+  const defaultPageSize = 4
+  const [pageSize, setPageSize] = useState(defaultPageSize)
 
   //Checkbox State
   const [selectedArray, setSelectedArray] = useState([])
 
   //UseEffect
-  useEffect(() => {
-    getTotal();
-    getAreasPage();
-  }, []);
 
   useEffect(() => {
     getAreasPage();
   }, [currentPage, pageSize, tableScreen])
-
 
   //Axios
 
@@ -120,7 +122,8 @@ const PurokArea = (props) => {
       )
         .then((result) => {
           var data = result.data
-          setPurokList(data)
+          setTotal(data.total)
+          setPurokList(data.list)
         })
 
     } catch (error) {
@@ -130,22 +133,6 @@ const PurokArea = (props) => {
 
     setLoading(false)
   };
-
-  const getTotal = async () => {
-    try {
-      await axios.get(
-        `/api/purok/getTotal/${organization_id}`,
-        generateToken()[1],
-        { cancelToken }
-      )
-        .then((result) => {
-          setTotal(result.data)
-        })
-    } catch (error) {
-      console.log(error);
-      message.error("Error in database connection!!");
-    }
-  }
 
   //Axios CRUD
   const addNewArea = async (newArea) => {
@@ -314,23 +301,6 @@ const PurokArea = (props) => {
     }
   }
 
-  const handleTableChange = (pagination, filters, sorter) => {
-    var sorter = {
-      field: sorter.field,
-      order: sorter.order
-    }
-
-    if (sorter.order != null) {
-      setPurokList([])
-      setTableScreen({ sorter })
-    }
-
-    if (sorter.order == null) {
-      setTableScreen({})
-    }
-
-  }
-
   // Form Function
   const onFinishAddArea = (value) => {
     value.createdAt = Date.now();
@@ -381,14 +351,14 @@ const PurokArea = (props) => {
             total: total,
             pageSize: pageSize,
             showSizeChanger: true,
-            defaultPageSize: pageSize,
-            pageSizeOptions: [pageSize, 10, 20, 50, 100],
+            defaultPageSize: defaultPageSize,
+            pageSizeOptions: [defaultPageSize, 10, 20, 50, 100],
             onShowSizeChange: (current, size) => {
               handlePageSizeChange(size)
             },
             onChange: (page) => handlePageChange(page)
           }}
-          onChange={handleTableChange}
+          onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setPurokList, setTableScreen)}
         >
 
         </Table>

@@ -62,11 +62,6 @@ const AyudaTable = (props) => {
       key: "family_planning",
     },
     {
-      title: "Ayuda",
-      dataIndex: "ayuda",
-      key: "ayuda",
-    },
-    {
       title: "Water Source",
       dataIndex: "water_source",
       key: "water_source",
