@@ -9,14 +9,14 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { Font_Oswald, Font_Roboto, Font_Bebas, Font_Data } from "assets/font";
-import DOMPurify from "dompurify";
-import RichText from "./RichText";
-import DraftToHtml from "components/util-components/DraftHtml";
+
 import Header from "./ContentPDF/Header";
+import Body from "./ContentPDF/Body";
+
 // Remember pt to cm to convert the size of the typewriting
 // Create Document Component
 const BasicDocument = (props) => {
-  const { data, fontType } = props;
+  const { fontType } = props;
   const font = Font_Data.filter((font) => font.family == fontType);
 
   Font.register(
@@ -92,135 +92,14 @@ const BasicDocument = (props) => {
 
       textAlign: "justify",
     },
-    image: {
-      // marginVertical: 10,
-      // marginHorizontal: 10,
-      Maxheight: "95px",
-      Maxwidth: "95px",
-      display: "block",
-      height: "auto",
-      width: "auto",
-      borderRadius: "50%",
-      display: "inline-block",
-    },
-    indent: {
-      textIndent: 30,
-      margin: 13,
-      textAlign: "justify",
-    },
-    line: {
-      lineHeight: 2,
-    },
-    container_sig: {
-      fontFamily: fontType,
-      flexDirection: "row",
-      display: "grid",
-      gridTemplateColumn: "1fr 1fr",
-      gridGap: "20px",
-      justifySelf: "end",
-      height: "10vh",
-      float: "right",
-      //    border: " 2px solid red",
-      borderBottom: 0, // margin: 0,
-    },
-    col_signature: {
-      width: "50%",
-      float: "right",
-      padding: "20px",
-      textAlign: "center",
-    },
-
-    col_signature_center: {
-      textAlign: "center",
-    },
-    col_footer: {
-      textAlign: "center",
-    },
-    bold: {
-      fontWeight: "bold",
-    },
-    pageBackground: {
-      position: "absolute",
-      minWidth: "100%",
-      minHeight: "100%",
-      display: "block",
-      height: "80%",
-      marginLeft: "auto",
-      marginRight: "auto",
-      width: "100%",
-      left: 50,
-      top: " 22%",
-      transform: "translate(-50%, -50%)",
-      objectFit: "cover",
-      opacity: 0.3,
-      marginLeft: 8,
-    },
   });
-  let container = DraftToHtml(data);
-
-  let clean = DOMPurify.sanitize(container);
-
-  clean = clean.replaceAll("{NAME}", "MR & MRS RAFAEL S ESTEBAN");
 
   return (
     <Document>
       <Page size="A4" style={styles.body} wrap={false}>
         <View style={styles.borders}>
           <Header {...props} />
-          <View style={styles.container_body}>
-            {/* <View style={styles.col_sidename}>
-              <Text>if else if the user enable the show organization member</Text>
-            </View> */}
-            <View style={styles.col_content}>
-              {data?.firstLogo ? (
-                <Image src={data?.firstLogo} style={styles.pageBackground} />
-              ) : null}
-
-              <Text style={styles.col_center_space_bold_clearance}>
-                ORGANIZATION CLEARANCE
-              </Text>
-              <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
-              <Text style={styles.indent}>
-                <RichText note={clean} />
-                {/* This is to certify that
-              <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text>is to
-              bonafide resident of Organization Fiesishare, talisay, Batangas. */}
-              </Text>
-              {/* <Text style={styles.indent}>
-              This certification issued upon the request of
-              <Text style={styles.bold}>MR & MRS RAFAEL S ESTEBAN </Text> and
-              whatever legal purpose this may serve him/her best
-            </Text>
-            <Text style={styles.indent}>
-              Issuied thus 14th day if January, 2020 at Organization BUhangin
-              Proper, Davo CIty, Philippines
-            </Text> */}
-              <View style={styles.container_sig}>
-                <View style={styles.col_signature}></View>
-                <View style={styles.col_signature}>
-                  <Text>__________________</Text>
-                  <Text>Sample CAptain</Text>
-                </View>
-              </View>
-              <View style={styles.container_sig}>
-                <View style={styles.col_signature}>
-                  <Text>__________________</Text>
-                  <Text>Sample Applicant</Text>
-                </View>
-                <View style={styles.col_signature}>
-                  <Text>__________________</Text>
-                  <Text>Sample Secretary</Text>
-                </View>
-              </View>
-              <Text>OR No. _______</Text>
-              <Text>Issued at ______</Text>
-              <Text>Issued on ______</Text>
-              <Text style={styles.col_footer}>
-                Note not valid with erasures and without the official seal of
-                issuing office
-              </Text>
-            </View>
-          </View>
+          <Body {...props} />
           {/* <View style={styles.section}>
           <Text>{data.republic}</Text>
         </View>

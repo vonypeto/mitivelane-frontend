@@ -487,7 +487,9 @@ div > button[data-direction="left"],
   width: 1000px !important;
   display: inline-block;
 }
-
+.signature-class .ant-form-item {
+  margin: 0px !important;
+}
 @media screen and (max-width: 1900px) {
   .pdf-template-font {
     font-size: 8px;

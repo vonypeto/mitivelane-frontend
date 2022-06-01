@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Spin from "components/shared-components/Loading";
 import { APP_PREFIX_PATH, PRE_PREFIX_PATH } from "configs/AppConfig";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "contexts/AuthContext";
 
 export const AppViews = () => {
   const { currentOrganization } = useAuth();

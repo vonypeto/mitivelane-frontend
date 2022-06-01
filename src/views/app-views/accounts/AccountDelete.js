@@ -1,23 +1,7 @@
 import { React, useState } from "react";
-import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
-import Flex from "components/shared-components/Flex";
-import {
-  Button,
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Avatar,
-  Divider,
-  Popconfirm,
-  message,
-} from "antd";
-import {
-  UserOutlined,
-  UploadOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+
+import { Button, Row, Col, Card, Popconfirm, message } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 const AccountDelete = () => {
   const onDeleteOrganization = () => {
     message.info("Clicked on Yes.");

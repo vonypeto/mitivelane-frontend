@@ -116,14 +116,14 @@ const UserView = (props) => {
           Created
         </Col>
         <Col className="text-right" xs={12} sm={12} md={12} lg={12} xl={12}>
-          Last {timeSince(updated)} Ago
+          Last {timeSince(created)} Ago
         </Col>
         <Divider style={{ margin: "0px !important" }} />
         <Col xs={12} sm={12} md={12} lg={12} xl={12}>
           Modfied
         </Col>
         <Col className="text-right" xs={12} sm={12} md={12} lg={12} xl={12}>
-          Last {timeSince(created)} Ago
+          Last {timeSince(updated)} Ago
         </Col>
         <div style={{ height: "120px" }}></div>
         <Card className="bottom-right-Drawer" style={{ width: "100%" }}>

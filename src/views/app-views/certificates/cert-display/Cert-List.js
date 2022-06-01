@@ -17,34 +17,28 @@ import {
   updateCertificateData,
   deleteCertificateData,
 } from "api/AppController/CertificatesController/CertificatesController";
-import utils from "utils";
-import { useCert } from "contexts/CertificateContext";
-import { conforms } from "lodash";
-
+import { PDF_LIST } from "redux/constants/Auth";
+import mongoose from "mongoose";
 const CertList = React.memo(
   (props) => {
+    const count = 6;
     const history = useHistory();
-
-    const { currentList, setCurrentFunctionList } = useCert();
-    const { pdfFile, setPdfFile } = props;
     const { generateToken } = useAuth();
-    const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
-
+    const { pdfFile, setPdfFile } = props;
+    const [start, setStart] = useState(7);
+    const [drawer, setDrawer] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [loadingDuplicate, setLoadingDuplicate] = useState(false);
+
+    const [selectedUser, SetSelectedUser] = useState(null);
+    const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
     const arrayData = [
       { id: 1, pdf: FileTest, type: "view", selectedform: 1 },
       { id: 2, pdf: FileTest, type: "view", selectedform: 1 },
       { id: 3, pdf: FileTest, type: "view", selectedform: 1 },
     ];
-    const [drawer, setDrawer] = useState(false);
-    const [selectedUser, SetSelectedUser] = useState(null);
-    const [selectedRow, setSelectedRow] = useState(null);
-
-    const [count, setCount] = useState(6);
-    const [start, setStart] = useState(7);
-    const [hasMore, setHasMore] = useState(true);
-    const [refresh, setRefresh] = useState(true);
-
     //let ratio = 1.41451612903;
     useEffect(() => {
       let isApiSubscribed = true;
@@ -63,32 +57,32 @@ const CertList = React.memo(
     //Handle Drawer
     useEffect(() => {
       // setCurrentFunctionList(pdfFile);
-      localStorage.setItem("pdfFile", JSON.stringify(pdfFile));
+      localStorage.setItem(PDF_LIST, JSON.stringify(pdfFile));
       setPdfFile(pdfFile);
     }, [pdfFile, refresh]);
-    const onHandleCertificate = (title, id) => {
-      let data = { certificate_id: id, title: title };
-      updateCertificateData(data, generateToken()[1]);
-    };
 
     const onHandle = (elm, created, updated, title) => {
       // setDrawer(true);
       SetSelectedUser({ elm, created, updated, title });
       setDrawer(true);
     };
+
     const closeDrawer = () => {
       setDrawer(false);
       SetSelectedUser(null);
     };
-    // useEffect(() => {ss
-    //   counterClick();
-    // }, []);
-    const createDocument = async () => {
+
+    const onHandleDocument = (title, id) => {
+      let data = { certificate_id: id, title: title };
+      updateCertificateData(data, generateToken()[1]);
+    };
+
+    const createDocument = async (data) => {
       setLoading(true);
       let isApiSubscribed = true;
       if (!loading) {
         await axios
-          .post("/api/cert-display/create", {}, generateToken()[1])
+          .post("/api/cert-display/create", data, generateToken()[1])
           .then((res) => {
             if (isApiSubscribed) {
               setLoading(!loading);
@@ -106,10 +100,27 @@ const CertList = React.memo(
         };
       }
     };
+    const createDocumentDuplicate = async (data) => {
+      let isApiSubscribed = true;
+      setLoadingDuplicate(true);
 
-    // function isEmpty(obj) {
-    //   return Object.keys(obj).length === 0;
-    // }
+      if (!loadingDuplicate)
+        await axios
+          .post("/api/cert-display/create", data, generateToken()[1])
+          .then((_) => {
+            if (isApiSubscribed) {
+              setLoadingDuplicate(!loading);
+              console.log("duplicate");
+            }
+          })
+          .catch((err) => {
+            return console.error(err);
+          });
+      return () => {
+        // cancel the subscription
+        isApiSubscribed = false;
+      };
+    };
     const getCertificateNext = async () => {
       setStart(start + count);
       await axios
@@ -139,13 +150,14 @@ const CertList = React.memo(
 
     const deleteRow = (row, i) => {
       //deleting resident in table
+
       deleteCertificateData(row, generateToken()[1]);
-      let clone = JSON.parse(localStorage.getItem("pdfFile"));
+      let clone = JSON.parse(localStorage.getItem(PDF_LIST));
       clone.splice(i, 1);
-      console.log(row);
+      console.log(clone);
       setPdfFile(clone);
 
-      localStorage.setItem("pdfFile", clone);
+      localStorage.setItem(PDF_LIST, JSON.stringify(clone));
       setTimeout(() => {
         setRefresh(!refresh);
       }, 1000);
@@ -172,10 +184,19 @@ const CertList = React.memo(
       else return;
     };
 
-    const setData = (data) => {
-      setRefresh(!refresh);
-      let x = data;
-      return setPdfFile(x);
+    const duplicateDocument = async (data) => {
+      let id = mongoose.Types.ObjectId();
+      console.log(id.toString());
+      const date = new Date();
+      let document = JSON.parse(localStorage.getItem(PDF_LIST));
+      let tmp = JSON.parse(localStorage.getItem(PDF_LIST));
+      document = document.find((o) => o.certificate_id === data);
+      document.certificate_id = id.toString();
+      document.createdAt = date.toLocaleString();
+      document.updatedAt = date.toLocaleString();
+      createDocumentDuplicate(document);
+      tmp.push(document);
+      setPdfFile(tmp);
     };
     return (
       <div className="container">
@@ -206,7 +227,7 @@ const CertList = React.memo(
                 xxl={5}
               >
                 <div
-                  onClick={createDocument}
+                  onClick={() => createDocument({})}
                   className={`${loading ? "pointer-events" : ""}`}
                 >
                   <div
@@ -261,9 +282,14 @@ const CertList = React.memo(
                                   deleteRow(item?.certificate_id, i);
                                 },
                               }}
+                              duplicateDocument={{
+                                onClick: function () {
+                                  duplicateDocument(item?.certificate_id);
+                                },
+                              }}
                               pdfFile={pdfFile}
                               setPdfFile={setPdfFile}
-                              onHandleCertificate={onHandleCertificate}
+                              onHandleDocument={onHandleDocument}
                             />
                           ) : null}
                         </div>

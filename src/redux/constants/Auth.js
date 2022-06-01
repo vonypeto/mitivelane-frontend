@@ -13,6 +13,7 @@ export const AUTH_ORGANIZATION_LIST = "auth_organization_list";
 export const PROFILE_URL = "profile_url";
 export const ACCESS_TOKEN = "access_token";
 export const SESSION_TOKEN = "session_token";
+export const PDF_LIST = "pdf_list";
 export const CODE_TOKEN = "code";
 export const FONTS = "font";
 export const SIGNIN_WITH_GOOGLE = "SIGNIN_WITH_GOOGLE";

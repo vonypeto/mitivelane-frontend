@@ -1,24 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
-import SplitPane, { Pane } from "react-split-pane";
-import { Col, Row, Button, Input, Radio } from "antd";
-import {
-  ArrowDownOutlined,
-  ArrowLeftOutlined,
-  AppstoreOutlined,
-  UnorderedListOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { Radio } from "antd";
+import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import CertList from "./Cert-List";
 import CertRequest from "./Cert-Request";
-import { useAuth } from "contexts/AuthContext";
-import { getCertificateAll } from "api/AppController/CertificatesController/CertificatesController";
-import { AuthProvider } from "contexts/CertificateContext";
 
 const Certificates = () => {
   const [pdfFile, setPdfFile] = useState([]);
-  const { generateToken } = useAuth();
   const [switchCert, setSwitchCert] = useState(true);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);

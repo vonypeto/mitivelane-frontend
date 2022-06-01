@@ -78,7 +78,7 @@ export function AuthProvider({ children }) {
     };
     return [jwt, header];
   }
-  function resetEmailPassword(email) {
+  async function resetEmailPassword(email) {
     return firebase
       .auth()
       .sendPasswordResetEmail(email)

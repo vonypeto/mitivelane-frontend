@@ -45,6 +45,7 @@ const CertDisplay = React.memo(
     };
     const onFinish = () => {
       let data = [];
+      console.log(form.getFieldValue("signatures1"));
       dropDownForm.map((value) => {
         value.data.map((nestedValue) => {
           const value = form.getFieldValue(nestedValue.formName);

@@ -35,9 +35,7 @@ const SinglePage = React.memo(
       createdAt,
       title,
       deleteRow,
-      pdfFile,
-      setPdfFile,
-      index,
+      duplicateDocument,
     } = props;
     let id = data;
     const [renderedPageNumber, setRenderedPageNumber] = useState(null);
@@ -85,38 +83,6 @@ const SinglePage = React.memo(
           break;
       }
     };
-    //  const isLoading = renderedPageNumber !== pageNumber;
-    // const [width, setWidth] = React.useState(0);
-
-    // React.useLayoutEffect(() => {
-    //   setTimeout(
-    //     () => setWidth(documentWrapperRef.current?.getBoundingClientRect().width),
-    //     200
-    //   );
-    // });
-    // useEffect(() => {
-    //   let cancel = true;
-
-    //   console.log(getResolve);
-    //   if (cancel)
-    //     if (getResolve != pdf)
-    //       setTimeout(() => {
-    //         if (type == "form") {
-    //           pdf.then(function (result) {
-    //             setGetResolve(result);
-    //             return result;
-    //           });
-    //         }
-    //         if (type == "view") {
-    //           setGetResolve(pdf);
-    //         }
-    //       }, 1100);
-    //   return () => {
-    //     cancel = false;
-    //     setGetResolve();
-    //   };
-    // }, [pdf]);
-    // console.log(getResolve);
 
     ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
     const timeSince = (date) => {
@@ -153,13 +119,16 @@ const SinglePage = React.memo(
     };
     //update title
     const updateTitle = debounce((e) => {
-      props.onHandleCertificate(e.target.value, id);
+      props.onHandleDocument(e.target.value, id);
     }, 1000);
     const downloadFile = () => {
       saveAs(pdf, title);
     };
     const DeleteFile = () => {
       deleteRow.onClick();
+    };
+    const duplicateFile = () => {
+      duplicateDocument.onClick();
     };
     const dropdownMenu = (row) => (
       <Menu>
@@ -195,10 +164,16 @@ const SinglePage = React.memo(
             <span className="ml-2">Delete</span>
           </Flex>
         </Menu.Item>
-        <Menu.Item key={5}>
+        <Menu.Item onClick={() => duplicateFile()} key={5}>
           <Flex alignItems="center">
             <CopyOutlined />
             <span className="ml-2">Duplicate</span>
+          </Flex>
+        </Menu.Item>
+        <Menu.Item onClick={() => {}} key={6}>
+          <Flex alignItems="center">
+            <CopyOutlined />
+            <span className="ml-2">Active</span>
           </Flex>
         </Menu.Item>
       </Menu>
@@ -339,78 +314,6 @@ const SinglePage = React.memo(
                     </Card>
                   }
                 >
-                  {/* {isLoading && renderedPageNumber ? (
-                  <Page
-                    //   width={width || undefined}
-                    key={renderedPageNumber}
-                    className={
-                      "PDFPageOne prevPage " +
-                      (type == "create" ? "PDFPageTwo" : " PDFPage") +
-                      ""
-                    }
-                    renderTextLayer={false}
-                    renderInteractiveForms={false}
-                    pageNumber={pageNumber}
-                    loading={
-                      <Card className="cert_loading">
-                        <Skeleton
-                          size={"small"}
-                          paragraph={{ rows: 9 }}
-                          className="position-absolute h-100 w-100 cert_loading"
-                        ></Skeleton>
-
-                        <div className="react-pdf__Document PDFDocument">
-                          <div
-                            className="react-pdf__Page PDFPageOne PDFPageTwo"
-                            data-page-number="1"
-                            style={{ position: "relative" }}
-                          >
-                            <canvas
-                              className="react-pdf__Page__canvas"
-                              dir="ltr"
-                              width="1192"
-                              height="1684"
-                              style={{
-                                display: "block",
-                                userSelect: "none",
-                                width: "596px",
-                                height: "842px",
-                              }}
-                            ></canvas>
-
-                            <div className="react-pdf__Page__annotations annotationLayer"></div>
-                          </div>
-                        </div>
-                      </Card>
-                    }
-                  >
-                    <div>
-                      <div className="text-right">
-                        <div
-                          className="border bottomright "
-                          style={{
-                            borderRadius: "50%",
-                            backgroundColor: "white",
-                          }}
-                        >
-                          {type == "view" ? (
-                            <div
-                              onClick={(e) => e.stopPropagation()}
-                              className="children"
-                            >
-                              {" "}
-                              <EllipsisDropdown
-                                placement="topRight"
-                                menu={dropdownMenu()}
-                              />
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
-                  </Page>
-                ) : null} */}
-
                   <Page
                     //   width={width || undefined}
                     className={

@@ -5,8 +5,11 @@ import {
   PlusOutlined,
   LoadingOutlined,
   MinusCircleOutlined,
+  InfoCircleOutlined,
+  CheckSquareOutlined,
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { Form, Input } from "antd";
+import { Form, Input, Popconfirm } from "antd";
 import debounce from "lodash.debounce";
 import { Editor } from "react-draft-wysiwyg";
 import { convertFromRaw, EditorState } from "draft-js";
@@ -59,7 +62,6 @@ const CertOrganization = React.memo(
       { id: 1, image: "" },
       { id: 2, image: "" },
     ]);
-
     const handleAddSignature = () => {
       let logoID = signatureImage.length;
       let logoEnd;
@@ -70,7 +72,12 @@ const CertOrganization = React.memo(
       }
       setSignatureImage([
         ...signatureImage,
-        { id: logoEnd, image: "", formName: `signature${logoEnd}` },
+        {
+          id: logoEnd,
+          image: "",
+          formName: `name${logoEnd}`,
+          formName2: `position${logoEnd}`,
+        },
       ]);
     };
 
@@ -215,9 +222,15 @@ const CertOrganization = React.memo(
       return setParentData(data);
     }, 100);
     const onImageSignature = debounce(() => {
-      form.setFieldsValue({
-        signatures: signatureImage,
+      signatureImage.map((image) => {
+        form.setFieldsValue({
+          [`position${image.id}`]: image.formName2,
+        });
+        form.setFieldsValue({
+          [`name${image.id}`]: image.formName,
+        });
       });
+
       let data = parentData;
 
       data[`signatures`] = signatureImage;
@@ -369,7 +382,7 @@ const CertOrganization = React.memo(
                             ) : formItems.type == "multiform" ? (
                               <>
                                 <i>
-                                  *Leave Blank upload if Applicant signature is
+                                  *Click the Information Circle if Applicant is
                                   required*
                                 </i>
                                 <Row>
@@ -383,39 +396,81 @@ const CertOrganization = React.memo(
                                     >
                                       <Form.Item>
                                         <div>
-                                          <Row>
+                                          <Row className="signature-class">
                                             <Col
                                               xs={10}
                                               sm={10}
                                               md={11}
                                               lg={14}
                                             >
-                                              <Input
-                                                // onChange={(e) => {
-                                                //   onFill(
-                                                //     e,
-                                                //     formItems.formName
-                                                //   );
-                                                // }}
-                                                style={{
-                                                  border: "none",
-                                                  fontWeight: 900,
-                                                }}
-                                                className="cert-name "
-                                                placeholder={`Signature${
-                                                  index + 1
-                                                }`}
-                                              />
+                                              <Form.Item
+                                                name={`name${data.id}`}
+                                              >
+                                                <Input
+                                                  // onChange={(e) => {
+                                                  //   onFill(
+                                                  //     e,
+                                                  //     formItems.formName,"multiform"
+                                                  //   );
+                                                  // }}
+                                                  style={{
+                                                    border: "none",
+                                                    fontWeight: 900,
+                                                  }}
+                                                  className="cert-name "
+                                                  placeholder={`Name${
+                                                    index + 1
+                                                  }`}
+                                                />
+                                              </Form.Item>
+                                              <Form.Item
+                                                name={`position${data.id}`}
+                                              >
+                                                <Input
+                                                  // onChange={(e) => {
+                                                  //   onFill(
+                                                  //     e,
+                                                  //     formItems.formName,"multiform"
+                                                  //   );
+                                                  // }}
+                                                  style={{
+                                                    border: "none",
+                                                    fontWeight: 900,
+                                                  }}
+                                                  className="cert-name "
+                                                  placeholder={`Position${
+                                                    index + 1
+                                                  }`}
+                                                />
+                                              </Form.Item>
                                             </Col>
-                                            <Col xs={4} sm={4} md={4} lg={4}>
-                                              <div className="pt-3 pl-3 text-center vertical-center">
+                                            <Col xs={2} sm={3} md={3} lg={2}>
+                                              <div className="pt-3 text-center ">
                                                 <MinusCircleOutlined
                                                   onClick={() =>
                                                     handleRemoveSignature(index)
                                                   }
                                                 />
                                               </div>
-                                            </Col>{" "}
+                                              <Popconfirm
+                                                placement="top"
+                                                title="Set as Applicant?"
+                                                okText="Yes"
+                                                cancelText="No"
+                                                icon={
+                                                  <QuestionCircleOutlined
+                                                    style={{ color: "red" }}
+                                                  />
+                                                }
+                                              >
+                                                <div
+                                                  className="pt-3 text-center "
+                                                  style={{ cursor: "pointer" }}
+                                                >
+                                                  <InfoCircleOutlined />
+                                                </div>
+                                              </Popconfirm>
+                                            </Col>
                                           </Row>
                                         </div>
 

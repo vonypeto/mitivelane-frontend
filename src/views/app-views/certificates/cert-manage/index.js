@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, usePrevious } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import CertDisplay from "./cert-display";
@@ -19,7 +19,6 @@ import debounce from "lodash.debounce";
 const Certificates = () => {
   const { generateToken } = useAuth();
   let { id } = useParams();
-  const refs = useRef();
   const [firstTime, setFirstTime] = useState(true);
   const [parentData, setParentData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -51,6 +50,7 @@ const Certificates = () => {
         }, 500);
       }
     }
+
     return () => {
       // cancel the subscription
       isApiSubscribed = false;
