@@ -34,6 +34,7 @@ export async function loginOrganization(
     ipv4: ipv4,
     auth_id: token,
     platform: platform,
+    email: currentUser?.email,
     browser: browser,
     iat: unix,
     exp: unix + 60,
