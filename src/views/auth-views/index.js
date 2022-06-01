@@ -15,6 +15,10 @@ export const AppViews = () => {
           path={`${AUTH_PREFIX_PATH}/register`}
           component={lazy(() => import(`./authentication/register-2`))}
         />
+        <Route
+          path={`${AUTH_PREFIX_PATH}/organization-invite/:_id`}
+          component={lazy(() => import(`./authentication/organization-invite`))}
+        />
         {/* <Route
           path={`${AUTH_PREFIX_PATH}/login-1`}
           component={lazy(() => import(`./authentication/login-1`))}
