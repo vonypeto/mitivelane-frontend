@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import {
@@ -36,15 +36,100 @@ const { Step } = Steps;
 
 const ManageMember = (props) => {
   const { currentOrganization, generateToken, currentUser } = useAuth();
-  
-  const [editOrganization, setEditOrganization] = useState(false);
-  const [memberRequest, setMemberRequest] = useState([])
+
   const [addMember, setAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [memberRequest, setMemberRequest] = useState([])
+
   const [current, setCurrent] = useState(0);
   const [selectEmail, setSelectEmail] = useState([]);
   const [newMember, setNewMember] = useState([])
-  const [sending, setSending] = useState(false)
+
+  const [step2Data, setStep2Data] = useState([])
+  const [step3Data, setStep3Data] = useState([])
+
+  const [step2Loading, setStep2Loading] = useState(false)
+  const [step3Loading, setStep3Loading] = useState(false)
+
+  useEffect(() => {
+    getOrganizationRequest()
+
+  }, [])
+
+  const getOrganizationRequest = () => {
+    axios
+      .get(
+        "/api/organization_setting/get-organization-request/" + currentOrganization,
+        generateToken()[1]
+      )
+      .then((response) => {
+        console.log("Organization Request ", response.data);
+        setMemberRequest(response.data)
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+  }
+
+  const deleteOrganizationRequest = (_id) => {
+    axios
+      .post(
+        "/api/organization_setting/delete-organization-request/", { _id },
+        generateToken()[1]
+      )
+      .then((response) => {
+        console.log("Delete Organization Request ", response.data);
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+
+    setMemberRequest(
+      memberRequest.filter((organizationRequest) => organizationRequest._id !== _id)
+    )
+  }
+
+  const validateEmail = (values) => {
+    axios
+      .post(
+        "/api/organization_setting/validate-email/", values,
+        generateToken()[1]
+      )
+      .then((response) => {
+        setStep2Loading(false)
+        setCurrent(current + 1)
+
+        setNewMember(response.data.newMember)
+        setStep3Data(response.data.step3Data)
+
+        console.log(response.data)
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+
+  }
+
+  const addNewMember = (values) => {
+    axios
+      .post("/api/organization_setting/add-member", values, generateToken()[1])
+      .then((response) => {
+        if (response.data == "Success") {
+          setStep3Loading(false)
+          resetData()
+          getOrganizationRequest()
+          return message.success("Processing complete!")
+        } else {
+          return message.error("Error, please try again.");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        message.destroy();
+        message.error("The action can't be completed, please try again.");
+      });
+  }
 
   const getUnique = (arr, index) => {
     const unique = arr
@@ -145,12 +230,12 @@ const ManageMember = (props) => {
     {
       title: "Actions",
       dataIndex: "actions",
-      key: "member_id",
+      key: "_id",
 
       render: (_, elm) => (
         <div className="text-right">
           <div className="text-right d-flex justify-content-end">
-            <Tooltip title="View">
+            <Tooltip title="Edit">
               <Button
                 type="primary"
                 className="mr-2"
@@ -161,18 +246,12 @@ const ManageMember = (props) => {
                 size="small"
               />
             </Tooltip>
-            <Tooltip
-            // title={
-            //   selectedRowsBlotterRequest.length > 0
-            //     ? `Delete (${selectedRowsBlotterRequest.length})`
-            //     : "Delete"
-            // }
-            >
+            <Tooltip title="Delete">
               <Button
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => {
-                  // BlotterRequestDeleteRow(elm);
+                  deleteOrganizationRequest(elm._id)
                 }}
                 size="small"
               />
@@ -183,8 +262,8 @@ const ManageMember = (props) => {
     },
   ];
 
-  const roleMember = (event) => {
-    var tempNewMember = newMember
+  const onChangeRoleMember = (event) => {
+    var tempNewMember = step2Data
     var tempRole = event.split(",");
 
     if (parseInt(tempRole[1]) == 1) {
@@ -193,10 +272,10 @@ const ManageMember = (props) => {
       tempNewMember[tempRole[0]].role = "Editor"
     }
 
-    setNewMember(tempNewMember)
+    setStep2Data(tempNewMember)
   };
 
-  const roleTable = [
+  const step2Table = [
     {
       title: "Member Name",
       dataIndex: "email",
@@ -218,7 +297,7 @@ const ManageMember = (props) => {
     {
       title: "Role",
       dataIndex: "role",
-	  key: "role",
+      key: "role",
       render: (_, elm) => (
         <>
           <div key={elm} className="text-center align-items-center">
@@ -227,12 +306,12 @@ const ManageMember = (props) => {
               style={{ width: 200 }}
               placeholder="Search to Select"
               optionFilterProp="children"
-              onChange={roleMember}
+              onChange={onChangeRoleMember}
               defaultValue={elm.role}
               id="roleid"
             >
-              <Option value={elm.member_id + ",1"}>Administrator</Option>
-              <Option value={elm.member_id + ",2"}>Editor</Option>
+              <Option value={elm._id + ",1"}>Administrator</Option>
+              <Option value={elm._id + ",2"}>Editor</Option>
             </Select>
             ,
           </div>
@@ -241,7 +320,7 @@ const ManageMember = (props) => {
     },
   ];
 
-  const finishedTabled = [
+  const step3Table = [
     {
       title: "Member Name",
       dataIndex: "email",
@@ -327,12 +406,13 @@ const ManageMember = (props) => {
             </div>
             <div className="mb-2 table-responsive ">
               <Table
-                dataSource={newMember}
-                columns={roleTable}
-                rowKey="member_id"
+                dataSource={step2Data}
+                columns={step2Table}
+                rowKey="_id"
                 scroll={{ x: "max-content" }}
                 pagination={false}
                 showHeader={false}
+                loading={step2Loading}
               />
             </div>
           </div>
@@ -355,13 +435,13 @@ const ManageMember = (props) => {
             </div>
             <div className="mb-2 table-responsive ">
               <Table
-                dataSource={newMember}
-                columns={finishedTabled}
-                rowKey="member_id"
+                dataSource={step3Data}
+                columns={step3Table}
+                rowKey="_id"
                 scroll={{ x: "max-content" }}
                 pagination={false}
                 showHeader={false}
-				loading={sending}
+                loading={step3Loading}
               />
             </div>
           </div>
@@ -395,21 +475,37 @@ const ManageMember = (props) => {
 
         finalData.push(
           {
-            member_id: i,
+            _id: i,
             avatarColor: avatarColor,
+            organization_id: currentOrganization,
             email: value,
+            code: "abcde",
             role: "Editor",
             status: "Pending"
           })
       })
 
-      setNewMember(finalData)
+      step2Data.map((value, i) => {
+        finalData.map((fDValue, fdIndex) => {
+          if (fDValue.email == value.email) {
+            value._id = fdIndex
+            finalData[fdIndex] = value
+          }
+        })
+      })
+
+      setStep2Data(finalData)
     } else if (current == 0 && selectEmail.length == 0) {
       message.error("Email!")
     }
 
     if (current == 1) {
-      setCurrent(current + 1);
+      validateEmail({
+        email: selectEmail,
+        organization_id: currentOrganization,
+        step2Data
+      })
+      setStep2Loading(true)
     }
   };
 
@@ -418,43 +514,22 @@ const ManageMember = (props) => {
   };
 
   const done = () => {
-	setSending(true)
-	  
+    setStep3Loading(true)
+
     console.log(newMember)
-    setMemberRequest(newMember)
-	
-	const values = {
-		new_member: newMember,
-		organization_id: currentOrganization,
-		current_user_name: currentUser.displayName
-	}
-	
-	axios
-    .post("/api/organization_setting/add-member", values, generateToken()[1])
-    .then((response) => {
-    if (response.data == "Success") {
-		setSending(false)
-		setAddMember(!addMember)
-		setSelectEmail([]);
-		setNewMember([])
-		setCurrent(0)
-		return message.success("Processing complete!")
-    } else {
-		return message.error("Error, please try again.");
+
+    const values = {
+      new_member: newMember,
+      organization_id: currentOrganization,
+      current_user_name: currentUser.displayName
     }
-    })
-    .catch((error) => {
-    console.log(error);
-    message.destroy();
-    message.error("The action can't be completed, please try again.");
-    });
+
+
+    addNewMember(values)
   }
 
   const onClickMember = () => {
-    setAddMember(!addMember)
-    setSelectEmail([]);
-    setNewMember([])
-    setCurrent(0)
+    resetData()
 
     // setTimeout(() => {
     // setAddMember(!addMember);
@@ -464,7 +539,18 @@ const ManageMember = (props) => {
     // }, 1000);
     // }, 500);
   };
-  
+
+  const resetData = () => {
+    setAddMember(!addMember)
+    setCurrent(0)
+
+    setSelectEmail([])
+    setNewMember([])
+    setStep2Data([])
+    setStep3Data([])
+
+  }
+
   return (
     <>
       <Col xs={24} sm={24} md={8}>
@@ -481,7 +567,6 @@ const ManageMember = (props) => {
           title="Member Details"
           extra={
             <Button onClick={() => onClickMember()}>
-              {" "}
               {addMember ? "Cancel" : "Add Member"}
             </Button>
           }
@@ -531,7 +616,7 @@ const ManageMember = (props) => {
                       <Table
                         dataSource={memberRequest}
                         columns={tableMember}
-                        rowKey="member_id"
+                        rowKey="_id"
                         scroll={{ x: "max-content" }}
                         pagination={false}
                         showHeader={false}
