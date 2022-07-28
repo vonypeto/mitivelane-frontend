@@ -52,10 +52,9 @@ const GivenList = (props) => {
   const SupplyGivenFormRef = createRef();
 
   //UseEffect
-
   useEffect(() => {
     getPage();
-    console.log("tableScreen", tableScreen)
+    // console.log("tableScreen", tableScreen)
   }, [givenSupplyCurrentPage, pageSize, tableScreen, year]);
 
   useEffect(() => {
@@ -119,7 +118,24 @@ const GivenList = (props) => {
           getPage()
           setGivenTableLoading(false);
           message.success(" New Supply Given data has been added.");
+
+          //Session
+          var SessionVal = {
+            message: "Given some ayuda.",
+            action: "create",
+            module: "ayuda",
+            name: "Giann"
+          }
+
+          axios
+          .post(
+              "/api/session/add",
+              { values: SessionVal, organization_id },
+              generateToken()[1],
+              { cancelToken }
+          )
         });
+        
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");

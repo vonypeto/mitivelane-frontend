@@ -2,125 +2,19 @@ import React from "react";
 import { Row, Col, Space, Timeline, Card, Avatar, List, Tag } from "antd";
 import { BsCircleFill } from "react-icons/bs";
 import Badge from "react-bootstrap/Badge";
-
+import { dummy_session } from "./fakedata";
 import "../../../../assets/css/bootstrap.badge.css";
 
-const data = [
-  {
-    id: 1,
-    name: "Giann",
-    action: "Created list for ayuda.",
-    color: "green",
-    date: "10-11-2021",
-    module: "Organization",
-  },
-  {
-    id: 2,
-    name: "Giann",
-    action: "Deleted 5 users.",
-    color: "red",
-    date: "10-16-2021",
-    module: "User",
-  },
-  {
-    id: 3,
-    name: "Rojhon",
-    action: "Edited mothly funds for October 2021.",
-    color: "blue",
-    date: "10-21-2021",
-    module: "Organization",
-  },
-  {
-    id: 4,
-    name: "Von",
-    action: "Created list for good employees for this month.",
-    color: "green",
-    date: "10-21-2021",
-    module: "Organization",
-  },
-  {
-    id: 2,
-    name: "Giann",
-    action: "Deleted 2 documents.",
-    color: "red",
-    date: "10-16-2021",
-    module: "Blotter",
-  },
-  {
-    id: 2,
-    name: "Giann",
-    action: "Deleted 5 users.",
-    color: "red",
-    date: "10-16-2021",
-    module: "User",
-  },
-  {
-    id: 3,
-    name: "Rojhon",
-    action: "Edited mothly funds for October 2021.",
-    color: "blue",
-    date: "10-21-2021",
-    module: "Organization",
-  },
-  {
-    id: 4,
-    name: "Von",
-    action: "Created list for good employees for this month.",
-    color: "green",
-    date: "10-21-2021",
-    module: "Organization",
-  },
-  {
-    id: 2,
-    name: "Giann",
-    action: "Deleted 2 documents.",
-    color: "red",
-    date: "10-16-2021",
-    module: "Blotter",
-  },
-  {
-    id: 2,
-    name: "Giann",
-    action: "Deleted 5 users.",
-    color: "red",
-    date: "10-16-2021",
-    module: "User",
-  },
-  {
-    id: 3,
-    name: "Rojhon",
-    action: "Edited mothly funds for October 2021.",
-    color: "blue",
-    date: "10-21-2021",
-    module: "Organization",
-  },
-  {
-    id: 4,
-    name: "Von",
-    action: "Created list for good employees for this month.",
-    color: "green",
-    date: "10-21-2021",
-    module: "Organization",
-  },
-  {
-    id: 2,
-    name: "Giann",
-    action: "Deleted 2 documents.",
-    color: "red",
-    date: "10-16-2021",
-    module: "Blotter",
-  },
-];
+const Audit = () => {
 
-const index = () => {
-  const badgeColorPicker = (color) => {
-    if (color == "green") {
+  const badgeColorPicker = (action) => {
+    if (action == "create") {
       return "success";
     }
-    if (color == "blue") {
+    if (action == "update") {
       return "primary";
     }
-    if (color == "red") {
+    if (action == "delete") {
       return "danger";
     }
   };
@@ -137,7 +31,7 @@ const index = () => {
             },
             pageSize: 8,
           }}
-          dataSource={data}
+          dataSource={dummy_session}
           renderItem={(item) => (
             <List.Item className="w-100">
               <List.Item.Meta
@@ -154,17 +48,17 @@ const index = () => {
                 title={
                   <Space direction="horizontal">
                     <b>{item.name}</b>
-                    <p style={{ color: "#1565c0", margin: 0 }}>{item.date}</p>
+                    <p style={{ color: "#1565c0", margin: 0 }}>{item.createdAt}</p>
                   </Space>
                 }
                 description={
                   <Space wrap>
                     <Badge
-                      bg={badgeColorPicker(item.color)}
+                      bg={badgeColorPicker(item.action)}
                       style={{ fontSize: "12px !important" }}
                       pill
                     >
-                      {item.action}
+                      {item.message}
                     </Badge>
 
                     <Badge pill bg={"dark"}>
@@ -181,4 +75,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Audit;
