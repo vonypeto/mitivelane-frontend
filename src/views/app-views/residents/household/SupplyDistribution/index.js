@@ -34,7 +34,9 @@ const SupplyDistribution = (props) => {
   const [currentSupply, setCurrentSupply] = useState(0);
   const [pageSize, setPageSize] = useState(4);
   const currentDate = moment();
-  const [year, setYear] = useState(currentDate);
+  const [dateFilter, setDateFilter] = useState(currentDate);
+  const [givenSupplyInventory, setGivenSupplyInventory] = useState([]);
+  const [receivedSupplyInventory, setReceivedSupplyInventory] = useState([]);
 
   //Ref
   const SupplyReceivedFormRef = createRef();
@@ -46,7 +48,7 @@ const SupplyDistribution = (props) => {
     setPageSize,
     setCurrentSupply,
     currentSupply,
-    year
+    dateFilter,
   }
 
   //UseEffect
@@ -54,16 +56,38 @@ const SupplyDistribution = (props) => {
     getCurrentSupply();
   }, []);
 
+  useEffect(() => {
+    console.log("dateFilter", dateFilter)
+    getSupplyInventory()
+  }, [dateFilter]);
+
   //Axios
   const getCurrentSupply = async () => {
-    const request = await axios.post(
+    await axios.post(
       "/api/supply/get/current",
       { organization_id },
       generateToken()[1],
       { cancelToken }
-    );
+    ).then((res) => {
+      setCurrentSupply(res.data.organization_supply);
+    })
 
-    setCurrentSupply(request.data.organization_supply);
+
+  };
+
+  const getSupplyInventory = async () => {
+    await axios.get(
+      `/api/supply/inventory/${organization_id}/${dateFilter.year()}`,
+      generateToken()[1],
+      { cancelToken }
+    ).then((res) => {
+      var data = res.data
+      setGivenSupplyInventory(data.given_month)
+      setReceivedSupplyInventory(data.received_month)
+
+      console.log("givenSupplyInventory", data.given_month)
+      console.log("receivedSupplyInventory", data.received_month)
+    })
   };
 
   return (
@@ -79,7 +103,7 @@ const SupplyDistribution = (props) => {
               defaultValue={currentDate}
               onChange={(value) => {
                 if (value != null) {
-                  setYear(value)
+                  setDateFilter(value)
                 }
               }} />
           </Col>

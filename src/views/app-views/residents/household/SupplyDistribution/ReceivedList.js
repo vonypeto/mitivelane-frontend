@@ -36,7 +36,7 @@ const ReceievedList = (props) => {
   const { generateToken, currentOrganization } = useAuth();
 
   //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, year } = props;
+  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, dateFilter } = props;
 
   //State
   const [tableScreen, setTableScreen] = useState({});
@@ -58,7 +58,7 @@ const ReceievedList = (props) => {
 
   useEffect(() => {
     getPage();
-  }, [receivedSupplyCurrentPage, pageSize, tableScreen, year]);
+  }, [receivedSupplyCurrentPage, pageSize, tableScreen, dateFilter]);
 
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const ReceievedList = (props) => {
     await axios
       .post(
         `/api/supply/receive/getPage/${organization_id}/${receivedSupplyCurrentPage}/${pageSize}`,
-        { tableScreen, year },
+        { tableScreen, dateFilter },
         generateToken()[1],
         { cancelToken }
       )
@@ -163,7 +163,7 @@ const ReceievedList = (props) => {
       await axios
         .post(
           "/api/supply/receive/delete",
-          { selectedRowKeys: receivedSelectedRowKey, organization_id, new_supply_amount, supply_remove, year },
+          { selectedRowKeys: receivedSelectedRowKey, organization_id, new_supply_amount, supply_remove, dateFilter },
           generateToken()[1],
           { cancelToken }
         )
@@ -213,7 +213,7 @@ const ReceievedList = (props) => {
       await axios
         .post(
           "/api/supply/receive/delete",
-          { selectedRowKeys: receivedSelectedRowKeys, organization_id, new_supply_amount, supply_remove, year },
+          { selectedRowKeys: receivedSelectedRowKeys, organization_id, new_supply_amount, supply_remove, dateFilter },
           generateToken()[1],
           { cancelToken }
         )

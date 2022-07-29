@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Space, Timeline, Card, Avatar, List, Tag } from "antd";
+import { Row, Col, Space, Timeline, Card, Avatar, List, Tag, Badge as AntdBadge } from "antd";
 import { BsCircleFill } from "react-icons/bs";
 import Badge from "react-bootstrap/Badge";
 import { dummy_session } from "./fakedata";
@@ -9,13 +9,13 @@ const Audit = () => {
 
   const badgeColorPicker = (action) => {
     if (action == "create") {
-      return "success";
+      return "#00A36C";
     }
     if (action == "update") {
-      return "primary";
+      return "#0047AB";
     }
     if (action == "delete") {
-      return "danger";
+      return "#FF0000";
     }
   };
 
@@ -26,10 +26,17 @@ const Audit = () => {
       <Card>
         <List
           pagination={{
-            onChange: (page) => {
-              console.log(page);
+            showSizeChanger: true,
+            defaultPageSize: 8,
+            pageSizeOptions: [8, 10, 20, 50, 100],
+            onShowSizeChange: (current, size) => {
+              console.log("current", current)
+              console.log("size", size)
             },
-            pageSize: 8,
+            onChange: (page, pageSize) => {
+              console.log("page", page)
+              console.log("pageSize", pageSize)
+            }
           }}
           dataSource={dummy_session}
           renderItem={(item) => (
@@ -47,19 +54,16 @@ const Audit = () => {
                 }
                 title={
                   <Space direction="horizontal">
-                    <b>{item.name}</b>
-                    <p style={{ color: "#1565c0", margin: 0 }}>{item.createdAt}</p>
+                    <b style={{ fontSize: 18 }}>{item.name}</b>
+                    <h4 style={{ color: "#1565c0", margin: 0 }}>{item.createdAt}</h4>
+                    <AntdBadge color={badgeColorPicker(item.action)} />
                   </Space>
                 }
                 description={
                   <Space wrap>
-                    <Badge
-                      bg={badgeColorPicker(item.action)}
-                      style={{ fontSize: "12px !important" }}
-                      pill
-                    >
+                    <h4 className="m-0">
                       {item.message}
-                    </Badge>
+                    </h4>
 
                     <Badge pill bg={"dark"}>
                       {item.module}

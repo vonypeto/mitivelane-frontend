@@ -33,7 +33,7 @@ const GivenList = (props) => {
   const { generateToken, currentOrganization } = useAuth();
 
   //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, year} = props;
+  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, dateFilter} = props;
 
   //State
   const [tableScreen, setTableScreen] = useState({});
@@ -55,7 +55,7 @@ const GivenList = (props) => {
   useEffect(() => {
     getPage();
     // console.log("tableScreen", tableScreen)
-  }, [givenSupplyCurrentPage, pageSize, tableScreen, year]);
+  }, [givenSupplyCurrentPage, pageSize, tableScreen, dateFilter]);
 
   useEffect(() => {
     var length = Object.keys(supplyGivenList).length
@@ -74,7 +74,7 @@ const GivenList = (props) => {
       await axios
         .post(
           `/api/supply/given/getPage/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
-          { tableScreen, year },
+          { tableScreen, dateFilter },
           generateToken()[1],
           { cancelToken }
         )
@@ -117,13 +117,13 @@ const GivenList = (props) => {
           setGivenSupplyTotal(newTotal);
           getPage()
           setGivenTableLoading(false);
-          message.success(" New Supply Given data has been added.");
+          message.success("New Supply Given data has been added.");
 
           //Session
           var SessionVal = {
             message: "Given some ayuda.",
-            action: "create",
-            module: "ayuda",
+            action: "Create",
+            module: "Ayuda",
             name: "Giann"
           }
 
@@ -192,7 +192,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { selectedRowKeys: givenSelectedRowKey, organization_id, new_supply_amount, supply_remove, year},
+          { selectedRowKeys: givenSelectedRowKey, organization_id, new_supply_amount, supply_remove, dateFilter},
           generateToken()[1],
           { cancelToken }
         )
@@ -239,7 +239,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { selectedRowKeys: givenSelectedRowKeys, organization_id, new_supply_amount, remove_supply, year},
+          { selectedRowKeys: givenSelectedRowKeys, organization_id, new_supply_amount, remove_supply, dateFilter},
           generateToken()[1],
           { cancelToken }
         )
