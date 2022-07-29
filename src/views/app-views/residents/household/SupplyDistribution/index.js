@@ -41,14 +41,19 @@ const SupplyDistribution = (props) => {
   //Ref
   const SupplyReceivedFormRef = createRef();
 
-  //Child Components
-  const childComponents = {
+  //Child Components for Given and Received List
+  const supplyProps = {
     pageSize,
     organization_id,
     setPageSize,
     setCurrentSupply,
     currentSupply,
     dateFilter,
+  }
+
+  const inventoryProps = {
+    givenSupplyInventory,
+    receivedSupplyInventory
   }
 
   //UseEffect
@@ -59,7 +64,7 @@ const SupplyDistribution = (props) => {
   useEffect(() => {
     console.log("dateFilter", dateFilter)
     getSupplyInventory()
-  }, [dateFilter]);
+  }, [dateFilter, currentSupply]);
 
   //Axios
   const getCurrentSupply = async () => {
@@ -82,11 +87,18 @@ const SupplyDistribution = (props) => {
       { cancelToken }
     ).then((res) => {
       var data = res.data
-      setGivenSupplyInventory(data.given_month)
-      setReceivedSupplyInventory(data.received_month)
+      if (data != null) {
+        setGivenSupplyInventory(data.given_month)
+        setReceivedSupplyInventory(data.received_month)
 
-      console.log("givenSupplyInventory", data.given_month)
-      console.log("receivedSupplyInventory", data.received_month)
+        console.log("givenSupplyInventory", data.given_month)
+        console.log("receivedSupplyInventory", data.received_month)
+      }
+
+      else {
+        setGivenSupplyInventory([0,0,0,0,0,0,0,0,0,0,0,0])
+        setReceivedSupplyInventory([0,0,0,0,0,0,0,0,0,0,0,0])
+      }
     })
   };
 
@@ -112,7 +124,7 @@ const SupplyDistribution = (props) => {
 
       <Row gutter={20} style={{ overflow: "hidden" }} className="mt-3">
         <Col xs={24} sm={24} md={24} lg={24} xl={20} className="w-100">
-          <SupplyChart />
+          <SupplyChart {...inventoryProps} />
         </Col>
 
         <Col xs={24} sm={24} md={24} lg={24} xl={4} className="w-100 mb-3">
@@ -131,11 +143,11 @@ const SupplyDistribution = (props) => {
       </Row>
 
       <GivenList
-      {...childComponents}
+        {...supplyProps}
       />
 
       <ReceievedList
-      {...childComponents}
+        {...supplyProps}
       />
     </div>
   );
