@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Card, Avatar } from "antd";
 import { Icon } from "components/util-components/Icon";
 import utils from "utils";
+import CustomAvatar from "components/shared-components/Avatar" ;
 
 import {
   MailOutlined,
@@ -36,15 +37,16 @@ const MainFormView = (props) => {
         <Card title="Profile" className="text-left">
           <div className="pt-1 mb-2 text-center">
             <div>
-              <Avatar
+              <CustomAvatar
                 size="large"
+                color={props.residentData.avatarColor}
                 icon={utils.getNameInitial(props.residentData.firstname + " " + props.residentData.lastname)}
+                image={props.residentData.avatarImg}
                 style={{
                   width: "140px",
                   height: " 140px",
                   lineHeight: "140px",
                   fontSize: "70px",
-                  backgroundColor: props.residentData.avatarColor
                 }}
               />
             </div>
@@ -105,7 +107,7 @@ const MainFormView = (props) => {
                 </Col>
                 <Col xs={12} sm={12} md={15} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
-                    <bold>{props.residentData.age}</bold>
+                    <b>{props.residentData.age}</b>
                   </span>
                 </Col>
               </Row>

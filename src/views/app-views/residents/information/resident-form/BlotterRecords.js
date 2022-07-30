@@ -141,7 +141,7 @@ const columns = [
 
 const BlotterField = (props) => {
   const { resident_id, organization_id } = props;
-  console.log(props);
+  // console.log(props);
 
   return (
     <Row>

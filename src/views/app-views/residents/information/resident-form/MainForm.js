@@ -11,12 +11,19 @@ import {
   Select,
   DatePicker,
   Avatar,
+  Button,
+  Space
 } from "antd";
+
 import QueueAnim from "rc-queue-anim";
 import { ImageSvg } from "assets/svg/icon";
 import CustomIcon from "components/util-components/CustomIcon";
-import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
+import { LoadingOutlined, UserOutlined, UploadOutlined } from "@ant-design/icons";
+import CustomAvatar from "components/shared-components/Avatar";
 import moment from "moment";
+import utils from "utils";
+
+
 const current = new Date();
 const lengthUnit = ["cm", "mm", "m"];
 const weightUnit = ["kg", "g", "mg"];
@@ -116,15 +123,15 @@ const imageUploadProps = {
 };
 
 const beforeUpload = (file) => {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
+  const fileTypeValid = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+  if (!fileTypeValid) {
+    message.error("You can only upload JPEG/JPG/PNG file!");
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
+  const fileSizeValid = file.size / 1024 / 1024 < 2;
+  if (!fileSizeValid) {
     message.error("Image must smaller than 2MB!");
   }
-  return isJpgOrPng && isLt2M;
+  return fileTypeValid && fileSizeValid;
 };
 
 const numberFilter = (e) => {
@@ -136,7 +143,45 @@ const numberFilter = (e) => {
 const yesno = ["Yes", "No"];
 
 const MainForm = (props) => {
+  const { hiddenFileInput, setNewProfile, residentData, mode } = props
   const [selectShow, setShow] = useState(true);
+  const [newProfilePicture, setNewProfilePicture] = useState("");
+
+  //handle upload image
+  const handleImageUpload = async (event) => {
+    const fileUploaded = event.target.files[0];
+    const isFileValid = beforeUpload(fileUploaded)
+
+    if (isFileValid) {
+      const type = fileUploaded.type
+      const base64 = await convertBase64(fileUploaded);
+
+      console.log("fileUploaded", fileUploaded)
+      setNewProfilePicture(base64)
+
+      setNewProfile({
+        fileBase64: base64,
+        type
+      })
+
+      message.success("Sucess, don't forget to press save to make changes permanent.")
+    }
+  };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
 
   return (
     <>
@@ -298,49 +343,6 @@ const MainForm = (props) => {
               <div key="c">
                 <Card title="Miscellaneous">
                   <Row gutter={16}>
-                    {/* <Col xs={24} sm={24} md={24}>
-                      <Form.Item name="salary" label="Salary">
-                        <Input.Group className="w-100" compact>
-                          <Select className="w-15" defaultValue="1">
-                            <Option value="1">Between</Option>
-                          </Select>
-                          <InputNumber
-                            className="w-40"
-                            style={{ width: 100, textAlign: "center" }}
-                            placeholder="Minimum"
-                            onKeyPress={(e) => { numberFilter(e) }}
-                            formatter={(value) =>
-                              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                            }
-                            parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                          />
-                          <Input
-                            className="w-3 site-input-split"
-                            style={{
-                              width: 30,
-                              borderLeft: 0,
-                              borderRight: 0,
-                              pointerEvents: "none",
-                            }}
-                            placeholder="~"
-                            disabled
-                          />
-                          <InputNumber
-                            className="w-40 site-input-right"
-                            onKeyPress={(e) => { numberFilter(e) }}
-                            formatter={(value) =>
-                              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                            }
-                            parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                            style={{
-                              width: 100,
-                              textAlign: "center",
-                            }}
-                            placeholder="Maximum"
-                          />
-                        </Input.Group>
-                      </Form.Item>
-                    </Col> */}
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item name="occupation" label="Occupation">
                         <Input className="w-100" placeholder="Occupation" />
@@ -362,34 +364,52 @@ const MainForm = (props) => {
               ease={["easeOutQuart", "easeInOutQuart"]}
             >
               <div key="a">
-                <Card title="Profile">
-                  <Dragger
-                    {...imageUploadProps}
-                    beforeUpload={beforeUpload}
-                    onChange={(e) => props.handleUploadChange(e)}
-                  >
-                    {props.uploadedImg ? (
-                      <img
-                        src={props.uploadedImg}
-                        alt="avatar"
-                        className="img-fluid"
+                <Card title="Profile"
+                  bodyStyle={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                >
+                  <Space direction="vertical" align="center">
+                    {(mode == "EDIT" && residentData.avatarImg == null) &&
+                      <CustomAvatar
+                        size={100}
+                        color={residentData.avatarColor}
+                        icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
+                        image={newProfilePicture ? newProfilePicture : null}
+
                       />
-                    ) : (
-                      <div>
-                        {props.uploadLoading ? (
-                          <div>
-                            <LoadingOutlined className="font-size-xxl text-primary" />
-                            <div className="mt-3">Uploading</div>
-                          </div>
-                        ) : (
-                          <div>
-                            <CustomIcon className="display-3" svg={ImageSvg} />
-                            <p>Click or drag file to upload</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </Dragger>
+                    }
+
+                    {(mode == "EDIT" && residentData.avatarImg != null) &&
+                      <CustomAvatar
+                        size={100}
+                        color={residentData.avatarColor}
+                        icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
+                        image={newProfilePicture ? newProfilePicture : residentData.avatarImg}
+
+                      />
+                    }
+
+                    {mode == "ADD" &&
+                      <CustomAvatar
+                        size={100}
+                        color={"#0047AB"}
+                        image={newProfilePicture ? newProfilePicture : null}
+
+                      />
+                    }
+
+                    <Button icon={<UploadOutlined />} size="medium"
+                      onClick={() => { hiddenFileInput.current.click() }}
+                    >
+                      Upload image
+                    </Button>
+
+                    <input
+                      ref={hiddenFileInput}
+                      type="file"
+                      onChange={handleImageUpload}
+                      hidden
+                    />
+                  </Space>
                 </Card>
               </div>
               <div key="b">

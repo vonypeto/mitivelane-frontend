@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import { Tabs, Form, Button, message } from "antd";
 import Flex from "components/shared-components/Flex";
@@ -33,6 +33,7 @@ const MainFormList = (props) => {
   const cancelToken = source.token;
   const { generateToken } = useAuth();
 
+  const hiddenFileInput = useRef(null);
   const { id } = useParams();
   const organization_id = localStorage.getItem(AUTH_ORGANIZATION);
   let history = useHistory();
@@ -45,6 +46,7 @@ const MainFormList = (props) => {
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [newProfile, setNewProfile] = useState({});
 
   useEffect(() => {
     if (mode === EDIT || mode === VIEW) {
@@ -119,16 +121,27 @@ const MainFormList = (props) => {
     })();
   }, []);
 
+  const newProfileNull = () => {
+    return Object.keys(newProfile).length == 0
+  }
+
   const handleUploadChange = (info) => {
+    console.log("info", info)
     if (info.file.status === "uploading") {
       setUploadLoading(true);
       return;
     }
     if (info.file.status === "done") {
       getBase64(info.file.originFileObj, (imageUrl) => {
+        console.log("imageUrl", imageUrl)
         setImage(imageUrl);
-        setUploadLoading(true);
+        setUploadLoading(false);
       });
+    }
+
+    if (info.file.status === "error") {
+      message.error("Error with the uploaded image!!")
+      setUploadLoading(false);
     }
   };
 
@@ -159,6 +172,7 @@ const MainFormList = (props) => {
   };
 
   const onFinishUpdate = async (values) => {
+    console.log("values", values)
     try {
       await axios
         .post(
@@ -183,6 +197,11 @@ const MainFormList = (props) => {
     form
       .validateFields()
       .then((values) => {
+        if (newProfileNull() == false) {
+          values.avatarImg = newProfile.fileBase64
+          values.avatarImgType = newProfile.type
+        }
+
         setTimeout(() => {
           if (mode === ADD) {
             //RESIDENT INSERT ADD
@@ -190,6 +209,7 @@ const MainFormList = (props) => {
           }
           if (mode === EDIT) {
             //RESIDENT INSERT EDIT
+
             onFinishUpdate(values);
           }
         }, 1500);
@@ -269,6 +289,11 @@ const MainFormList = (props) => {
                       uploadedImg={uploadedImg}
                       uploadLoading={uploadLoading}
                       handleUploadChange={handleUploadChange}
+                      hiddenFileInput={hiddenFileInput}
+                      setNewProfile={setNewProfile}
+                      newProfile={newProfile}
+                      residentData={mode == EDIT ? residentData : []}
+                      mode={mode}
                     />
                   </div>
                 </QueueAnim>
