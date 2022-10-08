@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import BasicDocument from "components/shared-components/Documents/Certificates-General/";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Card, Col, Row, Image, Button } from "antd";
+import { Card, Col, Row, Popover, Button } from "antd";
 import FontPicker from "font-picker-react";
 import { saveAs } from "file-saver";
 import { pdf } from "@react-pdf/renderer";
 import { ArrowDownOutlined } from "@ant-design/icons";
-import { BsCpu } from "react-icons/bs";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import ColorPicker from "components/shared-components/ColorPicker";
+import PopOverData from "components/shared-components/PopOverData";
+
+import utils from "utils/index";
 import SinglePagePDFViewer from "components/shared-components/Documents/Certificates-General/";
+import { Menu } from "antd";
+
 const CertDisplay = React.memo(
   (props) => {
     const { data, loadingImage, templateType, certType, setParentData } = props;
@@ -16,9 +19,15 @@ const CertDisplay = React.memo(
       data ? data?.font_family : "Tinos"
     );
     const [childData, setChildData] = useState(data);
-    const [switchData, setSwitchData] = useState(false);
+    const [displayColorPicker, setDisplayColorPicker] = useState(false);
+    const [color, setColor] = useState();
+    const ontopNavColorClick = (value) => {
+      const { rgb } = value;
+      const rgba = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${rgb.a})`;
+      const hex = utils.rgbaToHex(rgba);
+      setColor(hex);
+    };
     const ratio = 1.41451612903;
-
     // let testts = [
     //   { id: 1, test: 25 },
     //   { id: 2, test: 24 },
@@ -113,6 +122,7 @@ const CertDisplay = React.memo(
         </>
       );
     };
+
     return (
       <Row justify="center">
         <Col xs={24} sm={24} md={24} lg={24}>
@@ -121,10 +131,16 @@ const CertDisplay = React.memo(
               {" "}
               <Button
                 icon={<ArrowDownOutlined />}
-                onClick={() => generatePdfDocument(data, "feedata")}
+                onClick={() => generatePdfDocument(data, data.title)}
               >
                 Download
               </Button>
+              <ColorPicker
+                className="btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
+                color={color}
+                colorChange={ontopNavColorClick}
+              />
+              <PopOverData type="lineHeight" />
               <FontPicker
                 className=" btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
                 apiKey={process.env.REACT_APP_FONT_ACCESS}
