@@ -50,7 +50,7 @@ const SupplyReceiveForm = (props) => {
                 <Form.Item
                     {...datePickerAttr}
                 >
-                    <DatePicker className='w-100'/>
+                    <DatePicker className='w-100' size='small'/>
                 </Form.Item>
             </Col>
 

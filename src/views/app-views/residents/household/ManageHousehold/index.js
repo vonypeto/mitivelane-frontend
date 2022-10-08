@@ -456,7 +456,7 @@ const ManageHousehold = (props) => {
     // (household, householdMembers, deletedMemberArray)
     updateHousehold(value, householdMemberList, deletedMembers);
     message.success("Success, household data has been updated.");
-    // history.push(`/app/${organization_id}/residents/household/list`)
+    history.replace(`/app/${organization_id}/residents/household/list`)
   };
 
   const importResidentAsMember = (key) => {

@@ -33,7 +33,7 @@ const GivenList = (props) => {
   const { generateToken, currentOrganization } = useAuth();
 
   //Props
-  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, dateFilter} = props;
+  const { pageSize, setPageSize, organization_id, currentSupply, setCurrentSupply, dateFilter } = props;
 
   //State
   const [tableScreen, setTableScreen] = useState({});
@@ -108,7 +108,7 @@ const GivenList = (props) => {
           generateToken()[1],
           { cancelToken }
         )
-        .then((res) => {
+        .then(async (res) => {
           const data = res.data;
           setCurrentSupply(new_supply_amount);
 
@@ -127,15 +127,15 @@ const GivenList = (props) => {
             name: "Giann"
           }
 
-          axios
-          .post(
+          await axios
+            .post(
               "/api/session/add",
               { values: SessionVal, organization_id },
               generateToken()[1],
               { cancelToken }
-          )
+            )
         });
-        
+
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
@@ -163,7 +163,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/update",
-          { newSupplyGiven: values, organization_id, new_supply_amount},
+          { newSupplyGiven: values, organization_id, new_supply_amount },
           generateToken()[1],
           { cancelToken }
         )
@@ -192,7 +192,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { selectedRowKeys: givenSelectedRowKey, organization_id, new_supply_amount, supply_remove, dateFilter},
+          { selectedRowKeys: givenSelectedRowKey, organization_id, new_supply_amount, supply_remove, dateFilter },
           generateToken()[1],
           { cancelToken }
         )
@@ -239,7 +239,7 @@ const GivenList = (props) => {
       await axios
         .post(
           "/api/supply/given/delete",
-          { selectedRowKeys: givenSelectedRowKeys, organization_id, new_supply_amount, remove_supply, dateFilter},
+          { selectedRowKeys: givenSelectedRowKeys, organization_id, new_supply_amount, remove_supply, dateFilter },
           generateToken()[1],
           { cancelToken }
         )
@@ -375,7 +375,7 @@ const GivenList = (props) => {
   };
 
   const deleteSupplyGiven = (row) => {
-    popSupplyGiven([{_id: row.supply_given_id, amount: row.amount, date: row.date}]);
+    popSupplyGiven([{ _id: row.supply_given_id, amount: row.amount, date: row.date }]);
   };
 
   const deleteSuppliesGiven = () => {
@@ -433,7 +433,7 @@ const GivenList = (props) => {
       let tempRow = {}
 
       selectedRows.map((row) => {
-        tempRow = {_id: row.supply_given_id, amount: row.amount, date: row.date}
+        tempRow = { _id: row.supply_given_id, amount: row.amount, date: row.date }
         tempSelectedRows.push(tempRow);
       });
 
@@ -523,7 +523,7 @@ const GivenList = (props) => {
             ref={SupplyGivenFormRef}
             initialValues={supplyGivenInitialVal}
           >
-            <SupplyGivenForm action={formAction}/>
+            <SupplyGivenForm action={formAction} />
           </Form>
         )}
       </Modal>
@@ -544,7 +544,7 @@ const GivenList = (props) => {
             ref={SupplyGivenFormRef}
             initialValues={supplyGivenInitialVal}
           >
-            <SupplyGivenForm action={formAction}/>
+            <SupplyGivenForm action={formAction} />
           </Form>
         )}
       </Drawer>

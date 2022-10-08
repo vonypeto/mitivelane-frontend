@@ -90,10 +90,9 @@ const ReceievedList = (props) => {
   };
 
   const addSupplyReceived = async (newSupplyReceived) => {
+    setReceivedTableLoading(true);
     try {
       const new_supply_amount = currentSupply + newSupplyReceived.amount;
-      setCurrentSupply(new_supply_amount);
-
       await axios
         .post(
           "/api/supply/receive/add",
@@ -107,17 +106,18 @@ const ReceievedList = (props) => {
         )
         .then((res) => {
           const data = res.data;
-
+          setCurrentSupply(new_supply_amount);
           newSupplyReceived.supply_receive_id = data.supply_receive_id;
           var newTotal = receivedSupplyTotal + 1;
           setReceivedSupplyTotal(newTotal);
           getPage()
-          message.success(" New Supply Received data has been added.");
+          message.success("New Supply Received data has been added.");
         });
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
+    setReceivedTableLoading(false);
   };
 
   const updateSupplyReceived = async (values) => {
@@ -131,7 +131,7 @@ const ReceievedList = (props) => {
         currentSupply - currentSupplyReceivedList[objIndex].amount;
       var new_receive_supply = values.amount;
       const new_supply_amount = stock_supply + new_receive_supply;
-      setCurrentSupply(new_supply_amount);
+      
 
       await axios.post(
         "/api/supply/receive/update",
@@ -139,6 +139,7 @@ const ReceievedList = (props) => {
         generateToken()[1],
         { cancelToken }
       ).then((res) => {
+        setCurrentSupply(new_supply_amount);
         currentSupplyReceivedList[objIndex] = values;
         getPage()
         message.success("Supply Received Table data has been updated.");

@@ -146,13 +146,14 @@ const ListInformation = (props) => {
 
     if (selectedRows.length > 1) {
       selectedRows.forEach((elm) => {
-        // data = utils.deleteArrayRow(data, objKey, elm.resident_id);
-        // setList(data);
+        data = utils.deleteArrayRow(data, objKey, elm.resident_id);
+        setList(data);
         setSelectedRows([]);
         residentIdArray.push(elm.resident_id);
       }); //end of loop
       deleteResident(residentIdArray);
       handleDeletePages(residentIdArray, total, setTotal, pageSize, currentPage, setCurrentPage, list, getPage)
+      message.success(`${selectedRows.length} Selected resident has been deleted.`)
     } else {
       data = utils.deleteArrayRow(data, objKey, row.resident_id);
       setList(data);
