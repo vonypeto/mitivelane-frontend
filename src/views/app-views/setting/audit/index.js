@@ -20,6 +20,9 @@ const Audit = () => {
   const history = useHistory();
   const { generateToken, currentOrganization } = useAuth();
 
+  //State 
+  const [auditLog, setAuditLog] = useState([])
+
   //Pagination State
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(1)
@@ -56,7 +59,9 @@ const Audit = () => {
       generateToken()[1],
       { cancelToken }
       ).then((res) => {
-        console.log("data", res.data)
+        var data = res.data
+        console.log("data", data)
+        setAuditLog(data)
       })
   }
 
