@@ -239,12 +239,12 @@ const ManageHousehold = (props) => {
   };
 
   const getAllPurok = async () => {
-      await axios.post(
-        "/api/purok/getAll",
-        { organization_id: organization_id },
-        generateToken()[1],
-        { cancelToken }
-      )
+    await axios.post(
+      "/api/purok/getAll",
+      { organization_id: organization_id },
+      generateToken()[1],
+      { cancelToken }
+    )
       .then((result) => {
         setPurokList(result.data)
       })
@@ -491,17 +491,27 @@ const ManageHousehold = (props) => {
       <Card>
         <Row justify="space-between">
           <Col>{printTitle()}</Col>
-          <Col>
-            <Button
-              type="primary"
-              style={{ float: "right" }}
-              onClick={() => {
-                NewHouseholdFormRef.current.submit();
-              }}
-              loading={loading}
-            >
-              Submit
-            </Button>
+          <Col className="mt-2">
+            <Space>
+              <Button
+                onClick={() => {
+                  history.replace(`/app/${organization_id}/residents/household/list`)
+                }}
+                loading={loading}
+              >
+                Back
+              </Button>
+
+              <Button
+                type="primary"
+                onClick={() => {
+                  NewHouseholdFormRef.current.submit();
+                }}
+                loading={loading}
+              >
+                Submit
+              </Button>
+            </Space>
           </Col>
         </Row>
       </Card>
@@ -513,7 +523,7 @@ const ManageHousehold = (props) => {
         initialValues={householdInitialVal}
       >
         <Card title={<h1>Household Info</h1>}>
-          <HouseholdForm purokList={purokList}/>
+          <HouseholdForm purokList={purokList} />
         </Card>
       </Form>
 
