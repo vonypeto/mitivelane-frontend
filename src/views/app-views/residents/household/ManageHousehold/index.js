@@ -16,10 +16,12 @@ import {
   Drawer,
   message,
 } from "antd";
+
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
+import ConfirmButton from "components/shared-components/ConfirmButton";
 
 //Form
 import HouseholdForm from "./HouseholdForm";
@@ -486,6 +488,15 @@ const ManageHousehold = (props) => {
     }
   };
 
+  const handleConfirmMessage = () => {
+    if (mode == "ADD") {
+      return "Data you've entered will be gone."
+    }
+    if (mode == "EDIT") {
+      return "Any unsaved changes will be gone."
+    }
+  };
+
   return (
     <div>
       <Card>
@@ -493,15 +504,14 @@ const ManageHousehold = (props) => {
           <Col>{printTitle()}</Col>
           <Col className="mt-2">
             <Space>
-              <Button
-                onClick={() => {
-                  history.replace(`/app/${organization_id}/residents/household/list`)
-                }}
-                loading={loading}
-              >
-                Back
-              </Button>
-
+            <ConfirmButton
+                  type="warning"
+                  modalTitle="Are you sure you want to leave this page?"
+                  modalContent={handleConfirmMessage()}
+                  text="Back"
+                  handleOk={() => history.replace(`/app/${organization_id}/residents/household/list`)}
+                  loading={loading}
+                />
               <Button
                 type="primary"
                 onClick={() => {
@@ -612,7 +622,7 @@ const ManageHousehold = (props) => {
         okText={"Submit"}
         destroyOnClose={true}
       >
-        {isImportResidentModalVisible && "Import resident hell yeah"}
+        {isImportResidentModalVisible && "Import resident"}
       </Modal>
     </div>
   );

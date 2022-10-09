@@ -15,6 +15,7 @@ import QueueAnim from "rc-queue-anim";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
+import ConfirmButton from "components/shared-components/ConfirmButton";
 
 const { TabPane } = Tabs;
 
@@ -254,13 +255,18 @@ const MainFormList = (props) => {
                 {mode === ADD
                   ? "Add New Resident"
                   : mode === EDIT
-                  ? `Edit Resident`
-                  : "View Resident"}{" "}
+                    ? `Edit Resident`
+                    : "View Resident"}{" "}
               </h2>
               <div className="mb-3">
-                <Button onClick={history.goBack} className="mr-2">
-                  {mode === VIEW ? "Back" : "Discard"}
-                </Button>
+                <ConfirmButton
+                  className="mr-2"
+                  type="warning"
+                  modalTitle="Are you sure you want to leave this page?"
+                  modalContent="Data you've entered will be gone."
+                  text={mode === VIEW ? "Back" : "Discard"}
+                  handleOk={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
+                />
                 {mode === VIEW ? null : (
                   <Button
                     type="primary"
