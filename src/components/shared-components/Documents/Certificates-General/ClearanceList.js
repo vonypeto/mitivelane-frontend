@@ -9,11 +9,13 @@ const ClearanceList = (props) => {
     switch (type.type) {
       case "simple_border":
         return <ClassicTemplatePDF {...props} />;
-      case "simple_noBorder":
+      case "simple_no_border":
         return <ClassicNoBorderPDF {...props} />;
       case "1":
         return <ClassicTemplatePDF {...props} />;
       case "1":
+        return <ClassicTemplatePDF {...props} />;
+      default:
         return <ClassicTemplatePDF {...props} />;
     }
   };

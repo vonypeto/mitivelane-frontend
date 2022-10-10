@@ -435,9 +435,9 @@ div[id^="font-picker"]:hover {
   top: 10px;
 }
 .cert_loading {
-  border: 0px;
-  margin: 0px;
-  padding: 0px;
+  border: 0px !important;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 
 .cert_loading .ant-card-body {
@@ -504,7 +504,37 @@ div > button[data-direction="left"],
 .margin-account-left {
   margin-left: 1.5rem;
 }
+.color-picker .color-picker-dropdown .color {
+  height: auto !important;
+  width: 30px !important;
+  border: 1px solid #e6ebf1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.color-picker .color-picker-dropdown {
+  border: 1px solid transparent;
+}
+.color-picker .color-picker-dropdown:hover {
+  border: 1px solid #3e79f7;
+  color: #3e79f7;
+}
 
+.color-hover {
+  border-radius: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+.ant-popover-inner-content {
+  padding: 0px !important;
+  color: rgb(69, 85, 96);
+}
+.nav-popover {
+  width: 7rem;
+}
+.nav-background-popover {
+  background: transparent !important;
+}
 @media screen and (max-width: 1240px) {
   .ant-skeleton-content .ant-skeleton-title + .ant-skeleton-paragraph {
     margin-top: 0px;
@@ -607,3 +637,11 @@ div > button[data-direction="left"],
     height: 7px;
   }
 }
+
+/* .color-hover:hover {
+  border: 1px solid #d0d0d0;
+} */
+/* .color-picker div svg:hover {
+  color: #3e79f7;
+  cursor: pointer;
+} */

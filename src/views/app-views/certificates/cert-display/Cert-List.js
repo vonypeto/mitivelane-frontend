@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 import FileTest from "assets/files/test.pdf";
 import CreateLayout from "assets/files/create.pdf";
+import { base64pdf } from "constants/PdfConstant";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { getCertificateAll } from "api/AppController/CertificatesController/CertificatesController";
@@ -13,12 +14,13 @@ import InfinitScroll from "react-infinite-scroll-component";
 import Spin from "components/shared-components/Loading";
 import BasicDocument from "components/shared-components/Documents/Certificates-General/";
 import { pdf } from "@react-pdf/renderer";
+import { PDF_LIST } from "redux/constants/Auth";
+import mongoose from "mongoose";
 import {
   updateCertificateData,
   deleteCertificateData,
 } from "api/AppController/CertificatesController/CertificatesController";
-import { PDF_LIST } from "redux/constants/Auth";
-import mongoose from "mongoose";
+
 const CertList = React.memo(
   (props) => {
     const count = 6;
@@ -34,6 +36,7 @@ const CertList = React.memo(
 
     const [selectedUser, SetSelectedUser] = useState(null);
     const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
+    //Test data
     const arrayData = [
       { id: 1, pdf: FileTest, type: "view", selectedform: 1 },
       { id: 2, pdf: FileTest, type: "view", selectedform: 1 },
@@ -61,9 +64,9 @@ const CertList = React.memo(
       setPdfFile(pdfFile);
     }, [pdfFile, refresh]);
 
-    const onHandle = (elm, created, updated, title) => {
+    const onHandle = (elm, created, updated, title, id) => {
       // setDrawer(true);
-      SetSelectedUser({ elm, created, updated, title });
+      SetSelectedUser({ elm, created, updated, title, id });
       setDrawer(true);
     };
 
@@ -198,6 +201,32 @@ const CertList = React.memo(
       tmp.push(document);
       setPdfFile(tmp);
     };
+
+    // const byteCharacters = Buffer.from(base64pdf).toString("base64");
+    // const byteNumbers = new Array(byteCharacters.length);
+    // for (let i = 0; i < byteCharacters.length; i++) {
+    //   byteNumbers[i] = byteCharacters.charCodeAt(i);
+    // }
+    // const byteArray = new Uint8Array(byteNumbers);
+    // const blob = new Blob([byteArray], { type: "application/pdf" });
+    // console.log(URL.createObjectURL(blob));
+
+    const base64toBlob = (data) => {
+      // Cut the prefix `data:application/pdf;base64` from the raw base 64
+      const base64WithoutPrefix = data.substr(
+        "data:application/pdf;base64,".length
+      );
+
+      const bytes = window.atob(base64WithoutPrefix);
+      let length = bytes.length;
+      let out = new Uint8Array(length);
+
+      while (length--) {
+        out[length] = bytes.charCodeAt(length);
+      }
+
+      return new Blob([out], { type: "application/pdf" });
+    };
     return (
       <div className="container">
         <CertDrawer
@@ -239,7 +268,7 @@ const CertList = React.memo(
                       templateType="simple"
                       min={4}
                       max={9}
-                      pdf={CreateLayout}
+                      pdf={URL.createObjectURL(base64toBlob(base64pdf))}
                       type={"create"}
                       // counterClick={counterClick}
                       // onHandle={onHandle}
