@@ -529,6 +529,12 @@ div > button[data-direction="left"],
   padding: 0px !important;
   color: rgb(69, 85, 96);
 }
+.nav-popover {
+  width: 7rem;
+}
+.nav-background-popover {
+  background: transparent !important;
+}
 @media screen and (max-width: 1240px) {
   .ant-skeleton-content .ant-skeleton-title + .ant-skeleton-paragraph {
     margin-top: 0px;

@@ -1,48 +1,45 @@
 import { React, useState, useEffect } from "react";
-import { CheckOutlined, UserSwitchOutlined } from "@ant-design/icons";
-import { Menu, Dropdown, message } from "antd";
-import { useAuth } from "contexts/AuthContext";
-import { getOrganization } from "api/ComponentController/TeamNavController";
-import { useHistory } from "react-router-dom";
-import {
-  AUTH_ORGANIZATION,
-  AUTH_ORGANIZATION_LIST,
-} from "redux/constants/Auth";
-import { Button, Popover } from "antd";
+import { CheckOutlined, LineHeightOutlined } from "@ant-design/icons";
+import { Menu } from "antd";
 
-const TeamNav = () => {
-  const [visible, setVisible] = useState(false);
+import { Popover } from "antd";
 
-  const handleVisibleChange = (flag) => {
-    setVisible(flag);
+const PopOverData = (props) => {
+  const { data, setData } = props;
+  const [selectData, setSelectData] = useState(data?.line_height);
+  console.log(data);
+
+  const arrayLineHeight = [1, 1.2, 1.3, 1.5, 2];
+
+  const handlePopOverClick = (e) => {
+    console.log(e.key);
+    setSelectData(e.key);
+    let subData = data;
+    subData.line_height = e.key;
+    setData(subData);
   };
-  const RenderName = () => (
-    <div className="nav-profile-header-n">
-      <div className="d-flex">
-        <div className="pl-1">
-          <span className="text-muted-setting">Manage Organization</span>
-        </div>
-      </div>
-    </div>
-  );
-  const OrganizationNames = () => {
+
+  useEffect(() => {
+    if (!data?.line_height) setSelectData(1);
+  }, [selectData]);
+  const ContentArrayData = () => {
     try {
       return (
         <>
-          <Menu key="2">
-            <Menu.Item>
+          <Menu>
+            <Menu.Item key="1">
               {/* //eslint-disable-next-line */}
-              <a href="#/">
+              <a href="#">
                 <span className="d-flex justify-content-between align-items-center">
                   <div>
                     <span className=" font-weight-normal text-gray">1</span>
                   </div>
 
                   <CheckOutlined className="text-success" />
-                </span>{" "}
+                </span>
               </a>
-            </Menu.Item>{" "}
-            <Menu.Item>
+            </Menu.Item>
+            <Menu.Item key="2">
               {/* //eslint-disable-next-line */}
               <a href="#/">
                 <span className="d-flex justify-content-between align-items-center">
@@ -61,30 +58,58 @@ const TeamNav = () => {
       console.log(error);
     }
   };
-
-  const TeamMenu = (
+  const ContentArrayData2 = () => {
+    try {
+      return (
+        <>
+          {arrayLineHeight.map((item, i) => {
+            return (
+              <Menu key={i} onClick={handlePopOverClick}>
+                <Menu.Item
+                  key={item}
+                  className={
+                    selectData == item
+                      ? "ant-dropdown-menu-item-active ant-menu-item"
+                      : "nav-background-popover"
+                  }
+                >
+                  {/* //eslint-disable-next-line */}
+                  <div>
+                    <span className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <span className=" font-weight-normal text-gray">
+                          {console.log(item)} {item}
+                        </span>
+                      </div>
+                      {selectData == item ? (
+                        <CheckOutlined className="text-success" />
+                      ) : null}
+                    </span>
+                  </div>
+                </Menu.Item>
+              </Menu>
+            );
+          })}
+        </>
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const PopOverMenu = (
     <>
-      <div className="nav-profile nav-dropdown">
+      <div className="nav-popover nav-dropdown">
         <div className="nav-profile-header-n">
           <div>
             <div className="text-center ">
-              <span className="">Switch Organization</span>
+              <span className="">Line Height</span>
             </div>
           </div>
         </div>
 
         <div className="nav-profile-body">
           <div className="pl-1 padding-setting">
-            {/* <Menu key="2"> */}
-            <OrganizationNames />
-            {/* <Menu.Item key={2}>
-                <a href="#">
-                  <span className="font-weight-normal text-gray">
-                    Organization San Andress
-                  </span>
-                </a>
-              </Menu.Item> */}
-            {/* </Menu> */}
+            <ContentArrayData2 />
           </div>
         </div>
       </div>
@@ -92,16 +117,33 @@ const TeamNav = () => {
   );
   return (
     <>
-      <Popover
-        placement="bottom"
-        content={TeamMenu}
-        trigger="hover"
-        className="test"
-      >
-        <Button>Hover me</Button>
-      </Popover>
+      <div className="color-picker d-flex color-hover ">
+        <Popover
+          placement="bottom"
+          content={PopOverMenu}
+          trigger="click"
+          className="test"
+        >
+          <div className="color-picker-dropdown d-flex">
+            <div
+              className="text-center d-flex "
+              style={{ paddingRight: 5, margin: "auto", fontSize: "1.2rem" }}
+            >
+              <LineHeightOutlined
+                size={30}
+                className="text-center "
+                style={{ paddingRight: 5, margin: "auto" }}
+              />
+            </div>
+            <div style={{ margin: "auto", fontSize: "1.2rem" }}>
+              {" "}
+              {selectData}
+            </div>
+          </div>
+        </Popover>
+      </div>
     </>
   );
 };
 
-export default TeamNav;
+export default PopOverData;

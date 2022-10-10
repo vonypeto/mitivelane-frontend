@@ -128,19 +128,24 @@ const CertDisplay = React.memo(
         <Col xs={24} sm={24} md={24} lg={24}>
           <Card className="custom_cert">
             <div className="d-flex justify-content-between">
-              {" "}
               <Button
                 icon={<ArrowDownOutlined />}
                 onClick={() => generatePdfDocument(data, data.title)}
               >
                 Download
               </Button>
-              <ColorPicker
-                className="btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
-                color={color}
-                colorChange={ontopNavColorClick}
-              />
-              <PopOverData type="lineHeight" />
+              <div className="d-flex">
+                <ColorPicker
+                  className="btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
+                  color={color}
+                  colorChange={ontopNavColorClick}
+                />
+                <PopOverData
+                  type="lineHeight"
+                  data={data}
+                  setData={setParentData}
+                />{" "}
+              </div>
               <FontPicker
                 className=" btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
                 apiKey={process.env.REACT_APP_FONT_ACCESS}

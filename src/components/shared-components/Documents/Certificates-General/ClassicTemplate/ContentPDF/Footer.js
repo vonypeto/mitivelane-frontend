@@ -49,7 +49,7 @@ const Footer = (props) => {
 
   sliceCol1 = data.signatures.slice(0, 2);
   sliceCol2 = data.signatures.slice(2, 5);
-  console.log(data.signatures);
+
   return (
     <>
       {data.signatures.length <= 1 ? (
