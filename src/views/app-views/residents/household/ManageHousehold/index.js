@@ -16,10 +16,12 @@ import {
   Drawer,
   message,
 } from "antd";
+
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
 import moment from "moment";
 import { useAuth } from "contexts/AuthContext";
+import ConfirmButton from "components/shared-components/ConfirmButton";
 
 //Form
 import HouseholdForm from "./HouseholdForm";
@@ -239,12 +241,12 @@ const ManageHousehold = (props) => {
   };
 
   const getAllPurok = async () => {
-      await axios.post(
-        "/api/purok/getAll",
-        { organization_id: organization_id },
-        generateToken()[1],
-        { cancelToken }
-      )
+    await axios.post(
+      "/api/purok/getAll",
+      { organization_id: organization_id },
+      generateToken()[1],
+      { cancelToken }
+    )
       .then((result) => {
         setPurokList(result.data)
       })
@@ -486,22 +488,40 @@ const ManageHousehold = (props) => {
     }
   };
 
+  const handleConfirmMessage = () => {
+    if (mode == "ADD") {
+      return "Data you've entered will be gone."
+    }
+    if (mode == "EDIT") {
+      return "Any unsaved changes will be gone."
+    }
+  };
+
   return (
     <div>
       <Card>
         <Row justify="space-between">
           <Col>{printTitle()}</Col>
-          <Col>
-            <Button
-              type="primary"
-              style={{ float: "right" }}
-              onClick={() => {
-                NewHouseholdFormRef.current.submit();
-              }}
-              loading={loading}
-            >
-              Submit
-            </Button>
+          <Col className="mt-2">
+            <Space>
+            <ConfirmButton
+                  type="warning"
+                  modalTitle="Are you sure you want to leave this page?"
+                  modalContent={handleConfirmMessage()}
+                  text="Back"
+                  handleOk={() => history.replace(`/app/${organization_id}/residents/household/list`)}
+                  loading={loading}
+                />
+              <Button
+                type="primary"
+                onClick={() => {
+                  NewHouseholdFormRef.current.submit();
+                }}
+                loading={loading}
+              >
+                Submit
+              </Button>
+            </Space>
           </Col>
         </Row>
       </Card>
@@ -513,7 +533,7 @@ const ManageHousehold = (props) => {
         initialValues={householdInitialVal}
       >
         <Card title={<h1>Household Info</h1>}>
-          <HouseholdForm purokList={purokList}/>
+          <HouseholdForm purokList={purokList} />
         </Card>
       </Form>
 
@@ -602,7 +622,7 @@ const ManageHousehold = (props) => {
         okText={"Submit"}
         destroyOnClose={true}
       >
-        {isImportResidentModalVisible && "Import resident hell yeah"}
+        {isImportResidentModalVisible && "Import resident"}
       </Modal>
     </div>
   );

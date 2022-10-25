@@ -4,12 +4,14 @@ import axios from "axios";
 import { useParams, useHistory } from "react-router-dom";
 import { useAuth } from "contexts/AuthContext";
 
-import { Row, Col, Space, Card, Avatar, List, Tag, DatePicker, Badge as AntdBadge } from "antd";
+import { Row, Col, Space, Card, Avatar, List, Tag, DatePicker, Badge as AntdBadge, Select } from "antd";
 import { BsCircleFill } from "react-icons/bs";
 import Badge from "react-bootstrap/Badge";
 import { dummy_session } from "./fakedata";
 import "../../../../assets/css/bootstrap.badge.css";
 import { handlePageChange } from "helper/pagination";
+
+const { Option } = Select;
 
 const Audit = () => {
   //Initialize
@@ -26,13 +28,16 @@ const Audit = () => {
   //Pagination State
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(1)
-  const defaultPageSize = 4
+  const defaultPageSize = 10
   const [pageSize, setPageSize] = useState(defaultPageSize)
   const currentDate = moment();
   const [dateFilter, setDateFilter] = useState(currentDate)
+  const defaultSortFilter = "desc"
+  const [sortFilter, setSortFilter] = useState(defaultSortFilter)
 
   //Const for color
   const badgeColorPicker = (action) => {
+    action = action.toLowerCase()
     if (action == "create") {
       return "#00A36C";
     }
@@ -47,28 +52,35 @@ const Audit = () => {
   //Function
   const dateChange = (value) => {
     if (value != null) {
-      console.log("value", value.format("DD-MM-YYYY"))
       setDateFilter(value)
+    }
+  }
+
+  const sortChange = (value) => {
+    if (value != null) {
+      setSortFilter(value)
     }
   }
 
   const getPage = async () => {
     await axios.post(
       `/api/session/getPage`,
-      {currentPage, pageSize, dateFilter, organization_id:currentOrganization},
+      { currentPage, pageSize, dateFilter, sortFilter, organization_id: currentOrganization },
       generateToken()[1],
       { cancelToken }
-      ).then((res) => {
-        var data = res.data
-        console.log("data", data)
-        setAuditLog(data)
-      })
+    ).then((res) => {
+      var data = res.data
+      var list = data.list
+      var total = data.total
+      setAuditLog(list)
+      setTotal(total)
+    })
   }
 
   useEffect(() => {
     getPage()
-  }, [dateFilter])
-  
+  }, [dateFilter, pageSize, currentPage, sortFilter])
+
 
   return (
     <div>
@@ -78,7 +90,14 @@ const Audit = () => {
         </Col>
 
         <Col>
-          <DatePicker defaultValue={currentDate} onChange={(value) => dateChange(value)} />
+          <Space align="center">
+            <p className="m-0">Date until:</p>
+            <DatePicker defaultValue={currentDate} onChange={(value) => dateChange(value)} />
+            <Select className="w-100" defaultValue={defaultSortFilter} onChange={(value) => sortChange(value)}>
+              <Option value={"desc"}>Desc</Option>
+              <Option value={"asc"}>Asc</Option>
+            </Select>
+          </Space>
         </Col>
       </Row>
       <Card>
@@ -86,17 +105,17 @@ const Audit = () => {
           pagination={{
             current: currentPage,
             showSizeChanger: true,
-            defaultPageSize: 8,
-            pageSizeOptions: [8, 10, 20, 50, 100],
+            defaultPageSize: defaultPageSize,
+            pageSizeOptions: [5, 10, 20, 50, 100],
+            total,
             onShowSizeChange: (current, size) => {
-              console.log("current", current)
-              console.log("size", size)
+              setPageSize(size)
             },
             onChange: (page) => {
               handlePageChange(page, setCurrentPage)
             }
           }}
-          dataSource={dummy_session}
+          dataSource={auditLog}
           renderItem={(item) => (
             <List.Item className="w-100">
               <List.Item.Meta
@@ -113,7 +132,7 @@ const Audit = () => {
                 title={
                   <Space direction="horizontal">
                     <b style={{ fontSize: 18 }}>{item.name}</b>
-                    <h4 style={{ color: "#1565c0", margin: 0 }}>{item.createdAt}</h4>
+                    <h4 style={{ color: "#1565c0", margin: 0 }}>{moment(item.createdAt).format("MMM-DD-YYYY h:mm A")}</h4>
                   </Space>
                 }
                 description={
