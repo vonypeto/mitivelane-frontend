@@ -24,7 +24,7 @@ export async function updateAccount(
         data.profile_data = response.data.profile_url;
         // localStorage.setitem(PROFILE_URL, JSON.stringify(data));
         setProfileAvatar(response.data?.profile_url);
-        // setPhoto(data);
+        // setPhoto(data);s
         // setIsLoading(false);
         setDisplayName(response.data?.full_name);
         localStorage.setItem(PROFILE_URL, JSON.stringify(data));
