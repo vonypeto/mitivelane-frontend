@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { SketchPicker } from "react-color";
 import { BsPaintBucket } from "react-icons/bs";
-
+import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 const ColorPicker = (props) => {
   const { colorChange, color = "" } = props;
-
   const [visible, setVisible] = useState(false);
   const [pickerColor, setPickerColor] = useState(color);
   const [boxColor, setBoxColor] = useState(color);
+  const [active, setActive] = useState(false);
+
+  const onHandleActive = () => {
+    setActive(!active);
+  };
 
   useEffect(() => {
     setBoxColor(color);
@@ -28,7 +32,7 @@ const ColorPicker = (props) => {
   };
 
   return (
-    <div className="color-picker d-flex color-hover ">
+    <div className="color-picker d-flex color-hover " onClick={onHandleActive}>
       <div className="color-picker-dropdown d-flex">
         <div
           className="text-center d-flex "
@@ -44,7 +48,25 @@ const ColorPicker = (props) => {
           className="color d-flex"
           style={{ backgroundColor: boxColor ? boxColor : "#ffffff" }}
           onClick={onPickerDropdown}
-        />
+        />{" "}
+        <div
+          className="text-center d-flex "
+          style={{ paddingLeft: 5, margin: "auto", fontSize: "1rem" }}
+        >
+          {active ? (
+            <CaretUpOutlined
+              size={30}
+              className="text-center "
+              style={{ paddingRight: 5, margin: "auto" }}
+            />
+          ) : (
+            <CaretDownOutlined
+              size={30}
+              className="text-center "
+              style={{ paddingRight: 5, margin: "auto" }}
+            />
+          )}
+        </div>
       </div>
       {visible && (
         <>

@@ -135,16 +135,21 @@ const CertDisplay = React.memo(
                 Download
               </Button>
               <div className="d-flex">
+                <PopOverData
+                  type="lineHeight"
+                  data={data}
+                  setData={setParentData}
+                />
+                <PopOverData
+                  type="fontSize"
+                  data={data}
+                  setData={setParentData}
+                />
                 <ColorPicker
                   className="btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"
                   color={color}
                   colorChange={ontopNavColorClick}
                 />
-                <PopOverData
-                  type="lineHeight"
-                  data={data}
-                  setData={setParentData}
-                />{" "}
               </div>
               <FontPicker
                 className=" btn edit btn-primary ant-select ant-select-single ant-select-show-arrow"

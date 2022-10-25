@@ -81,10 +81,10 @@ const Certificates = () => {
                     onChange={onChangeSwitch}
                   >
                     <Radio.Button value={true}>
-                      <AppstoreOutlined />
+                      <UnorderedListOutlined />
                     </Radio.Button>
                     <Radio.Button value={false}>
-                      <UnorderedListOutlined />
+                      <AppstoreOutlined />
                     </Radio.Button>
                   </Radio.Group>
                 </div>
@@ -98,10 +98,10 @@ const Certificates = () => {
                     onChange={onChangeSwitch}
                   >
                     <Radio.Button value={true}>
-                      <AppstoreOutlined />
+                      <UnorderedListOutlined />
                     </Radio.Button>
                     <Radio.Button value={false}>
-                      <UnorderedListOutlined />
+                      <AppstoreOutlined />
                     </Radio.Button>
                   </Radio.Group>
                 </div>

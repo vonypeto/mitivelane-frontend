@@ -1,225 +1,42 @@
 import React, { useState, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Button,
-  Card,
-  Avatar,
-  Dropdown,
-  Table,
-  Menu,
-  Tag,
-} from "antd";
+import { Row, Col, Button, Card, Avatar, Table, Select, Tag } from "antd";
 import ChartWidget from "components/shared-components/ChartWidget";
 import AvatarStatus from "components/shared-components/AvatarStatus";
-import DataDisplayWidget from "components/shared-components/DataDisplayWidget";
-
+import AvatarDocument from "components/shared-components/AvatarDocument";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-
 import {
   VisitorChartData,
   NewMembersData,
   RecentBlotterCaseData,
+  DisplayDataSet,
+  newJoinMemberOption,
+  latestRecentBlotterCaseOption,
+  cardDropdown,
+  tableColumns,
 } from "./HomeDashboard";
-import {
-  UserAddOutlined,
-  FileExcelOutlined,
-  PrinterOutlined,
-  PlusOutlined,
-  EllipsisOutlined,
-  StopOutlined,
-  ReloadOutlined,
-  IdcardOutlined,
-  WomanOutlined,
-  TeamOutlined,
-  ManOutlined,
-} from "@ant-design/icons";
-import utils from "utils";
+import { UserAddOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
+const { Option } = Select;
 
-const DisplayDataSet = () => (
-  <Row gutter={16}>
-    <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-      <DataDisplayWidget
-        icon={<ManOutlined />}
-        value="13"
-        title="Male"
-        color="blue"
-        vertical={true}
-        avatarSize={55}
-      />
-      <DataDisplayWidget
-        icon={<WomanOutlined />}
-        value="15"
-        title="Female"
-        color="volcano"
-        vertical={true}
-        avatarSize={55}
-      />
-    </Col>
-    <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-      <DataDisplayWidget
-        icon={<TeamOutlined />}
-        value="28"
-        title="Population"
-        color="lime"
-        vertical={true}
-        avatarSize={55}
-      />
-      <DataDisplayWidget
-        icon={<IdcardOutlined />}
-        value="17"
-        title="Registered Voter"
-        color="cyan"
-        vertical={true}
-        avatarSize={55}
-      />
-    </Col>
-  </Row>
-);
-const newJoinMemberOption = (
-  <Menu>
-    <Menu.Item key="0">
-      <span>
-        <div className="d-flex align-items-center">
-          <PlusOutlined />
-          <span className="ml-2">Add all</span>
-        </div>
-      </span>
-    </Menu.Item>
-    <Menu.Item key="1">
-      <span>
-        <div className="d-flex align-items-center">
-          <StopOutlined />
-          <span className="ml-2">Disable all</span>
-        </div>
-      </span>
-    </Menu.Item>
-  </Menu>
-);
-
-const latestRecentBlotterCaseOption = (
-  <Menu>
-    <Menu.Item key="0">
-      <span>
-        <div className="d-flex align-items-center">
-          <ReloadOutlined />
-          <span className="ml-2">Refresh</span>
-        </div>
-      </span>
-    </Menu.Item>
-    <Menu.Item key="1">
-      <span>
-        <div className="d-flex align-items-center">
-          <PrinterOutlined />
-          <span className="ml-2">Print</span>
-        </div>
-      </span>
-    </Menu.Item>
-    <Menu.Item key="12">
-      <span>
-        <div className="d-flex align-items-center">
-          <FileExcelOutlined />
-          <span className="ml-2">Export</span>
-        </div>
-      </span>
-    </Menu.Item>
-  </Menu>
-);
-
-const cardDropdown = (menu) => (
-  <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-    <a
-      href="/#"
-      className="text-gray font-size-lg"
-      onClick={(e) => e.preventDefault()}
-    >
-      <EllipsisOutlined />
-    </a>
-  </Dropdown>
-);
-
-const tableColumns = [
-  {
-    title: "ID",
-    dataIndex: "blotter_id",
-    key: "blotter_id",
-  },
-  {
-    title: "Applicant",
-    dataIndex: "applicant",
-    key: "applicant",
-    render: (text, record) => (
-      <div className="d-flex align-items-center">
-        <Avatar
-          size={30}
-          className="font-size-sm"
-          style={{ backgroundColor: record.reporters[0].avatarColor }}
-        >
-          {utils.getNameInitial(record.reporters[0].firstname)}
-        </Avatar>
-        <span className="ml-2">{record.reporters[0].firstname}</span>
-      </div>
-    ),
-  },
-  {
-    title: "Date Reported",
-    dataIndex: "createdAt",
-    sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    render: (_, record) => (
-      <div className="d-flex align-items-center">
-        <span className="ml-2">
-          {new Date(record.createdAt).toDateString()}
-        </span>
-      </div>
-    ),
-  },
-  {
-    title: "Classification",
-    dataIndex: "classification",
-    key: "classification",
-  },
-  {
-    title: () => <div className="text-right">Status</div>,
-    key: "status",
-    render: (_, record) => (
-      <div className="text-right">
-        <Tag
-          className="mr-0"
-          color={
-            record.status === "Approved"
-              ? "cyan"
-              : record.status === "Pending"
-              ? "blue"
-              : "volcano"
-          }
-        >
-          {record.status}
-        </Tag>
-      </div>
-    ),
-  },
-];
-
+const handleChange = (value) => {
+  console.log(`selected ${value}`);
+};
 export const DefaultDashboard = () => {
   const { currentOrganization, generateToken } = useAuth();
-
   const [visitorChartData] = useState(VisitorChartData);
   const [newMembersData] = useState(NewMembersData);
   const [recentBlotterCaseData] = useState(RecentBlotterCaseData);
   const { direction } = useSelector((state) => state.theme);
-
   const [blotterlistrequest, setBlotterListRequest] = useState([]);
   // const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
   const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
     true
   );
 
-  useEffect(() => {
-    getLatestBlotterRequests();
-  }, []);
+  const [documentCertList, setDocumentCertList] = useState([]);
+  const [documentBlotterList, setDocumentBlotterList] = useState([]);
 
   const getLatestBlotterRequests = () => {
     axios
@@ -238,10 +55,27 @@ export const DefaultDashboard = () => {
       });
   };
 
+  const getDocumentsData = (type) => {
+    axios
+      .get(`/api/cert-display/name/data?cert_type=${type}`, generateToken()[1])
+      .then((response) => {
+        if (type) console.log(response.data);
+
+        if (type == "cert") setDocumentCertList(response.data);
+        if (type == "blotter") setDocumentBlotterList(response.data);
+      });
+  };
+
+  useEffect(() => {
+    getLatestBlotterRequests();
+    getDocumentsData("cert");
+    getDocumentsData("blotter");
+  }, []);
+
   return (
     <>
       <Row gutter={16}>
-        <Col xs={24} sm={24} md={24} lg={18}>
+        <Col xs={24} sm={24} md={24} lg={24} xl={18}>
           <Row gutter={16}>
             <Col span={24}>
               <ChartWidget
@@ -271,7 +105,7 @@ export const DefaultDashboard = () => {
           </Row>
         </Col>
 
-        <Col xs={24} sm={24} md={24} lg={6}>
+        <Col xs={24} sm={24} md={24} lg={24} xl={6}>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
               <DisplayDataSet />
@@ -279,8 +113,8 @@ export const DefaultDashboard = () => {
             {/* {
               annualStatisticData.map((elm, i) => (
                 <Col xs={24} sm={24} md={24} lg={24} xl={24}  key={i}>
-                  <StatisticWidget 
-                    title={elm.title} 
+                  <StatisticWidget
+                    title={elm.title}
                     value={elm.value}
                     status={elm.status}
                     subtitle={elm.subtitle}
@@ -311,11 +145,91 @@ export const DefaultDashboard = () => {
                           type="default"
                           size="small"
                         >
-                          Add
+                          Edit
                         </Button>
                       </div>
                     </div>
                   ))}
+                </div>
+              </Card>
+            </Col>{" "}
+            <Col xs={24} sm={24} md={24} lg={24}>
+              <Card title="Set Active Documents">
+                <div className="mt-3">
+                  <div
+                    className={`d-flex align-items-center justify-content-between mb-4`}
+                  >
+                    <div>
+                      <AvatarDocument
+                        name="Clearance"
+                        icon={
+                          <UserAddOutlined
+                            style={{ color: "#0979D9", fontSize: 28 }}
+                          />
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Select
+                        defaultValue="lucy"
+                        style={{
+                          width: 120,
+                        }}
+                        onChange={handleChange}
+                      >
+                        {documentCertList.map((t, i) => {
+                          return (
+                            <Option key={i} value={t.certificate_id}>
+                              {t.title}
+                            </Option>
+                          );
+                        })}
+                        <Option value="lucy">Lucy</Option>
+                        <Option value="disabled" disabled>
+                          Disabled
+                        </Option>
+                        <Option value="Yiminghe">yiminghe</Option>
+                      </Select>
+                    </div>
+                  </div>
+                </div>{" "}
+                <div className="mt-3">
+                  <div
+                    className={`d-flex align-items-center justify-content-between mb-4`}
+                  >
+                    <div>
+                      <AvatarDocument
+                        name="Blotter"
+                        icon={
+                          <UserAddOutlined
+                            style={{ color: "#0979D9", fontSize: 28 }}
+                          />
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Select
+                        defaultValue="lucy"
+                        style={{
+                          width: 120,
+                        }}
+                        onChange={handleChange}
+                      >
+                        {documentBlotterList.map((t, i) => {
+                          return (
+                            <Option key={i} value={t.certificate_id}>
+                              {t.title}
+                            </Option>
+                          );
+                        })}
+                        <Option value="lucy">Lucy</Option>
+                        <Option value="disabled" disabled>
+                          Disabled
+                        </Option>
+                        <Option value="Yiminghe">yiminghe</Option>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
               </Card>
             </Col>
