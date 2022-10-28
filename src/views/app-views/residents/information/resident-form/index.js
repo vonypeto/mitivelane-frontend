@@ -94,6 +94,7 @@ const MainFormList = (props) => {
             spouse: resident.spouse,
             telephone: resident.telephone,
             mobile_number: resident.mobile_number,
+            email: resident.email,
             pag_ibig: resident.pag_ibig,
             philhealth: resident.philhealth,
             sss: resident.sss,
@@ -168,7 +169,7 @@ const MainFormList = (props) => {
       history.push(
         `/app/${organization_id}/residents/resident-information/list`
       );
-      setSubmitLoading(false);
+      setSubmitLoading(false);form
     }, 1000);
   };
 

@@ -114,6 +114,22 @@ const MainFormView = (props) => {
               <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
+                    type={UserOutlined}
+                    className="mr-3 text-dark font-size-md"
+                  />
+                  <span className=" font-weight-bold text-muted-resident">
+                    Gender:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={15} className="text-right">
+                  <span className="ml-5 text-detail-resident font-weight-bold">
+                    <b>{props.residentData.gender}</b>
+                  </span>
+                </Col>
+              </Row>
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <Icon
                     type={StarOutlined}
                     className="mr-3 text-dark font-size-md"
                   />

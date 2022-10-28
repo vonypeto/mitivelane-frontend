@@ -25,7 +25,7 @@ import utils from "utils";
 
 
 const current = new Date();
-const lengthUnit = ["cm", "mm", "m"];
+const lengthUnit = ["cm", "in", "m"];
 const weightUnit = ["kg", "g", "mg"];
 const dateFormat = "YYYY/MM/DD";
 const { Dragger } = Upload;
@@ -75,6 +75,12 @@ const rules = {
       message: "Please enter your birthday",
     },
   ],
+  gender: [
+    {
+      required: true,
+      message: "Please enter your gender",
+    },
+  ],
   middlename: [
     {
       required: true,
@@ -110,6 +116,12 @@ const rules = {
     {
       required: true,
       message: "Please enter item cost",
+    },
+  ],
+  voter_status: [
+    {
+      required: true,
+      message: "Please enter your voter status",
     },
   ],
 };
@@ -240,7 +252,7 @@ const MainForm = (props) => {
 
                         <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
                           <Form.Item name="height" label="Height"
-                            rules={rules.height} initialValue={0}
+                            rules={rules.height}
                           >
                             <InputNumber
                               min={0}
@@ -272,7 +284,7 @@ const MainForm = (props) => {
 
                         <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
                           <Form.Item name="weight" label="Weight"
-                            rules={rules.height} initialValue={0}
+                            rules={rules.height}
                           >
                             <InputNumber
                               min={0}
@@ -300,7 +312,7 @@ const MainForm = (props) => {
                       </Row>
 
                     </Col>
-                    <Col xs={24} sm={24} md={24}>
+                    <Col xs={12} sm={12} md={12}>
                       <Form.Item
                         name="birthday"
                         label="Birthday"
@@ -317,8 +329,20 @@ const MainForm = (props) => {
                         />
                       </Form.Item>
                     </Col>
+                    <Col xs={12} sm={12} md={12}>
+                      <Form.Item name="gender" label="Gender" initialValue={"Male"} rules={rules.gender}>
+                        <Select className="w-100" placeholder="Gender">
+                          <Option key={1} value={"Male"}>
+                            Male
+                          </Option>
+                          <Option key={2} value={"Female"}>
+                            Female
+                          </Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="age" label="Age" rules={rules.age} initialValue={1}>
+                      <Form.Item name="age" label="Age" rules={rules.age}>
                         <InputNumber
                           min={1}
                           className="w-100"
@@ -415,7 +439,7 @@ const MainForm = (props) => {
               <div key="b">
                 {" "}
                 <Card title="Additional Details">
-                  <Form.Item name="voter_status" label="Voter Status" initialValue={"Registered"}>
+                  <Form.Item name="voter_status" label="Voter Status" initialValue={"Registered"} rules={rules.voter_status}>
                     <Select className="w-100" placeholder="Voter Status">
                       <Option key={1} value={"Registered"}>
                         Registered

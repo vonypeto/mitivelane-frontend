@@ -1,29 +1,24 @@
 
-//Import
-import axios from "axios";
-import { useAuth } from "contexts/AuthContext";
+export const CreateSession = async (name, message, action, module, organization_id, apiOptions) => {
+    const values = {
+        name, message, action, module
+    }
 
-export const Session = () => {
-    const source = axios.CancelToken.source();
-    const cancelToken = source.token;
-    const { generateToken } = useAuth();
+    const {axios, generateToken, cancelToken} = apiOptions
 
-    const Create = async (values, organization_id) => {
-        try {
-            await axios
-                .post(
-                    "/api/supply/session/add",
-                    { values, organization_id },
-                    generateToken()[1],
-                    { cancelToken }
-                )
-            console.log("Success")
-        } catch (error) {
-            console.log(error);
-            message.error("Error in database connection!!");
-        }
-
+    try {
+        await axios
+            .post(
+                "/api/session/add",
+                { values, organization_id },
+                generateToken()[1],
+                { cancelToken }
+            )
+        console.log("Success")
+    } catch (error) {
+        console.log(error);
     }
 }
+
 
 

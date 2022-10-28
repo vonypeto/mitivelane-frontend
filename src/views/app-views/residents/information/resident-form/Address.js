@@ -108,6 +108,11 @@ const AddressField = (props) => {
 										<Input placeholder="Mobile Phone" />
 									</Form.Item>
 								</Col>
+								<Col xs={24} sm={24} md={12}>
+									<Form.Item name="email" label="Email Address" >
+										<Input placeholder="Email Address" />
+									</Form.Item>
+								</Col>
 
 							</Row>
 

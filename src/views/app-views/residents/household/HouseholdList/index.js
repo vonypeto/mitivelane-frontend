@@ -89,6 +89,7 @@ const AyudaTable = (props) => {
 
   //State
   const [householdList, sethouseholdList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   //useEffect
   useEffect(() => {
@@ -97,6 +98,7 @@ const AyudaTable = (props) => {
 
   //Axios
   const getAllHousehold = async () => {
+    setLoading(true)
     try {
       const households = await axios.post(
         "/api/household/getAll",
@@ -110,11 +112,14 @@ const AyudaTable = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
+
+    setLoading(false)
   };
 
   const popHousehold = async (household_id) => {
+    setLoading(true)
     try {
-      const households = await axios.post(
+      await axios.post(
         "/api/household/delete",
         { household_id, organization_id: organization_id },
         generateToken()[1],
@@ -124,10 +129,14 @@ const AyudaTable = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
+    
+    message.success(`Deleted selected household`);
+    setLoading(false)
   };
 
   //Functions
   const deleteHousehold = (row) => {
+
     const household_id = row.household_id;
     var currentHouseholdList = [...householdList];
     var objIndex = currentHouseholdList.findIndex(
@@ -135,7 +144,6 @@ const AyudaTable = (props) => {
     );
     currentHouseholdList.splice(objIndex, 1);
     sethouseholdList(currentHouseholdList);
-    message.success(`Deleting household id ${row.household_id}`);
 
     popHousehold(row.household_id);
   };
@@ -211,6 +219,7 @@ const AyudaTable = (props) => {
         }}
         rowKey="household_id"
         pagination="true"
+        loading={loading}
         bordered
       />
     </Card>
