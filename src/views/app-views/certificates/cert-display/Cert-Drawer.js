@@ -3,10 +3,13 @@ import { Avatar, Tag, Row, Col, Drawer, Card, Divider, Button } from "antd";
 import { EditOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { saveAs } from "file-saver";
+import { useHistory } from "react-router-dom";
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 const UserView = (props) => {
   const { data, visible, close } = props;
-  let ratio = 1.41451612903;
+  //let ratio = 1.41451612903;
+  let history = useHistory();
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   let elm = data?.elm;
@@ -18,7 +21,12 @@ const UserView = (props) => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
   };
-
+  const navigateData = (data) => {
+    console.log(data);
+    return history.push(
+      `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/${data}`
+    );
+  };
   useEffect(
     () => {
       const listener = window.addEventListener(
@@ -129,7 +137,12 @@ const UserView = (props) => {
         <Card className="bottom-right-Drawer" style={{ width: "100%" }}>
           <Row>
             <Col xs={12} sm={12} md={12} lg={12} xl={12}>
-              <Button icon={<EditOutlined />}> Edit</Button>
+              <Button
+                icon={<EditOutlined />}
+                onClick={() => navigateData(data?.id)}
+              >
+                Edit
+              </Button>
             </Col>
             <Col className="text-right" xs={12} sm={12} md={12} lg={12} xl={12}>
               {elm ? (

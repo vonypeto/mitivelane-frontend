@@ -8,7 +8,7 @@ import CertRequest from "./Cert-Request";
 
 const Certificates = () => {
   const [pdfFile, setPdfFile] = useState([]);
-  const [switchCert, setSwitchCert] = useState(true);
+  const [switchCert, setSwitchCert] = useState(false);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   function handleChange(value) {
@@ -81,10 +81,10 @@ const Certificates = () => {
                     onChange={onChangeSwitch}
                   >
                     <Radio.Button value={true}>
-                      <AppstoreOutlined />
+                      <UnorderedListOutlined />
                     </Radio.Button>
                     <Radio.Button value={false}>
-                      <UnorderedListOutlined />
+                      <AppstoreOutlined />
                     </Radio.Button>
                   </Radio.Group>
                 </div>
@@ -98,10 +98,10 @@ const Certificates = () => {
                     onChange={onChangeSwitch}
                   >
                     <Radio.Button value={true}>
-                      <AppstoreOutlined />
+                      <UnorderedListOutlined />
                     </Radio.Button>
                     <Radio.Button value={false}>
-                      <UnorderedListOutlined />
+                      <AppstoreOutlined />
                     </Radio.Button>
                   </Radio.Group>
                 </div>

@@ -220,7 +220,7 @@ export const defaultTemplateCert = [
   {
     template_id: 2,
     certType: "cert",
-    templateType: "simple_noBorder",
+    templateType: "simple_no_border",
     pdf: FileTestNoBorder,
     type: "template",
   },

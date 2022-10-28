@@ -5,7 +5,6 @@ import { Skeleton, Card, Col, Row, Menu, Button, Input } from "antd";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import {
-  EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   CopyOutlined,
@@ -21,11 +20,6 @@ import { useCert } from "contexts/CertificateContext";
 const SinglePage = React.memo(
   (props) => {
     //  const { currentList } = useCert();
-    let myInp = null;
-    let history = useHistory();
-    const [numPages, setNumPages] = useState(null);
-    const documentWrapperRef = useRef();
-    const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
     const {
       data,
       pdf,
@@ -37,8 +31,14 @@ const SinglePage = React.memo(
       deleteRow,
       duplicateDocument,
     } = props;
-    let id = data;
+    let myInp = null;
+    let history = useHistory();
     const [renderedPageNumber, setRenderedPageNumber] = useState(null);
+    const [numPages, setNumPages] = useState(null);
+    const documentWrapperRef = useRef();
+    const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
+
+    let id = data;
 
     // const data = useMemo(() => ({ pdf }), [pdf]);
 
@@ -73,7 +73,7 @@ const SinglePage = React.memo(
         case "create":
           break;
         case "view":
-          props.onHandle(pdf, createdAt, updatedAt, title);
+          props.onHandle(pdf, createdAt, updatedAt, title, id);
           break;
         case "drawer":
           break;
@@ -255,7 +255,7 @@ const SinglePage = React.memo(
       switch (templateType) {
         case "simple_border":
           return <div className="text-center">Classic Bordered</div>;
-        case "simple_noBorder":
+        case "simple_no_border":
           return <div className="text-center">Classic Borderless</div>;
       }
     };

@@ -199,6 +199,37 @@ const CertOrganization = React.memo(
           //multiform signature
         } else if (type == "multiform") {
           //default top single form
+          console.log(e.target.value, title, type);
+          let signature = signatureImage;
+
+          if (title.type == "position")
+            setSignatureImage((prevState) => {
+              const newState = prevState.map((obj) => {
+                // 👇️ if id equals 2, update country property
+                if (obj.id === title.id) {
+                  return { ...obj, formName2: e.target.value };
+                }
+
+                // 👇️ otherwise return object as is
+                return obj;
+              });
+
+              return newState;
+            });
+          if (title.type == "name")
+            setSignatureImage((prevState) => {
+              const newState = prevState.map((obj) => {
+                // 👇️ if id equals 2, update country property
+                if (obj.id === title.id) {
+                  return { ...obj, formName: e.target.value };
+                }
+
+                // 👇️ otherwise return object as is
+                return obj;
+              });
+
+              return newState;
+            });
         } else {
           form.setFieldsValue({
             [title]: e.target.value,
@@ -407,12 +438,17 @@ const CertOrganization = React.memo(
                                                 name={`name${data.id}`}
                                               >
                                                 <Input
-                                                  // onChange={(e) => {
-                                                  //   onFill(
-                                                  //     e,
-                                                  //     formItems.formName,"multiform"
-                                                  //   );
-                                                  // }}
+                                                  onChange={(e) => {
+                                                    onFill(
+                                                      e,
+                                                      {
+                                                        type: "name",
+                                                        id: data.id,
+                                                      },
+
+                                                      "multiform"
+                                                    );
+                                                  }}
                                                   style={{
                                                     border: "none",
                                                     fontWeight: 900,
@@ -427,12 +463,16 @@ const CertOrganization = React.memo(
                                                 name={`position${data.id}`}
                                               >
                                                 <Input
-                                                  // onChange={(e) => {
-                                                  //   onFill(
-                                                  //     e,
-                                                  //     formItems.formName,"multiform"
-                                                  //   );
-                                                  // }}
+                                                  onChange={(e) => {
+                                                    onFill(
+                                                      e,
+                                                      {
+                                                        type: "position",
+                                                        id: data.id,
+                                                      },
+                                                      "multiform"
+                                                    );
+                                                  }}
                                                   style={{
                                                     border: "none",
                                                     fontWeight: 900,
