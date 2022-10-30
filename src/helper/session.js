@@ -1,4 +1,3 @@
-
 export const CreateSession = async (name, message, action, module, organization_id, apiOptions) => {
     const values = {
         name, message, action, module

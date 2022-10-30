@@ -25,6 +25,11 @@ const HouseholdForm = (props) => {
       required: true
     },
     ],
+    address: [{
+      message: "Please input house address!!",
+      required: true
+    },
+    ],
     purok: [{
       message: "Please input household purok!!",
       required: true
@@ -59,8 +64,18 @@ const HouseholdForm = (props) => {
 
   return (
     <Row gutter={15}>
+      
+      <Col xxl={18} xl={18} lg={18} span={24}>
+        <Form.Item
+          name="address"
+          label="House Address"
+          rules={rules.address}
+        >
+          <Input />
+        </Form.Item>
+      </Col>
 
-      <Col xl={6} lg={12} md={12} span={24}>
+      <Col xxl={6} xl={6} lg={6} md={6} span={24}>
         <Form.Item
           name="house_number"
           label="House Number"
@@ -80,7 +95,7 @@ const HouseholdForm = (props) => {
         </Form.Item>
       </Col>
 
-      <Col xl={9} lg={8} md={12} span={24}>
+      <Col xl={9} lg={12} md={12} span={24}>
         <Form.Item
           name="purok"
           label="Purok"
@@ -120,7 +135,7 @@ const HouseholdForm = (props) => {
         </Form.Item>
       </Col>
 
-      <Col xl={6} lg={7} md={12} span={24}>
+      <Col xl={6} lg={8} md={12} span={24}>
         <Form.Item
           name="water_source"
           label="Water Source"

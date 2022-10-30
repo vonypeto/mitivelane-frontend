@@ -115,7 +115,7 @@ const PurokArea = (props) => {
   useEffect(() => {
     getAreasPage();
     console.log("currentUser", currentUser.displayName)
-    // CreateSession("Von", "nag jabol", "delete", "purok", organization_id, apiOptions)
+    CreateSession("Giann", "visited purok page", "create", "purok", organization_id, apiOptions)
   }, [currentPage, pageSize, tableScreen])
 
   //Axios

@@ -169,7 +169,7 @@ const MainFormList = (props) => {
       history.push(
         `/app/${organization_id}/residents/resident-information/list`
       );
-      setSubmitLoading(false);form
+      setSubmitLoading(false); form
     }, 1000);
   };
 
@@ -260,14 +260,23 @@ const MainFormList = (props) => {
                     : "View Resident"}{" "}
               </h2>
               <div className="mb-3">
-                <ConfirmButton
-                  className="mr-2"
-                  type="warning"
-                  modalTitle="Are you sure you want to leave this page?"
-                  modalContent="Data you've entered will be gone."
-                  text={mode === VIEW ? "Back" : "Discard"}
-                  handleOk={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
-                />
+                {mode === VIEW ?
+                  <Button
+                    onClick={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
+                  >
+                    Back
+                  </Button>
+                  :
+                  <ConfirmButton
+                    className="mr-2"
+                    type="warning"
+                    modalTitle="Are you sure you want to leave this page?"
+                    modalContent="Data you've entered will be gone."
+                    text="Discard"
+                    handleOk={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
+                  />
+                }
+
                 {mode === VIEW ? null : (
                   <Button
                     type="primary"

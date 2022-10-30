@@ -37,12 +37,18 @@ const AyudaTable = (props) => {
   //Table
   const HouseholdTableColumns = [
     {
-      title: "Household Number",
+      title: "H. Number",
       dataIndex: "house_number",
       key: "house_number",
     },
     {
-      title: "Household Name",
+      title: "Household Address",
+      dataIndex: "address",
+      key: "address",
+      width: 12
+    },
+    {
+      title: "H. Name",
       dataIndex: "name",
       key: "name",
     },
@@ -52,7 +58,7 @@ const AyudaTable = (props) => {
       key: "purok",
     },
     {
-      title: "House Status",
+      title: "Status",
       dataIndex: "house_status",
       key: "house_status",
     },
