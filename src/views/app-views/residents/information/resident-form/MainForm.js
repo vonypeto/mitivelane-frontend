@@ -23,6 +23,7 @@ import CustomAvatar from "components/shared-components/Avatar";
 import moment from "moment";
 import utils from "utils";
 
+import { resident_details } from "./AddResidentRules";
 
 const current = new Date();
 const lengthUnit = ["cm", "in", "m"];
@@ -30,109 +31,6 @@ const weightUnit = ["kg", "g", "mg"];
 const dateFormat = "YYYY/MM/DD";
 const { Dragger } = Upload;
 const { Option } = Select;
-
-const rules = {
-  number: [
-    {
-      message: "This data must be number only!!",
-      type: "email"
-    },
-  ],
-  firstname: [
-    {
-      required: true,
-      message: "Please enter first name",
-    },
-  ],
-  lastname: [
-    {
-      required: true,
-      message: "Please enter last name",
-    },
-  ],
-  age: [
-    {
-      required: true,
-      message: "Please enter your age",
-      type: "integer",
-    }
-  ],
-  weight: [
-    {
-      required: true,
-      message: "Please enter your weight",
-    },
-  ],
-  height: [
-    {
-      required: true,
-      message: "Please enter your height",
-    },
-  ],
-  birthday: [
-    {
-      required: true,
-      message: "Please enter your birthday",
-    },
-  ],
-  gender: [
-    {
-      required: true,
-      message: "Please enter your gender",
-    },
-  ],
-  middlename: [
-    {
-      required: true,
-      message: "Please enter middle name",
-    },
-  ],
-  alias: [
-    {
-      required: true,
-      message: "Please enter alias",
-    },
-  ],
-  description: [
-    {
-      required: true,
-      message: "Please enter product description",
-    },
-  ],
-  price: [
-    {
-      required: true,
-      message: "Please enter product price",
-    },
-  ],
-  comparePrice: [],
-  taxRate: [
-    {
-      required: true,
-      message: "Please enter tax rate",
-    },
-  ],
-  cost: [
-    {
-      required: true,
-      message: "Please enter item cost",
-    },
-  ],
-  voter_status: [
-    {
-      required: true,
-      message: "Please enter your voter status",
-    },
-  ],
-};
-
-const imageUploadProps = {
-  name: "file",
-  multiple: true,
-  listType: "picture-card",
-  showUploadList: false,
-  action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-};
 
 const beforeUpload = (file) => {
   const fileTypeValid = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
@@ -211,7 +109,7 @@ const MainForm = (props) => {
                       <Form.Item
                         name="lastname"
                         label="Last Name"
-                        rules={rules.lastname}
+                        rules={resident_details.last_name}
 
                       >
                         <Input placeholder="Last Name" />
@@ -221,7 +119,7 @@ const MainForm = (props) => {
                       <Form.Item
                         name="firstname"
                         label="First Name"
-                        rules={rules.firstname}
+                        rules={resident_details.first_name}
                       >
                         <Input placeholder="First Name" />
                       </Form.Item>
@@ -230,13 +128,13 @@ const MainForm = (props) => {
                       <Form.Item
                         name="middlename"
                         label="Middle Name"
-                        rules={rules.middlename}
+                        rules={resident_details.middle_name}
                       >
                         <Input placeholder="Middle Name" />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="alias" label="Alias" rules={rules.alias}>
+                      <Form.Item name="alias" label="Alias" rules={resident_details.alias}>
                         <Input placeholder="Alias" />
                       </Form.Item>
                     </Col>
@@ -252,7 +150,7 @@ const MainForm = (props) => {
 
                         <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
                           <Form.Item name="height" label="Height"
-                            rules={rules.height}
+                            rules={resident_details.height}
                           >
                             <InputNumber
                               min={0}
@@ -284,7 +182,7 @@ const MainForm = (props) => {
 
                         <Col xs={19} sm={20} md={16} lg={18} xl={20} xxl={20}>
                           <Form.Item name="weight" label="Weight"
-                            rules={rules.height}
+                            rules={resident_details.height}
                           >
                             <InputNumber
                               min={0}
@@ -316,7 +214,7 @@ const MainForm = (props) => {
                       <Form.Item
                         name="birthday"
                         label="Birthday"
-                        rules={rules.birthday}
+                        rules={resident_details.birthday}
                         initialValue={moment(
                           `${current.getFullYear()}/${current.getMonth() + 1
                           }/${current.getDate()}`,
@@ -330,7 +228,7 @@ const MainForm = (props) => {
                       </Form.Item>
                     </Col>
                     <Col xs={12} sm={12} md={12}>
-                      <Form.Item name="gender" label="Gender" initialValue={"Male"} rules={rules.gender}>
+                      <Form.Item name="gender" label="Gender" initialValue={"Male"} rules={resident_details.gender}>
                         <Select className="w-100" placeholder="Gender">
                           <Option key={1} value={"Male"}>
                             Male
@@ -342,7 +240,7 @@ const MainForm = (props) => {
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="age" label="Age" rules={rules.age}>
+                      <Form.Item name="age" label="Age" rules={resident_details.age}>
                         <InputNumber
                           min={1}
                           className="w-100"
@@ -355,9 +253,27 @@ const MainForm = (props) => {
                       <Form.Item
                         name="birth_of_place"
                         label="Birth of Place"
-                        rules={rules.birth_of_place}
+                        rules={resident_details.birth_of_place}
                       >
                         <Input placeholder="Birth of Place" />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={12} sm={12} md={12}>
+                      <Form.Item name="blood_type" label="Blood Type" initialValue={"A"} rules={resident_details.blood_type}>
+                        <Select className="w-100" placeholder="Blood Type">
+                          <Option key={1} value={"A"}>
+                            A
+                          </Option>
+                          <Option key={2} value={"B"}>
+                            B
+                          </Option>
+                          <Option key={3} value={"AB"}>
+                            AB
+                          </Option>
+                          <Option key={4} value={"O"}>
+                            O
+                          </Option>
+                        </Select>
                       </Form.Item>
                     </Col>
                   </Row>
@@ -439,7 +355,7 @@ const MainForm = (props) => {
               <div key="b">
                 {" "}
                 <Card title="Additional Details">
-                  <Form.Item name="voter_status" label="Voter Status" initialValue={"Registered"} rules={rules.voter_status}>
+                  <Form.Item name="voter_status" label="Voter Status" initialValue={"Registered"} rules={resident_details.voter_status}>
                     <Select className="w-100" placeholder="Voter Status">
                       <Option key={1} value={"Registered"}>
                         Registered

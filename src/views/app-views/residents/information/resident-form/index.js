@@ -5,7 +5,7 @@ import Flex from "components/shared-components/Flex";
 import MainForm from "./MainForm";
 import MainFormView from "./MainFormView";
 import { useHistory } from "react-router-dom";
-import Address from "./Address";
+import AddressContacts from "./AddressContacts";
 import BlotterRecords from "./BlotterRecords";
 import SocialWelfare from "./SocialWelfare";
 import Account from "./Account";
@@ -305,8 +305,8 @@ const MainFormList = (props) => {
                   </div>
                 </QueueAnim>
               </TabPane>
-              <TabPane tab="Address" key="2" forceRender>
-                <Address purokList={purokList} />
+              <TabPane tab="Address and Contacts" key="2" forceRender>
+                <AddressContacts purokList={purokList} />
               </TabPane>
               <TabPane tab="Social Welfare Service" key="3" forceRender>
                 <SocialWelfare />

@@ -36,7 +36,7 @@ const ListInformation = (props) => {
   const [tableScreen, setTableScreen] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(0)
-  const defaultPageSize = 4
+  const defaultPageSize = 10
   const [pageSize, setPageSize] = useState(defaultPageSize)
 
   //State
