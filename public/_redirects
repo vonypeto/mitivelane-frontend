@@ -1,1 +1,1 @@
-/api/*  https://mitivelane.herokuapp.com/api/:splat  200
+/api/*  https://api.mitivelane-test.online/.netlify/functions/api/:splat  200
