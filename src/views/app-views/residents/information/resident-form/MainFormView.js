@@ -30,6 +30,7 @@ import {
   VerticalAlignBottomOutlined,
   ExperimentOutlined,
 } from "@ant-design/icons";
+import { computeAge } from "helper/Formula";
 
 const MainFormView = (props) => {
   return (
@@ -108,7 +109,7 @@ const MainFormView = (props) => {
                 </Col>
                 <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
-                    <b>{props.residentData.age}</b>
+                    <b>{computeAge(props.residentData.birthday)}</b>
                   </span>
                 </Col>
               </Row>

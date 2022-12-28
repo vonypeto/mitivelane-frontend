@@ -29,13 +29,13 @@ export const resident_details = {
             message: "Please enter alias.",
         },
     ],
-    age: [
-        {
-            required: true,
-            message: "Please enter your age.",
-            type: "integer",
-        }
-    ],
+    // age: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your age.",
+    //         type: "integer",
+    //     }
+    // ],
     weight: [
         {
             required: true,

@@ -25,7 +25,7 @@ import utils from "utils";
 
 import { resident_details } from "./AddResidentRules";
 
-const current = new Date();
+const currentDate = new Date();
 const lengthUnit = ["cm", "in", "m"];
 const weightUnit = ["kg", "g", "mg"];
 const dateFormat = "YYYY/MM/DD";
@@ -55,6 +55,7 @@ const yesno = ["Yes", "No"];
 const MainForm = (props) => {
   const { hiddenFileInput, setNewProfile, residentData, mode } = props
   const [selectShow, setShow] = useState(true);
+  // const [age, setAge] = useState(0);
   const [newProfilePicture, setNewProfilePicture] = useState("");
 
   //handle upload image
@@ -163,7 +164,7 @@ const MainForm = (props) => {
 
                         <Col xs={3} sm={4} md={6} lg={6} xl={4} xxl={4}>
                           <Form.Item
-                            name="heightUnit" label={" "}
+                            name="height_unit" label={" "}
                           >
                             <Select style={{ minWidth: 70 }}>
                               {lengthUnit.map((unit) => (
@@ -195,7 +196,7 @@ const MainForm = (props) => {
 
                         <Col xs={3} sm={4} md={6} lg={6} xl={4} xxl={4}>
                           <Form.Item
-                            name="weightUnit" label={" "}
+                            name="weight_unit" label={" "}
 
                           >
                             <Select style={{ minWidth: 70 }}>
@@ -216,14 +217,17 @@ const MainForm = (props) => {
                         label="Birthday"
                         rules={resident_details.birthday}
                         initialValue={moment(
-                          `${current.getFullYear()}/${current.getMonth() + 1
-                          }/${current.getDate()}`,
+                          `${currentDate.getFullYear()}/${currentDate.getMonth() + 1
+                          }/${currentDate.getDate()}`,
                           dateFormat
                         )}
                       >
                         <DatePicker
                           className="w-100"
                           format={dateFormat}
+                          // onChange={(value) => {
+                          //   setAge(age)
+                          // }}
                         />
                       </Form.Item>
                     </Col>
@@ -239,16 +243,18 @@ const MainForm = (props) => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="age" label="Age" rules={resident_details.age}>
+                    {/* <Col xs={24} sm={24} md={12}>
+                      <Form.Item name="age" label="Age" rules={resident_details.age} >
                         <InputNumber
-                          min={1}
+                          min={0}
                           className="w-100"
                           onKeyPress={(e) => { numberFilter(e) }}
                           placeholder="Age"
+                          readOnly
+                          value={age}
                         />
                       </Form.Item>
-                    </Col>
+                    </Col> */}
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item
                         name="birth_of_place"

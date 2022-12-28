@@ -37,6 +37,7 @@ export const DefaultDashboard = () => {
 
   const [documentCertList, setDocumentCertList] = useState([]);
   const [documentBlotterList, setDocumentBlotterList] = useState([]);
+  const [populationStatus, setPopulationStatus] = useState({});
 
   const getLatestBlotterRequests = () => {
     axios
@@ -66,14 +67,36 @@ export const DefaultDashboard = () => {
       });
   };
 
+  const getResidentPopulationStatus = () => {
+    axios
+      .get(
+        "/api/resident/populationStatus/" +
+          currentOrganization,
+        generateToken()[1]
+      )
+      .then((response) => {
+        var data = response.data
+        setPopulationStatus(data)
+      })
+      .catch(() => {
+        console.log("Error");
+      });
+  };
+
   useEffect(() => {
     getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");
+    getResidentPopulationStatus();
   }, []);
+
+  useEffect(() => {
+    console.log("populationStatus", populationStatus)
+  }), [populationStatus]
 
   return (
     <>
+    <h1>Bat ang pogi ko</h1>
       <Row gutter={16}>
         <Col xs={24} sm={24} md={24} lg={24} xl={18}>
           <Row gutter={16}>
@@ -108,7 +131,7 @@ export const DefaultDashboard = () => {
         <Col xs={24} sm={24} md={24} lg={24} xl={6}>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
-              <DisplayDataSet />
+              <DisplayDataSet populationStatus={populationStatus}/>
             </Col>
             {/* {
               annualStatisticData.map((elm, i) => (

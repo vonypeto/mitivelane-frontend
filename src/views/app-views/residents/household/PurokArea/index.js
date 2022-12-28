@@ -21,9 +21,9 @@ import axios from "axios";
 import moment from "moment";
 import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/pagination";
+import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/Pagination";
 
-import { CreateSession } from "helper/session";
+import { CreateSession } from "helper/Session";
 
 import {
   DeleteOutlined,

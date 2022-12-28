@@ -19,7 +19,10 @@ import utils from "utils";
 import { Col, Dropdown } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/pagination";
+import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/Pagination";
+import * as XLSX from 'xlsx';
+import { JSONToExcel } from "helper/ExportToExcel";
+import { computeAge } from "helper/Formula";
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
@@ -215,9 +218,9 @@ const ListInformation = (props) => {
     },
   ];
 
-  const ResidentList = (
+  const residentTableChoices = (
     <Menu>
-      <Menu.Item key="0">
+      <Menu.Item key="0" onClick={() => { alert("Resident Table Refresh") }}>
         <span>
           <div className="d-flex align-items-center">
             <ReloadOutlined />
@@ -225,7 +228,7 @@ const ListInformation = (props) => {
           </div>
         </span>
       </Menu.Item>
-      <Menu.Item key="1">
+      <Menu.Item key="1" onClick={() => { alert("Resident Table Print") }}>
         <span>
           <div className="d-flex align-items-center">
             <PrinterOutlined />
@@ -233,7 +236,7 @@ const ListInformation = (props) => {
           </div>
         </span>
       </Menu.Item>
-      <Menu.Item key="12">
+      <Menu.Item key="2" onClick={() => { handleExport() }}>
         <span>
           <div className="d-flex align-items-center">
             <FileExcelOutlined />
@@ -270,16 +273,48 @@ const ListInformation = (props) => {
   };
 
   const cardDropdown = (menu) => (
-    <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-      <a
-        href="/#"
-        className="text-gray font-size-lg"
-        onClick={(e) => e.preventDefault()}
-      >
-        <EllipsisOutlined />
-      </a>
-    </Dropdown>
+    <EllipsisDropdown menu={menu} />
   );
+
+  const handleExport = () => {
+    console.log("exporting data from table")
+
+    let newList = list.map(resident => ({
+      "First Name": resident.firstname,
+      "Last Name": resident.lastname,
+      "Middle Name": resident.firstname,
+      "Alias": resident.alias,
+      "Age": computeAge(resident.birthday),
+      "Birthday": new Date(resident.birthday).toDateString().split(' ').slice(1).join(' '),
+      "Birth Place": resident.birth_of_place,
+      "Gender": resident.gender,
+      "Height": resident.height + " " + resident.height_unit,
+      "Weight": resident.weight  + " " + resident.height_unit,
+      "Blood_type": resident.blood_type,
+      "Voter_status": resident.voter_status,
+      "Civil_status": resident.civil_status,
+      "Occupation": resident.occupation,
+      "Citizenship": resident.citizenship,
+      "Religion": resident.religion,
+      "Address_1": resident.Address_1,
+      "Address_2": resident.Address_2,
+      "Purok/Area": resident.area,
+      "Telephone": resident.telephone,
+      "Mobile_number": resident.mobile_number,
+      "Email": resident.email,
+      "Father": resident.father,
+      "Mother": resident.mother,
+      "Spouse": resident.spouse,
+      "PAG_IBIG": resident.pag_ibig,
+      "PHILHEALTH": resident.philhealth,
+      "SSS": resident.sss,
+      "TIN": resident.tin,
+    }));
+
+    console.log("resident list", newList)
+
+    JSONToExcel(newList, "BarangayResidentList")
+  }
 
   return (
     <QueueAnim
@@ -288,7 +323,7 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={cardDropdown(ResidentList)}>
+          <Card title="Resident Master List" extra={cardDropdown(residentTableChoices)}>
             <Flex
               alignItems="center"
               className=""
@@ -300,7 +335,7 @@ const ListInformation = (props) => {
                   <Input
                     placeholder="Search"
                     prefix={<SearchOutlined />}
-                    onChange={(e) => onSearch(e)}
+                    onChange={(e) => onSearch(e)} elm
                   />
                 </div>
                 <div className="mb-3">

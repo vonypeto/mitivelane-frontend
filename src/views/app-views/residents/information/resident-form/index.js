@@ -185,7 +185,13 @@ const MainFormList = (props) => {
         .then((res) => {
           console.log(res.data);
           message.success(`Resident information has been updated`);
-          setSubmitLoading(false);
+          setSubmitLoading(false);    
+          setTimeout(() => {
+            history.push(
+              `/app/${organization_id}/residents/resident-information/list`
+            );
+            setSubmitLoading(false); form
+          }, 1000);  
         });
     } catch (error) {
       console.log(error);
@@ -199,6 +205,7 @@ const MainFormList = (props) => {
     form
       .validateFields()
       .then((values) => {
+
         if (newProfileNull() == false) {
           values.avatarImg = newProfile.fileBase64
           values.avatarImgType = newProfile.type
