@@ -23,6 +23,7 @@ import { handleTableChange, handlePageSizeChange, handlePageChange, handleDelete
 import * as XLSX from 'xlsx';
 import { JSONToExcel } from "helper/ExportToExcel";
 import { computeAge } from "helper/Formula";
+import CustomDropdown from "components/shared-components/CustomDropdown";
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
@@ -218,35 +219,6 @@ const ListInformation = (props) => {
     },
   ];
 
-  const residentTableChoices = (
-    <Menu>
-      <Menu.Item key="0" onClick={() => { alert("Resident Table Refresh") }}>
-        <span>
-          <div className="d-flex align-items-center">
-            <ReloadOutlined />
-            <span className="ml-2">Refresh</span>
-          </div>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="1" onClick={() => { alert("Resident Table Print") }}>
-        <span>
-          <div className="d-flex align-items-center">
-            <PrinterOutlined />
-            <span className="ml-2">Print</span>
-          </div>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="2" onClick={() => { handleExport() }}>
-        <span>
-          <div className="d-flex align-items-center">
-            <FileExcelOutlined />
-            <span className="ml-2">Export</span>
-          </div>
-        </span>
-      </Menu.Item>
-    </Menu>
-  );
-
   const rowSelection = {
     onChange: (key, rows) => {
       setSelectedRows(rows);
@@ -271,10 +243,6 @@ const ListInformation = (props) => {
       setList(ResidentListData);
     }
   };
-
-  const cardDropdown = (menu) => (
-    <EllipsisDropdown menu={menu} />
-  );
 
   const handleExport = () => {
     console.log("exporting data from table")
@@ -316,6 +284,24 @@ const ListInformation = (props) => {
     JSONToExcel(newList, "BarangayResidentList")
   }
 
+  const residentTableDropdownItems = [
+    {
+      text: "Refresh",
+			icon: <ReloadOutlined />,
+			onClick: () => alert("Resident Table Refresh")
+    },
+    {
+      text: "Print",
+			icon: <PrinterOutlined />,
+			onClick: () => alert("Resident Table Print")
+    },
+    {
+      text: "Export",
+			icon: <FileExcelOutlined />,
+			onClick: () => handleExport()
+    }
+  ]
+
   return (
     <QueueAnim
       type={["right", "left"]}
@@ -323,7 +309,7 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={cardDropdown(residentTableChoices)}>
+          <Card title="Resident Master List" extra={<CustomDropdown menuItems={residentTableDropdownItems}/>}>
             <Flex
               alignItems="center"
               className=""

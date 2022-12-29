@@ -23,6 +23,7 @@ import {
   ResidentTableData,
   HouseholdTableData,
 } from "./ResidentAyudaData";
+import CustomDropdown from "components/shared-components/CustomDropdown";
 
 const AyudaTable = (props) => {
   //Import
@@ -201,7 +202,7 @@ const AyudaTable = (props) => {
 
   return (
     <Card>
-      <Row justify="space-between" className="mb-3">
+      <Row justify="space-between" align="middle" className="mb-3">
         <Col>
           <h1>Organization Household List</h1>
         </Col>
@@ -210,6 +211,9 @@ const AyudaTable = (props) => {
           <Link to={`/app/${organization_id}/residents/household/add`}>
             <Button type="primary">Add Household</Button>
           </Link>
+
+          <CustomDropdown/>
+          
         </Col>
       </Row>
 
