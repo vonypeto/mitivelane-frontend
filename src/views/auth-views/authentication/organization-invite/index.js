@@ -33,6 +33,10 @@ const index = ({ match }) => {
         } else if (response.data == "Condition3") {
           acceptRequest({ _id })
         }
+        else if (response.data == "Error") {
+          message.error("Expired")
+          history.push("/")
+        }
         console.log("Verify request ", response.data);
       })
       .catch(() => {
@@ -50,6 +54,10 @@ const index = ({ match }) => {
       .then((response) => {
         if (response.data == "Success") {
           message.success("Join Organization")
+          history.push("/")
+        }
+        else if (response.data == "Joined") {
+          message.success("Already Joined")
           history.push("/")
         }
       })
