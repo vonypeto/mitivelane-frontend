@@ -1,9 +1,6 @@
 import React from "react";
 import { Input, Row, Col, Card, Form } from "antd";
-
-const rules = {
-  //TBA
-};
+import { social_welfare } from "./AddResidentRules";
 
 const SocialWelfareField = () => {
   return (
@@ -17,7 +14,7 @@ const SocialWelfareField = () => {
                   <Form.Item
                     name="pag_ibig"
                     label="PAG-IBIG"
-                    rules={rules.lastname}
+                    rules={social_welfare.pag_ibig}
                   >
                     <Input placeholder="PAG-IBIG" />
                   </Form.Item>
@@ -26,7 +23,7 @@ const SocialWelfareField = () => {
                   <Form.Item
                     name="philhealth"
                     label="PHILHEALTH"
-                    rules={rules.firstname}
+                    rules={social_welfare.philhealth}
                   >
                     <Input placeholder="PHILHEALTH" />
                   </Form.Item>
@@ -35,7 +32,7 @@ const SocialWelfareField = () => {
                   <Form.Item
                     name="sss"
                     label="Social Security System"
-                    rules={rules.firstname}
+                    rules={social_welfare.sss}
                   >
                     <Input placeholder="Social Security System" />
                   </Form.Item>
@@ -44,6 +41,7 @@ const SocialWelfareField = () => {
                   <Form.Item
                     name="tin"
                     label="Taxpayer Identification Number"
+                    rules={social_welfare.tin}
                   >
                     <Input placeholder="Taxpayer Identification Number" />
                   </Form.Item>

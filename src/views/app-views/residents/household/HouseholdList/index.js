@@ -23,6 +23,7 @@ import {
   ResidentTableData,
   HouseholdTableData,
 } from "./ResidentAyudaData";
+import CustomDropdown from "components/shared-components/CustomDropdown";
 
 const AyudaTable = (props) => {
   //Import
@@ -37,12 +38,18 @@ const AyudaTable = (props) => {
   //Table
   const HouseholdTableColumns = [
     {
-      title: "Household Number",
+      title: "H. Number",
       dataIndex: "house_number",
       key: "house_number",
     },
     {
-      title: "Household Name",
+      title: "Household Address",
+      dataIndex: "address",
+      key: "address",
+      width: 12
+    },
+    {
+      title: "H. Name",
       dataIndex: "name",
       key: "name",
     },
@@ -52,7 +59,7 @@ const AyudaTable = (props) => {
       key: "purok",
     },
     {
-      title: "House Status",
+      title: "Status",
       dataIndex: "house_status",
       key: "house_status",
     },
@@ -89,6 +96,7 @@ const AyudaTable = (props) => {
 
   //State
   const [householdList, sethouseholdList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   //useEffect
   useEffect(() => {
@@ -97,6 +105,7 @@ const AyudaTable = (props) => {
 
   //Axios
   const getAllHousehold = async () => {
+    setLoading(true)
     try {
       const households = await axios.post(
         "/api/household/getAll",
@@ -110,11 +119,14 @@ const AyudaTable = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
+
+    setLoading(false)
   };
 
   const popHousehold = async (household_id) => {
+    setLoading(true)
     try {
-      const households = await axios.post(
+      await axios.post(
         "/api/household/delete",
         { household_id, organization_id: organization_id },
         generateToken()[1],
@@ -124,10 +136,14 @@ const AyudaTable = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
+    
+    message.success(`Deleted selected household`);
+    setLoading(false)
   };
 
   //Functions
   const deleteHousehold = (row) => {
+
     const household_id = row.household_id;
     var currentHouseholdList = [...householdList];
     var objIndex = currentHouseholdList.findIndex(
@@ -135,7 +151,6 @@ const AyudaTable = (props) => {
     );
     currentHouseholdList.splice(objIndex, 1);
     sethouseholdList(currentHouseholdList);
-    message.success(`Deleting household id ${row.household_id}`);
 
     popHousehold(row.household_id);
   };
@@ -187,7 +202,7 @@ const AyudaTable = (props) => {
 
   return (
     <Card>
-      <Row justify="space-between" className="mb-3">
+      <Row justify="space-between" align="middle" className="mb-3">
         <Col>
           <h1>Organization Household List</h1>
         </Col>
@@ -196,6 +211,9 @@ const AyudaTable = (props) => {
           <Link to={`/app/${organization_id}/residents/household/add`}>
             <Button type="primary">Add Household</Button>
           </Link>
+
+          <CustomDropdown/>
+          
         </Col>
       </Row>
 
@@ -211,6 +229,7 @@ const AyudaTable = (props) => {
         }}
         rowKey="household_id"
         pagination="true"
+        loading={loading}
         bordered
       />
     </Card>

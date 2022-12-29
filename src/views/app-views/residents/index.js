@@ -4,7 +4,7 @@ import Information from "./information/list-information";
 import AddInformation from "./information/add-information";
 import ViewInformation from "./information/view-information";
 import EditInformation from "./information/edit-information";
-import Household from "./household/Fundlist";
+import Household from "./household/HouseholdList";
 import Archive from "./household/Archive";
 import SupplyDistribution from "./household/SupplyDistribution";
 import PurokArea from "./household/PurokArea";
@@ -38,10 +38,10 @@ const Resident = (props) => {
         path={`${match.url}/household/list`}
         component={() => <Household param_url={organization_id} />}
       />
-      <Route
+      {/* <Route
         path={`${match.url}/household/archive`}
         component={() => <Archive organization_id={organization_id} />}
-      />
+      /> */}
       <Route
         path={`${match.url}/household/purok`}
         component={() => <PurokArea organization_id={organization_id} />}

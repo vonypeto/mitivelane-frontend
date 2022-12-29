@@ -264,10 +264,10 @@ const ManageHousehold = (props) => {
 
   useEffect(() => {
     NewHouseholdFormRef.current.resetFields();
-  }, [householdMemberList]);
+  }, [householdInitialVal]);
 
   useEffect(() => {
-    console.log("deletedMembers", deletedMembers);
+    // console.log("deletedMembers", deletedMembers);
   }, [deletedMembers]);
 
   useEffect(() => {
@@ -450,7 +450,7 @@ const ManageHousehold = (props) => {
     createHousehold(value, householdMemberList);
 
     message.success("Success, new household has been added.");
-    history.push(`/app/${organization_id}/residents/household/list`);
+    history.replace(`/app/${organization_id}/residents/household/list`);
   };
 
   const onFinishUpdateHousehold = (value) => {
@@ -463,7 +463,7 @@ const ManageHousehold = (props) => {
 
   const importResidentAsMember = (key) => {
     const resident = residentList[key];
-    console.log("resident", resident);
+    // console.log("resident", resident);
 
     setHouseholdMemberInitialVal({
       ...householdMemberInitialVal,

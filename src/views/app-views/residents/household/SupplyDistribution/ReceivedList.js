@@ -24,7 +24,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 //Components
 import SupplyReceivedForm from "./SupplyReceivedForm";
-import { getTotalPage, searchBar, searchBarNumber, searchBarDate, searchIcon, handleTableChange } from "helper/pagination";
+import { getTotalPage, searchBar, searchBarNumber, searchBarDate, searchIcon, handleTableChange } from "helper/Pagination";
 import utils from "utils";
 
 const ReceievedList = (props) => {

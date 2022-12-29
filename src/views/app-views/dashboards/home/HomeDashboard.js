@@ -118,12 +118,12 @@ export const RecentBlotterCaseData = [
   },
 ];
 
-export const DisplayDataSet = () => (
+export const DisplayDataSet = ({populationStatus}) => (
   <Row gutter={16}>
     <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
       <DataDisplayWidget
         icon={<ManOutlined />}
-        value="13"
+        value={populationStatus.residentMale}
         title="Male"
         color="blue"
         vertical={true}
@@ -131,7 +131,7 @@ export const DisplayDataSet = () => (
       />
       <DataDisplayWidget
         icon={<WomanOutlined />}
-        value="15"
+        value={populationStatus.residentFemale}
         title="Female"
         color="volcano"
         vertical={true}
@@ -141,7 +141,7 @@ export const DisplayDataSet = () => (
     <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
       <DataDisplayWidget
         icon={<TeamOutlined />}
-        value="28"
+        value={populationStatus.residentPopulation}
         title="Population"
         color="lime"
         vertical={true}
@@ -149,7 +149,7 @@ export const DisplayDataSet = () => (
       />
       <DataDisplayWidget
         icon={<IdcardOutlined />}
-        value="17"
+        value={populationStatus.residentRegisteredVoters}
         title="Registered Voter"
         color="cyan"
         vertical={true}

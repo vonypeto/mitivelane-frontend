@@ -2,7 +2,7 @@ import React from "react";
 import { Row, Col, Card, Avatar } from "antd";
 import { Icon } from "components/util-components/Icon";
 import utils from "utils";
-import CustomAvatar from "components/shared-components/Avatar" ;
+import CustomAvatar from "components/shared-components/Avatar";
 
 import {
   MailOutlined,
@@ -28,7 +28,9 @@ import {
   AuditOutlined,
   ContainerOutlined,
   VerticalAlignBottomOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
+import { computeAge } from "helper/Formula";
 
 const MainFormView = (props) => {
   return (
@@ -57,13 +59,13 @@ const MainFormView = (props) => {
               </h2>
             </div>
           </div>
-  
+
           <div
             className="d-flex align-items-center "
             style={{ fontSize: "15px " }}
           >
             <Col xs={24} sm={24} md={24} className="w-100">
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={SkinOutlined}
@@ -73,13 +75,13 @@ const MainFormView = (props) => {
                     Alias:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
                     {props.residentData.alias}
                   </span>
                 </Col>
               </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={UserSwitchOutlined}
@@ -89,13 +91,13 @@ const MainFormView = (props) => {
                     Civil Status:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
                     {props.residentData.civil_status}
                   </span>
                 </Col>
               </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={HistoryOutlined}
@@ -105,13 +107,45 @@ const MainFormView = (props) => {
                     Age:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
-                    <b>{props.residentData.age}</b>
+                    <b>{computeAge(props.residentData.birthday)}</b>
                   </span>
                 </Col>
               </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <Icon
+                    type={UserOutlined}
+                    className="mr-3 text-dark font-size-md"
+                  />
+                  <span className=" font-weight-bold text-muted-resident">
+                    Gender:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={12} className="text-right">
+                  <span className="ml-5 text-detail-resident font-weight-bold">
+                    <b>{props.residentData.gender}</b>
+                  </span>
+                </Col>
+              </Row>
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                <Col xs={12} sm={12} md={9} className="text-left">
+                  <Icon
+                    type={ExperimentOutlined}
+                    className="mr-3 text-dark font-size-md"
+                  />
+                  <span className=" font-weight-bold text-muted-resident">
+                    Blood Type:
+                  </span>
+                </Col>
+                <Col xs={12} sm={12} md={12} className="text-right">
+                  <span className="ml-5 text-detail-resident font-weight-bold">
+                    <b>{props.residentData.blood_type}</b>
+                  </span>
+                </Col>
+              </Row>
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={StarOutlined}
@@ -121,13 +155,13 @@ const MainFormView = (props) => {
                     Birthday:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
-                  {new Date(props.residentData.birthday).toDateString().split(' ').slice(1).join(' ')}
+                    {new Date(props.residentData.birthday).toDateString().split(' ').slice(1).join(' ')}
                   </span>
                 </Col>
               </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={BankOutlined}
@@ -137,13 +171,13 @@ const MainFormView = (props) => {
                     Birth Place:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
                     {props.residentData.birth_of_place}
                   </span>
                 </Col>
               </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={VerticalAlignBottomOutlined}
@@ -153,13 +187,13 @@ const MainFormView = (props) => {
                     Weight:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
                     {props.residentData.weight} kg
                   </span>
                 </Col>
               </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
                 <Col xs={12} sm={12} md={9} className="text-left">
                   <Icon
                     type={VerticalAlignTopOutlined}
@@ -169,14 +203,14 @@ const MainFormView = (props) => {
                     Height:
                   </span>
                 </Col>
-                <Col xs={12} sm={12} md={15} className="text-right">
+                <Col xs={12} sm={12} md={12} className="text-right">
                   <span className="ml-5 text-detail-resident font-weight-bold">
                     {props.residentData.height} cm
                   </span>
                 </Col>
               </Row>
             </Col>
-  
+
             {console.log(props.residentData)}
           </div>
         </Card>
@@ -184,7 +218,7 @@ const MainFormView = (props) => {
       <Col xs={24} sm={24} md={17}>
         <Card title="Resident Details">
           <Col xs={24} sm={24} md={24} className="w-100">
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={MailOutlined}
@@ -200,7 +234,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={PhoneOutlined}
@@ -216,7 +250,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle" >
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={AndroidOutlined}
@@ -234,10 +268,10 @@ const MainFormView = (props) => {
             </Row>
           </Col>
         </Card>
-  
+
         <Card title="Additional Details">
           <Col xs={24} sm={24} md={24} className="w-100">
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={ContainerOutlined}
@@ -253,8 +287,8 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-  
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={HeartOutlined}
@@ -270,7 +304,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={CarryOutOutlined}
@@ -286,7 +320,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={ManOutlined}
@@ -302,7 +336,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={WomanOutlined}
@@ -320,10 +354,10 @@ const MainFormView = (props) => {
             </Row>
           </Col>
         </Card>
-  
+
         <Card title="Addresses">
           <Col xs={24} sm={24} md={24} className="w-100">
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={HomeOutlined}
@@ -339,7 +373,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon type={HomeFilled} className="mr-3 text-dark font-size-md" />
                 <span className=" font-weight-bold text-muted-resident">
@@ -352,7 +386,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={AuditOutlined}
@@ -370,10 +404,10 @@ const MainFormView = (props) => {
             </Row>
           </Col>
         </Card>
-  
+
         <Card title="Social Welfare Service">
           <Col xs={24} sm={24} md={24} className="w-100">
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={KeyOutlined}
@@ -387,7 +421,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={IdcardOutlined}
@@ -401,7 +435,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={ProfileOutlined}
@@ -417,7 +451,7 @@ const MainFormView = (props) => {
                 </span>
               </Col>
             </Row>
-            <Row className="pt-3 mt-2 mb-2 bt-1 border-top">
+            <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
                 <Icon
                   type={ContactsOutlined}

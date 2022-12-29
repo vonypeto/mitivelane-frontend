@@ -82,14 +82,14 @@ const residentNavTree = [
             breadcrumb: false,
             submenu: [],
           },
-          {
-            key: "aid-assistant-add",
-            path: `${APP_PREFIX_PATH}//residents/household/archive`,
-            title: "sidenav.residents.aid-assistant.add",
-            icon: "",
-            breadcrumb: false,
-            submenu: [],
-          },
+          // {
+          //   key: "aid-assistant-add",
+          //   path: `${APP_PREFIX_PATH}//residents/household/archive`,
+          //   title: "sidenav.residents.aid-assistant.add",
+          //   icon: "",
+          //   breadcrumb: false,
+          //   submenu: [],
+          // },
           {
             key: "aid-assistant-delete",
             path: `${APP_PREFIX_PATH}//residents/household/supply`,

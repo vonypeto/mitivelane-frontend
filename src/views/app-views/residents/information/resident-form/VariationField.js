@@ -17,7 +17,7 @@ const VariationField = props => (
 										label="Variant"
 										name={[field.name, 'variant']}
 										fieldKey={[field.fieldKey, 'variant']}
-										rules={[{ required: true, message: 'Please enter variant name' }]}
+										// rules={[{ required: true, message: 'Please enter variant name' }]}
 										className="w-100"
 									>
 										<Input />
@@ -29,7 +29,7 @@ const VariationField = props => (
 										label="Price"
 										name={[field.name, 'price']}
 										fieldKey={[field.fieldKey, 'price']}
-										rules={[{ required: true, message: 'Please enter variant price' }]}
+										// rules={[{ required: true, message: 'Please enter variant price' }]}
 										className="w-100"
 									>
 										<InputNumber
@@ -45,7 +45,7 @@ const VariationField = props => (
 										label="Stock keeping unit"
 										name={[field.name, 'sku']}
 										fieldKey={[field.fieldKey, 'sku']}
-										rules={[{ required: true, message: 'Please enter variant SKU' }]}
+										// rules={[{ required: true, message: 'Please enter variant SKU' }]}
 										className="w-100"
 									>
 										<InputNumber className="w-100"/>

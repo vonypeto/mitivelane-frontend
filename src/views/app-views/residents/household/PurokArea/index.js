@@ -21,7 +21,9 @@ import axios from "axios";
 import moment from "moment";
 import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/pagination";
+import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/Pagination";
+
+import { CreateSession } from "helper/Session";
 
 import {
   DeleteOutlined,
@@ -38,7 +40,13 @@ const PurokArea = (props) => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
   const history = useHistory();
-  const { generateToken, currentOrganization } = useAuth();
+  const { generateToken, currentOrganization , currentUser} = useAuth();
+
+  const apiOptions = {
+    axios,
+    generateToken,
+    cancelToken
+  }
 
   const purokColumn = [
     {
@@ -106,6 +114,8 @@ const PurokArea = (props) => {
 
   useEffect(() => {
     getAreasPage();
+    console.log("currentUser", currentUser.displayName)
+    CreateSession("Giann", "visited purok page", "create", "purok", organization_id, apiOptions)
   }, [currentPage, pageSize, tableScreen])
 
   //Axios

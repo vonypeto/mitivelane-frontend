@@ -22,7 +22,7 @@ import { useAuth } from "contexts/AuthContext";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 import SupplyGivenForm from "./SupplyGivenForm";
-import { getTotalPage, searchBar, searchBarNumber, searchBarDate, searchIcon, handleTableChange } from "helper/pagination";
+import { getTotalPage, searchBar, searchBarNumber, searchBarDate, searchIcon, handleTableChange } from "helper/Pagination";
 import utils from "utils";
 
 const GivenList = (props) => {

@@ -19,7 +19,11 @@ import utils from "utils";
 import { Col, Dropdown } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/pagination";
+import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/Pagination";
+
+import { JSONToExcel } from "helper/ExportToExcel";
+import { computeAge } from "helper/Formula";
+import CustomDropdown from "components/shared-components/CustomDropdown";
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
@@ -36,7 +40,7 @@ const ListInformation = (props) => {
   const [tableScreen, setTableScreen] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState(0)
-  const defaultPageSize = 4
+  const defaultPageSize = 10
   const [pageSize, setPageSize] = useState(defaultPageSize)
 
   //State
@@ -215,35 +219,6 @@ const ListInformation = (props) => {
     },
   ];
 
-  const ResidentList = (
-    <Menu>
-      <Menu.Item key="0">
-        <span>
-          <div className="d-flex align-items-center">
-            <ReloadOutlined />
-            <span className="ml-2">Refresh</span>
-          </div>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <span>
-          <div className="d-flex align-items-center">
-            <PrinterOutlined />
-            <span className="ml-2">Print</span>
-          </div>
-        </span>
-      </Menu.Item>
-      <Menu.Item key="12">
-        <span>
-          <div className="d-flex align-items-center">
-            <FileExcelOutlined />
-            <span className="ml-2">Export</span>
-          </div>
-        </span>
-      </Menu.Item>
-    </Menu>
-  );
-
   const rowSelection = {
     onChange: (key, rows) => {
       setSelectedRows(rows);
@@ -269,17 +244,63 @@ const ListInformation = (props) => {
     }
   };
 
-  const cardDropdown = (menu) => (
-    <Dropdown overlay={menu} trigger={["click"]} placement="bottomRight">
-      <a
-        href="/#"
-        className="text-gray font-size-lg"
-        onClick={(e) => e.preventDefault()}
-      >
-        <EllipsisOutlined />
-      </a>
-    </Dropdown>
-  );
+  const handleExport = () => {
+    console.log("exporting data from table")
+
+    let newList = list.map(resident => ({
+      "First Name": resident.firstname,
+      "Last Name": resident.lastname,
+      "Middle Name": resident.firstname,
+      "Alias": resident.alias,
+      "Age": computeAge(resident.birthday),
+      "Birthday": new Date(resident.birthday).toDateString().split(' ').slice(1).join(' '),
+      "Birth Place": resident.birth_of_place,
+      "Gender": resident.gender,
+      "Height": resident.height + " " + resident.height_unit,
+      "Weight": resident.weight  + " " + resident.height_unit,
+      "Blood_type": resident.blood_type,
+      "Voter_status": resident.voter_status,
+      "Civil_status": resident.civil_status,
+      "Occupation": resident.occupation,
+      "Citizenship": resident.citizenship,
+      "Religion": resident.religion,
+      "Address_1": resident.Address_1,
+      "Address_2": resident.Address_2,
+      "Purok/Area": resident.area,
+      "Telephone": resident.telephone,
+      "Mobile_number": resident.mobile_number,
+      "Email": resident.email,
+      "Father": resident.father,
+      "Mother": resident.mother,
+      "Spouse": resident.spouse,
+      "PAG_IBIG": resident.pag_ibig,
+      "PHILHEALTH": resident.philhealth,
+      "SSS": resident.sss,
+      "TIN": resident.tin,
+    }));
+
+    console.log("resident list", newList)
+
+    JSONToExcel(newList, "BarangayResidentList")
+  }
+
+  const residentTableDropdownItems = [
+    {
+      text: "Refresh",
+			icon: <ReloadOutlined />,
+			onClick: () => alert("Resident Table Refresh")
+    },
+    {
+      text: "Print",
+			icon: <PrinterOutlined />,
+			onClick: () => alert("Resident Table Print")
+    },
+    {
+      text: "Export",
+			icon: <FileExcelOutlined />,
+			onClick: () => handleExport()
+    }
+  ]
 
   return (
     <QueueAnim
@@ -288,7 +309,7 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={cardDropdown(ResidentList)}>
+          <Card title="Resident Master List" extra={<CustomDropdown menuItems={residentTableDropdownItems}/>}>
             <Flex
               alignItems="center"
               className=""

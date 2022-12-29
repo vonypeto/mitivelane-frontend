@@ -39,6 +39,7 @@ export const DefaultDashboard = () => {
   const [prevDataBlotter, setPrevDataBlotter] = useState();
   const [documentCertList, setDocumentCertList] = useState([]);
   const [documentBlotterList, setDocumentBlotterList] = useState([]);
+  const [populationStatus, setPopulationStatus] = useState({});
 
   const getLatestBlotterRequests = () => {
     axios
@@ -83,27 +84,32 @@ export const DefaultDashboard = () => {
       });
   };
 
-  const handleChangeCert = (value) => {
-    if (prevDataCert) updateCertificateData(prevDataCert, generateToken()[1]);
-
-    const data = { certificate_id: value, status: true };
-    //  console.log(`selected ${value}`);
-    updateCertificateData(data, generateToken()[1]);
-    let prevData = { certificate_id: value, status: false };
-
-    setPrevDataCert(prevData);
+  const getResidentPopulationStatus = () => {
+    axios
+      .get(
+        "/api/resident/populationStatus/" + currentOrganization,
+        generateToken()[1]
+      )
+      .then((response) => {
+        var data = response.data;
+        setPopulationStatus(data);
+      })
+      .catch(() => {
+        console.log("Error");
+      });
   };
-  const handleChangeBlotter = (value) => {
-    setPrevDataBlotter(value);
-    // const data = { certificate_id: value, status: true };
-    // console.log(`selected ${value}`);
-    // updateCertificateData(data, generateToken()[1]);
-  };
+
   useEffect(() => {
     getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");
+    getResidentPopulationStatus();
   }, []);
+
+  useEffect(() => {
+    console.log("populationStatus", populationStatus);
+  }),
+    [populationStatus];
 
   return (
     <>
@@ -141,7 +147,7 @@ export const DefaultDashboard = () => {
         <Col xs={24} sm={24} md={24} lg={24} xl={6}>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
-              <DisplayDataSet />
+              <DisplayDataSet populationStatus={populationStatus} />
             </Col>
             {/* {
               annualStatisticData.map((elm, i) => (

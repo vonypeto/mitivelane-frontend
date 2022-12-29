@@ -9,7 +9,7 @@ import { BsCircleFill } from "react-icons/bs";
 import Badge from "react-bootstrap/Badge";
 import { dummy_session } from "./fakedata";
 import "../../../../assets/css/bootstrap.badge.css";
-import { handlePageChange } from "helper/pagination";
+import { handlePageChange } from "helper/Pagination";
 
 const { Option } = Select;
 

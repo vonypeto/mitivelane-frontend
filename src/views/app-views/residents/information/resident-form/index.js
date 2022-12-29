@@ -5,7 +5,7 @@ import Flex from "components/shared-components/Flex";
 import MainForm from "./MainForm";
 import MainFormView from "./MainFormView";
 import { useHistory } from "react-router-dom";
-import Address from "./Address";
+import AddressContacts from "./AddressContacts";
 import BlotterRecords from "./BlotterRecords";
 import SocialWelfare from "./SocialWelfare";
 import Account from "./Account";
@@ -94,6 +94,7 @@ const MainFormList = (props) => {
             spouse: resident.spouse,
             telephone: resident.telephone,
             mobile_number: resident.mobile_number,
+            email: resident.email,
             pag_ibig: resident.pag_ibig,
             philhealth: resident.philhealth,
             sss: resident.sss,
@@ -168,7 +169,7 @@ const MainFormList = (props) => {
       history.push(
         `/app/${organization_id}/residents/resident-information/list`
       );
-      setSubmitLoading(false);
+      setSubmitLoading(false); form
     }, 1000);
   };
 
@@ -184,7 +185,13 @@ const MainFormList = (props) => {
         .then((res) => {
           console.log(res.data);
           message.success(`Resident information has been updated`);
-          setSubmitLoading(false);
+          setSubmitLoading(false);    
+          setTimeout(() => {
+            history.push(
+              `/app/${organization_id}/residents/resident-information/list`
+            );
+            setSubmitLoading(false); form
+          }, 1000);  
         });
     } catch (error) {
       console.log(error);
@@ -198,6 +205,7 @@ const MainFormList = (props) => {
     form
       .validateFields()
       .then((values) => {
+
         if (newProfileNull() == false) {
           values.avatarImg = newProfile.fileBase64
           values.avatarImgType = newProfile.type
@@ -259,14 +267,23 @@ const MainFormList = (props) => {
                     : "View Resident"}{" "}
               </h2>
               <div className="mb-3">
-                <ConfirmButton
-                  className="mr-2"
-                  type="warning"
-                  modalTitle="Are you sure you want to leave this page?"
-                  modalContent="Data you've entered will be gone."
-                  text={mode === VIEW ? "Back" : "Discard"}
-                  handleOk={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
-                />
+                {mode === VIEW ?
+                  <Button
+                    onClick={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
+                  >
+                    Back
+                  </Button>
+                  :
+                  <ConfirmButton
+                    className="mr-2"
+                    type="warning"
+                    modalTitle="Are you sure you want to leave this page?"
+                    modalContent="Data you've entered will be gone."
+                    text="Discard"
+                    handleOk={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
+                  />
+                }
+
                 {mode === VIEW ? null : (
                   <Button
                     type="primary"
@@ -304,8 +321,8 @@ const MainFormList = (props) => {
                   </div>
                 </QueueAnim>
               </TabPane>
-              <TabPane tab="Address" key="2" forceRender>
-                <Address purokList={purokList} />
+              <TabPane tab="Address and Contacts" key="2" forceRender>
+                <AddressContacts purokList={purokList} />
               </TabPane>
               <TabPane tab="Social Welfare Service" key="3" forceRender>
                 <SocialWelfare />
