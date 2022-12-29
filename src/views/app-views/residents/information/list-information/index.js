@@ -20,7 +20,7 @@ import { Col, Dropdown } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/Pagination";
-import * as XLSX from 'xlsx';
+
 import { JSONToExcel } from "helper/ExportToExcel";
 import { computeAge } from "helper/Formula";
 import CustomDropdown from "components/shared-components/CustomDropdown";
@@ -321,7 +321,7 @@ const ListInformation = (props) => {
                   <Input
                     placeholder="Search"
                     prefix={<SearchOutlined />}
-                    onChange={(e) => onSearch(e)} elm
+                    onChange={(e) => onSearch(e)}
                   />
                 </div>
                 <div className="mb-3">
