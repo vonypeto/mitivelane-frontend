@@ -38,14 +38,14 @@ const dashBoardNavTree = [
         breadcrumb: false,
         submenu: [],
       },
-	  {
-        key: "dashboards-chat",
-        path: `${APP_PREFIX_PATH}//dashboards/chat`,
-        title: "sidenav.dashboard.chat",
-        icon: MessageOutlined,
-        breadcrumb: false,
-        submenu: [],
-      },
+      // {
+      // key: "dashboards-chat",
+      // path: `${APP_PREFIX_PATH}//dashboards/chat`,
+      // title: "sidenav.dashboard.chat",
+      // icon: MessageOutlined,
+      // breadcrumb: false,
+      // submenu: [],
+      // },
     ],
   },
 ];
