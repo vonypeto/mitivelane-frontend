@@ -17,13 +17,7 @@ import { PROFILE_URL, AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 
 const AccountDetails = () => {
-  const {
-    currentUser,
-    setPhoto,
-    currentPhoto,
-    generateToken,
-    resetEmailPassword,
-  } = useAuth();
+  const { currentUser, generateToken, resetEmailPassword } = useAuth();
   const [form] = Form.useForm();
   const formRef = useRef();
   const [initialVal, setInitialVal] = useState({});

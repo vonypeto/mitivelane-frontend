@@ -19,7 +19,7 @@ const AccountDelete = () => {
         </div>
       </Col>
       <Col xs={24} sm={24} md={15} className="ant-body-pt">
-        <Card title="Deletion Details">
+        <Card title="Deactivation Details">
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-2 border-top ">
               <Col xs={24} sm={24} md={24} className="pt-2 text-left ">

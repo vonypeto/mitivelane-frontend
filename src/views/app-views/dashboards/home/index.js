@@ -15,14 +15,12 @@ import {
   cardDropdown,
   tableColumns,
 } from "./HomeDashboard";
+import { updateCertificateData } from "api/AppController/CertificatesController/CertificatesController";
 import { UserAddOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
 const { Option } = Select;
 
-const handleChange = (value) => {
-  console.log(`selected ${value}`);
-};
 export const DefaultDashboard = () => {
   const { currentOrganization, generateToken } = useAuth();
   const [visitorChartData] = useState(VisitorChartData);
@@ -34,7 +32,11 @@ export const DefaultDashboard = () => {
   const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
     true
   );
-
+  const [certLoading, setCertLoading] = useState(true);
+  const [currentDataCert, setcurrentDataCert] = useState({});
+  const [currentDataBlotter, setcurrentDataBlotter] = useState({});
+  const [prevDataCert, setPrevDataCert] = useState();
+  const [prevDataBlotter, setPrevDataBlotter] = useState();
   const [documentCertList, setDocumentCertList] = useState([]);
   const [documentBlotterList, setDocumentBlotterList] = useState([]);
 
@@ -46,7 +48,6 @@ export const DefaultDashboard = () => {
         generateToken()[1]
       )
       .then((response) => {
-        console.log("Latest Blotter", response.data);
         setBlotterListRequest(response.data);
         setBlotterListRequestLoading(false);
       })
@@ -61,11 +62,43 @@ export const DefaultDashboard = () => {
       .then((response) => {
         if (type) console.log(response.data);
 
-        if (type == "cert") setDocumentCertList(response.data);
-        if (type == "blotter") setDocumentBlotterList(response.data);
+        if (type == "cert") {
+          setDocumentCertList(response.data);
+          setcurrentDataCert(
+            response.data.filter((doc) => doc.status === true)
+          );
+          let d = response.data.filter((doc) => doc.status === true);
+          setPrevDataCert({
+            certificate_id: d[0]?.certificate_id,
+            status: false,
+          });
+        }
+        if (type == "blotter") {
+          setDocumentBlotterList(response.data);
+        }
+        setCertLoading(false);
+      })
+      .catch(() => {
+        console.log("Error");
       });
   };
 
+  const handleChangeCert = (value) => {
+    if (prevDataCert) updateCertificateData(prevDataCert, generateToken()[1]);
+
+    const data = { certificate_id: value, status: true };
+    //  console.log(`selected ${value}`);
+    updateCertificateData(data, generateToken()[1]);
+    let prevData = { certificate_id: value, status: false };
+
+    setPrevDataCert(prevData);
+  };
+  const handleChangeBlotter = (value) => {
+    setPrevDataBlotter(value);
+    // const data = { certificate_id: value, status: true };
+    // console.log(`selected ${value}`);
+    // updateCertificateData(data, generateToken()[1]);
+  };
   useEffect(() => {
     getLatestBlotterRequests();
     getDocumentsData("cert");
@@ -170,26 +203,23 @@ export const DefaultDashboard = () => {
                       />
                     </div>
                     <div>
-                      <Select
-                        defaultValue="lucy"
-                        style={{
-                          width: 120,
-                        }}
-                        onChange={handleChange}
-                      >
-                        {documentCertList.map((t, i) => {
-                          return (
-                            <Option key={i} value={t.certificate_id}>
-                              {t.title}
-                            </Option>
-                          );
-                        })}
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="disabled" disabled>
-                          Disabled
-                        </Option>
-                        <Option value="Yiminghe">yiminghe</Option>
-                      </Select>
+                      {certLoading ? null : (
+                        <Select
+                          defaultValue={currentDataCert[0]?.certificate_id}
+                          style={{
+                            width: 120,
+                          }}
+                          onChange={handleChangeCert}
+                        >
+                          {documentCertList.map((t, i) => {
+                            return (
+                              <Option key={i} value={t.certificate_id}>
+                                {t.title}
+                              </Option>
+                            );
+                          })}
+                        </Select>
+                      )}
                     </div>
                   </div>
                 </div>{" "}
@@ -213,7 +243,7 @@ export const DefaultDashboard = () => {
                         style={{
                           width: 120,
                         }}
-                        onChange={handleChange}
+                        onChange={handleChangeBlotter}
                       >
                         {documentBlotterList.map((t, i) => {
                           return (
@@ -222,11 +252,6 @@ export const DefaultDashboard = () => {
                             </Option>
                           );
                         })}
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="disabled" disabled>
-                          Disabled
-                        </Option>
-                        <Option value="Yiminghe">yiminghe</Option>
                       </Select>
                     </div>
                   </div>
