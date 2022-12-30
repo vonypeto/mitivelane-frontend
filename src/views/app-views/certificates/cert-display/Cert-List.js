@@ -84,9 +84,11 @@ const CertList = React.memo(
       setLoading(true);
       let isApiSubscribed = true;
       if (!loading) {
+        console.log(data);
         await axios
-          .post("/api/cert-display/create", data, generateToken()[1])
+          .post("/api/cert-display/create/data", data, generateToken()[1])
           .then((res) => {
+            console.log(res.data.id);
             if (isApiSubscribed) {
               setLoading(!loading);
               history.push(
@@ -109,7 +111,7 @@ const CertList = React.memo(
 
       if (!loadingDuplicate)
         await axios
-          .post("/api/cert-display/create", data, generateToken()[1])
+          .post("/api/cert-display/create/data", data, generateToken()[1])
           .then((_) => {
             if (isApiSubscribed) {
               setLoadingDuplicate(!loading);

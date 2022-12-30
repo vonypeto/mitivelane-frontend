@@ -8,7 +8,7 @@ export const getCertificateAll = async (setPdf, generateToken, count) => {
     .then((res) => {
       if (isApiSubscribed) {
         let data = res.data;
-
+        console.log(data);
         data.map((elem) => {
           elem.content =
             elem.content[0]?.blocks.length == 0
