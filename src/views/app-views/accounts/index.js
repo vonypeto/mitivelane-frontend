@@ -6,6 +6,8 @@ import AccountDetails from "./AccountDetails";
 import ConnectedAccount from "./ConnectedAccounts";
 import AccountDelete from "./AccountDelete";
 import AccountSesson from "./AccountSession";
+import AccountBillingInfo from "./AccountBillingInfo";
+import AccountBillingAddress from "./AccountBillingAddress";
 
 const ManageAccount = (props) => {
   return (
@@ -29,16 +31,20 @@ const ManageAccount = (props) => {
         </Row>
         <Divider />
         <Row gutter={16}>
-          {" "}
-          <ConnectedAccount />{" "}
-        </Row>{" "}
-        <Divider />
-        <Row gutter={16}>
-          <AccountSesson />{" "}
+          <ConnectedAccount />
         </Row>
         <Divider />
         <Row gutter={16}>
-          <AccountDelete />{" "}
+          <AccountSesson />
+        </Row>
+        <Divider />
+        <Row gutter={16}>
+          <AccountBillingInfo />
+          <AccountBillingAddress />
+        </Row>
+        <Divider />
+        <Row gutter={16}>
+          <AccountDelete />
         </Row>
       </div>
     </div>

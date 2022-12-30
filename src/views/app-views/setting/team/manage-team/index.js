@@ -21,6 +21,7 @@ import {
 import ManageMember from "./ManageTeam";
 import ManageOrganization from "./ManageOrganization";
 import OrganizationDelete from "./OrganizationDelete";
+import OrganizationBilling from "./OrganizationBilling";
 
 const ManageTeam = (props) => {
   return (
@@ -47,6 +48,10 @@ const ManageTeam = (props) => {
           <ManageMember />
         </Row>
         <Divider />
+        <Row gutter={16}>
+          <OrganizationBilling />
+        </Row>
+        <Divider />{" "}
         <Row gutter={16}>
           <OrganizationDelete />
         </Row>

@@ -333,7 +333,11 @@ const AccountDetails = () => {
         <div className="pl-1">
           <h3>Manage Account</h3>
           <p className="mt-1 text-sm text-gray-600">
-            Update MitiveLane Account password and avatar.
+            Managing your account allows you to control your personal and
+            billing information, update your preferences and settings, and
+            access any available features or services. To manage your account,
+            you will need to log in to your account using your username and
+            password{" "}
           </p>
         </div>
       </Col>

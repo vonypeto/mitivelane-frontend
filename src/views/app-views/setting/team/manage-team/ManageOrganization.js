@@ -111,30 +111,6 @@ const ManageOrganization = (props) => {
                 </Col>
               </Row>
               <Row className="pt-2">
-                <Col xs={24} sm={24} md={4} className="pt-4 text-left ">
-                  <h5 className=" font-weight-bold">Country Logo:</h5>
-                </Col>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={20}
-                  className="text-left form-input-mb"
-                >
-                  <Form.Item>
-                    <Avatar
-                      shape="square"
-                      className="mr-2 rounded"
-                      size={75}
-                      icon={<UserOutlined />}
-                    />
-
-                    {editOrganization ? (
-                      <Button icon={<UploadOutlined />} size="medium">
-                        Upload image
-                      </Button>
-                    ) : null}
-                  </Form.Item>
-                </Col>
                 <Col xs={24} sm={24} md={24} gutter={16} className="pt-4 w-100">
                   {editOrganization ? (
                     <>

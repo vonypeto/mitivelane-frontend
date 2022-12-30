@@ -75,3 +75,19 @@ export const deepCompare = (arg1, arg2) => {
   }
   return false;
 };
+export const ccFormat = (value) => {
+  var v = value;
+
+  var match = v;
+  var parts = [];
+
+  for (var i = 1, len = match.length; i < len; i += 4) {
+    parts.push(match.substring(i, i + 4));
+  }
+
+  if (parts.length) {
+    return parts.join(" ");
+  } else {
+    return value;
+  }
+};

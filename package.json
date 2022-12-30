@@ -58,6 +58,7 @@
     "react-color": "^2.19.3",
     "react-copy-to-clipboard": "^5.0.2",
     "react-country-region-selector": "^3.4.0",
+    "react-credit-cards": "^0.8.3",
     "react-css-theme-switcher": "^0.1.5",
     "react-csv": "^2.2.2",
     "react-custom-scrollbars": "^4.2.1",
