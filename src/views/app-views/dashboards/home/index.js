@@ -128,11 +128,6 @@ export const DefaultDashboard = () => {
     getResidentPopulationStatus();
   }, []);
 
-  useEffect(() => {
-    console.log("populationStatus", populationStatus);
-  }),
-    [populationStatus];
-
   return (
     <>
       <Row gutter={16}>
