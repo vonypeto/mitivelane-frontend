@@ -28,6 +28,7 @@ const Certificates = () => {
   const history = useHistory();
   const [certType, setCertType] = useState();
   const [templateType, setTemplateType] = useState();
+
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
@@ -60,27 +61,33 @@ const Certificates = () => {
   useEffect(() => {
     let isApiSubscribed = true;
 
-    if (isApiSubscribed) {
-      getCertificateData(
-        setParentData,
-        generateToken()[1],
-        id,
-        history,
-        setCertType,
-        setTemplateType,
-        firstTime,
-        setFirstTime
-      );
-    }
+    const fetchData = () => {
+      if (isApiSubscribed) {
+        getCertificateData(
+          setParentData,
+          generateToken()[1],
+          id,
+          history,
+          setCertType,
+          setTemplateType,
+          firstTime,
+          setFirstTime
+        );
+      }
+    };
+
+    fetchData();
+
+    // the cleanup function is called when the component is unmounted
     return () => {
       // cancel the subscription
       isApiSubscribed = false;
     };
-  }, []);
-  useEffect(
-    () => {
-      let isApiSubscribed = true;
+  }, []); // the empty array means the effect only runs once
+  useEffect(() => {
+    let isApiSubscribed = true;
 
+    const fetchData = () => {
       if (isApiSubscribed) {
         const listener = window.addEventListener(
           "resize",
@@ -89,15 +96,17 @@ const Certificates = () => {
         updateWindowDimensions();
         return listener;
       }
-      return () => {
-        // cancel the subscription
-        isApiSubscribed = false;
-      };
-    },
-    [height],
-    [width]
-  );
+    };
 
+    const unsubscribe = fetchData();
+
+    // the cleanup function is called when the component is unmounted
+    return () => {
+      // cancel the subscription
+      isApiSubscribed = false;
+      window.removeEventListener("resize", updateWindowDimensions, unsubscribe);
+    };
+  }, [height, width]); // the dependencies array means the effect runs when either value changes
   const setData = (data) => {
     setLoading(!loading);
     let x = data;
@@ -117,26 +126,6 @@ const Certificates = () => {
     return ref.current;
   }
 
-  const deepCompare = (arg1, arg2) => {
-    if (
-      Object.prototype.toString.call(arg1) ===
-      Object.prototype.toString.call(arg2)
-    ) {
-      if (
-        Object.prototype.toString.call(arg1) === "[object Object]" ||
-        Object.prototype.toString.call(arg1) === "[object Array]"
-      ) {
-        if (Object.keys(arg1).length !== Object.keys(arg2).length) {
-          return false;
-        }
-        return Object.keys(arg1).every(function (key) {
-          return deepCompare(arg1[key], arg2[key]);
-        });
-      }
-      return arg1 === arg2;
-    }
-    return false;
-  };
   const updateTitle = debounce((e) => {
     let data = parentData;
     data.title = e.target.value;
@@ -145,9 +134,7 @@ const Certificates = () => {
   return (
     <div>
       {firstTime ? (
-        <>
-          <Loading cover="content" />
-        </>
+        <Loading cover="content" />
       ) : (
         <>
           <PageHeaderAlt className="padding-none border-bottom" overlap>
@@ -183,51 +170,55 @@ const Certificates = () => {
 
             <div>
               <Row>
-                <Col
-                  className="pl-2 "
-                  xs={width >= 1399 || switchCert ? 24 : 0}
-                  sm={width >= 1399 || switchCert ? 24 : 0}
-                  md={width >= 1399 || switchCert ? 24 : 0}
-                  lg={width >= 1399 || switchCert ? 24 : 0}
-                  xl={width >= 1399 ? 12 : 24}
-                  xxl={width >= 1399 ? 12 : 24}
-                  style={{
-                    borderRightStyle: " solid",
-                    borderRight: "1px",
-                  }}
-                >
-                  <InputCert
-                    parentData={parentData}
-                    setParentData={setData}
-                    switchCol={setSwitchCert}
-                    certType={certType}
-                    setCertType={setCertType}
-                    templateType={templateType}
-                    setTemplateType={setTemplateType}
-                  />
-                </Col>
-                <Col
-                  style={{ overflow: "auto" }}
-                  justify="center"
-                  className="pl-2"
-                  xs={width >= 1399 || !switchCert ? 24 : 0}
-                  sm={width >= 1399 || !switchCert ? 24 : 0}
-                  md={width >= 1399 || !switchCert ? 24 : 0}
-                  lg={width >= 1399 || !switchCert ? 24 : 0}
-                  xl={width >= 1399 ? 12 : 24}
-                  xxl={width >= 1399 ? 12 : 24}
-                >
-                  <CertDisplay
-                    data={parentData}
-                    setParentData={setData}
-                    loadingImage={loading}
-                    certType={certType}
-                    setCertType={setCertType}
-                    templateType={templateType}
-                    setTemplateType={setTemplateType}
-                  />
-                </Col>
-              </Row>
+                {(width >= 1399 || switchCert) && (
+                  <Col
+                    className="pl-2 "
+                    xs={24}
+                    sm={24}
+                    md={24}
+                    lg={24}
+                    xl={12}
+                    xxl={12}
+                    style={{
+                      borderRightStyle: " solid",
+                      borderRight: "1px",
+                    }}
+                  >
+                    <InputCert
+                      parentData={parentData}
+                      setParentData={setData}
+                      switchCol={setSwitchCert}
+                      certType={certType}
+                      setCertType={setCertType}
+                      templateType={templateType}
+                      setTemplateType={setTemplateType}
+                    />
+                  </Col>
+                )}
+                {(width >= 1399 || !switchCert) && (
+                  <Col
+                    style={{ overflow: "auto" }}
+                    justify="center"
+                    className="pl-2"
+                    xs={24}
+                    sm={24}
+                    md={24}
+                    lg={24}
+                    xl={12}
+                    xxl={12}
+                  >
+                    <CertDisplay
+                      data={parentData}
+                      setParentData={setData}
+                      loadingImage={loading}
+                      certType={certType}
+                      setCertType={setCertType}
+                      templateType={templateType}
+                      setTemplateType={setTemplateType}
+                    />
+                  </Col>
+                )}
+              </Row>{" "}
             </div>
           </div>
         </>

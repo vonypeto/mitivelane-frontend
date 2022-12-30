@@ -1,48 +1,24 @@
 import { React, useState, useEffect } from "react";
-import { Button, Row, Col, Card, Form, message } from "antd";
+import { Button, Row, Col, Card, Form } from "antd";
 import { FacebookFilled, CloseCircleFilled } from "@ant-design/icons";
-import { useAuth } from "contexts/AuthContext";
 import { FcGoogle } from "react-icons/fc";
-import { googleAuthProvider, facebookAuthProvider } from "auth/FirebaseAuth";
 import firebase from "firebase/app";
-import { set } from "react-hook-form";
 
 const ConnectedAccount = () => {
   const auth = firebase.auth();
 
-  const { currentUser } = useAuth();
   const [editOrganization, setEditOrganization] = useState(false);
+  //Initialized Provider
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const facebookProvider = new firebase.auth.FacebookAuthProvider();
   const [isLoading, setIsLoading] = useState(true);
-  const [connectAccount, setConnectAccount] = useState(false);
+  // Firebase getProvider
   const [getGoogleProvider, setGoogleProvider] = useState();
   const [getFaceBookProvider, setFaceBookProvider] = useState();
+  const [connectAccount, setConnectAccount] = useState(false);
+  // Current User Login
   const [currentDataUser, setCurrentDataUser] = useState(auth.currentUser);
-  // useEffect(() => {
-  //   if (connectAccount) setConnectAccount(!connectAccount);
-  // }, [connectAccount]);
-  useEffect(() => {
-    setGoogleProvider(
-      currentDataUser.providerData.filter(
-        (provider) => provider.providerId === "google.com"
-      )
-    );
-    setFaceBookProvider(
-      currentDataUser.providerData.filter(
-        (provider) => provider.providerId === "facebook.com"
-      )
-    );
-    if (isLoading)
-      setTimeout(() => {
-        setIsLoading(!isLoading);
-      }, 1000);
-    return () => {
-      setIsLoading();
-      setGoogleProvider();
-      setFaceBookProvider();
-    };
-  }, [isLoading, currentDataUser]);
+
   const mergeAndUnmergeWithFacebook = () => {
     setIsLoading(true);
     const user = auth.currentUser;
@@ -158,14 +134,42 @@ const ConnectedAccount = () => {
         }, 1000);
       });
   };
+
   const onClickEdit = () => {
     setEditOrganization(!editOrganization);
   };
 
+  //useEffect
+  useEffect(() => {
+    // Set providers for Google and Facebook
+    setGoogleProvider(
+      currentDataUser.providerData.filter(
+        (provider) => provider.providerId === "google.com"
+      )
+    );
+    setFaceBookProvider(
+      currentDataUser.providerData.filter(
+        (provider) => provider.providerId === "facebook.com"
+      )
+    );
+
+    // Set loading to false after 1 second
+    if (isLoading) {
+      setTimeout(() => {
+        setIsLoading(!isLoading);
+      }, 1000);
+    }
+
+    // Clean up function to reset state variables
+    return () => {
+      setIsLoading();
+      setGoogleProvider();
+      setFaceBookProvider();
+    };
+  }, [isLoading, currentDataUser]);
   const ConnectedAccountData = () => {
     return (
       <Col xs={24} sm={24} md={24} className="w-100">
-        {" "}
         <Row className="pt-2 border-top">
           <Col
             xs={24}
@@ -176,11 +180,9 @@ const ConnectedAccount = () => {
             className="pt-2 text-left "
           >
             <h5 className=" font-weight-bold">
-              {" "}
               <span style={{ color: "#2EA1F5", fontSize: "20px" }}>
-                {" "}
                 <FacebookFilled />
-              </span>{" "}
+              </span>
               Facebook:
             </h5>
           </Col>
@@ -197,7 +199,7 @@ const ConnectedAccount = () => {
                 <div className="d-flex justify-content-between">
                   {getFaceBookProvider[0]?.uid ? (
                     <>
-                      <Button size="medium">Connected</Button>{" "}
+                      <Button size="medium">Connected</Button>
                       <Button
                         loading={connectAccount}
                         size="medium"
@@ -218,7 +220,7 @@ const ConnectedAccount = () => {
                         }}
                       >
                         {connectAccount ? "Connecting..." : "Connect"}
-                      </Button>{" "}
+                      </Button>
                     </>
                   )}
                 </div>
@@ -231,7 +233,7 @@ const ConnectedAccount = () => {
               )}
             </Form.Item>
           </Col>
-        </Row>{" "}
+        </Row>
         <Row className="pt-2 border-top">
           <Col
             xs={24}
@@ -242,11 +244,9 @@ const ConnectedAccount = () => {
             className="pt-2 text-left "
           >
             <h5 className=" font-weight-bold">
-              {" "}
               <span style={{ fontSize: "20px" }}>
-                {" "}
                 <FcGoogle className="anticon" />
-              </span>{" "}
+              </span>
               Google:
             </h5>
           </Col>
@@ -263,7 +263,7 @@ const ConnectedAccount = () => {
                 <div className="d-flex justify-content-between ">
                   {getGoogleProvider[0]?.uid ? (
                     <>
-                      <Button size="medium">Connected</Button>{" "}
+                      <Button size="medium">Connected</Button>
                       <Button
                         loading={connectAccount}
                         size="medium"
@@ -279,8 +279,8 @@ const ConnectedAccount = () => {
                         size="medium"
                         onClick={() => mergeAndUnmergeWithGoogle()}
                       >
-                        {connectAccount ? "Connecting..." : "Connect"}{" "}
-                      </Button>{" "}
+                        {connectAccount ? "Connecting..." : "Connect"}
+                      </Button>
                     </>
                   )}
                 </div>

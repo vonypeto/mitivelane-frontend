@@ -18,8 +18,6 @@ import { AUTH_TOKEN, SESSION_TOKEN } from "redux/constants/Auth";
 import AvatarSession from "components/shared-components/AvatarSession";
 import { useAuth } from "contexts/AuthContext";
 import { deleteSession } from "api/AppController/AccountsController/AccountDetailsController";
-import Loading from "components/shared-components/Loading";
-import LazyLoad from "react-lazyload";
 
 import {
   EllipsisOutlined,
@@ -31,15 +29,17 @@ const AccountSession = () => {
   const postsPerPage = 3;
   let arrayForHoldingSession = [];
   const { generateToken } = useAuth();
-  const [sessionData, setSessionData] = useState([]);
-  const [sessionDataAll, setSessionDataAll] = useState([]);
+  // Selected Session
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [nextPageLoad, setNextPageLoad] = useState(false);
+  // State Session
+  const [sessionData, setSessionData] = useState([]);
+  const [sessionDataAll, setSessionDataAll] = useState([]);
   const [totalSession, setTotalSession] = useState(false);
   const [currentSession, setCurrentSession] = useState(false);
+  // Infinite loading nextPage
+  const [nextPageLoad, setNextPageLoad] = useState(false);
   const [limit, setLimit] = useState(5);
-
   const [next, setNext] = useState(3);
   const [showMessage, setShowMessage] = useState({
     show: false,
@@ -72,17 +72,21 @@ const AccountSession = () => {
     const objKey = "_id";
     console.log(row._id);
     let data = sessionData;
-    if (selectedRows.length > 1) {
-      selectedRows.forEach((elm) => {
-        data = utils.deleteArrayRow(data, objKey, elm._id);
+    try {
+      if (selectedRows.length > 1) {
+        selectedRows.forEach((elm) => {
+          data = utils.deleteArrayRow(data, objKey, elm._id);
+          setSessionData(data);
+          deleteSession(row._id, generateToken, setShowMessage);
+        });
+        setSelectedRows([]);
+      } else {
+        data = utils.deleteArrayRow(data, objKey, row._id);
         setSessionData(data);
         deleteSession(row._id, generateToken, setShowMessage);
-      });
-      setSelectedRows([]);
-    } else {
-      data = utils.deleteArrayRow(data, objKey, row._id);
-      setSessionData(data);
-      deleteSession(row._id, generateToken, setShowMessage);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
   const getData = async () => {
@@ -104,29 +108,26 @@ const AccountSession = () => {
       .catch((error) => {
         console.log(error);
       });
-    return () => {
-      // cancel the subscription
-      isApiSubscribed = false;
-    };
   };
   useEffect(() => {
-    if (showMessage)
+    if (showMessage) {
       setTimeout(() => {
-        setShowMessage(!showMessage);
+        setShowMessage(false);
       }, 3000);
+    }
     return () => {
-      setShowMessage(false);
+      // Clear timeout when the component unmounts
+      clearTimeout();
     };
   }, [showMessage]);
-  useEffect(() => {
-    let mount = true;
-    // console.log(currentPhoto);
 
-    if (mount) {
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted) {
       getData();
     }
     return () => {
-      mount = false;
+      isMounted = false;
     };
   }, []);
   //Data Dropdown
@@ -158,7 +159,7 @@ const AccountSession = () => {
         }}
       >
         <Flex alignItems="center">
-          <ExclamationCircleOutlined />{" "}
+          <ExclamationCircleOutlined />
           <span className="ml-2">Remove device</span>
         </Flex>
       </Menu.Item>
@@ -181,7 +182,6 @@ const AccountSession = () => {
     return (
       <>
         <Skeleton loading={isLoading} active avatar>
-          {" "}
           <div className="mt-3">
             <div
               className={`d-flex align-items-center justify-content-between mb-4`}
@@ -233,7 +233,6 @@ const AccountSession = () => {
           size={10}
           paragraph={{ rows: 1 }}
         >
-          {" "}
           <div className="mt-3">
             <div
               className={`d-flex align-items-center justify-content-between mb-4`}
@@ -259,9 +258,7 @@ const AccountSession = () => {
         <Card title="Sessions" extra={cardDropdown(newJoinMemberOption)}>
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-2 border-top ">
-              {" "}
               <Col xs={24} sm={24} md={24} className="pt-2 text-left ">
-                {" "}
                 {showMessage.show == true ? (
                   <Alert
                     message={showMessage.message}
