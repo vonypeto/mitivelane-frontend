@@ -40,20 +40,13 @@ const AccountDetails = () => {
       .then((response) => {
         setIsLoading(false);
         setDisplayName(response.data.full_name);
-        // setInitialVal({
-        //   email: currentUser?.email,
-        //   name: response.data.full_name,
-        // });
+
         form.setFieldsValue({
           email: currentUser?.email,
           name: response.data.full_name,
         });
       });
   };
-  //mount data
-  // useEffect(() => {
-  //   form.resetFields();
-  // }, [initialVal, form]);
   useEffect(() => {
     if (showResetPassword)
       setTimeout(() => {

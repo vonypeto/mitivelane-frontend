@@ -77,7 +77,9 @@ export const DefaultDashboard = () => {
         if (type == "blotter") {
           setDocumentBlotterList(response.data);
         }
-        setCertLoading(false);
+        setTimeout(() => {
+          setCertLoading(false);
+        }, 500);
       })
       .catch(() => {
         console.log("Error");
@@ -98,7 +100,27 @@ export const DefaultDashboard = () => {
         console.log("Error");
       });
   };
+  const handleChangeCert = (value) => {
+    const newStatus = true;
+    const data = { certificate_id: value, status: newStatus };
+    updateCertificateData(data, generateToken()[1]);
 
+    if (prevDataCert) {
+      const prevData = {
+        certificate_id: prevDataCert.certificate_id,
+        status: !newStatus,
+      };
+      updateCertificateData(prevData, generateToken()[1]);
+    }
+
+    setPrevDataCert(data);
+  };
+  const handleChangeBlotter = (value) => {
+    setPrevDataBlotter(value);
+    // const data = { certificate_id: value, status: true };
+    // console.log(`selected ${value}`);
+    // updateCertificateData(data, generateToken()[1]);
+  };
   useEffect(() => {
     getLatestBlotterRequests();
     getDocumentsData("cert");
