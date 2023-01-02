@@ -1,36 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { setLocalStorage } from "api/AppController/LocalStorageController/LocalStorageController";
 import { BLOTTER_FORM } from "redux/constants/Record";
-import {
-  Col,
-  Card,
-  Table,
-  Tooltip,
-  Select,
-  Input,
-  Button,
-  Menu,
-  Space,
-  Row,
-  Badge,
-  Tag,
-  Avatar,
-  List,
-  message,
-} from "antd";
-import {
-  EyeOutlined,
-  EllipsisOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-  PlusCircleOutlined,
-  FileExcelOutlined,
-  CheckCircleOutlined,
-  PrinterOutlined,
-  EditOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
-import { Dropdown } from "antd";
+import { Col, Card, Table, Tooltip, Select, Input, Button, Menu, Space, Row, Badge, Tag, Avatar, List, message, Dropdown } from 'antd';
+import { EyeOutlined, EllipsisOutlined, DeleteOutlined, SearchOutlined, PlusCircleOutlined, FileExcelOutlined, CheckCircleOutlined, PrinterOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
 import BlotterListRequestData from "assets/data/blotter-request.data.json";
 import DonutChartWidget from "components/shared-components/DonutChartWidget";
 import NumberFormat from "react-number-format";
@@ -42,8 +14,8 @@ import UserView from "./UserView";
 import { BlotterReportMost } from "./BlotterData";
 import { COLORS } from "constants/ChartConstant";
 import { CSVLink } from "react-csv";
-import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
+import { getBlotters, getRecordCases, deleteBlotter } from "api/AppController/BlotterController/BlotterController";
 
 const { Option } = Select;
 const categories = ["Scheduled", "Unscheduled", "Settled", "Unsettled"];
@@ -54,29 +26,20 @@ const BlotterRecord = (props) => {
   const { param_url } = props;
   var history = useHistory();
 
-  const [blotterlist, setBlotterList] = useState([]);
-  const [blotterlistData, setBlotterlistData] = useState([]);
-  const [blotterlistLoading, setBlotterListLoading] = useState(true);
-
-  const [sessionData, setSessionData] = useState([0, 0, 0, 0]);
+  const [blotters, setBlotters] = useState([]);
+  const [blottersData, setBlottersData] = useState([]);
+  const [blottersLoading, setBlottersLoading] = useState(true);
 
   const [selectedRowsBlotter, setSelectedRowsBlotter] = useState([]);
   const [selectedRowKeysBlotter, setSelectedRowKeysBlotter] = useState([]);
 
-  const [selectedRowsBlotterRequest, setSelectedRowsBlotterRequest] = useState(
-    []
-  );
-  const [
-    selectedRowKeysBlotterRequest,
-    setSelectedRowKeysBlotterRequest,
-  ] = useState([]);
+  const [blotterVisible, setBlotterVisible] = useState(false);
+  const [selectedBlotter, setSelectedBlotter] = useState(null);
 
-  const [userProfileVisible, SetUserProfileVisible] = useState(false);
-  const [selectedUser, SetSelectedUser] = useState(null);
+  const [sessionData, setSessionData] = useState([0, 0, 0, 0]);
 
   useEffect(() => {
-    getBlotters(currentOrganization);
-    getRecordCases(currentOrganization);
+    getBlottersAndRecordCases();
 
     setLocalStorage(BLOTTER_FORM, {
       reporters: [],
@@ -86,71 +49,43 @@ const BlotterRecord = (props) => {
     });
   }, []);
 
-  const getBlotters = (currentOrganization) => {
-    axios
-      .get(
-        "/api/blotter/get-blotters/" + currentOrganization,
-        generateToken()[1]
-      )
-      .then((response) => {
-        console.log("Blotters ", response.data);
-        setBlotterList(response.data);
-        setBlotterlistData(response.data);
-        setBlotterListLoading(false);
-      })
-      .catch(() => {
-        message.error("Could not fetch the data in the server!");
-      });
+  // Api Calls
+  const getBlottersAndRecordCases = () => {
+    (async () => {
+      const blotters = await getBlotters(currentOrganization, generateToken);
+      setBlotters(blotters);
+      setBlottersData(blotters);
+      setBlottersLoading(false);
+      const recordCases = await getRecordCases(currentOrganization, generateToken);
+      setSessionData(recordCases);
+    })();
+  }
+
+  const handleDelete = (_ids) => {
+    (async () => {
+      const response = await deleteBlotter(_ids, generateToken);
+      if (response == "Success") {
+        const recordCases = await getRecordCases(currentOrganization, generateToken);
+        setSessionData(recordCases);
+        return message.success('Successfully Deleted');
+      }
+    })();
   };
 
-  const getRecordCases = (currentOrganization) => {
-    axios
-      .get(
-        "/api/blotter/record-cases/" + currentOrganization,
-        generateToken()[1]
-      )
-      .then((response) => {
-        console.log("Record Cases", response.data);
-        setSessionData(response.data);
-      })
-      .catch(() => {
-        console.log("Error");
-      });
+  // View and Close Blotter
+  const viewBlotter = (blotters) => {
+    setBlotterVisible(true);
+    setSelectedBlotter(blotters);
   };
 
-  const deleteBlotter = (_ids) => {
-    axios
-      .post("/api/blotter/delete-blotter", { _ids }, generateToken()[1])
-      .then((response) => {
-        // message.destroy()
-        if (response.data == "Success") {
-          getRecordCases(currentOrganization);
-          return message.success("Successfully Deleted");
-        } else {
-          return message.error("Error, please try again.");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        // message.destroy()
-        message.error("The action can't be completed, please try again.");
-      });
-  };
-
-  // ViewBlotter
-  const showUserProfile = (UserList) => {
-    SetUserProfileVisible(true);
-    SetSelectedUser(UserList);
-  };
-
-  const closeUserProfile = () => {
-    SetUserProfileVisible(false);
-    SetSelectedUser(null);
+  const closeBlotter = () => {
+    setBlotterVisible(false);
+    setSelectedBlotter(null);
   };
 
   const BlotterDropdownMenu = (row) => (
     <Menu>
-      <Menu.Item key={0} onClick={() => showUserProfile(row)}>
+      <Menu.Item key={0} onClick={() => viewBlotter(row)}>
         <Flex alignItems="center">
           <EyeOutlined />
           <span className="ml-2">View</span>
@@ -246,10 +181,10 @@ const BlotterRecord = (props) => {
               record.settlement_status === "Settled"
                 ? "geekblue"
                 : record.settlement_status === "Unsettled"
-                ? "orange"
-                : record.settlement_status === "Scheduled"
-                ? "cyan"
-                : "gold"
+                  ? "orange"
+                  : record.settlement_status === "Scheduled"
+                    ? "cyan"
+                    : "gold"
             }
           >
             {record.settlement_status}
@@ -278,22 +213,20 @@ const BlotterRecord = (props) => {
 
   const onBlotterSearch = (e) => {
     const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? blotterlist : blotterlistData;
+    const searchArray = e.currentTarget.value ? blotters : blottersData;
     const data = utils.wildCardSearch(searchArray, value);
-    setBlotterList(data);
+    setBlotters(data);
     setSelectedRowKeysBlotter([]);
   };
 
   //EXPORT
   const refreshBlotter = () => {
-    console.log("Refresh Blotter");
-    setBlotterListLoading(true);
+    setBlottersLoading(true);
 
-    setBlotterList([]);
-    getBlotters(currentOrganization);
-
+    setBlotters([]);
     setSessionData([0, 0, 0, 0]);
-    getRecordCases(currentOrganization);
+
+    getBlottersAndRecordCases()
   };
 
   const headers = [
@@ -380,7 +313,7 @@ const BlotterRecord = (props) => {
       <Menu.Item key="3" hidden={true}>
         <CSVLink
           ref={csvLink}
-          data={blotterlistData}
+          data={blottersData}
           headers={headers}
           filename="Blotter.csv"
         >
@@ -403,11 +336,11 @@ const BlotterRecord = (props) => {
 
   const BlotterDeleteRow = (row) => {
     const objKey = "_id";
-    let data = blotterlist;
+    let data = blotters;
     if (selectedRowsBlotter.length > 1) {
       selectedRowsBlotter.forEach((elm) => {
         data = utils.deleteArrayRow(data, objKey, elm._id);
-        setBlotterList(data);
+        setBlotters(data);
         setSelectedRowsBlotter([]);
       });
 
@@ -416,22 +349,22 @@ const BlotterRecord = (props) => {
         _ids.push(values._id);
       });
 
-      deleteBlotter(_ids);
+      handleDelete(_ids);
     } else {
       data = utils.deleteArrayRow(data, objKey, row._id);
-      setBlotterList(data);
+      setBlotters(data);
 
-      deleteBlotter([row._id]);
+      handleDelete([row._id]);
     }
   };
 
   const BlotterCases = (value) => {
     if (value !== "All") {
       const key = "settlement_status";
-      const data = utils.filterArray(blotterlistData, key, value);
-      setBlotterList(data);
+      const data = utils.filterArray(blottersData, key, value);
+      setBlotters(data);
     } else {
-      setBlotterList(blotterlistData);
+      setBlotters(blottersData);
     }
   };
 
@@ -590,10 +523,10 @@ const BlotterRecord = (props) => {
 
                 <div className="table-responsive">
                   <Table
-                    loading={blotterlistLoading}
+                    loading={blottersLoading}
                     className="no-border-last"
                     columns={blotterdatacolumn}
-                    dataSource={blotterlist}
+                    dataSource={blotters}
                     rowKey="_id"
                     scroll={{ x: "max-content" }}
                     rowSelection={{
@@ -618,10 +551,10 @@ const BlotterRecord = (props) => {
         </Col>
 
         <UserView
-          data={selectedUser}
-          visible={userProfileVisible}
+          data={selectedBlotter}
+          visible={blotterVisible}
           close={() => {
-            closeUserProfile();
+            closeBlotter();
           }}
         />
       </Row>
