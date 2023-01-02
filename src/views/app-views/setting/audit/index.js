@@ -64,7 +64,7 @@ const Audit = () => {
 
   const getPage = async () => {
     await axios.post(
-      `/api/session/getPage`,
+      `/api/session/page`,
       { currentPage, pageSize, dateFilter, sortFilter, organization_id: currentOrganization },
       generateToken()[1],
       { cancelToken }

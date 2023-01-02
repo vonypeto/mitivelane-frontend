@@ -1,9 +1,11 @@
+import axios from "axios";
+
 export const CreateSession = async (name, message, action, module, organization_id, apiOptions) => {
     const values = {
         name, message, action, module
     }
 
-    const {axios, generateToken, cancelToken} = apiOptions
+    const {generateToken, cancelToken} = apiOptions
 
     try {
         await axios
@@ -18,6 +20,3 @@ export const CreateSession = async (name, message, action, module, organization_
         console.log(error);
     }
 }
-
-
-

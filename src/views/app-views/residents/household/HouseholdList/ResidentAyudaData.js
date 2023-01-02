@@ -199,7 +199,7 @@ export const ResidentTableColumns = [
   },
   {
     title: "Birthday",
-    dataIndex: "birthday",
+    dataIndex: "birthdayParse",
     key: "birthday",
   },
   {

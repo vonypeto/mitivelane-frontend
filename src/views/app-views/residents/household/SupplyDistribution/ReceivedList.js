@@ -76,7 +76,7 @@ const ReceievedList = (props) => {
     setReceivedTableLoading(true);
     await axios
       .post(
-        `/api/supply/receive/getPage/${organization_id}/${receivedSupplyCurrentPage}/${pageSize}`,
+        `/api/supply/receive/page/${organization_id}/${receivedSupplyCurrentPage}/${pageSize}`,
         { tableScreen, dateFilter },
         generateToken()[1],
         { cancelToken }

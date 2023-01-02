@@ -45,8 +45,8 @@ const MainFormView = (props) => {
                 icon={utils.getNameInitial(props.residentData.firstname + " " + props.residentData.lastname)}
                 image={props.residentData.avatarImg}
                 style={{
-                  width: "140px",
-                  height: " 140px",
+                  width: "6rem",
+                  height: " 6rem",
                   lineHeight: "140px",
                   fontSize: "70px",
                 }}

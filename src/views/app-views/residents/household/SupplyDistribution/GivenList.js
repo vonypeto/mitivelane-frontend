@@ -73,7 +73,7 @@ const GivenList = (props) => {
     try {
       await axios
         .post(
-          `/api/supply/given/getPage/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
+          `/api/supply/given/page/${organization_id}/${givenSupplyCurrentPage}/${pageSize}`,
           { tableScreen, dateFilter },
           generateToken()[1],
           { cancelToken }

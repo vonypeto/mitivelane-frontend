@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 
 const CustomDropdown = (props) => {
 
-	console.log("props", props)
+	// console.log("props", props)
 	const menu = (menuItems) => {
 		return (
 			<Menu>

@@ -1,10 +1,11 @@
 import { React, useEffect, useState } from "react";
-import { Row, Col, Card, Table, Badge, Button, Menu, message } from "antd";
+import { Row, Col, Card, Table, Input, Select, Badge, Button, Menu, message } from "antd";
 import { useAuth } from "contexts/AuthContext";
 import axios from "axios";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import { Link } from "react-router-dom";
+import { computeAge } from "helper/Formula";
 
 import {
   EyeOutlined,
@@ -23,7 +24,23 @@ import {
   ResidentTableData,
   HouseholdTableData,
 } from "./ResidentAyudaData";
+
+const { Option } = Select;
+const filterCategories = [
+  { text: "H.Number", value: "house_number"},
+  { text: "H.Name", value: "name" },
+  { text: "Address", value: "address" },
+  { text: "Purok", value: "purok" },
+  { text: "Status", value: "house_status" },
+  { text: "Family Planning", value: "family_planning" },
+  { text: "Water Source", value: "water_source" },
+  { text: "Toilet Type", value: "toilet_type" },
+  { text: "Waste Management", value: "waste_management" },
+];
+
 import CustomDropdown from "components/shared-components/CustomDropdown";
+import { handlePageChange } from "helper/Pagination";
+import moment from "moment";
 
 const AyudaTable = (props) => {
   //Import
@@ -98,23 +115,44 @@ const AyudaTable = (props) => {
   const [householdList, sethouseholdList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  //State For Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const [total, setTotal] = useState(1)
+  const defaultPageSize = 10
+  const [pageSize, setPageSize] = useState(defaultPageSize)
+  const defaultFilters = { sort: "desc", searchCategory: "address" }
+  const [dataFilter, setDataFilter] = useState({
+    value: "",
+    field: defaultFilters.searchCategory,
+    sort: defaultFilters.sort,
+  })
+
   //useEffect
   useEffect(() => {
-    getAllHousehold();
-  }, []);
+    getPage()
+    console.log("dataFilter", dataFilter)
+  }, [pageSize, currentPage, dataFilter])
+
 
   //Axios
-  const getAllHousehold = async () => {
+  const getPage = async () => {
     setLoading(true)
     try {
-      const households = await axios.post(
-        "/api/household/getAll",
-        { organization_id: organization_id },
+      const query = await axios.post(
+        "/api/household/page",
+        { organization_id, dataFilter, page: currentPage, pageSize },
         generateToken()[1],
         { cancelToken }
       );
 
-      sethouseholdList(households.data);
+      var householdList = query.data.household
+      var total = query.data.total
+
+      console.log("householdList", householdList)
+    
+      sethouseholdList(householdList)
+      setTotal(total)
+
     } catch (error) {
       console.log(error);
       message.error("Error!! Please try again later!!");
@@ -136,7 +174,7 @@ const AyudaTable = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
-    
+
     message.success(`Deleted selected household`);
     setLoading(false)
   };
@@ -186,8 +224,10 @@ const AyudaTable = (props) => {
 
   const expandedRowRender = (household_members) => {
     console.log(household_members);
-    household_members.map((member) => {
+    household_members.map(async (member) => {
       member.name = `${member.first_name} ${member.last_name}`;
+      member.age = computeAge(member.birthday)
+      member.birthdayParse = moment(member.birthday).format("MM/DD/yyyy")
     });
 
     return (
@@ -199,6 +239,21 @@ const AyudaTable = (props) => {
       />
     );
   };
+
+  const handleSearchChange = (e) => {
+    var value = e.target.value
+    setDataFilter({ ...dataFilter, value: value })
+  }
+
+  const handleFilterChange = (value) => {
+    //Select Input type only returns value
+    setDataFilter({ ...dataFilter, field: value })
+  }
+
+  const handleSortChange = (value) => {
+    //Select Input type only returns value
+    setDataFilter({ ...dataFilter, sort: value })
+  }
 
   return (
     <Card>
@@ -212,8 +267,45 @@ const AyudaTable = (props) => {
             <Button type="primary">Add Household</Button>
           </Link>
 
-          <CustomDropdown/>
-          
+          <CustomDropdown />
+
+        </Col>
+      </Row>
+
+      <Row align="middle" gutter={5} className="mb-3">
+        <Col>
+          <Input
+            placeholder="Search"
+            prefix={<SearchOutlined />}
+            onChange={handleSearchChange}
+          />
+        </Col>
+
+        <Col>
+          <Select
+            defaultValue={defaultFilters.searchCategory}
+            className="w-100"
+            style={{ minWidth: 120 }}
+            onChange={handleFilterChange}
+          >
+            {filterCategories.map((choice, key) => (
+              <Option key={key} value={choice.value}>
+                {choice.text}
+              </Option>
+            ))}
+          </Select>
+        </Col>
+
+        <Col>
+          <Select
+            defaultValue={defaultFilters.sort}
+            className="w-100"
+            style={{ minWidth: 120 }}
+            onChange={handleSortChange}
+          >
+            <Option value={"desc"}>Descending</Option>
+            <Option value={"asc"}>Ascending</Option>
+          </Select>
         </Col>
       </Row>
 
@@ -228,7 +320,19 @@ const AyudaTable = (props) => {
           rowExpandable: (data) => data.househole_name !== "Not Expandable",
         }}
         rowKey="household_id"
-        pagination="true"
+        pagination={{
+          current: currentPage,
+          showSizeChanger: true,
+          defaultPageSize: defaultPageSize,
+          pageSizeOptions: [5, 10, 20, 50, 100],
+          total,
+          onShowSizeChange: (current, size) => {
+            setPageSize(size)
+          },
+          onChange: (page) => {
+            handlePageChange(page, setCurrentPage)
+          }
+        }}
         loading={loading}
         bordered
       />

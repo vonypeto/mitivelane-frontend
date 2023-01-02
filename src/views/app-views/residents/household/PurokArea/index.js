@@ -23,7 +23,7 @@ import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
 import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/Pagination";
 
-import { CreateSession } from "helper/Session";
+// import { CreateSession } from "api/AppController/AuditController/AuditController"
 
 import {
   DeleteOutlined,
@@ -43,7 +43,6 @@ const PurokArea = (props) => {
   const { generateToken, currentOrganization , currentUser} = useAuth();
 
   const apiOptions = {
-    axios,
     generateToken,
     cancelToken
   }
@@ -115,7 +114,7 @@ const PurokArea = (props) => {
   useEffect(() => {
     getAreasPage();
     console.log("currentUser", currentUser.displayName)
-    CreateSession("Giann", "visited purok page", "create", "purok", organization_id, apiOptions)
+    // CreateSession("Giann", "visited purok page", "create", "purok", organization_id, apiOptions)
   }, [currentPage, pageSize, tableScreen])
 
   //Axios
@@ -125,7 +124,7 @@ const PurokArea = (props) => {
     try {
       setLoading(true)
       await axios.post(
-        "/api/purok/getPage",
+        "/api/purok/page",
         { organization_id: organization_id, page: currentPage, tableScreen, pageSize },
         generateToken()[1],
         { cancelToken }
