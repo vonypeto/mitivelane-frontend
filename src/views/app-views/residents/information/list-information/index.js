@@ -19,7 +19,17 @@ import utils from "utils";
 import { Col, Dropdown } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handlePageSizeChange, handlePageChange, handleDeletePage, handleDeletePages, searchBar, searchIcon, searchBarNumber, searchBarDate } from "helper/Pagination";
+import {
+  handleTableChange,
+  handlePageSizeChange,
+  handlePageChange,
+  handleDeletePage,
+  handleDeletePages,
+  searchBar,
+  searchIcon,
+  searchBarNumber,
+  searchBarDate,
+} from "helper/Pagination";
 
 import { JSONToExcel } from "helper/ExportToExcel";
 import { computeAge } from "helper/Formula";
@@ -37,11 +47,11 @@ const ListInformation = (props) => {
   let history = useHistory();
 
   //Pagination State
-  const [tableScreen, setTableScreen] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [total, setTotal] = useState(0)
-  const defaultPageSize = 10
-  const [pageSize, setPageSize] = useState(defaultPageSize)
+  const [tableScreen, setTableScreen] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const defaultPageSize = 10;
+  const [pageSize, setPageSize] = useState(defaultPageSize);
 
   //State
   const [selectShow, setShow] = useState(true);
@@ -61,15 +71,25 @@ const ListInformation = (props) => {
     try {
       await axios
         .post(
+<<<<<<< HEAD
           "/api/resident/page",
           { organization_id: organization_id, page: currentPage, tableScreen, pageSize },
+=======
+          "/api/resident/getPage",
+          {
+            organization_id: organization_id,
+            page: currentPage,
+            tableScreen,
+            pageSize,
+          },
+>>>>>>> 9709904ca24691aab92f2230d9293f7bdf646262
           generateToken()[1],
           { cancelToken }
         )
         .then((res) => {
           var data = res.data;
-          console.log("data", data)
-          setTotal(data.total)
+          console.log("data", data);
+          setTotal(data.total);
           setList(data.residentList);
         });
     } catch (error) {
@@ -156,15 +176,34 @@ const ListInformation = (props) => {
         residentIdArray.push(elm.resident_id);
       }); //end of loop
       deleteResident(residentIdArray);
-      handleDeletePages(residentIdArray, total, setTotal, pageSize, currentPage, setCurrentPage, list, getPage)
-      message.success(`${selectedRows.length} Selected resident has been deleted.`)
+      handleDeletePages(
+        residentIdArray,
+        total,
+        setTotal,
+        pageSize,
+        currentPage,
+        setCurrentPage,
+        list,
+        getPage
+      );
+      message.success(
+        `${selectedRows.length} Selected resident has been deleted.`
+      );
     } else {
       data = utils.deleteArrayRow(data, objKey, row.resident_id);
       setList(data);
       residentIdArray.push(row.resident_id);
       deleteResident(residentIdArray);
-      handleDeletePage(total, setTotal, currentPage, setCurrentPage, pageSize, list, getPage)
-      message.success("Selected resident has been deleted.")
+      handleDeletePage(
+        total,
+        setTotal,
+        currentPage,
+        setCurrentPage,
+        pageSize,
+        list,
+        getPage
+      );
+      message.success("Selected resident has been deleted.");
     }
   };
 
@@ -174,14 +213,14 @@ const ListInformation = (props) => {
       dataIndex: "lastname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
       filterDropdown: searchBar,
-      filterIcon: searchIcon
+      filterIcon: searchIcon,
     },
     {
       title: "First Name",
       dataIndex: "firstname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "firstname"),
       filterDropdown: searchBar,
-      filterIcon: searchIcon
+      filterIcon: searchIcon,
     },
     {
       title: "Middle Name",
@@ -189,23 +228,23 @@ const ListInformation = (props) => {
       sorter: (a, b) => utils.antdTableSorter(a, b, "middlename"),
       filterDropdown: searchBarDate,
       defaultFilteredValue: null,
-      filterIcon: searchIcon
+      filterIcon: searchIcon,
     },
     {
       title: "Age",
       dataIndex: "age",
       sorter: (a, b) => utils.antdTableSorter(a, b, "age"),
       filterDropdown: searchBarNumber,
-      filterIcon: searchIcon
+      filterIcon: searchIcon,
     },
     {
       title: "Civil Status",
       dataIndex: "civil_status",
       filters: [
-        { text: 'Single', value: 'Single' },
-        { text: 'Married', value: 'Married' },
-        { text: 'Widowed', value: 'Widowed' },
-        { text: 'Divorced', value: 'Divorced' },
+        { text: "Single", value: "Single" },
+        { text: "Married", value: "Married" },
+        { text: "Widowed", value: "Widowed" },
+        { text: "Divorced", value: "Divorced" },
       ],
     },
     {
@@ -245,16 +284,21 @@ const ListInformation = (props) => {
   // };
 
   const handleExport = () => {
-    console.log("exporting data from table")
+    console.log("exporting data from table");
 
-    let newList = list.map(resident => ({
+    let newList = list.map((resident) => ({
       "First Name": resident.firstname,
       "Last Name": resident.lastname,
       "Middle Name": resident.firstname,
-      "Alias": resident.alias,
-      "Age": computeAge(resident.birthday),
-      "Birthday": new Date(resident.birthday).toDateString().split(' ').slice(1).join(' '),
+      Alias: resident.alias,
+      Age: computeAge(resident.birthday),
+      Birthday: new Date(resident.birthday)
+        .toDateString()
+        .split(" ")
+        .slice(1)
+        .join(" "),
       "Birth Place": resident.birth_of_place,
+<<<<<<< HEAD
       "Gender": resident.gender,
       "Height": resident.height + " " + resident.height_unit,
       "Weight": resident.weight  + " " + resident.height_unit,
@@ -266,41 +310,54 @@ const ListInformation = (props) => {
       "Religion": resident.religion,
       "Address 1": resident.Address_1,
       "Address 2": resident.Address_2,
+=======
+      Gender: resident.gender,
+      Height: resident.height + " " + resident.height_unit,
+      Weight: resident.weight + " " + resident.height_unit,
+      Blood_type: resident.blood_type,
+      Voter_status: resident.voter_status,
+      Civil_status: resident.civil_status,
+      Occupation: resident.occupation,
+      Citizenship: resident.citizenship,
+      Religion: resident.religion,
+      Address_1: resident.Address_1,
+      Address_2: resident.Address_2,
+>>>>>>> 9709904ca24691aab92f2230d9293f7bdf646262
       "Purok/Area": resident.area,
-      "Telephone": resident.telephone,
-      "Mobile_number": resident.mobile_number,
-      "Email": resident.email,
-      "Father": resident.father,
-      "Mother": resident.mother,
-      "Spouse": resident.spouse,
-      "PAG_IBIG": resident.pag_ibig,
-      "PHILHEALTH": resident.philhealth,
-      "SSS": resident.sss,
-      "TIN": resident.tin,
+      Telephone: resident.telephone,
+      Mobile_number: resident.mobile_number,
+      Email: resident.email,
+      Father: resident.father,
+      Mother: resident.mother,
+      Spouse: resident.spouse,
+      PAG_IBIG: resident.pag_ibig,
+      PHILHEALTH: resident.philhealth,
+      SSS: resident.sss,
+      TIN: resident.tin,
     }));
 
-    console.log("resident list", newList)
+    console.log("resident list", newList);
 
-    JSONToExcel(newList, "BarangayResidentList")
-  }
+    JSONToExcel(newList, "BarangayResidentList");
+  };
 
   const residentTableDropdownItems = [
     {
       text: "Refresh",
-			icon: <ReloadOutlined />,
-			onClick: () => alert("Resident Table Refresh")
+      icon: <ReloadOutlined />,
+      onClick: () => alert("Resident Table Refresh"),
     },
     {
       text: "Print",
-			icon: <PrinterOutlined />,
-			onClick: () => alert("Resident Table Print")
+      icon: <PrinterOutlined />,
+      onClick: () => alert("Resident Table Print"),
     },
     {
       text: "Export",
-			icon: <FileExcelOutlined />,
-			onClick: () => handleExport()
-    }
-  ]
+      icon: <FileExcelOutlined />,
+      onClick: () => handleExport(),
+    },
+  ];
 
   return (
     <QueueAnim
@@ -309,7 +366,10 @@ const ListInformation = (props) => {
     >
       {selectShow ? (
         <div key="demo1">
-          <Card title="Resident Master List" extra={<CustomDropdown menuItems={residentTableDropdownItems}/>}>
+          <Card
+            title="Resident Master List"
+            extra={<CustomDropdown menuItems={residentTableDropdownItems} />}
+          >
             <Flex
               alignItems="center"
               className=""
@@ -378,12 +438,13 @@ const ListInformation = (props) => {
                   defaultPageSize: defaultPageSize,
                   pageSizeOptions: [defaultPageSize, 10, 20, 50, 100],
                   onShowSizeChange: (current, size) => {
-                    handlePageSizeChange(size, setList, setPageSize)
+                    handlePageSizeChange(size, setList, setPageSize);
                   },
-                  onChange: (page) => handlePageChange(page, setCurrentPage)
+                  onChange: (page) => handlePageChange(page, setCurrentPage),
                 }}
-
-                onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setList, setTableScreen)}
+                onChange={(pagination, filters, sorter) =>
+                  handleTableChange(sorter, filters, setList, setTableScreen)
+                }
               />
             </div>
           </Card>

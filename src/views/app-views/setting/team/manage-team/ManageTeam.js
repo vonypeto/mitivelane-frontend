@@ -72,10 +72,10 @@ const ManageMember = (props) => {
       });
   }
 
-  const deleteOrganizationRequest = (_id) => {
+  const deleteOrganizationMember = (_id) => {
     axios
       .post(
-        "/api/organization_setting/delete-organization-request/", { _id },
+        "/api/organization_setting/delete-organization-member/", { _id },
         generateToken()[1]
       )
       .then((response) => {
@@ -212,11 +212,11 @@ const ManageMember = (props) => {
           <div key={elm} className="text-center align-items-center">
             <Tag
               color={
-                elm.status === "Active"
+                elm.status === "Accepted"
                   ? "cyan"
                   : elm.status === "Pending"
                     ? "orange"
-                    : elm.status === "Inactive"
+                    : elm.status === "Rejected"
                       ? "volcano"
                       : null
               }
@@ -251,7 +251,7 @@ const ManageMember = (props) => {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => {
-                  deleteOrganizationRequest(elm._id)
+                  deleteOrganizationMember(elm._id)
                 }}
                 size="small"
               />

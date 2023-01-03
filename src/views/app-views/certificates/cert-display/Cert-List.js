@@ -23,26 +23,26 @@ import {
 
 const CertList = React.memo(
   (props) => {
-    const count = 6;
-    const history = useHistory();
-    const { generateToken } = useAuth();
     const { pdfFile, setPdfFile } = props;
+    const { generateToken } = useAuth();
+    const history = useHistory();
+    const count = 6;
     const [start, setStart] = useState(7);
     const [drawer, setDrawer] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(false);
     const [loadingDuplicate, setLoadingDuplicate] = useState(false);
-
     const [selectedUser, SetSelectedUser] = useState(null);
     const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
+
     //Test data
     const arrayData = [
       { id: 1, pdf: FileTest, type: "view", selectedform: 1 },
       { id: 2, pdf: FileTest, type: "view", selectedform: 1 },
       { id: 3, pdf: FileTest, type: "view", selectedform: 1 },
     ];
-    //let ratio = 1.41451612903;
+
     useEffect(() => {
       let isApiSubscribed = true;
       setTimeout(() => {
@@ -84,9 +84,11 @@ const CertList = React.memo(
       setLoading(true);
       let isApiSubscribed = true;
       if (!loading) {
+        console.log(data);
         await axios
-          .post("/api/cert-display/create", data, generateToken()[1])
+          .post("/api/cert-display/create/data", data, generateToken()[1])
           .then((res) => {
+            console.log(res.data.id);
             if (isApiSubscribed) {
               setLoading(!loading);
               history.push(
@@ -109,7 +111,7 @@ const CertList = React.memo(
 
       if (!loadingDuplicate)
         await axios
-          .post("/api/cert-display/create", data, generateToken()[1])
+          .post("/api/cert-display/create/data", data, generateToken()[1])
           .then((_) => {
             if (isApiSubscribed) {
               setLoadingDuplicate(!loading);

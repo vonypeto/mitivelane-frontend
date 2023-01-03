@@ -47,11 +47,13 @@ const MainFormList = (props) => {
   const [uploadedImg, setImage] = useState("");
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [newProfile, setNewProfile] = useState({});
 
   useEffect(() => {
     if (mode === EDIT || mode === VIEW) {
       try {
+        setLoading(true)
         (async () => {
           const response = await axios.post(
             "/api/resident/getAll",
@@ -100,7 +102,9 @@ const MainFormList = (props) => {
             sss: resident.sss,
             tin: resident.tin,
           });
+
           setImage(resident.image);
+          setLoading(false)
         })();
       } catch (error) {
         console.log(error);
@@ -110,6 +114,7 @@ const MainFormList = (props) => {
   }, [form, mode, param, props]);
 
   useEffect(() => {
+    setLoading(true)
     (async () => {
       const request = await axios.post(
         "/api/purok/getAll",
@@ -119,7 +124,7 @@ const MainFormList = (props) => {
       );
 
       setPurokList(request.data);
-      console.log(request.data);
+      setLoading(false)
     })();
   }, []);
 
@@ -174,8 +179,8 @@ const MainFormList = (props) => {
   };
 
   const onFinishUpdate = async (values) => {
-    console.log("values", values)
     try {
+      setLoading(true)
       await axios
         .post(
           "/api/resident/update",
@@ -193,6 +198,8 @@ const MainFormList = (props) => {
             setSubmitLoading(false); form
           }, 1000);  
         });
+
+        setLoading(false)
     } catch (error) {
       console.log(error);
       message.error(`Error occurred, please try again later!`);
@@ -348,7 +355,7 @@ const MainFormList = (props) => {
           <div className="container">
             <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
               <TabPane tab="Resident Details" key="1">
-                <MainFormView residentData={residentData} />
+                <MainFormView residentData={residentData} loading={loading}/>
               </TabPane>
 
               <TabPane tab="Blotter Records" key="2">

@@ -15,14 +15,12 @@ import {
   cardDropdown,
   tableColumns,
 } from "./HomeDashboard";
+import { updateCertificateData } from "api/AppController/CertificatesController/CertificatesController";
 import { UserAddOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 import { useSelector } from "react-redux";
 const { Option } = Select;
 
-const handleChange = (value) => {
-  console.log(`selected ${value}`);
-};
 export const DefaultDashboard = () => {
   const { currentOrganization, generateToken } = useAuth();
   const [visitorChartData] = useState(VisitorChartData);
@@ -34,7 +32,11 @@ export const DefaultDashboard = () => {
   const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
     true
   );
-
+  const [certLoading, setCertLoading] = useState(true);
+  const [currentDataCert, setcurrentDataCert] = useState({});
+  const [currentDataBlotter, setcurrentDataBlotter] = useState({});
+  const [prevDataCert, setPrevDataCert] = useState();
+  const [prevDataBlotter, setPrevDataBlotter] = useState();
   const [documentCertList, setDocumentCertList] = useState([]);
   const [documentBlotterList, setDocumentBlotterList] = useState([]);
   const [populationStatus, setPopulationStatus] = useState({});
@@ -47,7 +49,6 @@ export const DefaultDashboard = () => {
         generateToken()[1]
       )
       .then((response) => {
-        console.log("Latest Blotter", response.data);
         setBlotterListRequest(response.data);
         setBlotterListRequestLoading(false);
       })
@@ -62,27 +63,64 @@ export const DefaultDashboard = () => {
       .then((response) => {
         if (type) console.log(response.data);
 
-        if (type == "cert") setDocumentCertList(response.data);
-        if (type == "blotter") setDocumentBlotterList(response.data);
-      });
-  };
-
-  const getResidentPopulationStatus = () => {
-    axios
-      .get(
-        "/api/resident/populationStatus/" +
-          currentOrganization,
-        generateToken()[1]
-      )
-      .then((response) => {
-        var data = response.data
-        setPopulationStatus(data)
+        if (type == "cert") {
+          setDocumentCertList(response.data);
+          setcurrentDataCert(
+            response.data.filter((doc) => doc.status === true)
+          );
+          let d = response.data.filter((doc) => doc.status === true);
+          setPrevDataCert({
+            certificate_id: d[0]?.certificate_id,
+            status: false,
+          });
+        }
+        if (type == "blotter") {
+          setDocumentBlotterList(response.data);
+        }
+        setTimeout(() => {
+          setCertLoading(false);
+        }, 500);
       })
       .catch(() => {
         console.log("Error");
       });
   };
 
+  const getResidentPopulationStatus = () => {
+    axios
+      .get(
+        "/api/resident/populationStatus/" + currentOrganization,
+        generateToken()[1]
+      )
+      .then((response) => {
+        var data = response.data;
+        setPopulationStatus(data);
+      })
+      .catch(() => {
+        console.log("Error");
+      });
+  };
+  const handleChangeCert = (value) => {
+    const newStatus = true;
+    const data = { certificate_id: value, status: newStatus };
+    updateCertificateData(data, generateToken()[1]);
+
+    if (prevDataCert) {
+      const prevData = {
+        certificate_id: prevDataCert.certificate_id,
+        status: !newStatus,
+      };
+      updateCertificateData(prevData, generateToken()[1]);
+    }
+
+    setPrevDataCert(data);
+  };
+  const handleChangeBlotter = (value) => {
+    setPrevDataBlotter(value);
+    // const data = { certificate_id: value, status: true };
+    // console.log(`selected ${value}`);
+    // updateCertificateData(data, generateToken()[1]);
+  };
   useEffect(() => {
     getLatestBlotterRequests();
     getDocumentsData("cert");
@@ -90,13 +128,8 @@ export const DefaultDashboard = () => {
     getResidentPopulationStatus();
   }, []);
 
-  useEffect(() => {
-    console.log("populationStatus", populationStatus)
-  }), [populationStatus]
-
   return (
     <>
-    <h1>Bat ang pogi ko</h1>
       <Row gutter={16}>
         <Col xs={24} sm={24} md={24} lg={24} xl={18}>
           <Row gutter={16}>
@@ -131,7 +164,7 @@ export const DefaultDashboard = () => {
         <Col xs={24} sm={24} md={24} lg={24} xl={6}>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
-              <DisplayDataSet populationStatus={populationStatus}/>
+              <DisplayDataSet populationStatus={populationStatus} />
             </Col>
             {/* {
               annualStatisticData.map((elm, i) => (
@@ -193,26 +226,23 @@ export const DefaultDashboard = () => {
                       />
                     </div>
                     <div>
-                      <Select
-                        defaultValue="lucy"
-                        style={{
-                          width: 120,
-                        }}
-                        onChange={handleChange}
-                      >
-                        {documentCertList.map((t, i) => {
-                          return (
-                            <Option key={i} value={t.certificate_id}>
-                              {t.title}
-                            </Option>
-                          );
-                        })}
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="disabled" disabled>
-                          Disabled
-                        </Option>
-                        <Option value="Yiminghe">yiminghe</Option>
-                      </Select>
+                      {certLoading ? null : (
+                        <Select
+                          defaultValue={currentDataCert[0]?.certificate_id}
+                          style={{
+                            width: 120,
+                          }}
+                          onChange={handleChangeCert}
+                        >
+                          {documentCertList.map((t, i) => {
+                            return (
+                              <Option key={i} value={t.certificate_id}>
+                                {t.title}
+                              </Option>
+                            );
+                          })}
+                        </Select>
+                      )}
                     </div>
                   </div>
                 </div>{" "}
@@ -236,7 +266,7 @@ export const DefaultDashboard = () => {
                         style={{
                           width: 120,
                         }}
-                        onChange={handleChange}
+                        onChange={handleChangeBlotter}
                       >
                         {documentBlotterList.map((t, i) => {
                           return (
@@ -245,11 +275,6 @@ export const DefaultDashboard = () => {
                             </Option>
                           );
                         })}
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="disabled" disabled>
-                          Disabled
-                        </Option>
-                        <Option value="Yiminghe">yiminghe</Option>
                       </Select>
                     </div>
                   </div>

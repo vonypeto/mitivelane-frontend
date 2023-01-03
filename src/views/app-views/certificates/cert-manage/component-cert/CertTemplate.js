@@ -13,28 +13,7 @@ import { Form, Input, Popconfirm } from "antd";
 import debounce from "lodash.debounce";
 import { Editor } from "react-draft-wysiwyg";
 import { convertFromRaw, EditorState } from "draft-js";
-
-function getBase64(img, callback) {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-}
-const dummyRequest = ({ file, onSuccess }) => {
-  setTimeout(() => {
-    onSuccess("ok");
-  }, 0);
-};
-function beforeUpload(file) {
-  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-  if (!isJpgOrPng) {
-    message.error("You can only upload JPG/PNG file!");
-  }
-  const isLt2M = file.size / 1024 / 1024 < 1;
-  if (!isLt2M) {
-    message.error("Image must smaller than 2MB!");
-  }
-  return isJpgOrPng && isLt2M;
-}
+import { getBase64, dummyRequest, beforeUpload } from "helper/Formula.js";
 
 const CertOrganization = React.memo(
   (props) => {
@@ -51,25 +30,26 @@ const CertOrganization = React.memo(
       blocks: parentData?.content != null ? parentData?.content.blocks : [],
     };
     const contentState = convertFromRaw(content);
+    const editorState = EditorState.createWithContent(contentState);
     const [loading, setLoading] = useState(false);
     const [signatureImage, setSignatureImage] = useState([]);
-    // const [editorState, setEditorStateChange] = useState(
-    //   EditorState.createWithContent(contentState)
-    // );
-    const editorState = EditorState.createWithContent(contentState);
 
+    //Initial Value for logo
     const [logoList, setLogoList] = useState([
       { id: 1, image: "" },
       { id: 2, image: "" },
     ]);
+
     const handleAddSignature = () => {
-      let logoID = signatureImage.length;
+      const logoID = signatureImage.length;
       let logoEnd;
-      if (logoID == 0) {
+
+      if (logoID === 0) {
         logoEnd = 1;
       } else {
         logoEnd = signatureImage[logoID - 1].id + 1;
       }
+
       setSignatureImage([
         ...signatureImage,
         {
@@ -80,7 +60,6 @@ const CertOrganization = React.memo(
         },
       ]);
     };
-
     const handleRemoveSignature = (index) => {
       setLoading(true);
       const values = [...signatureImage];
@@ -328,37 +307,37 @@ const CertOrganization = React.memo(
                           <Col
                             key={index}
                             xl={
-                              formItems.type == "text" ||
-                              formItems.type == "editor" ||
-                              formItems.type == "multiform"
+                              formItems.type === "text" ||
+                              formItems.type === "editor" ||
+                              formItems.type === "multiform"
                                 ? 24
                                 : 5
                             }
                             lg={
-                              formItems.type == "text" ||
-                              formItems.type == "editor" ||
-                              formItems.type == "multiform"
+                              formItems.type === "text" ||
+                              formItems.type === "editor" ||
+                              formItems.type === "multiform"
                                 ? 24
                                 : 8
                             }
                             md={
-                              formItems.type == "text" ||
-                              formItems.type == "editor" ||
-                              formItems.type == "multiform"
+                              formItems.type === "text" ||
+                              formItems.type === "editor" ||
+                              formItems.type === "multiform"
                                 ? 24
                                 : 12
                             }
                             sm={
-                              formItems.type == "text" ||
-                              formItems.type == "editor" ||
-                              formItems.type == "multiform"
+                              formItems.type === "text" ||
+                              formItems.type === "editor" ||
+                              formItems.type === "multiform"
                                 ? 24
                                 : 24
                             }
                             xs={
-                              formItems.type == "text" ||
-                              formItems.type == "editor" ||
-                              formItems.type == "multiform"
+                              formItems.type === "text" ||
+                              formItems.type === "editor" ||
+                              formItems.type === "multiform"
                                 ? 24
                                 : 24
                             }
@@ -380,7 +359,8 @@ const CertOrganization = React.memo(
                               </Form.Item>
                             ) : formItems.type == "editor" ? (
                               <>
-                                {/* options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 
+                                {/* Reference 
+                                options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'link', 
                                     'embedded', 'emoji', 'image', 'remove', 'history'] */}
                                 <i>*Max 5 paragraph*</i>
                                 <Editor

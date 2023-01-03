@@ -10,20 +10,13 @@ import {
   // notification,
 } from "antd";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
-import notification from "components/shared-components/Notification";
 import { updateAccount } from "api/AppController/AccountsController/AccountDetailsController";
 import { useAuth } from "contexts/AuthContext";
 import { PROFILE_URL, AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 
 const AccountDetails = () => {
-  const {
-    currentUser,
-    setPhoto,
-    currentPhoto,
-    generateToken,
-    resetEmailPassword,
-  } = useAuth();
+  const { currentUser, generateToken, resetEmailPassword } = useAuth();
   const [form] = Form.useForm();
   const formRef = useRef();
   const [initialVal, setInitialVal] = useState({});
@@ -46,20 +39,13 @@ const AccountDetails = () => {
       .then((response) => {
         setIsLoading(false);
         setDisplayName(response.data.full_name);
-        // setInitialVal({
-        //   email: currentUser?.email,
-        //   name: response.data.full_name,
-        // });
+
         form.setFieldsValue({
           email: currentUser?.email,
           name: response.data.full_name,
         });
       });
   };
-  //mount data
-  // useEffect(() => {
-  //   form.resetFields();
-  // }, [initialVal, form]);
   useEffect(() => {
     if (showResetPassword)
       setTimeout(() => {
@@ -163,10 +149,8 @@ const AccountDetails = () => {
         ref={formRef}
         onFinish={handleSubmitAccount}
       >
-        {" "}
         <Card loading={isLoading} title="Account Details">
           <Col xs={24} sm={24} md={24} className="w-100">
-            {" "}
             <Row className="pt-2 border-top">
               <Col
                 xs={24}
@@ -201,7 +185,7 @@ const AccountDetails = () => {
                         size="medium"
                       >
                         Upload image
-                      </Button>{" "}
+                      </Button>
                       {fileLarge ? (
                         <span style={{ color: "red" }}>**File too large**</span>
                       ) : null}
@@ -217,7 +201,7 @@ const AccountDetails = () => {
                   ) : null}
                 </Form.Item>
               </Col>
-            </Row>{" "}
+            </Row>
             <Row className="pt-2 ">
               <Col
                 xs={24}
@@ -273,7 +257,7 @@ const AccountDetails = () => {
                   )}
                 </Form.Item>
               </Col>
-            </Row>{" "}
+            </Row>
             <Row className="pt-2 ">
               <Col
                 xs={24}
@@ -296,7 +280,6 @@ const AccountDetails = () => {
                 <Form.Item>
                   {editOrganization ? (
                     <>
-                      {" "}
                       <Button
                         size="medium"
                         loading={showResetPassword}
@@ -340,7 +323,7 @@ const AccountDetails = () => {
               </Col>
             </Row>
           </Col>
-        </Card>{" "}
+        </Card>
       </Form>
     );
   };

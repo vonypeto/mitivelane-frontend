@@ -7,7 +7,6 @@ import {
   EllipsisOutlined,
   DeleteOutlined,
   SearchOutlined,
-  PlusCircleOutlined,
   FileExcelOutlined,
   PrinterOutlined,
   EditOutlined,
@@ -15,17 +14,14 @@ import {
 } from "@ant-design/icons";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
-import { useHistory } from "react-router-dom";
+import { Dropdown } from "antd";
 import utils from "utils";
-import { Col, Dropdown, Tag } from "antd";
-
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
 
 const ListInformation = () => {
   const [selectShow, setShow] = useState(true);
-  let history = useHistory();
   const [list, setList] = useState(CertList);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);

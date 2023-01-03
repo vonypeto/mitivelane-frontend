@@ -18,10 +18,27 @@ import {
   UploadOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
+
 const OrganizationDelete = () => {
-  const onDeleteOrganization = () => {
+  const { currentOrganization, generateToken, currentUser } = useAuth();
+
+  const deleteOrganization = () => {
     message.info("Clicked on Yes.");
+    axios
+      .post(
+        "/api/organization_setting/delete-organization", { "organization_id": currentOrganization },
+        generateToken()[1]
+      )
+      .then((response) => {
+        console.log("Delete Organization Request ", response.data);
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
   };
+
   return (
     <>
       <Col xs={24} sm={24} md={8}>
@@ -35,14 +52,14 @@ const OrganizationDelete = () => {
         </div>
       </Col>
       <Col xs={24} sm={24} md={15} className="ant-body-pt">
-        <Card title="Deletion Details">
+        <Card title="Deactivation Details">
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-2 border-top ">
               <Col xs={24} sm={24} md={24} className="pt-2 text-left ">
                 <Popconfirm
                   placement="top"
                   title="Are you sure to delete this Organization?"
-                  onConfirm={onDeleteOrganization}
+                  onConfirm={deleteOrganization}
                   okText="Yes"
                   cancelText="No"
                   icon={<QuestionCircleOutlined style={{ color: "red" }} />}

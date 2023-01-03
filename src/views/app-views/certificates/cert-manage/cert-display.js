@@ -14,25 +14,22 @@ import { Menu } from "antd";
 
 const CertDisplay = React.memo(
   (props) => {
-    const { data, loadingImage, templateType, certType, setParentData } = props;
+    const { data, templateType, certType, setParentData } = props;
+
     const [activeFontFamily, setActiveFontFamily] = useState(
-      data ? data?.font_family : "Tinos"
+      data ? data.font_family : "Tinos"
     );
     const [childData, setChildData] = useState(data);
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
     const [color, setColor] = useState();
+
     const ontopNavColorClick = (value) => {
       const { rgb } = value;
       const rgba = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${rgb.a})`;
       const hex = utils.rgbaToHex(rgba);
       setColor(hex);
     };
-    const ratio = 1.41451612903;
-    // let testts = [
-    //   { id: 1, test: 25 },
-    //   { id: 2, test: 24 },
-    // ];
-    // testts = testts.map((data) => data.test + 1);
+
     useEffect(() => {
       let isApiSubscribed = true;
 
@@ -88,25 +85,11 @@ const CertDisplay = React.memo(
             type="pdf"
           />
         ).toBlob();
-        // console.log(URL.createObjectURL(blob));
         return URL.createObjectURL(blob);
       } catch (e) {
         console.log(e);
       }
-      // var reader = new FileReader();
-      // reader.readAsDataURL(blob);
-      // return new Promise((resolve) => {
-      //   reader.onloadend = () => {
-      //     resolve(reader.result);
-      //   };
-      // });
     };
-    // async function getBase64() {
-    //   let result = await generatePdfDocumentShow(data, "feedata");
-
-    //   return result + 1;
-    // }
-    // getBase64();
 
     const GetCertificate = () => {
       return (
