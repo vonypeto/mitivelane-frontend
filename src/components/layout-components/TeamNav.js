@@ -9,7 +9,6 @@ import {
   AUTH_ORGANIZATION_LIST,
 } from "redux/constants/Auth";
 const TeamNav = () => {
-  let history = useHistory();
   const {
     setOrganization,
     currentOrganization,
@@ -17,8 +16,9 @@ const TeamNav = () => {
     currentUser,
     generateToken,
   } = useAuth();
-  const [visible, setVisible] = useState(false);
+  let history = useHistory();
   const [id, setId] = useState(currentOrganization);
+  const [visible, setVisible] = useState(false);
   const [organizationMember, setOrganizationMember] = useState([
     { name: "", organization_id: "", _id: "" },
   ]);

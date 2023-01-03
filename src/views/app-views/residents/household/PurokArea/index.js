@@ -1,35 +1,30 @@
-import { React, useEffect, useState, useRef, createRef } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { React, useEffect, useState, createRef } from "react";
+import { useHistory } from "react-router-dom";
 import {
   Card,
   Form,
-  Input,
-  InputNumber,
-  Select,
   Row,
   Col,
   Table,
   Menu,
   Button,
   Modal,
-  Space,
   message,
 } from "antd";
-
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import axios from "axios";
-import moment from "moment";
 import utils from "utils";
 import { useAuth } from "contexts/AuthContext";
-import { handleTableChange, handleAddPage, handleDeletePages, searchBar, searchBarDate, searchIcon  } from "helper/Pagination";
-
-import { CreateSession } from "helper/Session";
-
 import {
-  DeleteOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
-
+  handleTableChange,
+  handleAddPage,
+  handleDeletePages,
+  searchBar,
+  searchBarDate,
+  searchIcon,
+} from "helper/Pagination";
+import { CreateSession } from "helper/Session";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import NewAreaForm from "./NewAreaForm";
 
 const PurokArea = (props) => {
@@ -40,13 +35,13 @@ const PurokArea = (props) => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
   const history = useHistory();
-  const { generateToken, currentOrganization , currentUser} = useAuth();
+  const { generateToken, currentUser } = useAuth();
 
   const apiOptions = {
     axios,
     generateToken,
-    cancelToken
-  }
+    cancelToken,
+  };
 
   const purokColumn = [
     {
@@ -56,7 +51,7 @@ const PurokArea = (props) => {
       width: "50%",
       filterDropdown: searchBar,
       filterIcon: searchIcon,
-      sorter: (a, b) => utils.antdTableSorter(a, b, "name")
+      sorter: (a, b) => utils.antdTableSorter(a, b, "name"),
     },
     {
       title: "Date added",
@@ -76,7 +71,6 @@ const PurokArea = (props) => {
           </span>
         </div>
       ),
-
     },
     {
       title: "Actions",
@@ -101,47 +95,59 @@ const PurokArea = (props) => {
   const [submitting, setSubmitting] = useState(false);
 
   //Pagination State
-  const [tableScreen, setTableScreen] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [total, setTotal] = useState(1)
-  const defaultPageSize = 4
-  const [pageSize, setPageSize] = useState(defaultPageSize)
+  const [tableScreen, setTableScreen] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(1);
+  const defaultPageSize = 4;
+  const [pageSize, setPageSize] = useState(defaultPageSize);
 
   //Checkbox State
-  const [selectedArray, setSelectedArray] = useState([])
+  const [selectedArray, setSelectedArray] = useState([]);
 
   //UseEffect
 
   useEffect(() => {
     getAreasPage();
-    console.log("currentUser", currentUser.displayName)
-    CreateSession("Giann", "visited purok page", "create", "purok", organization_id, apiOptions)
-  }, [currentPage, pageSize, tableScreen])
+    console.log("currentUser", currentUser.displayName);
+    CreateSession(
+      "Giann",
+      "visited purok page",
+      "create",
+      "purok",
+      organization_id,
+      apiOptions
+    );
+  }, [currentPage, pageSize, tableScreen]);
 
   //Axios
 
   //AxiosTable
   const getAreasPage = async () => {
     try {
-      setLoading(true)
-      await axios.post(
-        "/api/purok/getPage",
-        { organization_id: organization_id, page: currentPage, tableScreen, pageSize },
-        generateToken()[1],
-        { cancelToken }
-      )
+      setLoading(true);
+      await axios
+        .post(
+          "/api/purok/getPage",
+          {
+            organization_id: organization_id,
+            page: currentPage,
+            tableScreen,
+            pageSize,
+          },
+          generateToken()[1],
+          { cancelToken }
+        )
         .then((result) => {
-          var data = result.data
-          setTotal(data.total)
-          setPurokList(data.list)
-        })
-
+          var data = result.data;
+          setTotal(data.total);
+          setPurokList(data.list);
+        });
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
     }
 
-    setLoading(false)
+    setLoading(false);
   };
 
   //Axios CRUD
@@ -155,7 +161,7 @@ const PurokArea = (props) => {
       );
 
       const data = request.data;
-      await handleAddPage(total, setTotal, getAreasPage)
+      await handleAddPage(total, setTotal, getAreasPage);
     } catch (error) {
       console.log(error);
       message.error("Error in database connection!!");
@@ -164,7 +170,7 @@ const PurokArea = (props) => {
 
   const deleteArea = async () => {
     try {
-      console.log("selectedArray", selectedArray)
+      console.log("selectedArray", selectedArray);
       const request = await axios.post(
         "/api/purok/delete",
         { organization_id: organization_id, selectedArray },
@@ -257,22 +263,22 @@ const PurokArea = (props) => {
 
   //Function
   const editPurok = (row) => {
-    setLoading(true)
+    setLoading(true);
     setPurokInitialVal({
       name: row.name,
       action: "edited",
       purok_id: row.purok_id,
     });
     setShowAreaModal(true);
-    setLoading(false)
+    setLoading(false);
   };
 
   const deletePurok = (row) => {
-    setSubmitting(true)
+    setSubmitting(true);
     const currentpurokList = [...purokList];
 
     if (selectedArray.length == 0) {
-      setSelectedArray(row.purok_id)
+      setSelectedArray(row.purok_id);
 
       var objIndex = currentpurokList.findIndex(
         (obj) => obj.purok_id == row.purok_id
@@ -281,35 +287,42 @@ const PurokArea = (props) => {
     }
 
     if (selectedArray.length > 0) {
-      var objIndex
+      var objIndex;
 
-      selectedArray.forEach(id => {
-        objIndex = currentpurokList.findIndex(
-          (obj) => obj.purok_id == id
-        );
+      selectedArray.forEach((id) => {
+        objIndex = currentpurokList.findIndex((obj) => obj.purok_id == id);
         currentpurokList.splice(objIndex, 1);
-      })
+      });
     }
 
-    deleteArea()
+    deleteArea();
     setPurokList(currentpurokList);
-    handleDeletePages(selectedArray, total, setTotal, pageSize, currentPage, setCurrentPage, purokList, getAreasPage)
+    handleDeletePages(
+      selectedArray,
+      total,
+      setTotal,
+      pageSize,
+      currentPage,
+      setCurrentPage,
+      purokList,
+      getAreasPage
+    );
     message.success("Success, area has been deleted");
-    setSubmitting(false)
+    setSubmitting(false);
   };
 
   //Onchange
   const handlePageSizeChange = (size) => {
     //set state list to []
-    setPageSize(size)
-  }
+    setPageSize(size);
+  };
 
   const handlePageChange = async (page) => {
     if (page != null) {
-      console.log("page", page)
+      console.log("page", page);
       setCurrentPage(page);
     }
-  }
+  };
 
   // Form Function
   const onFinishAddArea = (value) => {
@@ -364,14 +377,14 @@ const PurokArea = (props) => {
             defaultPageSize: defaultPageSize,
             pageSizeOptions: [defaultPageSize, 10, 20, 50, 100],
             onShowSizeChange: (current, size) => {
-              handlePageSizeChange(size)
+              handlePageSizeChange(size);
             },
-            onChange: (page) => handlePageChange(page)
+            onChange: (page) => handlePageChange(page),
           }}
-          onChange={(pagination, filters, sorter) => handleTableChange(sorter, filters, setPurokList, setTableScreen)}
-        >
-
-        </Table>
+          onChange={(pagination, filters, sorter) =>
+            handleTableChange(sorter, filters, setPurokList, setTableScreen)
+          }
+        ></Table>
       </Card>
 
       <Modal
@@ -391,7 +404,7 @@ const PurokArea = (props) => {
           <NewAreaForm />
         </Form>
       </Modal>
-    </div >
+    </div>
   );
 };
 

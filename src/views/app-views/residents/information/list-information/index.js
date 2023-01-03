@@ -30,20 +30,19 @@ import {
   searchBarNumber,
   searchBarDate,
 } from "helper/Pagination";
-
 import { JSONToExcel } from "helper/ExportToExcel";
 import { computeAge } from "helper/Formula";
 import CustomDropdown from "components/shared-components/CustomDropdown";
+
 const { Option } = Select;
 
 const categories = [1, 2, 3, "Watches", "Devices"];
 
-const ListInformation = (props) => {
+const ListInformation = () => {
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
   const { generateToken, currentOrganization } = useAuth();
   const organization_id = currentOrganization;
-  const { param_url } = props;
   let history = useHistory();
 
   //Pagination State
