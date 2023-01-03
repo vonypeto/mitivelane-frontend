@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Card, Avatar } from "antd";
+import { Row, Col, Card, Avatar, Skeleton } from "antd";
 import { Icon } from "components/util-components/Icon";
 import utils from "utils";
 import CustomAvatar from "components/shared-components/Avatar";
@@ -33,17 +33,22 @@ import {
 import { computeAge } from "helper/Formula";
 
 const MainFormView = (props) => {
+  const {loading, residentData} = props
+  const displayText = (data) => {
+    return (data ? data : "None")
+  }
+
   return (
     <Row gutter={16}>
       <Col xs={24} sm={24} md={7}>
-        <Card title="Profile" className="text-left">
-          <div className="pt-1 mb-2 text-center">
-            <div>
+        <Card title="Profile" className="text-left" >
+          <Skeleton loading={loading} avatar active={{size: "large"}}>
+            <div className="pt-1 mb-2 text-center">
               <CustomAvatar
                 size="large"
-                color={props.residentData.avatarColor}
-                icon={utils.getNameInitial(props.residentData.firstname + " " + props.residentData.lastname)}
-                image={props.residentData.avatarImg}
+                color={residentData.avatarColor}
+                icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
+                image={residentData.avatarImg}
                 style={{
                   width: "6rem",
                   height: " 6rem",
@@ -51,172 +56,173 @@ const MainFormView = (props) => {
                   fontSize: "70px",
                 }}
               />
+              <div>
+                <h2>
+                {displayText(`${residentData.firstname} ${residentData.middlename}
+                  ${residentData.lastname}`)}
+                </h2>
+              </div>
             </div>
-            <div>
-              <h2>
-                {props.residentData.firstname} {props.residentData.middlename}{" "}
-                {props.residentData.lastname}
-              </h2>
+
+            <div
+              className="d-flex align-items-center "
+              style={{ fontSize: "15px " }}
+            >
+              <Col xs={24} sm={24} md={24} className="w-100">
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={SkinOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Alias:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      {displayText(residentData.alias)}
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={UserSwitchOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Civil Status:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      {displayText(residentData.civil_status)}
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={HistoryOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Age:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      <b>{displayText(computeAge(residentData.birthday))}</b>
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={UserOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Gender:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      <b>{displayText(residentData.gender)}</b>
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={ExperimentOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Blood Type:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      <b>{displayText(residentData.blood_type)}</b>
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={StarOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Birthday:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      {displayText(new Date(residentData.birthday).toDateString().split(' ').slice(1).join(' '))}
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={BankOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Birth Place:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      {displayText(residentData.birth_of_place)}
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={VerticalAlignBottomOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Weight:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      {displayText(residentData.weight)} kg
+                    </span>
+                  </Col>
+                </Row>
+                <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
+                  <Col xs={12} sm={12} md={9} className="text-left">
+                    <Icon
+                      type={VerticalAlignTopOutlined}
+                      className="mr-3 text-dark font-size-md"
+                    />
+                    <span className=" font-weight-bold text-muted-resident">
+                      Height:
+                    </span>
+                  </Col>
+                  <Col xs={12} sm={12} md={12} className="text-right">
+                    <span className="ml-5 text-detail-resident font-weight-bold">
+                      {displayText(residentData.height)} cm
+                    </span>
+                  </Col>
+                </Row>
+              </Col>
+
+              {/* {console.log(residentData)} */}
             </div>
-          </div>
 
-          <div
-            className="d-flex align-items-center "
-            style={{ fontSize: "15px " }}
-          >
-            <Col xs={24} sm={24} md={24} className="w-100">
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={SkinOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Alias:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    {props.residentData.alias}
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={UserSwitchOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Civil Status:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    {props.residentData.civil_status}
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={HistoryOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Age:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    <b>{computeAge(props.residentData.birthday)}</b>
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={UserOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Gender:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    <b>{props.residentData.gender}</b>
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={ExperimentOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Blood Type:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    <b>{props.residentData.blood_type}</b>
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={StarOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Birthday:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    {new Date(props.residentData.birthday).toDateString().split(' ').slice(1).join(' ')}
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={BankOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Birth Place:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    {props.residentData.birth_of_place}
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={VerticalAlignBottomOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Weight:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    {props.residentData.weight} kg
-                  </span>
-                </Col>
-              </Row>
-              <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
-                <Col xs={12} sm={12} md={9} className="text-left">
-                  <Icon
-                    type={VerticalAlignTopOutlined}
-                    className="mr-3 text-dark font-size-md"
-                  />
-                  <span className=" font-weight-bold text-muted-resident">
-                    Height:
-                  </span>
-                </Col>
-                <Col xs={12} sm={12} md={12} className="text-right">
-                  <span className="ml-5 text-detail-resident font-weight-bold">
-                    {props.residentData.height} cm
-                  </span>
-                </Col>
-              </Row>
-            </Col>
-
-            {console.log(props.residentData)}
-          </div>
+          </Skeleton>
         </Card>
       </Col>
       <Col xs={24} sm={24} md={17}>
-        <Card title="Resident Details">
+        <Card title="Resident Details" loading={loading}>
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
@@ -230,7 +236,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.email}
+                  {displayText(residentData.email)}
                 </span>
               </Col>
             </Row>
@@ -246,7 +252,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.telephone}
+                  {displayText(residentData.telephone)}
                 </span>
               </Col>
             </Row>
@@ -262,14 +268,14 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.mobile_number}
+                  {displayText(residentData.mobile_number)}
                 </span>
               </Col>
             </Row>
           </Col>
         </Card>
 
-        <Card title="Additional Details">
+        <Card title="Additional Details" loading={loading}>
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
@@ -283,7 +289,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.citizenship}
+                  {displayText(residentData.citizenship)}
                 </span>
               </Col>
             </Row>
@@ -300,7 +306,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.spouse}
+                  {displayText(residentData.spouse)}
                 </span>
               </Col>
             </Row>
@@ -316,7 +322,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.voter_status}
+                  {displayText(residentData.voter_status)}
                 </span>
               </Col>
             </Row>
@@ -332,7 +338,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.father}
+                  {displayText(residentData.father)}
                 </span>
               </Col>
             </Row>
@@ -348,14 +354,14 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.mother}
+                  {displayText(residentData.mother)}
                 </span>
               </Col>
             </Row>
           </Col>
         </Card>
 
-        <Card title="Addresses">
+        <Card title="Addresses" loading={loading}>
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
@@ -369,7 +375,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.address_1}
+                  {displayText(residentData.address_1)}
                 </span>
               </Col>
             </Row>
@@ -382,7 +388,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.address_2}
+                  {displayText(residentData.address_2)}
                 </span>
               </Col>
             </Row>
@@ -398,14 +404,14 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.area}
+                  {displayText(residentData.area)}
                 </span>
               </Col>
             </Row>
           </Col>
         </Card>
 
-        <Card title="Social Welfare Service">
+        <Card title="Social Welfare Service" loading={loading}>
           <Col xs={24} sm={24} md={24} className="w-100">
             <Row className="pt-3 mt-2 mb-2 bt-1 border-top" align="middle">
               <Col xs={12} sm={12} md={9} className="text-left">
@@ -417,7 +423,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.sss}
+                  {displayText(residentData.sss)}
                 </span>
               </Col>
             </Row>
@@ -431,7 +437,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.tin}
+                  {displayText(residentData.tin)}
                 </span>
               </Col>
             </Row>
@@ -447,7 +453,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.pag_ibig}
+                  {displayText(residentData.pag_ibig)}
                 </span>
               </Col>
             </Row>
@@ -463,7 +469,7 @@ const MainFormView = (props) => {
               </Col>
               <Col xs={12} sm={12} md={15} className="text-right">
                 <span className="ml-5 text-detail-resident font-weight-bold">
-                  {props.residentData.philhealth}
+                  {displayText(residentData.philhealth)}
                 </span>
               </Col>
             </Row>

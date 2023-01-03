@@ -53,8 +53,8 @@ const MainFormList = (props) => {
   useEffect(() => {
     if (mode === EDIT || mode === VIEW) {
       try {
-        setLoading(true)
         (async () => {
+          setLoading(true)
           const response = await axios.post(
             "/api/resident/getAll",
             { organization_id },
@@ -114,7 +114,6 @@ const MainFormList = (props) => {
   }, [form, mode, param, props]);
 
   useEffect(() => {
-    setLoading(true)
     (async () => {
       const request = await axios.post(
         "/api/purok/getAll",
@@ -124,7 +123,6 @@ const MainFormList = (props) => {
       );
 
       setPurokList(request.data);
-      setLoading(false)
     })();
   }, []);
 
@@ -180,7 +178,6 @@ const MainFormList = (props) => {
 
   const onFinishUpdate = async (values) => {
     try {
-      setLoading(true)
       await axios
         .post(
           "/api/resident/update",
@@ -199,7 +196,6 @@ const MainFormList = (props) => {
           }, 1000);  
         });
 
-        setLoading(false)
     } catch (error) {
       console.log(error);
       message.error(`Error occurred, please try again later!`);

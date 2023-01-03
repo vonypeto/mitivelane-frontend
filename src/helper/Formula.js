@@ -1,17 +1,6 @@
 import moment from "moment";
 
 export const computeAge = (birthday) => {
-<<<<<<< HEAD
-    console.log("birthday", birthday)
-    var today = moment(new Date())
-    var ageDate = moment.duration(today.diff(birthday));
-    var age = Math.trunc(ageDate.asYears())
-
-    console.log("birthday", birthday)
-    console.log("today", today)
-    return age
-}
-=======
   var today = moment(new Date());
   var ageDate = moment.duration(today.diff(birthday));
   var age = Math.trunc(ageDate.asYears());
@@ -86,4 +75,3 @@ export const deepCompare = (arg1, arg2) => {
   }
   return false;
 };
->>>>>>> 9709904ca24691aab92f2230d9293f7bdf646262

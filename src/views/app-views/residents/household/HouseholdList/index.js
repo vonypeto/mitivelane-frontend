@@ -120,7 +120,7 @@ const AyudaTable = (props) => {
   const [total, setTotal] = useState(1)
   const defaultPageSize = 10
   const [pageSize, setPageSize] = useState(defaultPageSize)
-  const defaultFilters = { sort: "desc", searchCategory: "address" }
+  const defaultFilters = { sort: "desc", searchCategory: "name" }
   const [dataFilter, setDataFilter] = useState({
     value: "",
     field: defaultFilters.searchCategory,
@@ -130,7 +130,6 @@ const AyudaTable = (props) => {
   //useEffect
   useEffect(() => {
     getPage()
-    console.log("dataFilter", dataFilter)
   }, [pageSize, currentPage, dataFilter])
 
 
@@ -243,6 +242,7 @@ const AyudaTable = (props) => {
   const handleSearchChange = (e) => {
     var value = e.target.value
     setDataFilter({ ...dataFilter, value: value })
+    setCurrentPage(1)
   }
 
   const handleFilterChange = (value) => {
