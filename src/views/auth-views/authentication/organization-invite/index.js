@@ -79,6 +79,7 @@ const index = ({ match }) => {
           }
           else if (response.data == "Condition2") {
             localStorage.clear() 
+            localStorage.setItem("organization_request_id", _id)
             history.push("/auth/login")
 
           } else if (response.data == "Condition3") {
