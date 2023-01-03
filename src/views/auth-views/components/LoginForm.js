@@ -25,6 +25,8 @@ import {
 
 export const LoginForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [counter, setCounter] = useState(1);
+
   const {
     setOrganizationMemberList,
     setOrganization,
@@ -74,6 +76,8 @@ export const LoginForm = (props) => {
 
   useEffect(() => {
     let cancel = true;
+    setCounter(1 + counter);
+    console.log(counter);
     console.log(showMessage);
     if (token !== null && allowRedirect) {
       // getOrganization(token);

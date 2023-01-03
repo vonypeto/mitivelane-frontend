@@ -47,11 +47,14 @@ const AccountDetails = () => {
       });
   };
   useEffect(() => {
-    if (showResetPassword)
-      setTimeout(() => {
+    if (showResetPassword) {
+      const timeoutId = setTimeout(() => {
         setShowResetPassword(false);
         setEditOrganization(false);
       }, 3000);
+
+      return () => clearTimeout(timeoutId);
+    }
   }, [showResetPassword]);
   useEffect(() => {
     let mount = true;
