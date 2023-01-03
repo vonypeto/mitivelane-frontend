@@ -70,7 +70,7 @@ const ListInformation = () => {
     try {
       await axios
         .post(
-          "/api/resident/getPage",
+          "/api/resident/page",
           {
             organization_id: organization_id,
             page: currentPage,
@@ -267,15 +267,15 @@ const ListInformation = () => {
     setSelectedRowKeys([]);
   };
 
-  const handleShowCategory = (value) => {
-    if (value !== "All") {
-      const key = "resident_id";
-      const data = utils.filterArray(ResidentListData, key, value);
-      setList(data);
-    } else {
-      setList(ResidentListData);
-    }
-  };
+  // const handleShowCategory = (value) => {
+  //   if (value !== "All") {
+  //     const key = "resident_id";
+  //     const data = utils.filterArray(ResidentListData, key, value);
+  //     setList(data);
+  //   } else {
+  //     setList(ResidentListData);
+  //   }
+  // };
 
   const handleExport = () => {
     console.log("exporting data from table");
@@ -292,31 +292,31 @@ const ListInformation = () => {
         .slice(1)
         .join(" "),
       "Birth Place": resident.birth_of_place,
-      Gender: resident.gender,
-      Height: resident.height + " " + resident.height_unit,
-      Weight: resident.weight + " " + resident.height_unit,
-      Blood_type: resident.blood_type,
-      Voter_status: resident.voter_status,
-      Civil_status: resident.civil_status,
-      Occupation: resident.occupation,
-      Citizenship: resident.citizenship,
-      Religion: resident.religion,
-      Address_1: resident.Address_1,
-      Address_2: resident.Address_2,
+      "Gender": resident.gender,
+      "Height": resident.height + " " + resident.height_unit,
+      "Weight": resident.weight  + " " + resident.height_unit,
+      "Blood type": resident.blood_type,
+      "Voter status": resident.voter_status,
+      "Civil status": resident.civil_status,
+      "Occupation": resident.occupation,
+      "Citizenship": resident.citizenship,
+      "Religion": resident.religion,
+      "Address 1": resident.address_1,
+      "Address 2": resident.address_2,
       "Purok/Area": resident.area,
-      Telephone: resident.telephone,
-      Mobile_number: resident.mobile_number,
-      Email: resident.email,
-      Father: resident.father,
-      Mother: resident.mother,
-      Spouse: resident.spouse,
-      PAG_IBIG: resident.pag_ibig,
-      PHILHEALTH: resident.philhealth,
-      SSS: resident.sss,
-      TIN: resident.tin,
+      "Telephone": resident.telephone,
+      "Mobile number": resident.mobile_number,
+      "Email": resident.email,
+      "Father": resident.father,
+      "Mother": resident.mother,
+      "Spouse": resident.spouse,
+      "PAG_IBIG": resident.pag_ibig,
+      "PHILHEALTH": resident.philhealth,
+      "SSS": resident.sss,
+      "TIN": resident.tin,
     }));
 
-    console.log("resident list", newList);
+    // console.log("resident list", newList);
 
     JSONToExcel(newList, "BarangayResidentList");
   };
@@ -361,7 +361,7 @@ const ListInformation = () => {
                   <Input
                     placeholder="Search"
                     prefix={<SearchOutlined />}
-                    onChange={(e) => onSearch(e)}
+                    // onChange={(e) => onSearch(e)}
                   />
                 </div>
                 <div className="mb-3">
@@ -369,7 +369,7 @@ const ListInformation = () => {
                     defaultValue="All"
                     className="w-100"
                     style={{ minWidth: 180 }}
-                    onChange={handleShowCategory}
+                    // onChange={handleShowCategory}
                     placeholder="Category"
                   >
                     <Option value="All">All</Option>

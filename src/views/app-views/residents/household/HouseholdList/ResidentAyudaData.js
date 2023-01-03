@@ -1,5 +1,6 @@
 import { tSTypeAliasDeclaration } from "@babel/types";
 import { COLORS } from "constants/ChartConstant";
+import moment from "moment";
 
 //Needs to be in individual array for DonutChartWidget to work
 export const resident_ayuda_color = [COLORS[0], COLORS[3]];
@@ -201,6 +202,9 @@ export const ResidentTableColumns = [
     title: "Birthday",
     dataIndex: "birthday",
     key: "birthday",
+    render: (_, resident) => (
+       moment(resident.birthday).format("MM/DD/yyyy")
+    ),
   },
   {
     title: "Age",

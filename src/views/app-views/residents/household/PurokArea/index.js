@@ -23,7 +23,9 @@ import {
   searchBarDate,
   searchIcon,
 } from "helper/Pagination";
-import { CreateSession } from "helper/Session";
+
+// import { CreateSession } from "api/AppController/AuditController/AuditController"
+
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import NewAreaForm from "./NewAreaForm";
 
@@ -38,7 +40,6 @@ const PurokArea = (props) => {
   const { generateToken, currentUser } = useAuth();
 
   const apiOptions = {
-    axios,
     generateToken,
     cancelToken,
   };
@@ -109,14 +110,7 @@ const PurokArea = (props) => {
   useEffect(() => {
     getAreasPage();
     console.log("currentUser", currentUser.displayName);
-    CreateSession(
-      "Giann",
-      "visited purok page",
-      "create",
-      "purok",
-      organization_id,
-      apiOptions
-    );
+    // CreateSession("Giann", "visited purok page", "create", "purok", organization_id, apiOptions)
   }, [currentPage, pageSize, tableScreen]);
 
   //Axios
@@ -127,7 +121,7 @@ const PurokArea = (props) => {
       setLoading(true);
       await axios
         .post(
-          "/api/purok/getPage",
+          "/api/purok/page",
           {
             organization_id: organization_id,
             page: currentPage,

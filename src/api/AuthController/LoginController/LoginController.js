@@ -88,6 +88,7 @@ export async function loginOrganization(
           );
           localStorage.setItem(AUTH_ORGANIZATION_LIST, role_id);
           setOrganizationMemberList(role_id);
+          console.log(redirect)
           return history.push(redirect);
         }
       } else {
