@@ -49,12 +49,10 @@ export const getCertificateData = async (
       );
       return;
     }
-
     setCertType(certificate.cert_type);
     setTemplateType(certificate.template_type);
     delete certificate.createdAt;
     delete certificate.updatedAt;
-
     if (certificate.content[0]?.blocks.length === 0) {
       delete certificate.content;
     }
