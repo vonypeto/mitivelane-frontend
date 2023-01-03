@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button, Card, Avatar, Table, Select, Tag } from "antd";
+import { Row, Col, Button, Card, Avatar, Table, Select, Tag, message} from "antd";
 import ChartWidget from "components/shared-components/ChartWidget";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import AvatarDocument from "components/shared-components/AvatarDocument";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
+import { AUTH_TOKEN } from "redux/constants/Auth";
 import {
   VisitorChartData,
   NewMembersData,
@@ -23,6 +24,8 @@ const { Option } = Select;
 
 export const DefaultDashboard = () => {
   const { currentOrganization, generateToken } = useAuth();
+  const authToken = localStorage.getItem(AUTH_TOKEN);
+
   const [visitorChartData] = useState(VisitorChartData);
   const [newMembersData] = useState(NewMembersData);
   const [recentBlotterCaseData] = useState(RecentBlotterCaseData);
@@ -121,7 +124,36 @@ export const DefaultDashboard = () => {
     // console.log(`selected ${value}`);
     // updateCertificateData(data, generateToken()[1]);
   };
+
+  const acceptRequest = (values) => {
+    axios
+      .post(
+        "/api/organization_setting/accept-request2/", values,
+        generateToken()[1]
+      )
+      .then((response) => {
+        if (response.data == "Success") {
+          message.success("Join Organization")
+          history.push("/")
+        }
+        else if (response.data == "Joined") {
+          message.success("Already Joined")
+          history.push("/")
+        }
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+  }
+
   useEffect(() => {
+    if(localStorage.getItem("organization_request_id") != null){
+      acceptRequest({ _id: localStorage.getItem("organization_request_id"), uuid: authToken })
+      
+    }else{
+      console.log("do nothing")
+    }
+  
     getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");
