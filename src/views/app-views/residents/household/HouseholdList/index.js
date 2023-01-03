@@ -27,6 +27,7 @@ import {
 
 const { Option } = Select;
 const filterCategories = [
+  { text: "Modified At", value: "updateAt"},
   { text: "H.Number", value: "house_number"},
   { text: "H.Name", value: "name" },
   { text: "Address", value: "address" },
@@ -96,10 +97,18 @@ const AyudaTable = (props) => {
       key: "toilet_type",
     },
     {
-      title: "Waste Management",
-      dataIndex: "waste_management",
-      key: "waste_management",
+      title: "Date Modified",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (_, household) => (
+        moment(household.updatedAt).format("MM/DD/yyyy")
+      ),
     },
+    // {
+    //   title: "Waste Management",
+    //   dataIndex: "waste_management",
+    //   key: "waste_management",
+    // },
     {
       title: "Actions",
       dataIndex: "actions",
@@ -120,7 +129,7 @@ const AyudaTable = (props) => {
   const [total, setTotal] = useState(1)
   const defaultPageSize = 10
   const [pageSize, setPageSize] = useState(defaultPageSize)
-  const defaultFilters = { sort: "desc", searchCategory: "name" }
+  const defaultFilters = { sort: "desc", searchCategory: "updateAt" }
   const [dataFilter, setDataFilter] = useState({
     value: "",
     field: defaultFilters.searchCategory,
@@ -226,7 +235,6 @@ const AyudaTable = (props) => {
     household_members.map(async (member) => {
       member.name = `${member.first_name} ${member.last_name}`;
       member.age = computeAge(member.birthday)
-      member.birthdayParse = moment(member.birthday).format("MM/DD/yyyy")
     });
 
     return (
