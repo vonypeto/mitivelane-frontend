@@ -3,10 +3,7 @@ import { message } from "antd";
 
 export const getBlotters = async (currentOrganization, generateToken) => {
   try {
-    const response = await axios.get(
-      `/api/blotter/get-blotters/${currentOrganization}`,
-      generateToken()[1]
-    );
+    const response = await axios.get(`/api/blotter/get-blotters/${currentOrganization}`, generateToken()[1]);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -17,10 +14,7 @@ export const getBlotters = async (currentOrganization, generateToken) => {
 
 export const getRecordCases = async (currentOrganization, generateToken) => {
   try {
-    const response = await axios.get(
-      `/api/blotter/record-cases/${currentOrganization}`,
-      generateToken()[1]
-    );
+    const response = await axios.get(`/api/blotter/record-cases/${currentOrganization}`, generateToken()[1]);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -31,11 +25,7 @@ export const getRecordCases = async (currentOrganization, generateToken) => {
 
 export const deleteBlotter = async (_ids, generateToken) => {
   try {
-    const response = await axios.post(
-      "/api/blotter/delete-blotter",
-      { _ids },
-      generateToken()[1]
-    );
+    const response = await axios.post("/api/blotter/delete-blotter", { _ids }, generateToken()[1]);
     return response.data;
   } catch (error) {
     console.log(error);

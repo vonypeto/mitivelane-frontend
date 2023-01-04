@@ -221,7 +221,7 @@ export const RegisterForm = (props) => {
                 prefix={<LockOutlined className="text-primary" />}
               />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               name="code"
               label="Invitation "
               tooltip="Leave blank if you don't have a code"
@@ -233,7 +233,7 @@ export const RegisterForm = (props) => {
                 ref={codeRef}
                 disabled
               />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item>
               <Button type="primary" htmlType="submit" block loading={loading}>
                 Sign Up

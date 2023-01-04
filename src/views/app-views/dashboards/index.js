@@ -4,7 +4,7 @@ import Loading from "components/shared-components/Loading";
 import { useParams } from "react-router-dom";
 import Home from "./home";
 import Campaign from "./campaign";
-import Chat from "./chat";
+// import Chat from "./chat";
 
 const Dashboards = ({ match }) => {
   let { organization_id } = useParams();
@@ -20,10 +20,10 @@ const Dashboards = ({ match }) => {
           path={`${match.url}/campaign`}
           component={() => <Campaign param_url={organization_id} />}
         />
-        <Route
+        {/* <Route
           path={`${match.url}/chat`}
           component={() => <Chat param_url={organization_id} />}
-        />
+        /> */}
 
         {/* <Route path={`${match.url}/default`} component={lazy(() => import(`./default`))} />
       <Route path={`${match.url}/analytic`} component={lazy(() => import(`./analytic`))} />

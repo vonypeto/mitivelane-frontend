@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import {
@@ -20,10 +20,37 @@ import {
 } from "@ant-design/icons";
 import ManageMember from "./ManageTeam";
 import ManageOrganization from "./ManageOrganization";
+import MemberLeave from "./MemberLeave";
 import OrganizationDelete from "./OrganizationDelete";
 import OrganizationBilling from "./OrganizationBilling";
+import axios from "axios";
+import { useAuth } from "contexts/AuthContext";
+import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
 
 const ManageTeam = (props) => {
+  const { currentOrganization, generateToken, currentUser } = useAuth();
+  const [isOwner, setIsOwner] = useState(false)
+  const authToken = localStorage.getItem(AUTH_TOKEN);
+
+  useEffect(() => {
+    getOrganizationOwner()
+
+  }, [])
+
+  const getOrganizationOwner = () => {
+    axios
+      .get(
+        `/api/organization/get-organization-owner/${currentOrganization}/${authToken}`,
+        generateToken()[1]
+      )
+      .then((response) => {
+        setIsOwner(response.data)
+      })
+      .catch(() => {
+        message.error("Could not fetch the data in the server!");
+      });
+  }
+
   return (
     <div>
       <PageHeaderAlt className="padding-none border-bottom" overlap>
@@ -45,7 +72,9 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />
         <Row gutter={16}>
-          <ManageMember />
+          {
+            isOwner ? <ManageMember /> : ""
+          }
         </Row>
         <Divider />
         <Row gutter={16}>
@@ -53,7 +82,9 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />{" "}
         <Row gutter={16}>
-          <OrganizationDelete />
+          {
+            isOwner ? <OrganizationDelete /> : <MemberLeave />
+          }
         </Row>
       </div>
     </div>
