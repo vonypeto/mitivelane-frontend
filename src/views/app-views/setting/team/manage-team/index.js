@@ -20,7 +20,6 @@ import {
 } from "@ant-design/icons";
 import ManageMember from "./ManageTeam";
 import ManageOrganization from "./ManageOrganization";
-import MemberLeave from "./MemberLeave";
 import OrganizationDelete from "./OrganizationDelete";
 import OrganizationBilling from "./OrganizationBilling";
 import axios from "axios";
@@ -72,9 +71,7 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />
         <Row gutter={16}>
-          {
-            isOwner ? <ManageMember /> : ""
-          }
+          <ManageMember isOwner={isOwner}/>
         </Row>
         <Divider />
         <Row gutter={16}>
@@ -82,9 +79,7 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />{" "}
         <Row gutter={16}>
-          {
-            isOwner ? <OrganizationDelete /> : <MemberLeave />
-          }
+          <OrganizationDelete isOwner={isOwner}/>
         </Row>
       </div>
     </div>

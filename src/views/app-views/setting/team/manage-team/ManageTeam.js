@@ -34,7 +34,7 @@ const { Option } = Select;
 
 const { Step } = Steps;
 
-const ManageMember = (props) => {
+const ManageMember = ({ isOwner }) => {
   const { currentOrganization, generateToken, currentUser } = useAuth();
 
   const [addMember, setAddMember] = useState(false);
@@ -216,8 +216,8 @@ const ManageMember = (props) => {
                   ? "cyan"
                   : elm.status === "Pending"
                     ? "orange"
-                    : elm.status === "Rejected"
-                      ? "volcano"
+                    : elm.status === "Owner"
+                      ? "blue"
                       : null
               }
             >
@@ -232,7 +232,7 @@ const ManageMember = (props) => {
       dataIndex: "actions",
       key: "_id",
 
-      render: (_, elm) => (
+      render: (_, elm) => isOwner && elm.status != "Owner" ? (
         <div className="text-right">
           <div className="text-right d-flex justify-content-end">
             <Tooltip title="Edit">
@@ -258,7 +258,7 @@ const ManageMember = (props) => {
             </Tooltip>
           </div>
         </div>
-      ),
+      ) : "",
     },
   ];
 
@@ -566,9 +566,10 @@ const ManageMember = (props) => {
         <Card
           title="Member Details"
           extra={
-            <Button onClick={() => onClickMember()}>
-              {addMember ? "Cancel" : "Add Member"}
-            </Button>
+            isOwner ? (
+              <Button onClick={() => onClickMember()}>
+                {addMember ? "Cancel" : "Add Member"}
+              </Button>) : ""
           }
         >
           <Col xs={24} sm={24} md={24} className="w-100">
