@@ -146,12 +146,12 @@ export const LoginForm = (props) => {
           className="organization-register-container"
           style={{ height: "600px" }}
         >
-          {" "}
+          
           <Loading />
         </Row>
       ) : (
         <>
-          {" "}
+          
           <motion.div
             initial={{ opacity: 0, marginBottom: 0 }}
             animate={{
@@ -210,13 +210,13 @@ export const LoginForm = (props) => {
 
             {showForgetPassword && (
               <div className="d-flex justify-content-between">
-                {" "}
+                
                 <Checkbox
                   className="pb-2 mb-2 cursor-pointer font-size-sm font-weight-normal text-muted "
                   onChange={() => {}}
                 >
                   Remember me
-                </Checkbox>{" "}
+                </Checkbox>
                 <div className="mt-2">
                   <span
                     onClick={() => onForgetPasswordClick}

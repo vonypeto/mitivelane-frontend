@@ -79,26 +79,41 @@
   margin: 25px;
   padding: 0 25px 25px 25px;
 }
+.setting-menu {
+  border-radius: 15px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset !important;
+}
+
+.setting-content {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.setting-menu .title {
+  padding: 10px 0px 0px 20px;
+}
+
 .card-platform {
-  padding: 0px 20px;
-  position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  padding: 0px 20px !important;
+  position: relative !important;
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  /* width: 272px; */
-  height: 60px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  overflow: hidden;
-  cursor: pointer;
-  padding: 0 20px;
+  /* width: 272px!important; */
+  height: 60px !important;
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  margin-bottom: 20px !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  padding: 0 20px !important;
 }
 .card-brand {
   border: 1px solid #e6e6e6;

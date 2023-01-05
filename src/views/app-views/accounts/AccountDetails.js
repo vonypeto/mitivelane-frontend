@@ -112,6 +112,8 @@ const AccountDetails = () => {
       //   duration: 4,
       // });
       setFileLarge(true);
+      return profileAvatar;
+
       // alert("File is too big!");
     } else {
       return new Promise((resolve, reject) => {
