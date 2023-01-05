@@ -5,6 +5,7 @@ import axios from "axios";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
 import { Link } from "react-router-dom";
+import { ObjCapitalizeKey } from "helper/Parser";
 import { computeAge } from "helper/Formula";
 
 import {
@@ -27,8 +28,8 @@ import {
 
 const { Option } = Select;
 const filterCategories = [
-  { text: "Modified At", value: "updateAt"},
-  { text: "H.Number", value: "house_number"},
+  { text: "Modified At", value: "updateAt" },
+  { text: "H.Number", value: "house_number" },
   { text: "H.Name", value: "name" },
   { text: "Address", value: "address" },
   { text: "Purok", value: "purok" },
@@ -42,6 +43,7 @@ const filterCategories = [
 import CustomDropdown from "components/shared-components/CustomDropdown";
 import { handlePageChange } from "helper/Pagination";
 import moment from "moment";
+import { JSONToExcel } from "helper/ExportToExcel";
 
 const AyudaTable = (props) => {
   //Import
@@ -64,7 +66,12 @@ const AyudaTable = (props) => {
       title: "Household Address",
       dataIndex: "address",
       key: "address",
-      width: 12
+      width: 220,
+      render: (text, record) => (
+        <div style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'break-word',}}>
+          {text}
+        </div>
+      )
     },
     {
       title: "H. Name",
@@ -86,11 +93,11 @@ const AyudaTable = (props) => {
       dataIndex: "family_planning",
       key: "family_planning",
     },
-    {
-      title: "Water Source",
-      dataIndex: "water_source",
-      key: "water_source",
-    },
+    // {
+    //   title: "Water Source",
+    //   dataIndex: "water_source",
+    //   key: "water_source",
+    // },
     {
       title: "Toilet Type",
       dataIndex: "toilet_type",
@@ -136,6 +143,19 @@ const AyudaTable = (props) => {
     sort: defaultFilters.sort,
   })
 
+  const residentMenuItems = [
+    {
+      text: "Refresh",
+      icon: <ReloadOutlined />,
+      onClick: () => getPage(),
+    },
+    {
+      text: "Export",
+      icon: <FileExcelOutlined />,
+      onClick: () => handleExport(),
+    },
+  ];
+
   //useEffect
   useEffect(() => {
     getPage()
@@ -157,7 +177,7 @@ const AyudaTable = (props) => {
       var total = query.data.total
 
       console.log("householdList", householdList)
-    
+
       sethouseholdList(householdList)
       setTotal(total)
 
@@ -186,6 +206,23 @@ const AyudaTable = (props) => {
     message.success(`Deleted selected household`);
     setLoading(false)
   };
+
+  const getAll = async () => {
+    try {
+      return await axios.post(
+        "/api/household/getAll",
+        { organization_id },
+        generateToken()[1],
+        { cancelToken }
+      )
+
+    } catch (error) {
+      console.log(error);
+      message.error("Error!! Please try again later!!");
+    }
+  };
+
+
 
   //Functions
   const deleteHousehold = (row) => {
@@ -263,6 +300,53 @@ const AyudaTable = (props) => {
     setDataFilter({ ...dataFilter, sort: value })
   }
 
+  const handleExport = () => {
+
+    getAll()
+      .then((result) => {
+        var list = result.data
+        console.log("list", list)
+
+        var households = [], householdMembers = []
+        var newHouseholds = {}, newHouseholdMembers = {}
+
+        list.map((household) => {
+
+          newHouseholds = householdParse(household)
+          households.push(newHouseholds)
+
+          household.household_members.map((member) => {
+            newHouseholdMembers = householdMemberParse(household, member)
+            householdMembers.push(newHouseholdMembers)
+          })
+        })
+
+        console.log("households", households);
+        console.log("householdMembers", householdMembers);
+        // JSONToExcel(newList, "BarangayHouseholdList")
+      })
+  };
+
+  const householdParse = (data) => {
+    return {
+      "H.Number": data.house_number,
+      "H.Name": data.name,
+      "Address": data.address,
+      "Purok": data.purok,
+      "Status": data.house_status,
+      "Family Planning": data.family_planning,
+      "Water Source": data.water_source,
+      "Waste Management": data.waste_management,
+      "Toilet Type": data.toilet_type,
+      "Date Modified": moment(data.updatedAt).format("MM/DD/yyyy")
+    }
+  }
+
+  const householdMemberParse = (household, member) => {
+    return ObjCapitalizeKey([member])[0]
+  }
+
+
   return (
     <Card>
       <Row justify="space-between" align="middle" className="mb-3">
@@ -275,7 +359,7 @@ const AyudaTable = (props) => {
             <Button type="primary">Add Household</Button>
           </Link>
 
-          <CustomDropdown />
+          <CustomDropdown menuItems={residentMenuItems} />
 
         </Col>
       </Row>

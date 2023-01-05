@@ -217,6 +217,11 @@ export const ResidentTableColumns = [
     key: "blood_type",
   },
   {
+    title: "Gender",
+    dataIndex: "gender",
+    key: "gender",
+  },
+  {
     title: "Civil Status",
     dataIndex: "civil_status",
     key: "civil_status",

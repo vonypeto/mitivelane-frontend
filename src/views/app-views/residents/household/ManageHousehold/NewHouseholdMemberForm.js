@@ -3,12 +3,13 @@ import { Form, Input, InputNumber, DatePicker, Select, Row, Col, Button, Divider
 
 const { Option } = Select;
 
-const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
+const NewHouseholdMemberForm = ({ residentList, importResidentAsMember, memberModalAction }) => {
 
     const handleChange = (value) => {
         importResidentAsMember(value)
-
     }
+
+    console.log("memberModalAction", memberModalAction)
 
     const printResidentOption = () => {
         return (
@@ -33,26 +34,28 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
             </Form.Item>
 
             <Form.Item
-                name="isOld"
+                name="row_id"
                 hidden
             >
                 <Input />
             </Form.Item>
 
-            <Form.Item
-                name="action"
+            {/* <Form.Item
+                name="isOld"
                 hidden
             >
                 <Input />
-            </Form.Item>
+            </Form.Item> */}
 
             <Col span={24}>
                 <Form.Item
                     name="first_name"
                     label="First Name"
-                    rules={[{ required: true, message: "Please input resident's first name!" }]}
+                    rules={[{ required: true, message: "Please select a resident to add!" }]}
+                // rules={[{ required: true, message: "Please input resident's first name!" }]}
+
                 >
-                    <Input />
+                    <Input disabled />
                 </Form.Item>
             </Col>
 
@@ -60,9 +63,10 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
                 <Form.Item
                     name="last_name"
                     label="Last Name"
-                    rules={[{ required: true, message: "Please input resident's last name!" }]}
+                    rules={[{ required: true, message: "Please select a resident to add!" }]}
+                // rules={[{ required: true, message: "Please input resident's last name!" }]}
                 >
-                    <Input />
+                    <Input disabled />
                 </Form.Item>
             </Col>
 
@@ -70,9 +74,10 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
                 <Form.Item
                     name="birthday"
                     label="Birthday"
-                    rules={[{ required: true, message: "Please input resident's birthday!" }]}
+                    rules={[{ required: true, message: "Please select a resident to add!" }]}
+                // rules={[{ required: true, message: "Please input resident's birthday!" }]}
                 >
-                    <DatePicker className='w-100' />
+                    <DatePicker className='w-100' disabled />
                 </Form.Item>
             </Col>
 
@@ -80,9 +85,10 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
                 <Form.Item
                     name="age"
                     label="Age"
-                    rules={[{ required: true, message: "Please input resident's age!" }]}
+                    rules={[{ required: true, message: "Please select a resident to add!" }]}
+                // rules={[{ required: true, message: "Please input resident's age!" }]}
                 >
-                    <InputNumber className='w-100' min={0} />
+                    <InputNumber className='w-100' min={0} disabled />
                 </Form.Item>
             </Col>
 
@@ -161,12 +167,14 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember}) => {
                 </Form.Item>
             </Col>
 
-            <Col span={24}>
-                <Divider>Import Resident Data</Divider>
-                <Select onChange={handleChange} className="w-100 mb-3" placeholder="Choose Resident" allowClear>
-                    {printResidentOption()}
-                </Select>
-            </Col>
+            {memberModalAction == "add" &&
+                <Col span={24}>
+                    <Divider>Import Resident Data</Divider>
+                    <Select onChange={handleChange} className="w-100 mb-3" placeholder="Choose Resident" allowClear>
+                        {printResidentOption()}
+                    </Select>
+                </Col> 
+            }
 
             {/* <Button
                 type='primary'

@@ -321,16 +321,11 @@ const ListInformation = () => {
     JSONToExcel(newList, "BarangayResidentList");
   };
 
-  const residentTableDropdownItems = [
+  const residentMenuItems = [
     {
       text: "Refresh",
       icon: <ReloadOutlined />,
       onClick: () => alert("Resident Table Refresh"),
-    },
-    {
-      text: "Print",
-      icon: <PrinterOutlined />,
-      onClick: () => alert("Resident Table Print"),
     },
     {
       text: "Export",
@@ -348,7 +343,7 @@ const ListInformation = () => {
         <div key="demo1">
           <Card
             title="Resident Master List"
-            extra={<CustomDropdown menuItems={residentTableDropdownItems} />}
+            extra={<CustomDropdown menuItems={residentMenuItems} />}
           >
             <Flex
               alignItems="center"
