@@ -9,8 +9,6 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember, memberMo
         importResidentAsMember(value)
     }
 
-    console.log("memberModalAction", memberModalAction)
-
     const printResidentOption = () => {
         return (
             residentList.map((resident, key) => {
@@ -49,7 +47,7 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember, memberMo
 
             <Col span={24}>
                 <Form.Item
-                    name="first_name"
+                    name="firstname"
                     label="First Name"
                     rules={[{ required: true, message: "Please select a resident to add!" }]}
                 // rules={[{ required: true, message: "Please input resident's first name!" }]}
@@ -61,7 +59,7 @@ const NewHouseholdMemberForm = ({ residentList, importResidentAsMember, memberMo
 
             <Col span={24}>
                 <Form.Item
-                    name="last_name"
+                    name="lastname"
                     label="Last Name"
                     rules={[{ required: true, message: "Please select a resident to add!" }]}
                 // rules={[{ required: true, message: "Please input resident's last name!" }]}

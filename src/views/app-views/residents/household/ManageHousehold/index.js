@@ -31,6 +31,9 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import { delay } from "lodash";
+import TableTextWrapper from "components/shared-components/TableTextWrapper";
+import { computeAge } from "helper/Formula";
 
 const ManageHousehold = (props) => {
   //Import
@@ -46,12 +49,10 @@ const ManageHousehold = (props) => {
   const ResidentTableColumns = [
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "fullname",
+      key: "fullname",
       render: (_, data) => (
-        <div className="d-flex align-items-center">
-          <span className="ml-2">{`${data.first_name} ${data.last_name}`}</span>
-        </div>
+        TableTextWrapper(`${data.firstname} ${data.lastname}`)
       ),
     },
     {
@@ -143,7 +144,7 @@ const ManageHousehold = (props) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [ isImportResidentModalVisible, setIsImportResidentModalVisible,] = useState(false);
+  const [isImportResidentModalVisible, setIsImportResidentModalVisible,] = useState(false);
 
   //Ref
   const NewMemberFormRef = createRef();
@@ -151,6 +152,7 @@ const ManageHousehold = (props) => {
 
   //Axios
   const createHousehold = async (household, householdMembers) => {
+    setLoading(true);
     try {
       await axios.post(
         "/api/household/add",
@@ -162,6 +164,7 @@ const ManageHousehold = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
+    setLoading(true);
   };
 
   const getHousehold = async () => {
@@ -212,17 +215,34 @@ const ManageHousehold = (props) => {
     }
   };
 
+  const updateResident = async (value) => {
+    setLoading(true);
+    try {
+      await axios.post(
+        "/api/resident/update",
+        {
+          values: value,
+          organization_id: organization_id,
+          resident_id: value._id
+        },
+        generateToken()[1],
+        { cancelToken }
+      );
+    } catch (error) {
+      console.log(error);
+      message.error("Error!! Please try again later!!");
+    }
+    setLoading(false);
+  };
+
   const getAllResident = async () => {
     try {
       await axios
-        .post("/api/resident/getAll", { organization_id }, generateToken()[1], {
+        .post("/api/resident/getAll", { organization_id, fields: ["firstname", "lastname"] }, generateToken()[1], {
           cancelToken,
         })
         .then((res) => {
           const data = res.data;
-          data.map((data) => {
-            data.birthday = moment(new Date(data.birthday));
-          });
           setResidentList(data);
         });
 
@@ -245,6 +265,21 @@ const ManageHousehold = (props) => {
         setPurokList(result.data)
       })
   }
+
+  const getResident = async (resident_id) => {
+    console.log("resident_id", resident_id)
+    try {
+      const query = await axios
+        .post("/api/resident/get", { organization_id, resident_id }, generateToken()[1], {
+          cancelToken,
+        })
+
+        return query
+    } catch (error) {
+      message.error("Could not fetch data from server!!");
+    }
+  }
+
 
   //UseEffect
   useEffect(() => {
@@ -273,7 +308,7 @@ const ManageHousehold = (props) => {
   }, [householdMemberInitialVal]);
 
   useEffect(() => {
-console.log("householdMemberList", householdMemberList)
+    console.log("householdMemberList", householdMemberList)
   }, [householdMemberList]);
 
   //Household Member Modal
@@ -302,7 +337,6 @@ console.log("householdMemberList", householdMemberList)
   };
 
   const handleImportResidentModalOk = () => {
-    setHouseholdMemberInitialVal({ first_name: "test" });
     NewMemberFormRef.current.resetFields();
     setIsImportResidentModalVisible(false);
   };
@@ -384,7 +418,7 @@ console.log("householdMemberList", householdMemberList)
   const deleteHouseholdMember = (row) => {
     var currentHouseholdMemberList = [...householdMemberList];
     var objIndex = currentHouseholdMemberList.findIndex(
-      (obj) => obj.row_id == row._id
+      (obj) => obj._id == row._id
     );
     currentHouseholdMemberList.splice(objIndex, 1);
     setHouseholdMemberList(currentHouseholdMemberList);
@@ -392,24 +426,19 @@ console.log("householdMemberList", householdMemberList)
     message.success("Deleted household members");
   };
 
-  const onFinishAddMember = (value) => {
-    setLoading(true);
+  const onFinishMember = (value) => {
     console.log("value", value)
-
     // if member is new
     if (memberModalAction == "add") {
-      value.row_id = householdMemberList.length;
-      console.log("Adding new member", value.row_id)
       setHouseholdMemberList([...householdMemberList, value]);
       message.success("Success, New Household Member added.");
     }
 
     // if member is edited
     if (memberModalAction == "edit") {
-      console.log("Existing member", value.row_id)
       var currentHouseholdMemberList = [...householdMemberList];
       var objIndex = currentHouseholdMemberList.findIndex(
-        (obj) => obj.row_id == value.row_id
+        (obj) => obj._id == value._id
       );
       currentHouseholdMemberList[objIndex] = value;
       // console.log(currentHouseholdMemberList)
@@ -418,10 +447,12 @@ console.log("householdMemberList", householdMemberList)
       message.success("Success, Household Member data has been updated.");
     }
 
+    updateResident(value)
+
+
     setIsModalVisible(false);
     setIsDrawerVisible(false);
     setHouseholdMemberInitialVal(householdMemberDefault);
-    setLoading(false);
   };
 
   const onFinishHouseHoldForm = (value) => {
@@ -436,7 +467,6 @@ console.log("householdMemberList", householdMemberList)
   };
 
   const onFinishAddHousehold = (value) => {
-    setLoading(true);
     // (household, householdMembers)
     createHousehold(value, householdMemberList);
 
@@ -445,44 +475,50 @@ console.log("householdMemberList", householdMemberList)
   };
 
   const onFinishUpdateHousehold = (value) => {
-    setLoading(true);
+    updateHousehold(value, householdMemberList)
     message.success("Success, household data has been updated.");
     history.replace(`/app/${organization_id}/residents/household/list`)
   };
 
-  const importResidentAsMember = (name) => {
-     if (name != undefined) {
+  const importResidentAsMember = (key) => {
+    if (key != undefined) {
 
-      const resident = residentList[name];
-      console.log("resident", resident)
+      const resident = residentList[key];
 
+      getResident(resident.resident_id).then((res) => {
+
+        var data = res.data
+        console.log("resident from axios", data)
+
+        setHouseholdMemberInitialVal({
+          ...householdMemberInitialVal,
+          _id: data.resident_id,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          birthday: moment(new Date(data.birthday)),
+          age: computeAge(data.birthday),
+          occupation: data.occupation,
+          civil_status: data.civil_status,
+          blood_type: data.blood_type,
+          ofw: data.ofw,
+          illness: data.illness,
+          importResident: true,
+        });
+      })
+    }
+
+    else {
       setHouseholdMemberInitialVal({
         ...householdMemberInitialVal,
-        _id: resident.resident_id,
-        first_name: resident.firstname,
-        last_name: resident.lastname,
-        birthday: resident.birthday,
-        age: resident.age,
-        occupation: resident.occupation,
-        blood_type: resident.blood_type,
-        civil_status: resident.civil_status,
-        blood_type: resident.blood_type,
-        importResident: true,
-      });
-     }
-
-     else {
-      setHouseholdMemberInitialVal({
-        ...householdMemberInitialVal,
-         first_name: null,
-         first_name: null,
-         last_name: null,
-         birthday: null,
-         age: null,
-         importResident: false,
-         ...householdMemberDefault
-        })
-     }
+        first_name: null,
+        first_name: null,
+        last_name: null,
+        birthday: null,
+        age: null,
+        importResident: false,
+        ...householdMemberDefault
+      })
+    }
   };
 
   const printTitle = () => {
@@ -510,14 +546,14 @@ console.log("householdMemberList", householdMemberList)
           <Col>{printTitle()}</Col>
           <Col className="mt-2">
             <Space>
-            <ConfirmButton
-                  type="warning"
-                  modalTitle="Are you sure you want to leave this page?"
-                  modalContent={handleConfirmMessage()}
-                  text="Back"
-                  handleOk={() => history.replace(`/app/${organization_id}/residents/household/list`)}
-                  loading={loading}
-                />
+              <ConfirmButton
+                type="warning"
+                modalTitle="Are you sure you want to leave this page?"
+                modalContent={handleConfirmMessage()}
+                text="Back"
+                handleOk={() => history.replace(`/app/${organization_id}/residents/household/list`)}
+                loading={loading}
+              />
               <Button
                 type="primary"
                 onClick={() => {
@@ -538,12 +574,12 @@ console.log("householdMemberList", householdMemberList)
         ref={NewHouseholdFormRef}
         initialValues={householdInitialVal}
       >
-        <Card title={<h1>Household Info</h1>}>
+        <Card title={<h1>Household Info</h1>} loading={loading}>
           <HouseholdForm purokList={purokList} />
         </Card>
       </Form>
 
-      <Card>
+      <Card >
         <Row justify="space-between">
           <Col>
             <h1>Household Members</h1>
@@ -563,16 +599,11 @@ console.log("householdMemberList", householdMemberList)
         <Table
           columns={ResidentTableColumns}
           dataSource={householdMemberList}
-          rowKey={"row_id"}
+          rowKey={"_id"}
           scroll={{ x: "max-content" }}
+          loading={loading}
         />
 
-        {/* <Button
-          type='primary'
-          onClick={() => { console.log(householdMemberList) }}
-        >
-          Show Member
-        </Button> */}
       </Card>
 
       <Modal
@@ -586,7 +617,7 @@ console.log("householdMemberList", householdMemberList)
         {isModalVisible && (
           <Form
             name="new_household_member_form"
-            onFinish={onFinishAddMember}
+            onFinish={onFinishMember}
             ref={NewMemberFormRef}
             initialValues={householdMemberInitialVal}
           >
@@ -611,11 +642,11 @@ console.log("householdMemberList", householdMemberList)
         {isDrawerVisible && (
           <Form
             name="new_household_member_form"
-            onFinish={onFinishAddMember}
+            onFinish={onFinishMember}
             ref={NewMemberFormRef}
             initialValues={householdMemberInitialVal}
           >
-            <NewHouseholdMemberForm residentList={residentList} importResidentAsMember={importResidentAsMember}/>
+            <NewHouseholdMemberForm residentList={residentList} importResidentAsMember={importResidentAsMember} />
           </Form>
         )}
       </Drawer>

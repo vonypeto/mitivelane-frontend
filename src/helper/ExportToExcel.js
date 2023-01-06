@@ -25,7 +25,7 @@ export const JSONManyToExcel = (data, filename) => {
         ws = XLSX.utils.json_to_sheet(excelData)
         ws["!cols"] = excel.wscols;
     
-        XLSX.utils.book_append_sheet(wb, ws, "Sheet" + key)
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet" + key + 1 )
     })
 
     XLSX.writeFile(wb, filename + ".xlsx")

@@ -35,7 +35,7 @@ const filterCategories = [
   { text: "Purok", value: "purok" },
   { text: "Status", value: "house_status" },
   { text: "Family Planning", value: "family_planning" },
-  { text: "Water Source", value: "water_source" },
+  // { text: "Water Source", value: "water_source" },
   { text: "Toilet Type", value: "toilet_type" },
   { text: "Waste Management", value: "waste_management" },
 ];
@@ -43,7 +43,8 @@ const filterCategories = [
 import CustomDropdown from "components/shared-components/CustomDropdown";
 import { handlePageChange } from "helper/Pagination";
 import moment from "moment";
-import { JSONToExcel } from "helper/ExportToExcel";
+import { JSONManyToExcel } from "helper/ExportToExcel";
+import TableTextWrapper from "components/shared-components/TableTextWrapper";
 
 const AyudaTable = (props) => {
   //Import
@@ -66,12 +67,8 @@ const AyudaTable = (props) => {
       title: "Household Address",
       dataIndex: "address",
       key: "address",
-      width: 220,
-      render: (text, record) => (
-        <div style={{ wordWrap: 'break-word', wordBreak: 'break-word', overflowWrap: 'break-word',}}>
-          {text}
-        </div>
-      )
+      width: "19vw",
+      render: TableTextWrapper
     },
     {
       title: "H. Name",
@@ -168,7 +165,7 @@ const AyudaTable = (props) => {
     try {
       const query = await axios.post(
         "/api/household/page",
-        { organization_id, dataFilter, page: currentPage, pageSize },
+        { organization_id, dataFilter, page: currentPage, pageSize, excludeAvatar: true },
         generateToken()[1],
         { cancelToken }
       );
@@ -311,7 +308,6 @@ const AyudaTable = (props) => {
         var newHouseholds = {}, newHouseholdMembers = {}
 
         list.map((household) => {
-
           newHouseholds = householdParse(household)
           households.push(newHouseholds)
 
@@ -323,7 +319,7 @@ const AyudaTable = (props) => {
 
         console.log("households", households);
         console.log("householdMembers", householdMembers);
-        // JSONToExcel(newList, "BarangayHouseholdList")
+        JSONManyToExcel([households, householdMembers], "BarangayHouseholdList")
       })
   };
 
@@ -343,7 +339,28 @@ const AyudaTable = (props) => {
   }
 
   const householdMemberParse = (household, member) => {
-    return ObjCapitalizeKey([member])[0]
+    return {
+      "H.Number": household.house_number,
+      "H.Name": household.name,
+      "Firstname": member.firstname,
+      "Lastname": member.lastname,
+      "Middlename": member.middlename,
+      "Gender": member.gender,
+      "Birth Of Place": member.birth_of_place,
+      "Age": computeAge(member.birthday),
+      "Birthday": moment(member.birthday).format("MM/DD/yyyy"),
+      "Blood Type": member.blood_type,
+      "Citizenship": member.citizenship,
+      "Civil Status": member.civil_status,
+      "Telephone": member.telephone,
+      "Mobile Number": member.mobile_number,
+      "Occupation": member.occupation,
+      "Religion": member.religion,
+      "Voter Status": member.voter_status,
+      "Educational Attainment": member.educational_attainment,
+      "Illness": member.illness,
+      "Ofw": member.ofw,
+    }
   }
 
 

@@ -33,6 +33,7 @@ import {
 import { JSONToExcel } from "helper/ExportToExcel";
 import { computeAge } from "helper/Formula";
 import CustomDropdown from "components/shared-components/CustomDropdown";
+import TableTextWrapper from "components/shared-components/TableTextWrapper";
 
 const { Option } = Select;
 
@@ -73,6 +74,7 @@ const ListInformation = () => {
           "/api/resident/page",
           {
             organization_id: organization_id,
+            excludeAvatar: true,
             page: currentPage,
             tableScreen,
             pageSize,
@@ -206,6 +208,8 @@ const ListInformation = () => {
       title: "Last Name",
       dataIndex: "lastname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "lastname"),
+      width: "19vw",
+      render: TableTextWrapper,
       filterDropdown: searchBar,
       filterIcon: searchIcon,
     },
@@ -213,6 +217,8 @@ const ListInformation = () => {
       title: "First Name",
       dataIndex: "firstname",
       sorter: (a, b) => utils.antdTableSorter(a, b, "firstname"),
+      width: "19vw",
+      render: TableTextWrapper,
       filterDropdown: searchBar,
       filterIcon: searchIcon,
     },
@@ -220,6 +226,8 @@ const ListInformation = () => {
       title: "Middle Name",
       dataIndex: "middlename",
       sorter: (a, b) => utils.antdTableSorter(a, b, "middlename"),
+      width: "19vw",
+      render: TableTextWrapper,
       filterDropdown: searchBarDate,
       defaultFilteredValue: null,
       filterIcon: searchIcon,
@@ -227,6 +235,7 @@ const ListInformation = () => {
     {
       title: "Age",
       dataIndex: "age",
+      width: 40,
       sorter: (a, b) => utils.antdTableSorter(a, b, "age"),
       filterDropdown: searchBarNumber,
       filterIcon: searchIcon,
@@ -234,6 +243,7 @@ const ListInformation = () => {
     {
       title: "Civil Status",
       dataIndex: "civil_status",
+      width: 100,
       filters: [
         { text: "Single", value: "Single" },
         { text: "Married", value: "Married" },

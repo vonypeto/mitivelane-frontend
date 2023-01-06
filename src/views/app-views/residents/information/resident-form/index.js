@@ -57,7 +57,7 @@ const MainFormList = (props) => {
           setLoading(true)
           const response = await axios.post(
             "/api/resident/getAll",
-            { organization_id },
+            { organization_id},
             generateToken()[1],
             { cancelToken }
           );
@@ -342,9 +342,9 @@ const MainFormList = (props) => {
                 </TabPane>
               )}
 
-              <TabPane tab="Account Information" key="5" forceRender>
+              {/* <TabPane tab="Account Information" key="5" forceRender>
                 <Account />
-              </TabPane>
+              </TabPane> */}
             </Tabs>
           </div>
         ) : mode === "VIEW" ? (

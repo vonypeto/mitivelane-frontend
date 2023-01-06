@@ -1,3 +1,4 @@
+import TableTextWrapper from "components/shared-components/TableTextWrapper";
 import { tSTypeAliasDeclaration } from "@babel/types";
 import { COLORS } from "constants/ChartConstant";
 import moment from "moment";
@@ -195,15 +196,18 @@ export const ResidentTableData = [
 export const ResidentTableColumns = [
   {
     title: "Name",
-    dataIndex: "name",
-    key: "name",
+    dataIndex: "fullname",
+    key: "fullname",
+    render: (_, data) => (
+      TableTextWrapper(`${data.firstname} ${data.lastname}`)
+    ),
   },
   {
     title: "Birthday",
     dataIndex: "birthday",
     key: "birthday",
     render: (_, resident) => (
-       moment(resident.birthday).format("MM/DD/yyyy")
+      moment(resident.birthday).format("MM/DD/yyyy")
     ),
   },
   {
