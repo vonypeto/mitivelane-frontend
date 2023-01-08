@@ -3,112 +3,34 @@ import { Table, Button, Tooltip, Row, Col, Card } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import BillingDrawer from "components/shared-components/DrawerBilling";
 import { AUTH_TOKEN } from "redux/constants/Auth";
-
-const cc_format = (value) => {
-  var v = value;
-
-  var match = v;
-  var parts = [];
-
-  for (var i = 1, len = match.length; i < len; i += 4) {
-    parts.push(match.substring(i, i + 4));
-  }
-
-  if (parts.length) {
-    return parts.join(" ");
-  } else {
-    return value;
-  }
-};
-const tableColumns = [
-  {
-    title: "Card type",
-    dataIndex: "issuer",
-    key: "issuer",
-    render: (_, record) => {
-      let image = "";
-      if (record.issuer == "mastercard") image = "/img/others/img-9.png";
-
-      if (record.issuer == "visa") image = "/img/others/img-8.png";
-
-      if (record.issuer == "GCash") image = "/img/others/cards/GCash-Logo.png";
-      return (
-        <>
-          {record.issuer == "GCash" ? (
-            <img style={{ height: "13%" }} src={image} alt={record.cardType} />
-          ) : (
-            <img style={{ height: "auto" }} src={image} alt={record.cardType} />
-          )}
-
-          <span className="ml-2">{record.issuer}</span>
-        </>
-      );
-    },
-  },
-
-  {
-    title: "Card Number",
-    dataIndex: "cardNumber",
-    key: "cardNumber",
-    render: (_, record) => {
-      let creditFormat;
-      if (record.cardNumber) creditFormat = cc_format(record.cardNumber);
-      return (
-        <>
-          <span className="ml-2">
-            {cc_format(
-              record.cardNumber.replace(
-                record.cardNumber.substr(0, record.cardNumber.length - 4),
-                record.cardNumber
-                  .substr(1, record.cardNumber.length - 3)
-                  .replace(/./g, "•")
-              )
-            )}
-          </span>
-        </>
-      );
-    },
-  },
-
-  {
-    title: "Expiry",
-    dataIndex: "validThru",
-    key: "validThru",
-  },
-  {
-    title: () => <div className="text-right"></div>,
-    key: "actions",
-    render: (_, record) => (
-      <Tooltip title="Remove card">
-        <Button
-          type="text"
-          shape="circle"
-          icon={<DeleteOutlined />}
-          onClick={() => {}}
-        />
-      </Tooltip>
-    ),
-  },
-];
+import { ccFormat } from "helper/Formula";
+import { useAuth } from "contexts/AuthContext";
+import axios from "axios";
 
 const Billing = () => {
+  const { generateToken } = useAuth();
   const tmp = [
     {
-      cardHolder: "12321",
-      cardNumber: "1232132113112323",
-      card_id: 1,
+      card_holder: "12321",
+      card_number: "1232132113112323",
+      _id: 1,
       cvc: "N/A",
       issuer: "visa",
       user_id: "kwWXpExbfoTAVnQZQVeVqMzCRFP2",
-      validThru: "N/A",
+      valid_thru: "N/A",
     },
   ];
+
+  // Credit Card State
   const [creditCards, setCreditCards] = useState(tmp);
   const [paymentMethod, setPaymentMethod] = useState({});
   const [paymentMethodType, setPaymentMethodType] = useState("");
-  const [selectedRowKeys, setSelectedRowKeys] = useState("card-1");
-  console.log(creditCards);
   const [drawer, setDrawer] = useState(false);
+
+  // Table State Select
+  const [selectedRowKeys, setSelectedRowKeys] = useState();
+
+  // Table Empty Dataset
   const locale = {
     emptyText: (
       <div className="my-4 text-center">
@@ -121,7 +43,87 @@ const Billing = () => {
       </div>
     ),
   };
-  console.log(paymentMethod);
+
+  const tableColumns = [
+    {
+      title: "Card type",
+      dataIndex: "issuer",
+      key: "issuer",
+      render: (_, record) => {
+        let image = "";
+        if (record.issuer == "mastercard") image = "/img/others/img-9.png";
+
+        if (record.issuer == "visa") image = "/img/others/img-8.png";
+
+        if (record.issuer == "GCash")
+          image = "/img/others/cards/GCash-Logo.png";
+        return (
+          <>
+            {record.issuer == "GCash" ? (
+              <img
+                style={{ height: "13%" }}
+                src={image}
+                alt={record.cardType}
+              />
+            ) : (
+              <img
+                style={{ height: "auto" }}
+                src={image}
+                alt={record.cardType}
+              />
+            )}
+
+            <span className="ml-2">{record.issuer}</span>
+          </>
+        );
+      },
+    },
+
+    {
+      title: "Card Number",
+      dataIndex: "card_number",
+      key: "card_number",
+      render: (_, record) => {
+        let creditFormat;
+        if (record.card_number) creditFormat = ccFormat(record.card_number);
+        return (
+          <>
+            <span className="ml-2">
+              {ccFormat(
+                record.card_number.replace(
+                  record.card_number.substr(0, record.card_number.length - 4),
+                  record.card_number
+                    .substr(1, record.card_number.length - 3)
+                    .replace(/./g, "•")
+                )
+              )}
+            </span>
+          </>
+        );
+      },
+    },
+
+    {
+      title: "Expiry",
+      dataIndex: "valid_thru",
+      key: "valid_thru",
+    },
+    {
+      title: () => <div className="text-right"></div>,
+      key: "actions",
+      render: (_, record) => (
+        <Tooltip title="Remove card">
+          <Button
+            type="text"
+            shape="circle"
+            icon={<DeleteOutlined />}
+            onClick={() => {}}
+          />
+        </Tooltip>
+      ),
+    },
+  ];
+
   const showDrawer = (type) => {
     console.log("open");
     setPaymentMethodType(type);
@@ -132,12 +134,33 @@ const Billing = () => {
     setDrawer(false);
   };
 
+  const rowSelectionCredit = {
+    onChange: (key, rows) => {
+      console.log(rows, key);
+    },
+  };
+
+  const getBilling = async () => {
+    const billingData = await axios.get(
+      "/api/app/user/billing/data",
+
+      generateToken()[1]
+    );
+    const i = [].concat.apply([], billingData.data[0].billing_method);
+
+    console.log(i);
+    return setCreditCards(i);
+  };
+  useEffect(() => {
+    getBilling();
+  }, []);
+  console.log(creditCards);
   useEffect(() => {
     if (!(JSON.stringify(paymentMethod) === "{}")) {
-      let credit = creditCards;
+      // let credit = creditCards;
       let payment = paymentMethod;
-      payment.user_id = localStorage.getItem(AUTH_TOKEN);
-      payment.card_id = credit.length + 1;
+      // payment.user_id = localStorage.getItem(AUTH_TOKEN);
+      // payment._id = credit.length + 1;
       setCreditCards((oldArray) => [...oldArray, payment]);
     }
   }, [paymentMethod]);
@@ -153,6 +176,7 @@ const Billing = () => {
         close={() => {
           closeDrawer();
         }}
+        generateToken={generateToken()[1]}
       />
       <Col xs={24} sm={24} md={8}>
         <div className="pl-1">
@@ -174,7 +198,13 @@ const Billing = () => {
             // rowSelection={rowSelection}
             columns={tableColumns}
             pagination={false}
-            rowKey="card_id"
+            rowKey="_id"
+            rowSelection={{
+              selectedRowKeys: selectedRowKeys,
+              type: "radio",
+              preserveSelectedRowKeys: false,
+              ...rowSelectionCredit,
+            }}
           />
           <div className="mt-3 text-left">
             <Row gutter={24}>

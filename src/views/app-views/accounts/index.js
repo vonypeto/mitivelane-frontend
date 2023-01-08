@@ -10,6 +10,8 @@ import AccountBillingInfo from "./AccountBillingInfo";
 import AccountBillingAddress from "./AccountBillingAddress";
 
 const ManageAccount = (props) => {
+  console.log("tes");
+
   return (
     <div>
       <PageHeaderAlt className="padding-none border-bottom" overlap>
