@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import UserInfoForm from "views/pre-views/components/organization-register-form/UserInfoForm";
 import OrganizationInfoForm from "views/pre-views/components/organization-register-form/OrganizationInfoForm";
 import { createOrganization } from "api/AuthController/PreRegisterController/PreRegisterController";
+import { acceptRequest } from "api/AppController/OrganizationController/OrganizationSettingController";
 import Loading from "components/shared-components/Loading";
-import { Row, Col, Card, Form, Button, Input } from "antd";
+import { Row, Col, Card, Form, Button, Input, message } from "antd";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { connect } from "react-redux";
@@ -14,6 +15,7 @@ import sign from "jwt-encode";
 import platform from "platform";
 import publicIp from "react-public-ip";
 import { Spin } from "antd";
+import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
 import "./index.css";
 import {
   signIn,
@@ -85,6 +87,8 @@ const OrganizationRegister = (props) => {
 
     //convert this to a new component later to the api folder
 
+    handleAcceptRequest()
+
     axios
       .get("/api/pre/users/" + user_id, generateToken()[1], {
         cancelToken: source.token,
@@ -119,6 +123,31 @@ const OrganizationRegister = (props) => {
       source.cancel();
     };
   }, []);
+
+  const handleAcceptRequest = async () => {
+    const authToken = localStorage.getItem(AUTH_TOKEN);
+
+    if (localStorage.getItem(ORGANIZATION_REQUEST_ID) != null) {
+      (async () => {
+        const response = await acceptRequest({ _id: localStorage.getItem(ORGANIZATION_REQUEST_ID), uuid: authToken }, generateToken);
+        if (response == "Success") {
+          message.success("Join Organization")
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+          history.push("/")
+        }
+        else if (response == "Joined") {
+          message.success("Already Joined")
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+        }
+        else if (response == "Error") {
+          message.error("The action can't be completed, please try again.");
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+        }
+      })();
+    } else {
+      console.log("do nothing")
+    }
+  };
 
   const handleSubmit = async (values) => {
     console.log(values);

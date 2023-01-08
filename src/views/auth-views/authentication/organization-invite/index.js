@@ -1,122 +1,71 @@
 import React, { useEffect } from "react";
-import { Row, Col, message } from "antd";
-import axios from "axios";
-import { AUTH_TOKEN } from "redux/constants/Auth";
+import { message } from "antd";
+import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
 import { useAuth } from "contexts/AuthContext";
 import { useHistory } from "react-router-dom"
-import jwt_decode from "jwt-decode";
 import sign from "jwt-encode";
+import { verifyRequest } from "api/AppController/OrganizationController/OrganizationSettingController";
 
 const index = ({ match }) => {
-  const { currentOrganization, generateToken, currentUser } = useAuth();
+  const { generateToken } = useAuth();
   const _id = match.params._id
   const history = useHistory()
 
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
   useEffect(() => {
-    verifyRequest()
-    console.log(currentUser)
-
+    handleVerifyRequest()
   }, [])
 
-  // malibag pa code, linisin ko pa - Rojhon Pogi
-  const verifyRequest = () => {
+  const handleVerifyRequest = () => {
     try {
-      axios
-        .post(
-          "/api/organization_setting/verify-request/", { _id, uuid: authToken },
-          generateToken()[1]
-        )
-        .then((response) => {
-          if (response.data == "Condition1") {
-            localStorage.clear()
-            history.push("/auth/register")
-          }
-          else if (response.data == "Condition2") {
-            localStorage.clear()
-            history.push("/auth/login")
+      var token = ""
 
-          } else if (response.data == "Condition3") {
-            acceptRequest({ _id })
-          }
-          else if (response.data == "Error") {
-            message.error("Expired")
-            history.push("/")
-          }
-          console.log("Verify request ", response.data);
-        })
-        .catch(() => {
-          message.error("Could not fetch the data in the server!");
-        });
+      if (authToken == null) {
+        const data = {
+          req_id: _id,
+          name: "Test Name",
+          iat: "13456576"
+        };
+        const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
+        token = {
+          headers: {
+            authorization: `Bearer ${jwt}`,
+            "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
+            "X-XSS-Protection": "1; mode=block",
+            "Content-Security-Policy":
+              " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
+          },
+        };
+      } else {
+        token = generateToken()[1]
+      }
+
+      (async () => {
+        const response = await verifyRequest(_id, authToken, token);
+        if (response == "Condition1") {
+          localStorage.clear()
+          localStorage.setItem(ORGANIZATION_REQUEST_ID, _id)
+          history.push("/auth/register")
+        }
+        else if (response == "Condition2") {
+          localStorage.clear()
+          localStorage.setItem(ORGANIZATION_REQUEST_ID, _id)
+          history.push("/auth/login")
+
+        } else if (response == "Condition3") {
+          localStorage.setItem(ORGANIZATION_REQUEST_ID, _id)
+          history.push("/")
+        }
+        else if (response == "Error") {
+          message.error("Invitation is already Expired")
+          history.push("/")
+        }
+      })();
 
     } catch (error) {
-      const data = {
-        req_id: _id,
-        name: "Test Name",
-        iat: "13456576"
-      };
-      const jwt = sign(data, process.env.REACT_APP_ACCESS_TOKEN_SECRET);
-      const header = {
-        headers: {
-          authorization: `Bearer ${jwt}`,
-          "Strict-Transport-Security": "max-age=65540 ; includeSubDomains",
-          "X-XSS-Protection": "1; mode=block",
-          "Content-Security-Policy":
-            " default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self';",
-        },
-      };
-
-      axios
-        .post(
-          "/api/organization_setting/verify-request/", { _id, uuid: authToken },
-          header
-        )
-        .then((response) => {
-          if (response.data == "Condition1") {
-            localStorage.clear()
-            history.push("/auth/register")
-          }
-          else if (response.data == "Condition2") {
-            localStorage.clear() 
-            localStorage.setItem("organization_request_id", _id)
-            history.push("/auth/login")
-
-          } else if (response.data == "Condition3") {
-            acceptRequest({ _id })
-          }
-          else if (response.data == "Error") {
-            message.error("Expired")
-            history.push("/")
-          }
-          console.log("Verify request ", response.data);
-        })
-        .catch(() => {
-          message.error("Could not fetch the data in the server!");
-        });
-
+      console.log(error)
     }
-  }
-
-  const acceptRequest = (values) => {
-    axios
-      .post(
-        "/api/organization_setting/accept-request/", values,
-        generateToken()[1]
-      )
-      .then((response) => {
-        if (response.data == "Success") {
-          message.success("Join Organization")
-          history.push("/")
-        }
-        else if (response.data == "Joined") {
-          message.success("Already Joined")
-          history.push("/")
-        }
-      })
-      .catch(() => {
-        message.error("Could not fetch the data in the server!");
-      });
   }
 
   return (
@@ -127,4 +76,3 @@ const index = ({ match }) => {
 };
 
 export default index;
-

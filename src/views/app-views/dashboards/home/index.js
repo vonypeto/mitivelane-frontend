@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import {
   Row,
   Col,
@@ -10,12 +11,15 @@ import {
   Tag,
   message,
 } from "antd";
+=======
+import { Row, Col, Button, Card, Avatar, Table, Select, Tag, message } from "antd";
+>>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
 import ChartWidget from "components/shared-components/ChartWidget";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import AvatarDocument from "components/shared-components/AvatarDocument";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
-import { AUTH_TOKEN } from "redux/constants/Auth";
+import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
 import {
   VisitorChartData,
   NewMembersData,
@@ -27,8 +31,9 @@ import {
   tableColumns,
 } from "./HomeDashboard";
 import { updateCertificateData } from "api/AppController/CertificatesController/CertificatesController";
+import { acceptRequest } from "api/AppController/OrganizationController/OrganizationSettingController";
 import { UserAddOutlined } from "@ant-design/icons";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 const { Option } = Select;
 
@@ -36,6 +41,14 @@ export const DefaultDashboard = () => {
   // Props State & Context & Constant
   const { currentOrganization, generateToken } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
+<<<<<<< HEAD
+=======
+  const history = useHistory()
+
+  const [visitorChartData] = useState(VisitorChartData);
+  const [newMembersData] = useState(NewMembersData);
+  const [recentBlotterCaseData] = useState(RecentBlotterCaseData);
+>>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
   const { direction } = useSelector((state) => state.theme);
 
   // Blotter Table State
@@ -71,7 +84,7 @@ export const DefaultDashboard = () => {
     axios
       .get(
         "/api/blotter_request/get-latest-blotter-requests/" +
-          currentOrganization,
+        currentOrganization,
         generateToken()[1]
       )
       .then((response) => {
@@ -148,6 +161,7 @@ export const DefaultDashboard = () => {
     // updateCertificateData(data, generateToken()[1]);
   };
 
+<<<<<<< HEAD
   const acceptRequest = (values) => {
     axios
       .post(
@@ -179,6 +193,33 @@ export const DefaultDashboard = () => {
       console.log("do nothing");
     }
 
+=======
+  const handleAcceptRequest = async () => {
+    if (localStorage.getItem(ORGANIZATION_REQUEST_ID) != null) {
+      (async () => {
+        const response = await acceptRequest({ _id: localStorage.getItem(ORGANIZATION_REQUEST_ID), uuid: authToken }, generateToken);
+        if (response == "Success") {
+          message.success("Join Organization")
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+          history.push("/")
+        }
+        else if (response == "Joined") {
+          message.success("Already Joined")
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+        }
+        else if (response == "Error") {
+          message.error("The action can't be completed, please try again.");
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+        }
+      })();
+    } else {
+      console.log("do nothing")
+    }
+  };
+
+  useEffect(() => {
+    handleAcceptRequest()
+>>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
     getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");
