@@ -13,6 +13,25 @@ export const JSONToExcel = (data, filename) => {
     XLSX.writeFile(wb, filename + ".xlsx")
 }
 
+export const JSONManyToExcel = (data, filename) => {
+    var wb = XLSX.utils.book_new()
+    var excelData, excel, ws
+
+    data.map((json, key) => {
+        excel = autoFitColumns(json)
+        console.log("excel " + key, excel)
+        excelData = excel.newJSON
+    
+        ws = XLSX.utils.json_to_sheet(excelData)
+        ws["!cols"] = excel.wscols;
+    
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet" + key + 1 )
+    })
+
+    XLSX.writeFile(wb, filename + ".xlsx")
+}
+
+
 const autoFitColumns = (json) => {
     console.log("start")
 

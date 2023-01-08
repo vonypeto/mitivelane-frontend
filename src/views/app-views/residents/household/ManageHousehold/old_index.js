@@ -31,9 +31,6 @@ import {
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { delay } from "lodash";
-import TableTextWrapper from "components/shared-components/TableTextWrapper";
-import { computeAge } from "helper/Formula";
 
 const ManageHousehold = (props) => {
   //Import
@@ -49,10 +46,12 @@ const ManageHousehold = (props) => {
   const ResidentTableColumns = [
     {
       title: "Name",
-      dataIndex: "fullname",
-      key: "fullname",
+      dataIndex: "name",
+      key: "name",
       render: (_, data) => (
-        TableTextWrapper(`${data.firstname} ${data.lastname}`)
+        <div className="d-flex align-items-center">
+          <span className="ml-2">{`${data.first_name} ${data.last_name}`}</span>
+        </div>
       ),
     },
     {
@@ -138,13 +137,16 @@ const ManageHousehold = (props) => {
   const [householdMemberInitialVal, setHouseholdMemberInitialVal] = useState(
     householdMemberDefault
   );
+  const [deletedMembers, setDeletedMembers] = useState([]);
   const [purokList, setPurokList] = useState([]);
   const [residentList, setResidentList] = useState([]);
-  const [memberModalAction, setMemberModalAction] = useState("add");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isImportResidentModalVisible, setIsImportResidentModalVisible,] = useState(false);
+  const [
+    isImportResidentModalVisible,
+    setIsImportResidentModalVisible,
+  ] = useState(false);
 
   //Ref
   const NewMemberFormRef = createRef();
@@ -152,7 +154,6 @@ const ManageHousehold = (props) => {
 
   //Axios
   const createHousehold = async (household, householdMembers) => {
-    setLoading(true);
     try {
       await axios.post(
         "/api/household/add",
@@ -164,7 +165,6 @@ const ManageHousehold = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
-    setLoading(true);
   };
 
   const getHousehold = async () => {
@@ -181,6 +181,7 @@ const ManageHousehold = (props) => {
 
       householdMembersData.map((member) => {
         member.birthday = moment(new Date(member.birthday));
+        member.isOld = true;
       });
 
       // console.log(householdData)
@@ -197,6 +198,7 @@ const ManageHousehold = (props) => {
   const updateHousehold = async (
     household,
     householdMembers,
+    deletedMembers
   ) => {
     try {
       await axios.post(
@@ -204,6 +206,7 @@ const ManageHousehold = (props) => {
         {
           household,
           householdMembers,
+          deletedMembers,
           organization_id: organization_id,
         },
         generateToken()[1],
@@ -213,36 +216,19 @@ const ManageHousehold = (props) => {
       console.log(error);
       message.error("Error!! Please try again later!!");
     }
-  };
-
-  const updateResident = async (value) => {
-    setLoading(true);
-    try {
-      await axios.post(
-        "/api/resident/update",
-        {
-          values: value,
-          organization_id: organization_id,
-          resident_id: value._id
-        },
-        generateToken()[1],
-        { cancelToken }
-      );
-    } catch (error) {
-      console.log(error);
-      message.error("Error!! Please try again later!!");
-    }
-    setLoading(false);
   };
 
   const getAllResident = async () => {
     try {
       await axios
-        .post("/api/resident/getAll", { organization_id, fields: ["firstname", "lastname"] }, generateToken()[1], {
+        .post("/api/resident/getAll", { organization_id }, generateToken()[1], {
           cancelToken,
         })
         .then((res) => {
           const data = res.data;
+          data.map((data) => {
+            data.birthday = moment(new Date(data.birthday));
+          });
           setResidentList(data);
         });
 
@@ -266,21 +252,6 @@ const ManageHousehold = (props) => {
       })
   }
 
-  const getResident = async (resident_id) => {
-    console.log("resident_id", resident_id)
-    try {
-      const query = await axios
-        .post("/api/resident/get", { organization_id, resident_id }, generateToken()[1], {
-          cancelToken,
-        })
-
-        return query
-    } catch (error) {
-      message.error("Could not fetch data from server!!");
-    }
-  }
-
-
   //UseEffect
   useEffect(() => {
     if (mode == "EDIT") {
@@ -296,20 +267,15 @@ const ManageHousehold = (props) => {
   }, [householdInitialVal]);
 
   useEffect(() => {
+    // console.log("deletedMembers", deletedMembers);
+  }, [deletedMembers]);
+
+  useEffect(() => {
     if (householdMemberInitialVal.importResident == true) {
       NewMemberFormRef.current.resetFields();
       message.success("Success, resident data has been imported");
     }
-
-    else if (householdMemberInitialVal.importResident == false) {
-      NewMemberFormRef.current.resetFields();
-    }
-
   }, [householdMemberInitialVal]);
-
-  useEffect(() => {
-    console.log("householdMemberList", householdMemberList)
-  }, [householdMemberList]);
 
   //Household Member Modal
   const showModal = () => {
@@ -337,6 +303,7 @@ const ManageHousehold = (props) => {
   };
 
   const handleImportResidentModalOk = () => {
+    setHouseholdMemberInitialVal({ first_name: "test" });
     NewMemberFormRef.current.resetFields();
     setIsImportResidentModalVisible(false);
   };
@@ -404,15 +371,16 @@ const ManageHousehold = (props) => {
     }
 
     if (action != null) {
-      setMemberModalAction(action)
+      setHouseholdMemberInitialVal({ ...householdMemberInitialVal, action });
     }
   };
 
   const editHouseholdMember = (row) => {
     var data = { ...row };
+    data.action = "edited";
     setHouseholdMemberInitialVal({ ...householdMemberInitialVal, ...data });
 
-    handlePopUp("edit");
+    handlePopUp();
   };
 
   const deleteHouseholdMember = (row) => {
@@ -423,19 +391,31 @@ const ManageHousehold = (props) => {
     currentHouseholdMemberList.splice(objIndex, 1);
     setHouseholdMemberList(currentHouseholdMemberList);
 
+    if (row.isOld == true) {
+      setDeletedMembers([...deletedMembers, row._id]);
+    }
+
     message.success("Deleted household members");
   };
 
-  const onFinishMember = (value) => {
-    console.log("value", value)
+  const onFinishAddMember = (value) => {
+    setLoading(true);
+
+    if (value.isOld == null) {
+      value.isOld = false;
+    }
+
     // if member is new
-    if (memberModalAction == "add") {
+    if (value.action == "added") {
+      value._id = householdMemberList.length;
+      // console.log("Adding new member", value._id)
       setHouseholdMemberList([...householdMemberList, value]);
       message.success("Success, New Household Member added.");
     }
 
     // if member is edited
-    if (memberModalAction == "edit") {
+    if (value.action == "edited") {
+      // console.log("Existing member", value._id)
       var currentHouseholdMemberList = [...householdMemberList];
       var objIndex = currentHouseholdMemberList.findIndex(
         (obj) => obj._id == value._id
@@ -447,12 +427,10 @@ const ManageHousehold = (props) => {
       message.success("Success, Household Member data has been updated.");
     }
 
-    updateResident(value)
-
-
     setIsModalVisible(false);
     setIsDrawerVisible(false);
     setHouseholdMemberInitialVal(householdMemberDefault);
+    setLoading(false);
   };
 
   const onFinishHouseHoldForm = (value) => {
@@ -467,6 +445,7 @@ const ManageHousehold = (props) => {
   };
 
   const onFinishAddHousehold = (value) => {
+    setLoading(true);
     // (household, householdMembers)
     createHousehold(value, householdMemberList);
 
@@ -475,50 +454,29 @@ const ManageHousehold = (props) => {
   };
 
   const onFinishUpdateHousehold = (value) => {
-    updateHousehold(value, householdMemberList)
+    setLoading(true);
+    // (household, householdMembers, deletedMemberArray)
+    updateHousehold(value, householdMemberList, deletedMembers);
     message.success("Success, household data has been updated.");
     history.replace(`/app/${organization_id}/residents/household/list`)
   };
 
   const importResidentAsMember = (key) => {
-    if (key != undefined) {
+    const resident = residentList[key];
+    // console.log("resident", resident);
 
-      const resident = residentList[key];
-
-      getResident(resident.resident_id).then((res) => {
-
-        var data = res.data
-        console.log("resident from axios", data)
-
-        setHouseholdMemberInitialVal({
-          ...householdMemberInitialVal,
-          _id: data.resident_id,
-          firstname: data.firstname,
-          lastname: data.lastname,
-          birthday: moment(new Date(data.birthday)),
-          age: computeAge(data.birthday),
-          occupation: data.occupation,
-          civil_status: data.civil_status,
-          blood_type: data.blood_type,
-          ofw: data.ofw,
-          illness: data.illness,
-          importResident: true,
-        });
-      })
-    }
-
-    else {
-      setHouseholdMemberInitialVal({
-        ...householdMemberInitialVal,
-        first_name: null,
-        first_name: null,
-        last_name: null,
-        birthday: null,
-        age: null,
-        importResident: false,
-        ...householdMemberDefault
-      })
-    }
+    setHouseholdMemberInitialVal({
+      ...householdMemberInitialVal,
+      first_name: resident.firstname,
+      last_name: resident.lastname,
+      birthday: resident.birthday,
+      age: resident.age,
+      occupation: resident.occupation,
+      blood_type: resident.blood_type,
+      civil_status: resident.civil_status,
+      blood_type: resident.blood_type,
+      importResident: true,
+    });
   };
 
   const printTitle = () => {
@@ -546,14 +504,14 @@ const ManageHousehold = (props) => {
           <Col>{printTitle()}</Col>
           <Col className="mt-2">
             <Space>
-              <ConfirmButton
-                type="warning"
-                modalTitle="Are you sure you want to leave this page?"
-                modalContent={handleConfirmMessage()}
-                text="Back"
-                handleOk={() => history.replace(`/app/${organization_id}/residents/household/list`)}
-                loading={loading}
-              />
+            <ConfirmButton
+                  type="warning"
+                  modalTitle="Are you sure you want to leave this page?"
+                  modalContent={handleConfirmMessage()}
+                  text="Back"
+                  handleOk={() => history.replace(`/app/${organization_id}/residents/household/list`)}
+                  loading={loading}
+                />
               <Button
                 type="primary"
                 onClick={() => {
@@ -574,12 +532,12 @@ const ManageHousehold = (props) => {
         ref={NewHouseholdFormRef}
         initialValues={householdInitialVal}
       >
-        <Card title={<h1>Household Info</h1>} loading={loading}>
+        <Card title={<h1>Household Info</h1>}>
           <HouseholdForm purokList={purokList} />
         </Card>
       </Form>
 
-      <Card >
+      <Card>
         <Row justify="space-between">
           <Col>
             <h1>Household Members</h1>
@@ -588,7 +546,7 @@ const ManageHousehold = (props) => {
           <Col>
             <Button
               type="primary"
-              onClick={() => handlePopUp("add")}
+              onClick={() => handlePopUp("added")}
               loading={loading}
             >
               Add Member
@@ -601,9 +559,14 @@ const ManageHousehold = (props) => {
           dataSource={householdMemberList}
           rowKey={"_id"}
           scroll={{ x: "max-content" }}
-          loading={loading}
         />
 
+        {/* <Button
+          type='primary'
+          onClick={() => { console.log(householdMemberList) }}
+        >
+          Show Member
+        </Button> */}
       </Card>
 
       <Modal
@@ -617,14 +580,14 @@ const ManageHousehold = (props) => {
         {isModalVisible && (
           <Form
             name="new_household_member_form"
-            onFinish={onFinishMember}
+            onFinish={onFinishAddMember}
             ref={NewMemberFormRef}
             initialValues={householdMemberInitialVal}
           >
             <NewHouseholdMemberForm
               residentList={residentList}
               importResidentAsMember={importResidentAsMember}
-              memberModalAction={memberModalAction}
+              NewMemberFormRef={NewMemberFormRef}
             />
           </Form>
         )}
@@ -642,11 +605,11 @@ const ManageHousehold = (props) => {
         {isDrawerVisible && (
           <Form
             name="new_household_member_form"
-            onFinish={onFinishMember}
+            onFinish={onFinishAddMember}
             ref={NewMemberFormRef}
             initialValues={householdMemberInitialVal}
           >
-            <NewHouseholdMemberForm residentList={residentList} importResidentAsMember={importResidentAsMember} />
+            <NewHouseholdMemberForm residentList={residentList} />
           </Form>
         )}
       </Drawer>

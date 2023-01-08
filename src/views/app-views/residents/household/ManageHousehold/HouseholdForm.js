@@ -6,8 +6,6 @@ const { Option } = Select;
 const HouseholdForm = (props) => {
   const { purokList } = props
 
-  console.log("purokList", purokList)
-
   const numberFilter = (e) => {
     if (!/[0-9]/.test(e.key)) {
       e.preventDefault();

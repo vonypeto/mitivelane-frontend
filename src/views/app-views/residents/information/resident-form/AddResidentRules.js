@@ -23,12 +23,12 @@ export const resident_details = {
             message: "Please enter middle name.",
         },
     ],
-    alias: [
-        {
-            required: true,
-            message: "Please enter alias.",
-        },
-    ],
+    // alias: [
+    //     {
+    //         required: true,
+    //         message: "Please enter alias.",
+    //     },
+    // ],
     // age: [
     //     {
     //         required: true,

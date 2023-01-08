@@ -164,7 +164,7 @@ const MainForm = (props) => {
 
                         <Col xs={3} sm={4} md={6} lg={6} xl={4} xxl={4}>
                           <Form.Item
-                            name="height_unit" label={" "}
+                            name="height_unit" label={" "} initialValue="cm"
                           >
                             <Select style={{ minWidth: 70 }}>
                               {lengthUnit.map((unit) => (
@@ -196,7 +196,7 @@ const MainForm = (props) => {
 
                         <Col xs={3} sm={4} md={6} lg={6} xl={4} xxl={4}>
                           <Form.Item
-                            name="weight_unit" label={" "}
+                            name="weight_unit" label={" "} initialValue={"kg"}
 
                           >
                             <Select style={{ minWidth: 70 }}>
@@ -216,18 +216,18 @@ const MainForm = (props) => {
                         name="birthday"
                         label="Birthday"
                         rules={resident_details.birthday}
-                        initialValue={moment(
-                          `${currentDate.getFullYear()}/${currentDate.getMonth() + 1
-                          }/${currentDate.getDate()}`,
-                          dateFormat
-                        )}
+                      // initialValue={moment(
+                      //   `${currentDate.getFullYear()}/${currentDate.getMonth() + 1
+                      //   }/${currentDate.getDate()}`,
+                      //   dateFormat
+                      // )}
                       >
                         <DatePicker
                           className="w-100"
                           format={dateFormat}
-                          // onChange={(value) => {
-                          //   setAge(age)
-                          // }}
+                        // onChange={(value) => {
+                        //   setAge(age)
+                        // }}
                         />
                       </Form.Item>
                     </Col>
@@ -289,14 +289,28 @@ const MainForm = (props) => {
               <div key="c">
                 <Card title="Miscellaneous">
                   <Row gutter={16}>
-                    <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="occupation" label="Occupation">
-                        <Input className="w-100" placeholder="Occupation" />
+                    <Col xs={24} sm={24} md={24} lg={12}>
+                      <Form.Item name="educational_attainment" label="Educational Attainment" initialValue={"Elementary School Graduate"}>
+                        <Select >
+                          <Option value="Elementary School Graduate">Elementary School Graduate</Option>
+                          <Option value="HighSchool Graduate">HighSchool Graduate</Option>
+                          <Option value="College Graduate">College Graduate</Option>
+                          <Option value="Undergraduate">Undergraduate</Option>
+                        </Select>
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={24} md={12}>
-                      <Form.Item name="religion" label="Religion">
-                        <Input placeholder="Religion" />
+                      <Form.Item name="ofw" label="OFW"
+                        help={"Leave blank if you're not."}
+                      >
+                        <Input placeholder="(Job title, Country)" />
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={24} md={12}>
+                      <Form.Item name="illness" label="Illness"
+                        help={"Leave blank if you don't have any."}
+                      >
+                        <Input placeholder="Illness, diseases, or disorder" />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -391,6 +405,12 @@ const MainForm = (props) => {
                   </Form.Item>
                   <Form.Item name="citizenship" label="Citizenship">
                     <Input placeholder="Citizenship" />
+                  </Form.Item>
+                  <Form.Item name="occupation" label="Occupation">
+                    <Input className="w-100" placeholder="Occupation" />
+                  </Form.Item>
+                  <Form.Item name="religion" label="Religion">
+                    <Input placeholder="Religion" />
                   </Form.Item>
                 </Card>
               </div>
