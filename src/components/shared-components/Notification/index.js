@@ -19,23 +19,15 @@ const Notification = (props) => {
     description: description,
     duration: duration,
   };
-  notification.warning(args);
-
-  //   notification.success(config)
-
-  // notification.error(config)
-
-  // notification.info(config)
-
-  // notification.warning(config)
-
-  // notification.warn(config)
-
-  // notification.open(config)
-
-  // notification.close(key: String)
-
-  // notification.destroy()
+  if (type == "error") return notification.error(args);
+  if (type == "success") return notification.success(args);
+  if (type == "info") return notification.info(args);
+  if (type == "warning") return notification.warning(args);
+  if (type == "warn") return notification.warn(args);
+  if (type == "open") return notification.open(args);
+  if (type == "close") return notification.close("Close");
+  if (type == "destroy") return notification.destroy();
+  else return notification.open(args);
 };
 
 Notification.propTypes = {
