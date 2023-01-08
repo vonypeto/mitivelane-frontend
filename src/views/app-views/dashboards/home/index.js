@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Button, Card, Avatar, Table, Select, Tag, message} from "antd";
+import {
+  Row,
+  Col,
+  Button,
+  Card,
+  Avatar,
+  Table,
+  Select,
+  Tag,
+  message,
+} from "antd";
 import ChartWidget from "components/shared-components/ChartWidget";
 import AvatarStatus from "components/shared-components/AvatarStatus";
 import AvatarDocument from "components/shared-components/AvatarDocument";
@@ -23,26 +33,39 @@ import { useSelector } from "react-redux";
 const { Option } = Select;
 
 export const DefaultDashboard = () => {
+  // Props State & Context & Constant
   const { currentOrganization, generateToken } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
-
-  const [visitorChartData] = useState(VisitorChartData);
-  const [newMembersData] = useState(NewMembersData);
-  const [recentBlotterCaseData] = useState(RecentBlotterCaseData);
   const { direction } = useSelector((state) => state.theme);
+
+  // Blotter Table State
   const [blotterlistrequest, setBlotterListRequest] = useState([]);
-  // const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
+
+  // Certificate Current State
+  const [currentDataCert, setcurrentDataCert] = useState({});
+  const [currentDataBlotter, setcurrentDataBlotter] = useState({});
+
+  // Certificate Prev State
+  const [prevDataBlotter, setPrevDataBlotter] = useState();
+  const [prevDataCert, setPrevDataCert] = useState();
+
+  // Document List State
+  const [documentCertList, setDocumentCertList] = useState([]);
+  const [documentBlotterList, setDocumentBlotterList] = useState([]);
+
+  // Population State
+  const [populationStatus, setPopulationStatus] = useState({});
+
+  // Loading State
+  const [certLoading, setCertLoading] = useState(true);
   const [blotterlistRequestLoading, setBlotterListRequestLoading] = useState(
     true
   );
-  const [certLoading, setCertLoading] = useState(true);
-  const [currentDataCert, setcurrentDataCert] = useState({});
-  const [currentDataBlotter, setcurrentDataBlotter] = useState({});
-  const [prevDataCert, setPrevDataCert] = useState();
-  const [prevDataBlotter, setPrevDataBlotter] = useState();
-  const [documentCertList, setDocumentCertList] = useState([]);
-  const [documentBlotterList, setDocumentBlotterList] = useState([]);
-  const [populationStatus, setPopulationStatus] = useState({});
+
+  // TBA State
+  const [visitorChartData] = useState(VisitorChartData);
+  const [newMembersData] = useState(NewMembersData);
+  // const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
 
   const getLatestBlotterRequests = () => {
     axios
@@ -128,32 +151,34 @@ export const DefaultDashboard = () => {
   const acceptRequest = (values) => {
     axios
       .post(
-        "/api/organization_setting/accept-request2/", values,
+        "/api/organization_setting/accept-request2/",
+        values,
         generateToken()[1]
       )
       .then((response) => {
         if (response.data == "Success") {
-          message.success("Join Organization")
-          history.push("/")
-        }
-        else if (response.data == "Joined") {
-          message.success("Already Joined")
-          history.push("/")
+          message.success("Join Organization");
+          history.push("/");
+        } else if (response.data == "Joined") {
+          message.success("Already Joined");
+          history.push("/");
         }
       })
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-  }
+  };
 
   useEffect(() => {
-    if(localStorage.getItem("organization_request_id") != null){
-      acceptRequest({ _id: localStorage.getItem("organization_request_id"), uuid: authToken })
-      
-    }else{
-      console.log("do nothing")
+    if (localStorage.getItem("organization_request_id") != null) {
+      acceptRequest({
+        _id: localStorage.getItem("organization_request_id"),
+        uuid: authToken,
+      });
+    } else {
+      console.log("do nothing");
     }
-  
+
     getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");

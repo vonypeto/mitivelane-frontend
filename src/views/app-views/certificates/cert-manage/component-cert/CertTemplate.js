@@ -17,6 +17,7 @@ import { getBase64, dummyRequest, beforeUpload } from "helper/Formula.js";
 
 const CertOrganization = React.memo(
   (props) => {
+    // Props State
     const {
       setParentData,
       parentData,
@@ -25,21 +26,34 @@ const CertOrganization = React.memo(
       setDropDownForm,
       form,
     } = props;
+
+    // Draftjs State
     const content = {
       entityMap: {},
       blocks: parentData?.content != null ? parentData?.content.blocks : [],
     };
     const contentState = convertFromRaw(content);
     const editorState = EditorState.createWithContent(contentState);
+
+    // Loading State
     const [loading, setLoading] = useState(false);
     const [signatureImage, setSignatureImage] = useState([]);
 
-    //Initial Value for logo
+    // Initial Value for logo State
     const [logoList, setLogoList] = useState([
       { id: 1, image: "" },
       { id: 2, image: "" },
     ]);
 
+    // Logo Upload State
+    const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
+
+    // Signature Add Function
     const handleAddSignature = () => {
       const logoID = signatureImage.length;
       let logoEnd;
@@ -60,6 +74,7 @@ const CertOrganization = React.memo(
         },
       ]);
     };
+    // Signature Remove Function
     const handleRemoveSignature = (index) => {
       setLoading(true);
       const values = [...signatureImage];
@@ -68,6 +83,7 @@ const CertOrganization = React.memo(
       setLoading(false);
     };
 
+    // Logo Add Function
     const handlerLogo = (info, index, name) => {
       if (info.file.status === "uploading") {
         setLoading(true);
@@ -83,6 +99,8 @@ const CertOrganization = React.memo(
         });
       }
     };
+
+    // Signature Image Upload
     const handlerLogoSignature = (info, index, name) => {
       if (info.file.status === "uploading") {
         setLoading(true);
@@ -98,13 +116,7 @@ const CertOrganization = React.memo(
         });
       }
     };
-    const uploadButton = (
-      <div>
-        {loading ? <LoadingOutlined /> : <PlusOutlined />}
-        <div style={{ marginTop: 8 }}>Upload</div>
-      </div>
-    );
-
+    // Add Details
     const AddDetails = (currentId) => {
       setDropDownForm((existingItems) => {
         const itemIndex = existingItems.findIndex(
@@ -138,6 +150,7 @@ const CertOrganization = React.memo(
         ];
       });
     };
+
     const AddImageSignature = (currentId, Image) => {
       setSignatureImage((existingItems) => {
         const itemIndex = existingItems.findIndex(
@@ -155,6 +168,35 @@ const CertOrganization = React.memo(
       });
     };
 
+    // Final output to input image to the database
+    const onImage = debounce((image, title) => {
+      form.setFieldsValue({
+        [title]: image,
+      });
+      let data = parentData;
+
+      data[`${title}`] = image;
+      return setParentData(data);
+    }, 100);
+
+    // Final output to input image signature to database
+    const onImageSignature = debounce(() => {
+      signatureImage.map((image) => {
+        form.setFieldsValue({
+          [`position${image.id}`]: image.formName2,
+        });
+        form.setFieldsValue({
+          [`name${image.id}`]: image.formName,
+        });
+      });
+
+      let data = parentData;
+
+      data[`signatures`] = signatureImage;
+      return setParentData(data);
+    }, 100);
+
+    // Final Submit to Database Onfill debounce auto update
     const onFill = debounce((e, title, type) => {
       try {
         //Editor
@@ -222,33 +264,12 @@ const CertOrganization = React.memo(
         console.log(error);
       }
     }, 1000);
-    const onImage = debounce((image, title) => {
-      form.setFieldsValue({
-        [title]: image,
-      });
-      let data = parentData;
 
-      data[`${title}`] = image;
-      return setParentData(data);
-    }, 100);
-    const onImageSignature = debounce(() => {
-      signatureImage.map((image) => {
-        form.setFieldsValue({
-          [`position${image.id}`]: image.formName2,
-        });
-        form.setFieldsValue({
-          [`name${image.id}`]: image.formName,
-        });
-      });
-
-      let data = parentData;
-
-      data[`signatures`] = signatureImage;
-      return setParentData(data);
-    }, 100);
+    // UseEffect Function
     useEffect(() => {
       if (parentData.organization_id) onImageSignature();
     }, [signatureImage, loading]);
+    // Trigger useEffect when update happen
     useEffect(() => {
       form.setFieldsValue(parentData);
       setSignatureImage(parentData.signatures);
@@ -257,9 +278,10 @@ const CertOrganization = React.memo(
         { id: 2, image: parentData?.secondLogo },
       ]);
     }, [parentData]);
+
     return (
       <>
-        {dropDownForm.map((item, index) => {
+        {dropDownForm.map((item, _) => {
           return (
             <Card
               className="custom_cert_child"

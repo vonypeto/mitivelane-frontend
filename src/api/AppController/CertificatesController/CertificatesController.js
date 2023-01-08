@@ -1,6 +1,6 @@
 import axios from "axios";
-import React from "react";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
+import { message } from "antd";
 
 export const getCertificateAll = async (setPdf, generateToken, count) => {
   try {
@@ -23,9 +23,10 @@ export const getCertificateAll = async (setPdf, generateToken, count) => {
       });
     }
 
-    setPdf(data);
+    return setPdf(data);
   } catch (error) {
     console.error(error);
+    return message.error(error.message);
   }
 };
 
@@ -44,10 +45,9 @@ export const getCertificateData = async (
     console.log(data);
     const certificate = data;
     if (!certificate) {
-      history.push(
+      return history.push(
         `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/list`
       );
-      return;
     }
     setCertType(certificate.cert_type);
     setTemplateType(certificate.template_type);
@@ -58,8 +58,10 @@ export const getCertificateData = async (
     }
     setParentData(certificate);
     setFirstTime(!firstTime);
+    return;
   } catch (error) {
     console.log(error);
+    return message.error(error.message);
   }
 };
 export const updateCertificateData = async (data, generateToken) => {
@@ -70,10 +72,12 @@ export const updateCertificateData = async (data, generateToken) => {
       await axios
         .post(`/api/cert-display/${data.certificate_id}`, data, generateToken)
         .then((_) => {
-          console.log("updated");
+          return console.log("updated");
+          //return message.success("Document updated");
         });
   } catch (e) {
     console.log(e);
+    return message.error(e.message);
   }
 
   return () => {
@@ -86,11 +90,41 @@ export const deleteCertificateData = async (data, generateToken) => {
   try {
     await axios.delete(`/api/cert-display/${data}`, generateToken).then((_) => {
       console.log("delete");
+      return message.success("Document Deleted Successfully");
     });
   } catch (e) {
     console.log(e);
+    return message.error(e.message);
   }
 
+  return () => {
+    // cancel the subscription
+    isApiSubscribed = false;
+  };
+};
+export const duplicateCertificate = async (
+  data,
+  setLoadingDuplicate,
+  generateToken,
+  loadingDuplicate,
+  loading
+) => {
+  let isApiSubscribed = true;
+  setLoadingDuplicate(true);
+
+  if (!loadingDuplicate)
+    await axios
+      .post("/api/cert-display/create/data", data, generateToken()[1])
+      .then((_) => {
+        if (isApiSubscribed) {
+          setLoadingDuplicate(!loading);
+          console.log("duplicate");
+          message.success("Document Duplicated");
+        }
+      })
+      .catch((err) => {
+        return console.error(err);
+      });
   return () => {
     // cancel the subscription
     isApiSubscribed = false;

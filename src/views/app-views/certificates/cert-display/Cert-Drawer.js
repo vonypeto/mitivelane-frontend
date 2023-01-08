@@ -7,16 +7,22 @@ import { useHistory } from "react-router-dom";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 const UserView = (props) => {
+  // Props State
   const { data, visible, close } = props;
-  //let ratio = 1.41451612903;
+  // History State
   let history = useHistory();
+
+  // Constant State
+  const elm = data?.elm;
+  const created = data?.created;
+  const updated = data?.updated;
+  const title = data?.title;
+  let size = 500;
+
+  // Functional State
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  let elm = data?.elm;
-  let created = data?.created;
-  let updated = data?.updated;
-  let title = data?.title;
-  let size = 500;
+
   const updateWindowDimensions = () => {
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
@@ -27,21 +33,6 @@ const UserView = (props) => {
       `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/${data}`
     );
   };
-  useEffect(
-    () => {
-      const listener = window.addEventListener(
-        "resize",
-        updateWindowDimensions
-      );
-      updateWindowDimensions();
-
-      return () => {
-        listener, setHeight(), setWidth();
-      };
-    },
-    [height],
-    [width]
-  );
 
   if (width > 1400) {
     size = 600;
@@ -86,6 +77,21 @@ const UserView = (props) => {
   };
 
   // Usage
+  useEffect(
+    () => {
+      const listener = window.addEventListener(
+        "resize",
+        updateWindowDimensions
+      );
+      updateWindowDimensions();
+
+      return () => {
+        listener, setHeight(), setWidth();
+      };
+    },
+    [height],
+    [width]
+  );
 
   return (
     <Drawer

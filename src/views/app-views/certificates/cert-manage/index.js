@@ -17,8 +17,10 @@ import Loading from "components/shared-components/Loading";
 import debounce from "lodash.debounce";
 
 const Certificates = () => {
+  // Props State
   const { generateToken } = useAuth();
   let { id } = useParams();
+
   const [firstTime, setFirstTime] = useState(true);
   const [parentData, setParentData] = useState({});
   const [loading, setLoading] = useState(false);

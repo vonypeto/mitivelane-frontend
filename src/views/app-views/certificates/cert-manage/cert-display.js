@@ -14,14 +14,16 @@ import { Menu } from "antd";
 
 const CertDisplay = React.memo(
   (props) => {
+    // Props State
     const { data, templateType, certType, setParentData } = props;
 
+    // Form State
+    const [childData, setChildData] = useState(data);
+    const [color, setColor] = useState();
+    const [displayColorPicker, setDisplayColorPicker] = useState(false);
     const [activeFontFamily, setActiveFontFamily] = useState(
       data ? data.font_family : "Tinos"
     );
-    const [childData, setChildData] = useState(data);
-    const [displayColorPicker, setDisplayColorPicker] = useState(false);
-    const [color, setColor] = useState();
 
     const ontopNavColorClick = (value) => {
       const { rgb } = value;

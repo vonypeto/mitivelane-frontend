@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Button } from "antd";
+import { Col, Row, message } from "antd";
 import CertDrawer from "./Cert-Drawer";
 import PDFTemplate from "components/shared-components/Documents/Certificates-General";
 import { useHistory } from "react-router-dom";
@@ -23,18 +23,27 @@ import {
 
 const CertList = React.memo(
   (props) => {
+    // Props State & context
+    const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
     const { pdfFile, setPdfFile } = props;
     const { generateToken } = useAuth();
+
+    // History State
     const history = useHistory();
+
+    // Page State
     const count = 6;
     const [start, setStart] = useState(7);
+
+    //Loading State
     const [drawer, setDrawer] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(false);
     const [loadingDuplicate, setLoadingDuplicate] = useState(false);
+
+    // Select Certificate State
     const [selectedUser, SetSelectedUser] = useState(null);
-    const auth_organization = localStorage.getItem(AUTH_ORGANIZATION);
 
     //Test data
     const arrayData = [
@@ -42,27 +51,6 @@ const CertList = React.memo(
       { id: 2, pdf: FileTest, type: "view", selectedform: 1 },
       { id: 3, pdf: FileTest, type: "view", selectedform: 1 },
     ];
-
-    useEffect(() => {
-      let isApiSubscribed = true;
-      setTimeout(() => {
-        if (isApiSubscribed) {
-          getCertificateAll(setPdfFile, generateToken()[1], count);
-          //  setPdfFile(arrayData);
-        }
-      }, 1000);
-      return () => {
-        // cancel the subscription
-        isApiSubscribed = false;
-      };
-    }, []);
-
-    //Handle Drawer
-    useEffect(() => {
-      // setCurrentFunctionList(pdfFile);
-      localStorage.setItem(PDF_LIST, JSON.stringify(pdfFile));
-      setPdfFile(pdfFile);
-    }, [pdfFile, refresh]);
 
     const onHandle = (elm, created, updated, title, id) => {
       // setDrawer(true);
@@ -116,10 +104,12 @@ const CertList = React.memo(
             if (isApiSubscribed) {
               setLoadingDuplicate(!loading);
               console.log("duplicate");
+              message.success("Document Duplicated");
             }
           })
           .catch((err) => {
-            return console.error(err);
+            console.error(err);
+            return message.error(err.message);
           });
       return () => {
         // cancel the subscription
@@ -146,7 +136,7 @@ const CertList = React.memo(
                 : elem.content;
             return elem;
           });
-          //    console.log(data);
+
           setPdfFile((oldArray) => [...oldArray, ...data]);
 
           if (data.length === 0) setHasMore(false);
@@ -154,7 +144,7 @@ const CertList = React.memo(
     };
 
     const deleteRow = (row, i) => {
-      //deleting resident in table
+      //deleting document in the array
 
       deleteCertificateData(row, generateToken()[1]);
       let clone = JSON.parse(localStorage.getItem(PDF_LIST));
@@ -181,7 +171,6 @@ const CertList = React.memo(
               type="pdf"
             />
           ).toBlob();
-          // console.log(URL.createObjectURL(blob));
           return URL.createObjectURL(blob);
         } catch (e) {
           console.log(e);
@@ -204,15 +193,6 @@ const CertList = React.memo(
       setPdfFile(tmp);
     };
 
-    // const byteCharacters = Buffer.from(base64pdf).toString("base64");
-    // const byteNumbers = new Array(byteCharacters.length);
-    // for (let i = 0; i < byteCharacters.length; i++) {
-    //   byteNumbers[i] = byteCharacters.charCodeAt(i);
-    // }
-    // const byteArray = new Uint8Array(byteNumbers);
-    // const blob = new Blob([byteArray], { type: "application/pdf" });
-    // console.log(URL.createObjectURL(blob));
-
     const base64toBlob = (data) => {
       // Cut the prefix `data:application/pdf;base64` from the raw base 64
       const base64WithoutPrefix = data.substr(
@@ -229,6 +209,28 @@ const CertList = React.memo(
 
       return new Blob([out], { type: "application/pdf" });
     };
+
+    useEffect(() => {
+      let isApiSubscribed = true;
+      setTimeout(() => {
+        if (isApiSubscribed) {
+          getCertificateAll(setPdfFile, generateToken()[1], count);
+          //  setPdfFile(arrayData);
+        }
+      }, 1000);
+      return () => {
+        // cancel the subscription
+        isApiSubscribed = false;
+      };
+    }, []);
+
+    //Handle Drawer
+    useEffect(() => {
+      // setCurrentFunctionList(pdfFile);
+      localStorage.setItem(PDF_LIST, JSON.stringify(pdfFile));
+      setPdfFile(pdfFile);
+    }, [pdfFile, refresh]);
+
     return (
       <div className="container">
         <CertDrawer

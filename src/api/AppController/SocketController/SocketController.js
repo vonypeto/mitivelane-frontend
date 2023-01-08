@@ -17,16 +17,15 @@ socket.on("connect", () => {
 
 socket.on("connect_error", (err) => {
   console.log(`connect_error due to ${err.message}`);
-  socket.io.opts.transports = ["websocket", "polling", "flashsocket"]
+  socket.io.opts.transports = ["websocket", "polling", "flashsocket"];
 });
 
-socket.on("socket:new-user", authToken => {
-  console.log("New user connected with authToken ", authToken)
-})
+socket.on("socket:new-user", (authToken) => {
+  console.log("New user connected with authToken ", authToken);
+});
 
 const checkProduction = (prodTrue, prodFalse) => {
-  if (process.env.NODE_ENV === "production")
-    return prodTrue
-    
-  return prodFalse
-}
+  if (process.env.NODE_ENV === "production") return prodTrue;
+
+  return prodFalse;
+};

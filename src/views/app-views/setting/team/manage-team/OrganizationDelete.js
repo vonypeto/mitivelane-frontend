@@ -1,23 +1,7 @@
-import { React, useState } from "react";
-import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
-import Flex from "components/shared-components/Flex";
-import {
-  Button,
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Avatar,
-  Divider,
-  Popconfirm,
-  message,
-} from "antd";
-import {
-  UserOutlined,
-  UploadOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+import { React } from "react";
+
+import { Button, Row, Col, Card, Popconfirm, message } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 
@@ -28,7 +12,8 @@ const OrganizationDelete = () => {
     message.info("Clicked on Yes.");
     axios
       .post(
-        "/api/organization_setting/delete-organization", { "organization_id": currentOrganization },
+        "/api/organization_setting/delete-organization",
+        { organization_id: currentOrganization },
         generateToken()[1]
       )
       .then((response) => {

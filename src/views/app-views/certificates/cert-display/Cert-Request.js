@@ -21,10 +21,13 @@ const { Option } = Select;
 const categories = [1, 2, 3, "Watches", "Devices"];
 
 const ListInformation = () => {
-  const [selectShow, setShow] = useState(true);
+  // Select Certificate State
   const [list, setList] = useState(CertList);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  // Loading State
+  const [selectShow, setShow] = useState(true);
 
   const dropdownMenu = (row) => (
     <Menu>

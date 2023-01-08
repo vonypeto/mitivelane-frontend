@@ -1,23 +1,7 @@
-import { React, useState } from "react";
+import { React } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
-import {
-  Button,
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Avatar,
-  Divider,
-  Popconfirm,
-  message,
-} from "antd";
-import {
-  UserOutlined,
-  UploadOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+import { Row, Divider } from "antd";
 import ManageMember from "./ManageTeam";
 import ManageOrganization from "./ManageOrganization";
 import OrganizationDelete from "./OrganizationDelete";

@@ -18,10 +18,10 @@ const Resident = (props) => {
         path={`${match.url}/audit`}
         component={() => <Audit param_url={organization_id} />}
       />
-      <Route
+      {/* <Route
         path={`${match.url}/billing`}
         component={() => <Billing param_url={organization_id} />}
-      />
+      /> */}
       <Route
         path={`${match.url}/team-manage`}
         component={() => <TeamManage param_url={organization_id} />}

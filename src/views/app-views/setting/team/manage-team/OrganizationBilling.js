@@ -1,7 +1,5 @@
-import { React, useState } from "react";
-import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
-import Flex from "components/shared-components/Flex";
-import { Button, Row, Col, Card, Select } from "antd";
+import { React } from "react";
+import { Row, Col, Card, Select } from "antd";
 
 const { Option } = Select;
 const OrganizationDelete = () => {

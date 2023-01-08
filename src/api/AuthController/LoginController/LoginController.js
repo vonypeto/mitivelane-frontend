@@ -88,7 +88,7 @@ export async function loginOrganization(
           );
           localStorage.setItem(AUTH_ORGANIZATION_LIST, role_id);
           setOrganizationMemberList(role_id);
-          console.log(redirect)
+          console.log(redirect);
           return history.push(redirect);
         }
       } else {
@@ -107,23 +107,3 @@ export async function loginOrganization(
   // const geo = geoip.lookup(ipv4 + 1);
   // console.log(geo);
 }
-
-// function toDataURL(url, callback) {
-//   var xhr = new XMLHttpRequest();
-//   xhr.onload = function () {
-//     var reader = new FileReader();
-//     reader.onloadend = function () {
-//       callback(reader.result);
-//     };
-//     reader.readAsDataURL(xhr.response);
-//   };
-
-//   xhr.open("GET", url);
-//   xhr.responseType = "blob";
-//   // xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-//   // xhr.setRequestHeader(
-//   //   "Access-Control-Allow-Headers",
-//   //   "Origin, X-Requested-With, Content-Type, Accept"
-//   // );
-//   xhr.send();
-// }

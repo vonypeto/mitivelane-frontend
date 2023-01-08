@@ -23,7 +23,10 @@ const { Option } = Select;
 
 const CertDisplay = React.memo(
   (props) => {
+    // Fixed State
     const MAX_LENGTH = 2000;
+
+    // Props
     const {
       setParentData,
       parentData,
@@ -33,13 +36,17 @@ const CertDisplay = React.memo(
       templateType,
       setTemplateType,
     } = props;
-    const [drawer, setDrawer] = useState(false);
+
+    // Form State
+    const [form] = Form.useForm();
     const [selectedUser, SetSelectedUser] = useState(null);
     const [dropDownForm, setDropDownForm] = useState([]);
     const [templateState, setTemplateState] = useState([]);
 
-    const [form] = Form.useForm();
+    // Loading State
     const [visible, setVisible] = useState(false);
+    const [drawer, setDrawer] = useState(false);
+
     const handleVisibleChange = (flag) => {
       setVisible(flag);
     };

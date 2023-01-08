@@ -6,26 +6,16 @@ import {
   Row,
   Col,
   Card,
-  Form,
-  Input,
   Avatar,
-  Divider,
   Table,
   Tooltip,
   Tag,
-  Popconfirm,
   message,
   Skeleton,
   Steps,
   Select,
 } from "antd";
-import {
-  UserOutlined,
-  UploadOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import MemberSample from "assets/data/member-sample.data.json";
 import utils from "utils";
 import axios from "axios";
@@ -34,48 +24,49 @@ const { Option } = Select;
 
 const { Step } = Steps;
 
-const ManageMember = (props) => {
+const ManageMember = () => {
   const { currentOrganization, generateToken, currentUser } = useAuth();
 
   const [addMember, setAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [memberRequest, setMemberRequest] = useState([])
+  const [memberRequest, setMemberRequest] = useState([]);
 
   const [current, setCurrent] = useState(0);
   const [selectEmail, setSelectEmail] = useState([]);
-  const [newMember, setNewMember] = useState([])
+  const [newMember, setNewMember] = useState([]);
 
-  const [step2Data, setStep2Data] = useState([])
-  const [step3Data, setStep3Data] = useState([])
+  const [step2Data, setStep2Data] = useState([]);
+  const [step3Data, setStep3Data] = useState([]);
 
-  const [step2Loading, setStep2Loading] = useState(false)
-  const [step3Loading, setStep3Loading] = useState(false)
+  const [step2Loading, setStep2Loading] = useState(false);
+  const [step3Loading, setStep3Loading] = useState(false);
 
   useEffect(() => {
-    getOrganizationRequest()
-
-  }, [])
+    getOrganizationRequest();
+  }, []);
 
   const getOrganizationRequest = () => {
     axios
       .get(
-        "/api/organization_setting/get-organization-request/" + currentOrganization,
+        "/api/organization_setting/get-organization-request/" +
+          currentOrganization,
         generateToken()[1]
       )
       .then((response) => {
         console.log("Organization Request ", response.data);
-        setMemberRequest(response.data)
+        setMemberRequest(response.data);
       })
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-  }
+  };
 
   const deleteOrganizationMember = (_id) => {
     axios
       .post(
-        "/api/organization_setting/delete-organization-member/", { _id },
+        "/api/organization_setting/delete-organization-member/",
+        { _id },
         generateToken()[1]
       )
       .then((response) => {
@@ -86,40 +77,42 @@ const ManageMember = (props) => {
       });
 
     setMemberRequest(
-      memberRequest.filter((organizationRequest) => organizationRequest._id !== _id)
-    )
-  }
+      memberRequest.filter(
+        (organizationRequest) => organizationRequest._id !== _id
+      )
+    );
+  };
 
   const validateEmail = (values) => {
     axios
       .post(
-        "/api/organization_setting/validate-email/", values,
+        "/api/organization_setting/validate-email/",
+        values,
         generateToken()[1]
       )
       .then((response) => {
-        setStep2Loading(false)
-        setCurrent(current + 1)
+        setStep2Loading(false);
+        setCurrent(current + 1);
 
-        setNewMember(response.data.newMember)
-        setStep3Data(response.data.step3Data)
+        setNewMember(response.data.newMember);
+        setStep3Data(response.data.step3Data);
 
-        console.log(response.data)
+        console.log(response.data);
       })
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-
-  }
+  };
 
   const addNewMember = (values) => {
     axios
       .post("/api/organization_setting/add-member", values, generateToken()[1])
       .then((response) => {
         if (response.data == "Success") {
-          setStep3Loading(false)
-          resetData()
-          getOrganizationRequest()
-          return message.success("Processing complete!")
+          setStep3Loading(false);
+          resetData();
+          getOrganizationRequest();
+          return message.success("Processing complete!");
         } else {
           return message.error("Error, please try again.");
         }
@@ -129,7 +122,7 @@ const ManageMember = (props) => {
         message.destroy();
         message.error("The action can't be completed, please try again.");
       });
-  }
+  };
 
   const getUnique = (arr, index) => {
     const unique = arr
@@ -177,27 +170,25 @@ const ManageMember = (props) => {
             className="text-center avatar-status d-flex align-items-center"
           >
             <div className="ml-2">
-              {
-                (elm.role == "Administrator") ? (
-                  <>
-                    <div>
-                      <div className="avatar-status-name">{elm.role}</div>
-                    </div>
-                    <div className="text-muted avatar-status-subtitle">
-                      Administrator can perform any Action
-                    </div></>
-
-                )
-                  : (
-                    <>
-                      <div>
-                        <div className="avatar-status-name">{elm.role}</div>
-                      </div>
-                      <div className="text-muted avatar-status-subtitle">
-                        Editor is limited to perform Action
-                      </div></>
-                  )}
-
+              {elm.role == "Administrator" ? (
+                <>
+                  <div>
+                    <div className="avatar-status-name">{elm.role}</div>
+                  </div>
+                  <div className="text-muted avatar-status-subtitle">
+                    Administrator can perform any Action
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <div className="avatar-status-name">{elm.role}</div>
+                  </div>
+                  <div className="text-muted avatar-status-subtitle">
+                    Editor is limited to perform Action
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </>
@@ -215,10 +206,10 @@ const ManageMember = (props) => {
                 elm.status === "Accepted"
                   ? "cyan"
                   : elm.status === "Pending"
-                    ? "orange"
-                    : elm.status === "Rejected"
-                      ? "volcano"
-                      : null
+                  ? "orange"
+                  : elm.status === "Rejected"
+                  ? "volcano"
+                  : null
               }
             >
               {elm.status}
@@ -251,7 +242,7 @@ const ManageMember = (props) => {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() => {
-                  deleteOrganizationMember(elm._id)
+                  deleteOrganizationMember(elm._id);
                 }}
                 size="small"
               />
@@ -263,16 +254,16 @@ const ManageMember = (props) => {
   ];
 
   const onChangeRoleMember = (event) => {
-    var tempNewMember = step2Data
+    var tempNewMember = step2Data;
     var tempRole = event.split(",");
 
     if (parseInt(tempRole[1]) == 1) {
-      tempNewMember[tempRole[0]].role = "Administrator"
+      tempNewMember[tempRole[0]].role = "Administrator";
     } else {
-      tempNewMember[tempRole[0]].role = "Editor"
+      tempNewMember[tempRole[0]].role = "Editor";
     }
 
-    setStep2Data(tempNewMember)
+    setStep2Data(tempNewMember);
   };
 
   const step2Table = [
@@ -354,7 +345,7 @@ const ManageMember = (props) => {
   ];
 
   const onChangeMember = (value) => {
-    setSelectEmail(value)
+    setSelectEmail(value);
   };
 
   const steps = [
@@ -400,8 +391,7 @@ const ManageMember = (props) => {
             <div className="mt-3 mb-4">
               <h3>Member roles</h3>
               <span className="text-muted">
-                Manage the limitation or role of the member that will be
-                invited
+                Manage the limitation or role of the member that will be invited
               </span>
             </div>
             <div className="mb-2 table-responsive ">
@@ -457,7 +447,7 @@ const ManageMember = (props) => {
     if (current == 0 && selectEmail.length != 0) {
       setCurrent(current + 1);
 
-      var finalData = []
+      var finalData = [];
 
       selectEmail.map((value, i) => {
         let colortag = [
@@ -473,39 +463,38 @@ const ManageMember = (props) => {
         const randomNum = Math.floor(Math.random() * colortag.length);
         const avatarColor = colortag[randomNum];
 
-        finalData.push(
-          {
-            _id: i,
-            avatarColor: avatarColor,
-            organization_id: currentOrganization,
-            email: value,
-            code: "abcde",
-            role: "Editor",
-            status: "Pending"
-          })
-      })
+        finalData.push({
+          _id: i,
+          avatarColor: avatarColor,
+          organization_id: currentOrganization,
+          email: value,
+          code: "abcde",
+          role: "Editor",
+          status: "Pending",
+        });
+      });
 
       step2Data.map((value, i) => {
         finalData.map((fDValue, fdIndex) => {
           if (fDValue.email == value.email) {
-            value._id = fdIndex
-            finalData[fdIndex] = value
+            value._id = fdIndex;
+            finalData[fdIndex] = value;
           }
-        })
-      })
+        });
+      });
 
-      setStep2Data(finalData)
+      setStep2Data(finalData);
     } else if (current == 0 && selectEmail.length == 0) {
-      message.error("Email!")
+      message.error("Email!");
     }
 
     if (current == 1) {
       validateEmail({
         email: selectEmail,
         organization_id: currentOrganization,
-        step2Data
-      })
-      setStep2Loading(true)
+        step2Data,
+      });
+      setStep2Loading(true);
     }
   };
 
@@ -514,22 +503,21 @@ const ManageMember = (props) => {
   };
 
   const done = () => {
-    setStep3Loading(true)
+    setStep3Loading(true);
 
-    console.log(newMember)
+    console.log(newMember);
 
     const values = {
       new_member: newMember,
       organization_id: currentOrganization,
-      current_user_name: currentUser.displayName
-    }
+      current_user_name: currentUser.displayName,
+    };
 
-
-    addNewMember(values)
-  }
+    addNewMember(values);
+  };
 
   const onClickMember = () => {
-    resetData()
+    resetData();
 
     // setTimeout(() => {
     // setAddMember(!addMember);
@@ -541,15 +529,14 @@ const ManageMember = (props) => {
   };
 
   const resetData = () => {
-    setAddMember(!addMember)
-    setCurrent(0)
+    setAddMember(!addMember);
+    setCurrent(0);
 
-    setSelectEmail([])
-    setNewMember([])
-    setStep2Data([])
-    setStep3Data([])
-
-  }
+    setSelectEmail([]);
+    setNewMember([]);
+    setStep2Data([]);
+    setStep3Data([]);
+  };
 
   return (
     <>
@@ -557,8 +544,8 @@ const ManageMember = (props) => {
         <div className="pl-1">
           <h3>Manage Member</h3>
           <p className="mt-1 text-sm text-gray-600">
-            Manage the members role and Add a new team member to your
-            team, allowing them to collaborate with you.
+            Manage the members role and Add a new team member to your team,
+            allowing them to collaborate with you.
           </p>
         </div>
       </Col>
@@ -592,12 +579,7 @@ const ManageMember = (props) => {
                           </Button>
                         )}
                         {current === steps.length - 1 && (
-                          <Button
-                            type="primary"
-                            onClick={() =>
-                              done()
-                            }
-                          >
+                          <Button type="primary" onClick={() => done()}>
                             Done
                           </Button>
                         )}

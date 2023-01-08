@@ -1,4 +1,5 @@
 import axios from "axios";
+import { message } from "antd";
 
 export async function getOrganization(
   currentUser,
@@ -21,5 +22,6 @@ export async function getOrganization(
     })
     .catch((error) => {
       console.log(error);
+      return message.error(error.message);
     });
 }

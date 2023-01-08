@@ -7,7 +7,9 @@ import CertList from "./Cert-List";
 import CertRequest from "./Cert-Request";
 
 const Certificates = () => {
+  // Pdf State
   const [pdfFile, setPdfFile] = useState([]);
+  // Switch Page
   const [switchCert, setSwitchCert] = useState(false);
 
   const onChangeSwitch = () => {
