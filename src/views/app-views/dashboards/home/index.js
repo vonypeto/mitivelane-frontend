@@ -35,6 +35,7 @@ const { Option } = Select;
 
 export const DefaultDashboard = () => {
   // Props State & Context & Constant
+  const history = useHistory();
   const { currentOrganization, generateToken } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
   const { direction } = useSelector((state) => state.theme);
@@ -149,37 +150,35 @@ export const DefaultDashboard = () => {
     // updateCertificateData(data, generateToken()[1]);
   };
 
-  const acceptRequest = (values) => {
-    axios
-      .post(
-        "/api/organization_setting/accept-request2/",
-        values,
-        generateToken()[1]
-      )
-      .then((response) => {
-        if (response.data == "Success") {
+  const handleAcceptRequest = async () => {
+    if (localStorage.getItem(ORGANIZATION_REQUEST_ID) != null) {
+      (async () => {
+        const response = await acceptRequest(
+          {
+            _id: localStorage.getItem(ORGANIZATION_REQUEST_ID),
+            uuid: authToken,
+          },
+          generateToken
+        );
+        if (response == "Success") {
           message.success("Join Organization");
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
           history.push("/");
-        } else if (response.data == "Joined") {
+        } else if (response == "Joined") {
           message.success("Already Joined");
-          history.push("/");
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
+        } else if (response == "Error") {
+          message.error("The action can't be completed, please try again.");
+          localStorage.removeItem(ORGANIZATION_REQUEST_ID);
         }
-      })
-      .catch(() => {
-        message.error("Could not fetch the data in the server!");
-      });
-  };
-
-  useEffect(() => {
-    if (localStorage.getItem("organization_request_id") != null) {
-      acceptRequest({
-        _id: localStorage.getItem("organization_request_id"),
-        uuid: authToken,
-      });
+      })();
     } else {
       console.log("do nothing");
     }
+  };
 
+  useEffect(() => {
+    handleAcceptRequest();
     getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");
