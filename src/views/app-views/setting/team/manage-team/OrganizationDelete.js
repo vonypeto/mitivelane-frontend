@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { React } from "react";
-
-import { Button, Row, Col, Card, Popconfirm, message } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-=======
 import { React, useState } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
@@ -25,7 +19,6 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { withRouter, useHistory } from "react-router-dom";
->>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
 import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
@@ -33,7 +26,7 @@ import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
 const OrganizationDelete = ({ isOwner }) => {
   const { currentOrganization, generateToken, currentUser } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
-  const history = useHistory()
+  const history = useHistory();
 
   const deleteOrganization = () => {
     message.info("Delete Organization");
@@ -53,18 +46,14 @@ const OrganizationDelete = ({ isOwner }) => {
   const leaveOrganization = () => {
     axios
       .post(
-<<<<<<< HEAD
-        "/api/organization_setting/delete-organization",
-        { organization_id: currentOrganization },
-=======
-        "/api/organization_setting/leave-organization", { "organization_id": currentOrganization, uuid: authToken },
->>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
+        "/api/organization_setting/leave-organization",
+        { organization_id: currentOrganization, uuid: authToken },
         generateToken()[1]
       )
       .then((response) => {
         if (response.data == "Success") {
-          message.success("Leave Organization")
-          history.push("/")
+          message.success("Leave Organization");
+          history.push("/");
         } else {
           message.error("The action can't be completed, please try again.");
         }
@@ -72,7 +61,7 @@ const OrganizationDelete = ({ isOwner }) => {
       .catch(() => {
         message.error("The action can't be completed, please try again.");
       });
-  }
+  };
 
   const DeleteOrganization = () => {
     return (
@@ -81,8 +70,8 @@ const OrganizationDelete = ({ isOwner }) => {
           <div className="pl-1">
             <h3>Delete Organization</h3>
             <p className="mt-1 text-sm text-gray-600">
-              Once the Organization is deleted, all of its resources and data will
-              be permanently deleted. Before deleting your account, please
+              Once the Organization is deleted, all of its resources and data
+              will be permanently deleted. Before deleting your account, please
               download any data or information that you wish to retain.
             </p>
           </div>
@@ -108,8 +97,8 @@ const OrganizationDelete = ({ isOwner }) => {
           </Card>
         </Col>
       </>
-    )
-  }
+    );
+  };
 
   const LeaveOrganization = () => {
     return (
@@ -118,8 +107,8 @@ const OrganizationDelete = ({ isOwner }) => {
           <div className="pl-1">
             <h3>Leave Organization</h3>
             <p className="mt-1 text-sm text-gray-600">
-              Once you leave the Organization, all of its resources and data will
-              be permanently deleted. Before deleting your account, please
+              Once you leave the Organization, all of its resources and data
+              will be permanently deleted. Before deleting your account, please
               download any data or information that you wish to retain.
             </p>
           </div>
@@ -145,14 +134,10 @@ const OrganizationDelete = ({ isOwner }) => {
           </Card>
         </Col>
       </>
-    )
-  }
+    );
+  };
 
-  return (
-    <>
-      {isOwner ? <DeleteOrganization /> : <LeaveOrganization />}
-    </>
-  );
+  return <>{isOwner ? <DeleteOrganization /> : <LeaveOrganization />}</>;
 };
 
 export default OrganizationDelete;

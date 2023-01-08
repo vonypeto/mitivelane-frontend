@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { React } from "react";
-=======
 import { React, useState, useEffect } from "react";
->>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import { Row, Divider } from "antd";
@@ -16,13 +12,12 @@ import { AUTH_TOKEN, ORGANIZATION_REQUEST_ID } from "redux/constants/Auth";
 
 const ManageTeam = (props) => {
   const { currentOrganization, generateToken, currentUser } = useAuth();
-  const [isOwner, setIsOwner] = useState(false)
+  const [isOwner, setIsOwner] = useState(false);
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
   useEffect(() => {
-    getOrganizationOwner()
-
-  }, [])
+    getOrganizationOwner();
+  }, []);
 
   const getOrganizationOwner = () => {
     axios
@@ -31,12 +26,12 @@ const ManageTeam = (props) => {
         generateToken()[1]
       )
       .then((response) => {
-        setIsOwner(response.data)
+        setIsOwner(response.data);
       })
       .catch(() => {
         message.error("Could not fetch the data in the server!");
       });
-  }
+  };
 
   return (
     <div>
@@ -59,7 +54,7 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />
         <Row gutter={16}>
-          <ManageMember isOwner={isOwner}/>
+          <ManageMember isOwner={isOwner} />
         </Row>
         <Divider />
         <Row gutter={16}>
@@ -67,7 +62,7 @@ const ManageTeam = (props) => {
         </Row>
         <Divider />{" "}
         <Row gutter={16}>
-          <OrganizationDelete isOwner={isOwner}/>
+          <OrganizationDelete isOwner={isOwner} />
         </Row>
       </div>
     </div>

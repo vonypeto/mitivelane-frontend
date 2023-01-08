@@ -24,11 +24,7 @@ const { Option } = Select;
 
 const { Step } = Steps;
 
-<<<<<<< HEAD
-const ManageMember = () => {
-=======
 const ManageMember = ({ isOwner }) => {
->>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
   const { currentOrganization, generateToken, currentUser } = useAuth();
 
   const [addMember, setAddMember] = useState(false);
@@ -210,17 +206,10 @@ const ManageMember = ({ isOwner }) => {
                 elm.status === "Accepted"
                   ? "cyan"
                   : elm.status === "Pending"
-<<<<<<< HEAD
                   ? "orange"
-                  : elm.status === "Rejected"
-                  ? "volcano"
+                  : elm.status === "Owner"
+                  ? "blue"
                   : null
-=======
-                    ? "orange"
-                    : elm.status === "Owner"
-                      ? "blue"
-                      : null
->>>>>>> 41de241d8a0d3f353d0074558ee7761f9736db4e
               }
             >
               {elm.status}
@@ -234,33 +223,36 @@ const ManageMember = ({ isOwner }) => {
       dataIndex: "actions",
       key: "_id",
 
-      render: (_, elm) => isOwner && elm.status != "Owner" ? (
-        <div className="text-right">
-          <div className="text-right d-flex justify-content-end">
-            <Tooltip title="Edit">
-              <Button
-                type="primary"
-                className="mr-2"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  // showUserProfile(elm);
-                }}
-                size="small"
-              />
-            </Tooltip>
-            <Tooltip title="Delete">
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => {
-                  deleteOrganizationMember(elm._id);
-                }}
-                size="small"
-              />
-            </Tooltip>
+      render: (_, elm) =>
+        isOwner && elm.status != "Owner" ? (
+          <div className="text-right">
+            <div className="text-right d-flex justify-content-end">
+              <Tooltip title="Edit">
+                <Button
+                  type="primary"
+                  className="mr-2"
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    // showUserProfile(elm);
+                  }}
+                  size="small"
+                />
+              </Tooltip>
+              <Tooltip title="Delete">
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    deleteOrganizationMember(elm._id);
+                  }}
+                  size="small"
+                />
+              </Tooltip>
+            </div>
           </div>
-        </div>
-      ) : "",
+        ) : (
+          ""
+        ),
     },
   ];
 
@@ -567,7 +559,10 @@ const ManageMember = ({ isOwner }) => {
             isOwner ? (
               <Button onClick={() => onClickMember()}>
                 {addMember ? "Cancel" : "Add Member"}
-              </Button>) : ""
+              </Button>
+            ) : (
+              ""
+            )
           }
         >
           <Col xs={24} sm={24} md={24} className="w-100">
