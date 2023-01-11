@@ -238,7 +238,7 @@ const ManageHousehold = (props) => {
   const getAllResident = async () => {
     try {
       await axios
-        .post("/api/resident/getAll", { organization_id, fields: ["firstname", "lastname"] }, generateToken()[1], {
+        .post("/api/resident/getAll", {organization_id, fields: ["firstname", "lastname"] }, generateToken()[1], {
           cancelToken,
         })
         .then((res) => {
@@ -270,7 +270,7 @@ const ManageHousehold = (props) => {
     console.log("resident_id", resident_id)
     try {
       const query = await axios
-        .post("/api/resident/get", { organization_id, resident_id }, generateToken()[1], {
+        .post("/api/resident/get", { organization_id, resident_id, excludeAvatar: true }, generateToken()[1], {
           cancelToken,
         })
 
@@ -485,6 +485,7 @@ const ManageHousehold = (props) => {
 
       const resident = residentList[key];
 
+      console.log("resident", resident)
       getResident(resident.resident_id).then((res) => {
 
         var data = res.data
