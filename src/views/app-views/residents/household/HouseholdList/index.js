@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { Row, Col, Card, Table, Input, Select, Badge, Button, Menu, message } from "antd";
+import { Row, Col, Card, Table, Input, Select, Badge, Button, Menu, message, DatePicker } from "antd";
 import { useAuth } from "contexts/AuthContext";
 import axios from "axios";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
@@ -28,7 +28,7 @@ import {
 
 const { Option } = Select;
 const filterCategories = [
-  { text: "Modified At", value: "updateAt" },
+  { text: "Modified At", value: "updatedAt" },
   { text: "H.Number", value: "house_number" },
   { text: "H.Name", value: "name" },
   { text: "Address", value: "address" },
@@ -46,7 +46,7 @@ import moment from "moment";
 import { JSONManyToExcel } from "helper/ExportToExcel";
 import TableTextWrapper from "components/shared-components/TableTextWrapper";
 
-const AyudaTable = (props) => {
+const HouseholdList = (props) => {
   //Import
   const source = axios.CancelToken.source();
   const cancelToken = source.token;
@@ -133,9 +133,10 @@ const AyudaTable = (props) => {
   const [total, setTotal] = useState(1)
   const defaultPageSize = 10
   const [pageSize, setPageSize] = useState(defaultPageSize)
-  const defaultFilters = { sort: "desc", searchCategory: "updateAt" }
+  const defaultFilters = { sort: "desc", searchCategory: "updatedAt", type: "date" }
   const [dataFilter, setDataFilter] = useState({
     value: "",
+    type: defaultFilters.type,
     field: defaultFilters.searchCategory,
     sort: defaultFilters.sort,
   })
@@ -283,7 +284,13 @@ const AyudaTable = (props) => {
 
   const handleSearchChange = (e) => {
     var value = e.target.value
-    setDataFilter({ ...dataFilter, value: value })
+    console.log("value", value)
+    setDataFilter({ ...dataFilter, value: value, type: "string" })
+    setCurrentPage(1)
+  }
+
+  const handleDateSearchChange = (value) => {
+    setDataFilter({ ...dataFilter, value: value, type: "date" })
     setCurrentPage(1)
   }
 
@@ -383,11 +390,22 @@ const AyudaTable = (props) => {
 
       <Row align="middle" gutter={5} className="mb-3">
         <Col>
-          <Input
-            placeholder="Search"
-            prefix={<SearchOutlined />}
-            onChange={handleSearchChange}
-          />
+
+          {dataFilter.field == "updatedAt"
+            ?
+            <DatePicker
+              className="w-100"
+              onChange={handleDateSearchChange}
+            />
+
+            :
+            <Input
+              placeholder="Search"
+              prefix={<SearchOutlined />}
+              onChange={handleSearchChange}
+            />
+          }
+
         </Col>
 
         <Col>
@@ -449,4 +467,4 @@ const AyudaTable = (props) => {
   );
 };
 
-export default AyudaTable;
+export default HouseholdList;
