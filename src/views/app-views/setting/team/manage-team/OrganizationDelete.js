@@ -68,10 +68,10 @@ const OrganizationDelete = ({ isOwner }) => {
       <>
         <Col xs={24} sm={24} md={8}>
           <div className="pl-1">
-            <h3>Delete Organization</h3>
+            <h3>Deactivate Organization</h3>
             <p className="mt-1 text-sm text-gray-600">
-              Once the Organization is deleted, all of its resources and data
-              will be permanently deleted. Before deleting your account, please
+              Once the Organization is Deactivate, all of its resources and data
+              will be permanently Deactivate. Before deleting your account, please
               download any data or information that you wish to retain.
             </p>
           </div>
@@ -83,13 +83,13 @@ const OrganizationDelete = ({ isOwner }) => {
                 <Col xs={24} sm={24} md={24} className="pt-2 text-left ">
                   <Popconfirm
                     placement="top"
-                    title="Are you sure to delete this Organization?"
+                    title="Are you sure to Deactivate this Organization?"
                     onConfirm={deleteOrganization}
                     okText="Yes"
                     cancelText="No"
                     icon={<QuestionCircleOutlined style={{ color: "red" }} />}
                   >
-                    <Button className="btn-danger">Delete Organization</Button>
+                    <Button className="btn-danger">Deactivate Organization</Button>
                   </Popconfirm>
                 </Col>
               </Row>

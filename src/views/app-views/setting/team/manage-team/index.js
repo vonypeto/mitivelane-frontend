@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
-import { Row, Divider } from "antd";
+import { Row, Divider, message } from "antd";
 import ManageMember from "./ManageTeam";
 import ManageOrganization from "./ManageOrganization";
 import OrganizationDelete from "./OrganizationDelete";
