@@ -219,8 +219,8 @@ const BlotterRequest = (props) => {
               record.status === "Approved"
                 ? "cyan"
                 : record.status === "Pending"
-                ? "blue"
-                : "volcano"
+                  ? "blue"
+                  : "volcano"
             }
           >
             {record.status}
@@ -563,7 +563,7 @@ const BlotterRequest = (props) => {
     axios
       .get(
         "/api/blotter_request/get-pending-blotter-request/" +
-          currentOrganization,
+        currentOrganization,
         generateToken()[1]
       )
       .then((response) => {
@@ -684,11 +684,11 @@ const BlotterRequest = (props) => {
   };
 
   const pendingRequestColumn = [
-    {
-      title: "ID",
-      dataIndex: "blotter_id",
-      sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "blotter_id",
+    //   sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+    // },
     {
       title: "Reporter",
       dataIndex: "reporter",
@@ -709,8 +709,15 @@ const BlotterRequest = (props) => {
 
     {
       title: "Date Occured",
-      dataIndex: "incidentdate",
+      dataIndex: "date_of_incident",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
+      render: (_, record) => (
+        <div className="d-flex align-items-center">
+          <span className="ml-2">
+            {new Date(record.date_of_incident).toDateString()}
+          </span>
+        </div>
+      ),
     },
     {
       title: "Date Reported",
@@ -726,12 +733,12 @@ const BlotterRequest = (props) => {
     },
     {
       title: "Location",
-      dataIndex: "incidentlocation",
+      dataIndex: "place_incident",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
     {
       title: "Classification",
-      dataIndex: "classification",
+      dataIndex: "incident_type",
       sorter: (a, b) => utils.antdTableSorter(a, b, "blotter_id"),
     },
     {
@@ -942,7 +949,7 @@ const BlotterRequest = (props) => {
                       </Select>
                     </div>
                   </Flex>
-                  <Flex className="mb-1" mobileFlex={false}>
+                  {/* <Flex className="mb-1" mobileFlex={false}>
                     <div className="mb-3 mr-md-3">
                       <Space>
                         <Col>
@@ -957,7 +964,7 @@ const BlotterRequest = (props) => {
                         </Col>
                       </Space>
                     </div>
-                  </Flex>
+                  </Flex> */}
                 </Flex>
                 <div className="table-responsive">
                   <Table
