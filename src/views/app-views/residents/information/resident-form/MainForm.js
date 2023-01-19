@@ -12,7 +12,8 @@ import {
   DatePicker,
   Avatar,
   Button,
-  Space
+  Space,
+  Skeleton
 } from "antd";
 
 import QueueAnim from "rc-queue-anim";
@@ -53,7 +54,7 @@ const numberFilter = (e) => {
 const yesno = ["Yes", "No"];
 
 const MainForm = (props) => {
-  const { hiddenFileInput, setNewProfile, residentData, mode } = props
+  const { hiddenFileInput, setNewProfile, residentData, loading, mode } = props
   const [selectShow, setShow] = useState(true);
   // const [age, setAge] = useState(0);
   const [newProfilePicture, setNewProfilePicture] = useState("");
@@ -104,7 +105,7 @@ const MainForm = (props) => {
               ease={["easeOutQuart", "easeInOutQuart"]}
             >
               <div key="a">
-                <Card title="Resident Information">
+                <Card title="Resident Information" loading={loading}>
                   <Row gutter={16}>
                     <Col xs={24} sm={24} md={12}>
                       <Form.Item
@@ -143,7 +144,7 @@ const MainForm = (props) => {
                 </Card>
               </div>
               <div key="b">
-                <Card title="Details">
+                <Card title="Details" loading={loading}>
                   <Row gutter={16}>
 
                     <Col xs={24} sm={24} md={12}>
@@ -327,54 +328,56 @@ const MainForm = (props) => {
                 <Card title="Profile"
                   bodyStyle={{ display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-                  <Space direction="vertical" align="center">
-                    {(mode == "EDIT" && residentData.avatarImg == null) &&
-                      <CustomAvatar
-                        size={100}
-                        color={residentData.avatarColor}
-                        icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
-                        image={newProfilePicture ? newProfilePicture : null}
+                  <Skeleton loading={loading} avatar active={{ size: "large" }}>
+                    <Space direction="vertical" align="center">
+                      {(mode == "EDIT" && residentData.avatarImg == null) &&
+                        <CustomAvatar
+                          size={100}
+                          color={residentData.avatarColor}
+                          icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
+                          image={newProfilePicture ? newProfilePicture : null}
 
+                        />
+                      }
+
+                      {(mode == "EDIT" && residentData.avatarImg != null) &&
+                        <CustomAvatar
+                          size={100}
+                          color={residentData.avatarColor}
+                          icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
+                          image={newProfilePicture ? newProfilePicture : residentData.avatarImg}
+
+                        />
+                      }
+
+                      {mode == "ADD" &&
+                        <CustomAvatar
+                          size={100}
+                          color={"#0047AB"}
+                          image={newProfilePicture ? newProfilePicture : null}
+
+                        />
+                      }
+
+                      <Button icon={<UploadOutlined />} size="medium"
+                        onClick={() => { hiddenFileInput.current.click() }}
+                      >
+                        Upload image
+                      </Button>
+
+                      <input
+                        ref={hiddenFileInput}
+                        type="file"
+                        onChange={handleImageUpload}
+                        hidden
                       />
-                    }
-
-                    {(mode == "EDIT" && residentData.avatarImg != null) &&
-                      <CustomAvatar
-                        size={100}
-                        color={residentData.avatarColor}
-                        icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
-                        image={newProfilePicture ? newProfilePicture : residentData.avatarImg}
-
-                      />
-                    }
-
-                    {mode == "ADD" &&
-                      <CustomAvatar
-                        size={100}
-                        color={"#0047AB"}
-                        image={newProfilePicture ? newProfilePicture : null}
-
-                      />
-                    }
-
-                    <Button icon={<UploadOutlined />} size="medium"
-                      onClick={() => { hiddenFileInput.current.click() }}
-                    >
-                      Upload image
-                    </Button>
-
-                    <input
-                      ref={hiddenFileInput}
-                      type="file"
-                      onChange={handleImageUpload}
-                      hidden
-                    />
-                  </Space>
+                    </Space>
+                  </Skeleton>
                 </Card>
               </div>
               <div key="b">
                 {" "}
-                <Card title="Additional Details">
+                <Card title="Additional Details" loading={loading}>
                   <Form.Item name="voter_status" label="Voter Status" initialValue={"Registered"} rules={resident_details.voter_status}>
                     <Select className="w-100" placeholder="Voter Status">
                       <Option key={1} value={"Registered"}>

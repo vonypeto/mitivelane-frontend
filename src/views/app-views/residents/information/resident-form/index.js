@@ -320,6 +320,7 @@ const MainFormList = (props) => {
                       newProfile={newProfile}
                       residentData={mode == EDIT ? residentData : []}
                       mode={mode}
+                      loading={loading}
                     />
                   </div>
                 </QueueAnim>

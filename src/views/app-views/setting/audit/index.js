@@ -90,7 +90,7 @@ const Audit = () => {
         </Col>
 
         <Col>
-          <Space align="center">
+          <Space align="center" className="mb-2">
             <p className="m-0">Date until:</p>
             <DatePicker defaultValue={currentDate} onChange={(value) => dateChange(value)} />
             <Select className="w-100" defaultValue={defaultSortFilter} onChange={(value) => sortChange(value)}>
@@ -122,8 +122,8 @@ const Audit = () => {
                 avatar={
                   <img
                     style={{
-                      height: "25px",
-                      width: "25px",
+                      height: "45px",
+                      width: "45px",
                       marginRight: "5px",
                     }}
                     src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
