@@ -179,7 +179,7 @@ export const DefaultDashboard = () => {
 
   useEffect(() => {
     handleAcceptRequest();
-    getLatestBlotterRequests();
+    // getLatestBlotterRequests();
     getDocumentsData("cert");
     getDocumentsData("blotter");
     getResidentPopulationStatus();
