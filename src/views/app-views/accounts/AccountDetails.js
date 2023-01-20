@@ -65,7 +65,7 @@ const AccountDetails = () => {
   const onClickEdit = () => {
     setEditOrganization(!editOrganization);
   };
-  //submit edit
+  //callback data
   const handleFileUploadResponse = (res) => {
     console.log(res);
     setTimeout(() => {
@@ -89,6 +89,8 @@ const AccountDetails = () => {
       setEditOrganization(false);
     }, 1000);
   };
+
+  // Submit data
   const handleSubmitAccount = async () => {
     if (editOrganization) {
       setLoadingButton(true);
@@ -99,26 +101,16 @@ const AccountDetails = () => {
             full_name: values.name,
           };
 
-          await FileUploadApi(
-            "/api/app/user/update",
-            profileData,
-            profileUrl,
-            generateToken()[1],
-            oldUrl,
-            "avatar",
-            handleFileUploadResponse
+          const data = await FileUploadApi(
+            "/api/app/user/update", //  API
+            profileData, //  FORM DATA
+            profileUrl, // newURL
+            generateToken()[1], // token
+            oldUrl, // oldURL
+            "avatar", // PATH firebase
+            handleFileUploadResponse //callback
           );
-
-          // updateAccount(
-          //   values,
-          //   profileUrl,
-          //   currentUser,
-          //   setDisplayName,
-          //   setProfileUrl,
-          //   setEditOrganization,
-          //   setLoadingButton,
-          //   generateToken
-          // );
+          console.log(data);
         })
         .catch((errorInfo) => {
           console.log(errorInfo);
@@ -127,6 +119,8 @@ const AccountDetails = () => {
 
     if (!editOrganization) setEditOrganization(!editOrganization);
   };
+
+  // File Folder Input get event
   const handleChange = async (event) => {
     try {
       const fileUploaded = event.target.files[0];
@@ -148,15 +142,8 @@ const AccountDetails = () => {
     try {
       // 2.5 kilobye
       if (f?.size > 25000) {
-        // To be added
-        // notification({
-        //   message: "Warning",
-        //   description: "File to large",
-        //   duration: 4,
-        // });
         setFileLarge(true);
         return file;
-        // alert("File is too big!");
       } else {
         return URL.createObjectURL(f);
       }
