@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import moment from "moment";
 import {
   Row,
   Col,
@@ -9,8 +8,6 @@ import {
   Table,
   Select,
   Tag,
-  List,
-  Space,
   message,
 } from "antd";
 import ChartWidget from "components/shared-components/ChartWidget";
@@ -34,26 +31,17 @@ import { acceptRequest } from "api/AppController/OrganizationController/Organiza
 import { UserAddOutlined } from "@ant-design/icons";
 import { withRouter, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { exportColor } from "helper/AuditColorPicker";
-import Badge from "react-bootstrap/Badge";
-import "../../../../assets/css/bootstrap.badge.css";
 const { Option } = Select;
 
 export const DefaultDashboard = () => {
   // Props State & Context & Constant
-  const source = axios.CancelToken.source();
-  const cancelToken = source.token;
   const history = useHistory();
   const { currentOrganization, generateToken } = useAuth();
   const authToken = localStorage.getItem(AUTH_TOKEN);
   const { direction } = useSelector((state) => state.theme);
-  const [loading, setLoading] = useState(false);
 
   // Blotter Table State
   const [blotterlistrequest, setBlotterListRequest] = useState([]);
-
-  //Audit State
-  const [auditLog, setAuditLog] = useState([])
 
   // Certificate Current State
   const [currentDataCert, setcurrentDataCert] = useState({});
@@ -81,12 +69,11 @@ export const DefaultDashboard = () => {
   const [newMembersData] = useState(NewMembersData);
   // const [blotterlistrequestData, setBlotterListRequestData] = useState([]);
 
-
   const getLatestBlotterRequests = () => {
     axios
       .get(
         "/api/blotter_request/get-latest-blotter-requests/" +
-        currentOrganization,
+          currentOrganization,
         generateToken()[1]
       )
       .then((response) => {
@@ -98,8 +85,8 @@ export const DefaultDashboard = () => {
       });
   };
 
-  const getDocumentsData = async (type) => {
-    await axios
+  const getDocumentsData = (type) => {
+    axios
       .get(`/api/cert-display/name/data?cert_type=${type}`, generateToken()[1])
       .then((response) => {
         if (type) console.log(response.data);
@@ -127,8 +114,8 @@ export const DefaultDashboard = () => {
       });
   };
 
-  const getResidentPopulationStatus = async () => {
-    await axios
+  const getResidentPopulationStatus = () => {
+    axios
       .get(
         "/api/resident/populationStatus/" + currentOrganization,
         generateToken()[1]
@@ -141,7 +128,6 @@ export const DefaultDashboard = () => {
         console.log("Error");
       });
   };
-
   const handleChangeCert = (value) => {
     const newStatus = true;
     const data = { certificate_id: value, status: newStatus };
@@ -157,7 +143,6 @@ export const DefaultDashboard = () => {
 
     setPrevDataCert(data);
   };
-
   const handleChangeBlotter = (value) => {
     setPrevDataBlotter(value);
     // const data = { certificate_id: value, status: true };
@@ -192,32 +177,12 @@ export const DefaultDashboard = () => {
     }
   };
 
-  const getAudit = async () => {
-    await axios.post(
-      `/api/session/page`,
-      { currentPage: 1, pageSize: 5, organization_id: currentOrganization },
-      generateToken()[1],
-      { cancelToken }
-    ).then((res) => {
-      var data = res.data
-      var list = data.list
-      setAuditLog(list)
-    })
-  }
-
   useEffect(() => {
-    setLoading(true)
-    Promise.all([
-      handleAcceptRequest(),
-      // getLatestBlotterRequests(),
-      getDocumentsData("cert"),
-      getDocumentsData("blotter"),
-      getResidentPopulationStatus(),
-      getAudit(),
-    ])
-      .then(() => {
-        setLoading(false)
-      })
+    handleAcceptRequest();
+    // getLatestBlotterRequests();
+    getDocumentsData("cert");
+    getDocumentsData("blotter");
+    getResidentPopulationStatus();
   }, []);
 
   return (
@@ -225,49 +190,14 @@ export const DefaultDashboard = () => {
       <Row gutter={16}>
         <Col xs={24} sm={24} md={24} lg={24} xl={18}>
           <Row gutter={16}>
-
-            <Col xs={24} sm={24} md={24} lg={24}>
-              <Card
-                title="Latest Session"
-              >
-                <List
-                  loading={loading}
-                  dataSource={auditLog}
-                  renderItem={(item) => (
-                    <List.Item className="w-100">
-                      <List.Item.Meta
-                        avatar={
-                          <img
-                            style={{
-                              height: "45px",
-                              width: "45px",
-                              marginRight: "5px",
-                            }}
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                          />
-                        }
-                        title={
-                          <Space direction="horizontal">
-                            <b style={{ fontSize: 18 }}>{item.name}</b>
-                            <h4 style={{ color: "#1565c0", margin: 0 }}>{moment(item.createdAt).format("MMM-DD-YYYY h:mm A")}</h4>
-                          </Space>
-                        }
-                        description={
-                          <Space wrap>
-
-                            <Badge pill text="light" bg={null} style={{ backgroundColor: exportColor(item.action) }}>
-                              {item.message}
-                            </Badge>
-                            <Badge pill bg={"dark"}>
-                              {item.module}
-                            </Badge>
-                          </Space>
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              </Card>
+            <Col span={24}>
+              <ChartWidget
+                title="Visitors"
+                series={visitorChartData.series}
+                xAxis={visitorChartData.categories}
+                height={"400px"}
+                direction={direction}
+              />
             </Col>
 
             <Col xs={24} sm={24} md={24} lg={24}>
@@ -291,14 +221,24 @@ export const DefaultDashboard = () => {
         <Col xs={24} sm={24} md={24} lg={24} xl={6}>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
-              <DisplayDataSet populationStatus={populationStatus} loading={loading} />
+              <DisplayDataSet populationStatus={populationStatus} />
             </Col>
-
+            {/* {
+              annualStatisticData.map((elm, i) => (
+                <Col xs={24} sm={24} md={24} lg={24} xl={24}  key={i}>
+                  <StatisticWidget
+                    title={elm.title}
+                    value={elm.value}
+                    status={elm.status}
+                    subtitle={elm.subtitle}
+                  />
+                </Col>
+              ))
+            } */}
             <Col xs={24} sm={24} md={24} lg={24}>
               <Card
                 title="Organization Members"
                 extra={cardDropdown(newJoinMemberOption)}
-                loading={loading}
               >
                 <div className="mt-3">
                   {newMembersData.map((elm, i) => (
