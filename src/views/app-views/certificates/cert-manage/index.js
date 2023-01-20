@@ -46,12 +46,12 @@ const Certificates = () => {
       setParentData(parentData);
       if (prevParentData?.parentData == parentData)
         updateCertificateData(parentData, generateToken()[1]);
-
-      if (loading) {
-        setTimeout(() => {
-          setLoading(!loading);
-        }, 500);
-      }
+      console.log(parentData);
+      // if (loading) {
+      //   setTimeout(() => {
+      //     setLoading(!loading);
+      //   }, 500);
+      // }
     }
 
     return () => {
