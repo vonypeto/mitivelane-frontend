@@ -125,7 +125,6 @@ const Billing = () => {
   ];
 
   const showDrawer = (type) => {
-    console.log("open");
     setPaymentMethodType(type);
     setDrawer(true);
   };
@@ -135,9 +134,7 @@ const Billing = () => {
   };
 
   const rowSelectionCredit = {
-    onChange: (key, rows) => {
-      console.log(rows, key);
-    },
+    onChange: (key, rows) => {},
   };
 
   const getBilling = async () => {
@@ -148,13 +145,11 @@ const Billing = () => {
     );
     const i = [].concat.apply([], billingData.data[0].billing_method);
 
-    console.log(i);
     return setCreditCards(i);
   };
   useEffect(() => {
     getBilling();
   }, []);
-  console.log(creditCards);
   useEffect(() => {
     if (!(JSON.stringify(paymentMethod) === "{}")) {
       // let credit = creditCards;

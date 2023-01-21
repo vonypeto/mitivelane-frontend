@@ -70,7 +70,6 @@ const UserView = (props) => {
   } else {
     size = width;
   }
-  console.log(cardNumber);
   const toggleCardFlip = () => {
     setIsFrontOfCardVisible(!isFrontOfCardVisible);
   };
@@ -81,13 +80,11 @@ const UserView = (props) => {
     if (type == "card") {
       data.cardNumber = value;
       setCardNumber(formatCreditCardNumber(value));
-      console.log(formatCreditCardNumber(value));
       setIsFrontOfCardVisible(true);
     }
     if (type == "card-gcash") {
       data.cardNumber = value;
       setCardNumber(value);
-      console.log(formatCreditCardNumber(value));
       setIsFrontOfCardVisible(true);
     }
     if (type == "holder") {
@@ -132,7 +129,6 @@ const UserView = (props) => {
         finalData,
         generateToken
       );
-      console.log(billingData);
       setPaymentMethod(billingData.data);
       setCardNumber("");
       setCardHolder("");

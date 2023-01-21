@@ -11,23 +11,37 @@ import {
 } from "antd";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import { updateAccount } from "api/AppController/AccountsController/AccountDetailsController";
+import { FileUploadApi } from "api/AppController/FileUploadController/FileUploadController";
+
 import { useAuth } from "contexts/AuthContext";
 import { PROFILE_URL, AUTH_TOKEN } from "redux/constants/Auth";
 import axios from "axios";
 
 const AccountDetails = () => {
   const { currentUser, generateToken, resetEmailPassword } = useAuth();
+
+  //Form State
   const [form] = Form.useForm();
   const formRef = useRef();
   const [initialVal, setInitialVal] = useState({});
-  const hiddenFileInput = useRef(null);
-  const [fileLarge, setFileLarge] = useState(false);
+
+  // Loading State
   const [editOrganization, setEditOrganization] = useState(false);
-  const [profileAvatar, setProfileAvatar] = useState(false);
-  const [displayName, setDisplayName] = useState();
+
   const [isLoading, setIsLoading] = useState(true);
   const [loadingButton, setLoadingButton] = useState(false);
+
+  // Name State
+  const [displayName, setDisplayName] = useState();
+  // Password State
   const [showResetPassword, setShowResetPassword] = useState(false);
+
+  // File Upload State
+  const hiddenFileInput = useRef(null);
+  const [fileLarge, setFileLarge] = useState(false);
+  const [profileUrl, setProfileUrl] = useState(false);
+  const [oldUrl, setOldUrl] = useState(null);
+  const [file, setFile] = useState(null);
 
   //get Details
   const getData = async (_) => {
@@ -46,6 +60,115 @@ const AccountDetails = () => {
         });
       });
   };
+
+  //cancel edit
+  const onClickEdit = () => {
+    setEditOrganization(!editOrganization);
+  };
+  //callback data
+  const handleFileUploadResponse = (res) => {
+    console.log(res);
+    setTimeout(() => {
+      if (res?.profile_url) {
+        let data = JSON.parse(localStorage.getItem(PROFILE_URL));
+        data.profile_data = res.profile_url;
+        setProfileUrl(res?.profile_url);
+        setDisplayName(res?.full_name);
+        localStorage.setItem(PROFILE_URL, JSON.stringify(data));
+        currentUser.updateProfile({
+          displayName: res?.full_name,
+          photoURL: res?.profile_url,
+        });
+      } else {
+        currentUser.updateProfile({
+          displayName: res?.full_name,
+        });
+      }
+
+      setLoadingButton(false);
+      setEditOrganization(false);
+    }, 1000);
+  };
+
+  // Submit data
+  const handleSubmitAccount = async () => {
+    if (editOrganization) {
+      setLoadingButton(true);
+      form
+        .validateFields()
+        .then(async (values) => {
+          const profileData = {
+            full_name: values.name,
+          };
+
+          const data = await FileUploadApi(
+            "/api/app/user/update", //  API
+            profileData, //  FORM DATA
+            profileUrl, // newURL
+            generateToken()[1], // token
+            oldUrl, // oldURL
+            "avatar", // PATH firebase
+            handleFileUploadResponse //callback
+          );
+          console.log(data);
+        })
+        .catch((errorInfo) => {
+          console.log(errorInfo);
+        });
+    }
+
+    if (!editOrganization) setEditOrganization(!editOrganization);
+  };
+
+  // File Folder Input get event
+  const handleChange = async (event) => {
+    try {
+      const fileUploaded = event.target.files[0];
+      let imageValidate = "image";
+
+      if (fileUploaded.type.includes(imageValidate)) {
+        setProfileUrl(event.target.files[0]);
+        const base64 = checkFileSize(event.target.files[0]);
+        setFile(base64);
+      } else {
+        message.warning("Image not Found");
+      }
+    } catch (error) {
+      // console.log(console.log(error.message));
+    }
+  };
+  //Check File size
+  const checkFileSize = (f) => {
+    try {
+      // 2.5 kilobye
+      if (f?.size > 25000) {
+        setFileLarge(true);
+        return file;
+      } else {
+        return URL.createObjectURL(f);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  // Upload image button show explorer to get file
+  const handleClick = (_) => {
+    setFileLarge(false);
+    hiddenFileInput.current.click();
+  };
+
+  //handle reset password
+  const handleResetPassword = async () => {
+    await resetEmailPassword(currentUser?.email)
+      .then((_) => {
+        setShowResetPassword(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     if (showResetPassword) {
       const timeoutId = setTimeout(() => {
@@ -60,7 +183,9 @@ const AccountDetails = () => {
     let mount = true;
     if (mount) {
       let data = JSON.parse(localStorage.getItem(PROFILE_URL));
-      setProfileAvatar(data.profile_data);
+      setProfileUrl(data.profile_data);
+      setOldUrl(data.profile_data);
+      setFile(data.profile_data);
       form.resetFields();
       getData();
     }
@@ -68,84 +193,11 @@ const AccountDetails = () => {
       mount = false;
     };
   }, [form, initialVal]);
-  //cancel edit
-  const onClickEdit = () => {
-    setEditOrganization(!editOrganization);
-  };
-  //submit edit
-  const handleSubmitAccount = () => {
-    if (editOrganization) {
-      setLoadingButton(true);
-      form
-        .validateFields()
-        .then((values) => {
-          updateAccount(
-            values,
-            profileAvatar,
-            currentUser,
-            setDisplayName,
-            setProfileAvatar,
-            setEditOrganization,
-            setLoadingButton,
-            generateToken
-          );
-        })
-        .catch((errorInfo) => {
-          console.log(errorInfo);
-        });
-    }
 
-    if (!editOrganization) setEditOrganization(!editOrganization);
-  };
-  //hidden file set upload
-  const handleClick = (_) => {
-    setFileLarge(false);
-    hiddenFileInput.current.click();
-  };
-  //convert profile
-  const convertBase64 = (file) => {
-    console.log(file);
-    if (file.size > 25000) {
-      // notification({
-      //   message: "Warning",
-      //   description: "File to large",
-      //   duration: 4,
-      // });
-      setFileLarge(true);
-      return profileAvatar;
-
-      // alert("File is too big!");
-    } else {
-      return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file);
-
-        fileReader.onload = () => {
-          resolve(fileReader.result);
-        };
-
-        fileReader.onerror = (error) => {
-          reject(error);
-        };
-      });
-    }
-  };
-  //handle upload image
-  const handleChange = async (event) => {
-    const fileUploaded = event.target.files[0];
-    const base64 = await convertBase64(fileUploaded);
-    setProfileAvatar(base64);
-  };
-  //handle reset password
-  const handleResetPassword = async () => {
-    await resetEmailPassword(currentUser?.email)
-      .then((_) => {
-        setShowResetPassword(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  useEffect(() => {
+    let data = JSON.parse(localStorage.getItem(PROFILE_URL));
+    setOldUrl(data.profile_data);
+  }, [loadingButton]);
   const FormData = () => {
     return (
       <Form
@@ -180,7 +232,7 @@ const AccountDetails = () => {
                     className="mt-2 mr-2 rounded"
                     size={50}
                     icon={<UserOutlined />}
-                    src={profileAvatar}
+                    src={file}
                   />
                   {editOrganization ? (
                     <>
