@@ -18,10 +18,8 @@ import {
 
 import QueueAnim from "rc-queue-anim";
 import { ImageSvg } from "assets/svg/icon";
-import CustomIcon from "components/util-components/CustomIcon";
-import { LoadingOutlined, UserOutlined, UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import CustomAvatar from "components/shared-components/Avatar";
-import moment from "moment";
 import utils from "utils";
 
 import { resident_details } from "./AddResidentRules";
@@ -62,21 +60,23 @@ const MainForm = (props) => {
   //handle upload image
   const handleImageUpload = async (event) => {
     const fileUploaded = event.target.files[0];
-    const isFileValid = beforeUpload(fileUploaded)
 
-    if (isFileValid) {
-      const type = fileUploaded.type
-      const base64 = await convertBase64(fileUploaded);
+    if (fileUploaded) {
+      const isFileValid = beforeUpload(fileUploaded)
 
-      console.log("fileUploaded", fileUploaded)
-      setNewProfilePicture(base64)
+      if (isFileValid) {
+        const type = fileUploaded.type
+        const base64 = await convertBase64(fileUploaded);
 
-      setNewProfile({
-        fileBase64: base64,
-        type
-      })
+        console.log("fileUploaded", fileUploaded)
+        setNewProfilePicture(base64)
 
-      message.success("Sucess, don't forget to press save to make changes permanent.")
+        setNewProfile({
+          file: fileUploaded
+        })
+
+        message.success("Sucess, don't forget to press save to make changes permanent.")
+      }
     }
   };
 
@@ -330,7 +330,7 @@ const MainForm = (props) => {
                 >
                   <Skeleton loading={loading} avatar active={{ size: "large" }}>
                     <Space direction="vertical" align="center">
-                      {(mode == "EDIT" && residentData.avatarImg == null) &&
+                      {(mode == "EDIT" && residentData.profile == null) &&
                         <CustomAvatar
                           size={100}
                           color={residentData.avatarColor}
@@ -340,12 +340,12 @@ const MainForm = (props) => {
                         />
                       }
 
-                      {(mode == "EDIT" && residentData.avatarImg != null) &&
+                      {(mode == "EDIT" && residentData.profile != null) &&
                         <CustomAvatar
                           size={100}
                           color={residentData.avatarColor}
                           icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
-                          image={newProfilePicture ? newProfilePicture : residentData.avatarImg}
+                          image={newProfilePicture ? newProfilePicture : residentData.profile?.fileUrl}
 
                         />
                       }

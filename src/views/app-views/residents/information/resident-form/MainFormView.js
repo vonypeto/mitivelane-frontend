@@ -45,16 +45,10 @@ const MainFormView = (props) => {
           <Skeleton loading={loading} avatar active={{size: "large"}}>
             <div className="pt-1 mb-2 text-center">
               <CustomAvatar
-                size="large"
+                size={100}
                 color={residentData.avatarColor}
                 icon={utils.getNameInitial(residentData.firstname + " " + residentData.lastname)}
-                image={residentData.avatarImg}
-                style={{
-                  width: "6rem",
-                  height: " 6rem",
-                  lineHeight: "140px",
-                  fontSize: "70px",
-                }}
+                image={residentData.profile?.fileUrl}
               />
               <div>
                 <h2>
@@ -215,7 +209,6 @@ const MainFormView = (props) => {
                 </Row>
               </Col>
 
-              {/* {console.log(residentData)} */}
             </div>
 
           </Skeleton>
