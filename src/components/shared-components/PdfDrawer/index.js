@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Tag, Row, Col, Drawer, Card, Divider, Button } from "antd";
 import { EditOutlined, ArrowDownOutlined } from "@ant-design/icons";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents";
 import { saveAs } from "file-saver";
 import { useHistory } from "react-router-dom";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";

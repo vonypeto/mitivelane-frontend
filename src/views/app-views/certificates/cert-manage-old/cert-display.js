@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import BasicDocument from "components/shared-components/Documents/Certificates-General/";
+import BasicDocument from "components/shared-components/Documents";
 import { Card, Col, Row, Popover, Button } from "antd";
 import FontPicker from "font-picker-react";
 import { saveAs } from "file-saver";
@@ -9,7 +9,7 @@ import ColorPicker from "components/shared-components/ColorPicker";
 import PopOverData from "components/shared-components/PopOverData";
 
 import utils from "utils/index";
-import SinglePagePDFViewer from "components/shared-components/Documents/Certificates-General/";
+import SinglePagePDFViewer from "components/shared-components/Documents";
 import { Menu } from "antd";
 
 const CertDisplay = React.memo(

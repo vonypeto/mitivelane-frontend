@@ -17,9 +17,9 @@ import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 // PDF Component
 import { PDF_LIST } from "redux/constants/Auth";
-import BasicDocument from "components/shared-components/Documents/Certificates-General/";
+import BasicDocument from "components/shared-components/Documents";
 import CertDrawer from "components/shared-components/PdfDrawer";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents";
 import FileTest from "assets/files/test.pdf";
 import CreateLayout from "assets/files/create.pdf";
 import { base64pdf } from "constants/PdfConstant";

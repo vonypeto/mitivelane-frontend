@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Col } from "antd";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents";
 import { Carousel } from "@trendyol-js/react-carousel";
 
 const CarouselPdf = (props) => {

@@ -20,7 +20,7 @@ import {
   SnippetsOutlined,
 } from "@ant-design/icons";
 // Shared Component
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents";
 import CarouselPdf from "components/shared-components/CarouselPdf";
 import debounce from "lodash.debounce";
 
@@ -141,8 +141,8 @@ const DocumentInput = React.memo(
                         <Select.Option value="cert">
                           Certificate Template
                         </Select.Option>
-                        <Select.Option value="blotter">
-                          Blotter Template
+                        <Select.Option value="indulgancy">
+                          Indulgancy Template
                         </Select.Option>
                         <Select.Option value="business">
                           Business Template

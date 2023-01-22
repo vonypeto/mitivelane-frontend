@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Clearances from "./ClearanceList";
+import { DocumentList, IndulgancyList } from "./DocumentList";
+
 import Paging from "./Paging";
 //import { Textfit } from "react-textfit";
 
@@ -53,12 +54,25 @@ const index = React.memo(
             <>
               {certType == "cert" ? (
                 <>
-                  <Clearances type={type} {...props} lineHeight={lineHeight} />
+                  <DocumentList
+                    type={type}
+                    {...props}
+                    lineHeight={lineHeight}
+                  />
                 </>
               ) : certType == "blotter" ? (
                 <></>
               ) : certType == "business" ? (
                 <></>
+              ) : certType == "indulgancy" ? (
+                <>
+                  {" "}
+                  <IndulgancyList
+                    type={type}
+                    {...props}
+                    lineHeight={lineHeight}
+                  />
+                </>
               ) : null}
             </>
           )}

@@ -16,7 +16,7 @@ import {
 } from "./Constant";
 import { Menu, Dropdown, Space, Tooltip } from "antd";
 import { Carousel } from "@trendyol-js/react-carousel";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents";
 
 const { Option } = Select;
 

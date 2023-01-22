@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Col, Row, message } from "antd";
 import CertDrawer from "./Cert-Drawer";
-import PDFTemplate from "components/shared-components/Documents/Certificates-General";
+import PDFTemplate from "components/shared-components/Documents";
 import { useHistory } from "react-router-dom";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 import FileTest from "assets/files/test.pdf";
@@ -12,7 +12,7 @@ import { useAuth } from "contexts/AuthContext";
 import { getCertificateAll } from "api/AppController/CertificatesController/CertificatesController";
 import InfinitScroll from "react-infinite-scroll-component";
 import Spin from "components/shared-components/Loading";
-import BasicDocument from "components/shared-components/Documents/Certificates-General/";
+import BasicDocument from "components/shared-components/Documents";
 import { pdf } from "@react-pdf/renderer";
 import { PDF_LIST } from "redux/constants/Auth";
 import mongoose from "mongoose";

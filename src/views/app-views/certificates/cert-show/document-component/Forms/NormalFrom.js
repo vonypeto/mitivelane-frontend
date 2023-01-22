@@ -6,9 +6,10 @@ const NormalFrom = (props) => {
     <>
       <Form.Item label={formItems.titleName} name={formItems.formName}>
         <Input
+          placeholder={formItems.titleName}
           style={{
             border: "none",
-            backgroundColor: "#f4f4f5",
+            backgroundColor: "#F0F0F0",
           }}
           onChange={(e) => {
             onFill(e, formItems.formName, "text");
