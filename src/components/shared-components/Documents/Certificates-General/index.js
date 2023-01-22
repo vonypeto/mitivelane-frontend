@@ -6,11 +6,11 @@ import Paging from "./Paging";
 const index = React.memo(
   (props) => {
     const { type, pdf, certType } = props;
-
     const [getResolve, setGetResolve] = useState(null);
+
     let size = 9;
     let lineHeight = "16px";
-    //  const ratio = 1.41451612903;
+
     useEffect(() => {
       let cancel = true;
 

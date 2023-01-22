@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Col, Row, Button, message, Divider } from "antd";
 import { Form, Select } from "antd";
-import CertDrawer from "../cert-display/Cert-Drawer";
 import {
   ArrowDownOutlined,
   ArrowRightOutlined,

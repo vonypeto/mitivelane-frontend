@@ -2,7 +2,7 @@ import axios from "axios";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 import { message } from "antd";
 
-export const getCertificateAll = async (setPdf, generateToken, count) => {
+export const getCertificateAllNew = async (callback, generateToken, count) => {
   try {
     const res = await axios.get(
       `/api/cert-display?result=${count}&start=0`,
@@ -23,47 +23,72 @@ export const getCertificateAll = async (setPdf, generateToken, count) => {
       });
     }
 
-    return setPdf(data);
+    return callback(data);
   } catch (error) {
     console.error(error);
     return message.error(error.message);
   }
 };
 
-export const getCertificateData = async (
-  setParentData,
+export const getCertificateNext = async (
+  count,
+  start,
   generateToken,
-  id,
-  history,
-  setCertType,
-  setTemplateType,
-  firstTime,
-  setFirstTime
+  callback
 ) => {
   try {
-    const { data } = await axios.get(`/api/cert-display/${id}`, generateToken);
-    console.log(data);
-    const certificate = data;
-    if (!certificate) {
-      return history.push(
-        `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/list`
-      );
-    }
-    setCertType(certificate.cert_type);
-    setTemplateType(certificate.template_type);
-    delete certificate.createdAt;
-    delete certificate.updatedAt;
-    if (certificate.content[0]?.blocks.length === 0) {
-      delete certificate.content;
-    }
-    setParentData(certificate);
-    setFirstTime(!firstTime);
-    return;
+    await axios
+      .get(`/api/cert-display?result=${count}&start=${start}`, generateToken)
+      .then((res) => {
+        let data = res.data;
+
+        data.map((elem) => {
+          elem.content =
+            elem.content[0]?.blocks.length == 0
+              ? {
+                  entityMap: {},
+                  blocks: [],
+                }
+              : elem.content;
+          return elem;
+        });
+        return callback(data);
+      });
   } catch (error) {
-    console.log(error);
-    return message.error(error.message);
+    message.error(error.message);
   }
 };
+
+export const createCertificate = async (
+  loading,
+  data,
+  generateTotken,
+  callback
+) => {
+  try {
+    let isApiSubscribed = true;
+    if (!loading) {
+      await axios
+        .post("/api/cert-display/create/data", data, generateTotken)
+        .then((res) => {
+          console.log(res.data.id);
+          if (isApiSubscribed) {
+            callback(res);
+          }
+        })
+        .catch((err) => {
+          return console.error(err);
+        });
+      return () => {
+        // cancel the subscription
+        isApiSubscribed = false;
+      };
+    }
+  } catch (error) {
+    message.error(error.message);
+  }
+};
+
 export const updateCertificateData = async (data, generateToken) => {
   let isApiSubscribed = true;
   try {
@@ -102,6 +127,31 @@ export const deleteCertificateData = async (data, generateToken) => {
     isApiSubscribed = false;
   };
 };
+
+export const getCertificateDataNew = async (
+  generateToken,
+  id,
+  history,
+  callback
+) => {
+  try {
+    const { data } = await axios.get(`/api/cert-display/${id}`, generateToken);
+    console.log(data);
+    const certificate = data;
+    if (!certificate) {
+      return history.push(
+        `/app/${localStorage.getItem(AUTH_ORGANIZATION)}/cert-display/list`
+      );
+    }
+    return callback(certificate);
+  } catch (error) {
+    console.log(error);
+    return message.error(error.message);
+  }
+};
+
+// OLD API
+
 export const duplicateCertificate = async (
   data,
   setLoadingDuplicate,

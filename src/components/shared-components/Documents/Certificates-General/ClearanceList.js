@@ -1,6 +1,6 @@
 import React from "react";
-import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
-import ClassicNoBorderPDF from "./ClassicNoBorder/ClassicNoBorderTemplatePDF";
+import ClassicTemplatePDF from "./Certificate/ClassicTemplate/ClassicTemplatePDF";
+import ClassicNoBorderPDF from "./Certificate/ClassicNoBorder/ClassicNoBorderTemplatePDF";
 
 const ClearanceList = (props) => {
   const { templateType } = props;

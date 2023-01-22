@@ -15,14 +15,12 @@ const PopOverData = (props) => {
   const [selectData, setSelectData] = useState(
     type == "lineHeight" ? data?.line_height : data?.font_size
   );
-  console.log(data);
   const [active, setActive] = useState(false);
 
   const arrayLineHeight = [1, 1.2, 1.3, 1.5, 2];
   const arrayFontSize = ["XS", "S", "M", "L", "XL"];
 
   const handlePopOverClick = (e) => {
-    console.log(e.key);
     setSelectData(e.key);
     let subData = data;
     if (type == "lineHeight") subData.line_height = e.key;

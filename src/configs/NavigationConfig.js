@@ -10,7 +10,7 @@ import {
   ReconciliationOutlined,
   DollarCircleOutlined,
   ContainerOutlined,
-  MessageOutlined
+  MessageOutlined,
 } from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
@@ -127,23 +127,23 @@ const blotterNavTree = [
         icon: SnippetsOutlined,
         breadcrumb: true,
         submenu: [
-          {
-            key: "blotter.record",
-            path: `${APP_PREFIX_PATH}//records`,
-            title: "sidenav.reports.blotter.record",
-            icon: "",
-            breadcrumb: false,
-            submenu: [],
-          },
-          {
-            key: "blotter.request",
-            path: `${APP_PREFIX_PATH}//records/blotter-record/request`,
-            title: "sidenav.reports.blotter.request",
-            icon: "",
-            breadcrumb: false,
-            submenu: [],
-          }
-        ]
+          // {
+          //   key: "blotter.record",
+          //   path: `${APP_PREFIX_PATH}//records`,
+          //   title: "sidenav.reports.blotter.record",
+          //   icon: "",
+          //   breadcrumb: false,
+          //   submenu: [],
+          // },
+          // {
+          //   key: "blotter.request",
+          //   path: `${APP_PREFIX_PATH}//records/blotter-record/request`,
+          //   title: "sidenav.reports.blotter.request",
+          //   icon: "",
+          //   breadcrumb: false,
+          //   submenu: [],
+          // },
+        ],
       },
       {
         key: "settlement-case-list",
@@ -182,15 +182,15 @@ const settingrNavTree = [
         // Remove AFTER DEVELOPMENT
         submenu: [],
       },
-      {
-        key: "setting.billing",
-        path: `${APP_PREFIX_PATH}//setting/billing`,
-        title: "sidenav.setting.billing",
-        icon: ShopOutlined,
-        breadcrumb: true,
-        // Remove AFTER DEVELOPMENT
-        submenu: [],
-      },
+      // {
+      //   key: "setting.billing",
+      //   path: `${APP_PREFIX_PATH}//setting/billing`,
+      //   title: "sidenav.setting.billing",
+      //   icon: ShopOutlined,
+      //   breadcrumb: true,
+      //   // Remove AFTER DEVELOPMENT
+      //   submenu: [],
+      // },
     ],
   },
 ];

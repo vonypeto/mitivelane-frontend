@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+
+// PDF Component
 import { Document, Page, pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
+// AntD Component
 import { Skeleton, Card, Col, Row, Menu, Button, Input } from "antd";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
+import DocumentLoading from "components/shared-components/DocumentLoading";
 import Flex from "components/shared-components/Flex";
 import {
   EditOutlined,
@@ -11,15 +15,18 @@ import {
   ArrowDownOutlined,
   HighlightOutlined,
 } from "@ant-design/icons";
-import { useHistory } from "react-router-dom";
-import { AUTH_ORGANIZATION } from "redux/constants/Auth";
+// Libraries
 import debounce from "lodash.debounce";
 import { saveAs } from "file-saver";
-import { useCert } from "contexts/CertificateContext";
+import { useHistory } from "react-router-dom";
+import { timeSince } from "helper/Formula";
+import { TypeView } from "helper/CertificateFunction";
+
+// Middleware
+import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 
 const SinglePage = React.memo(
   (props) => {
-    //  const { currentList } = useCert();
     const {
       data,
       pdf,
@@ -30,21 +37,17 @@ const SinglePage = React.memo(
       title,
       deleteRow,
       duplicateDocument,
+      onHandleDocument,
     } = props;
-    let myInp = null;
+
+    let myInp = useRef(null);
     let history = useHistory();
+    let id = data;
+    // Page State
     const [renderedPageNumber, setRenderedPageNumber] = useState(null);
     const [numPages, setNumPages] = useState(null);
     const documentWrapperRef = useRef();
     const [pageNumber, setPageNumber] = useState(1); //setting 1 to show fisrt page
-
-    let id = data;
-
-    // const data = useMemo(() => ({ pdf }), [pdf]);
-
-    // function handleClick(pdf) {
-    //   props.counterClick(pdf);
-    // }
     useEffect(() => {
       return () => {
         setPageNumber();
@@ -73,7 +76,7 @@ const SinglePage = React.memo(
         case "create":
           break;
         case "view":
-          props.onHandle(pdf, createdAt, updatedAt, title, id);
+          props.onHandleSelect(pdf, createdAt, updatedAt, title, id);
           break;
         case "drawer":
           break;
@@ -84,33 +87,6 @@ const SinglePage = React.memo(
       }
     };
 
-    ///https://codesandbox.io/s/react-pdf-prevent-flash-with-scale-forked-203c03?file=/src/App.js:2502-2517
-    const timeSince = (date) => {
-      var time = new Date(date);
-      var seconds = Math.floor((new Date() - time) / 1000);
-      // seconds -= +28800;
-      var interval = seconds / 31536000;
-      if (interval > 1) {
-        return Math.floor(interval) + " years";
-      }
-      interval = seconds / 2592000;
-      if (interval > 1) {
-        return Math.floor(interval) + " months";
-      }
-      interval = seconds / 86400;
-      if (interval > 1) {
-        return Math.floor(interval) + " days";
-      }
-      interval = seconds / 3600;
-      if (interval > 1) {
-        return Math.floor(interval) + " hours";
-      }
-      interval = seconds / 60;
-      if (interval > 1) {
-        return Math.floor(interval) + " minutes";
-      }
-      return Math.floor(seconds) + " seconds";
-    };
     //navigate edit
     const navigateData = (data) => {
       return history.push(
@@ -119,14 +95,17 @@ const SinglePage = React.memo(
     };
     //update title
     const updateTitle = debounce((e) => {
-      props.onHandleDocument(e.target.value, id);
+      onHandleDocument(e.target.value, id);
     }, 1000);
+    // Dowload pdf
     const downloadFile = () => {
       saveAs(pdf, title);
     };
+    // Delete Pdf
     const DeleteFile = () => {
       deleteRow.onClick();
     };
+    // duplicate pdf
     const duplicateFile = () => {
       duplicateDocument.onClick();
     };
@@ -140,7 +119,7 @@ const SinglePage = React.memo(
         </Menu.Item>
         <Menu.Item
           onClick={() => {
-            myInp.focus();
+            myInp.current.focus();
           }}
           key={2}
         >
@@ -170,95 +149,23 @@ const SinglePage = React.memo(
             <span className="ml-2">Duplicate</span>
           </Flex>
         </Menu.Item>
-        <Menu.Item onClick={() => {}} key={6}>
-          <Flex alignItems="center">
-            <CopyOutlined />
-            <span className="ml-2">Active</span>
-          </Flex>
-        </Menu.Item>
       </Menu>
     );
-    const TypeView = (props) => {
-      const { type } = props;
-      return (
-        <>
-          {type == "form" ? (
-            <>
-              <div className="text-center">
-                <p>
-                  Page {pageNumber || (numPages ? 1 : "--")} of{" "}
-                  {numPages || "--"}
-                </p>
-                {numPages == 1 ? null : (
-                  <Row gutter={16} justify="center">
-                    <Col>
-                      <Button
-                        type="button"
-                        disabled={pageNumber <= 1}
-                        onClick={previousPage}
-                      >
-                        Previous
-                      </Button>
-                    </Col>
-                    <Col>
-                      <Button
-                        type="button"
-                        disabled={pageNumber >= numPages}
-                        onClick={nextPage}
-                      >
-                        Next
-                      </Button>
-                    </Col>
-                  </Row>
-                )}
-              </div>
-            </>
-          ) : type == "view" ? (
-            <Row style={{ marginTop: "-15px" }}>
-              <Col className="pl-3 cert-font-buttom">
-                <p>
-                  <b>
-                    <Input
-                      ref={(ip) => (myInp = ip)}
-                      style={{
-                        border: "none",
-                        textAlign: "left",
-                        padding: "0",
-                        width: "100%",
-                        backgroundColor: "#FAFAFB",
-                        margin: 0,
-                        fontWeight: 900,
-                      }}
-                      className="cert-name "
-                      defaultValue={title}
-                      placeholder="Title"
-                      onChange={(e) => {
-                        updateTitle(e);
-                      }}
-                    />
-                  </b>
-                </p>
-                <p>Edited {timeSince(updatedAt)} ago</p>
-              </Col>
-            </Row>
-          ) : type == "template" ? (
-            <div>
-              <TemplateType />
-            </div>
-          ) : type == "drawer" ? (
-            <></>
-          ) : null}
-        </>
-      );
+
+    // Certificate Config
+    const typeViewData = {
+      type: type,
+      pageNumber: pageNumber,
+      numPages: numPages,
+      updateTitle: updateTitle,
+      updatedAt: updatedAt,
+      title: title,
+      templateType: templateType,
+      myInp,
+      nextPage: nextPage,
+      previousPage: previousPage,
     };
-    const TemplateType = () => {
-      switch (templateType) {
-        case "simple_border":
-          return <div className="text-center">Classic Bordered</div>;
-        case "simple_no_border":
-          return <div className="text-center">Classic Borderless</div>;
-      }
-    };
+
     const PdfRender = (data) => {
       return (
         <>
@@ -281,38 +188,7 @@ const SinglePage = React.memo(
                   file={{ url: data.pdf }}
                   onLoadSuccess={onDocumentLoadSuccess}
                   key={renderedPageNumber}
-                  loading={
-                    <Card className="cert_loading">
-                      <Skeleton
-                        size={"small"}
-                        paragraph={{ rows: 7 }}
-                        className="position-absolute h-100 w-100 cert_loading"
-                      ></Skeleton>
-
-                      <div className="react-pdf__Document PDFDocument">
-                        <div
-                          className="react-pdf__Page PDFPageOne PDFPageTwo"
-                          data-page-number="1"
-                          style={{ position: "relative" }}
-                        >
-                          <canvas
-                            className="react-pdf__Page__canvas"
-                            dir="ltr"
-                            width="1192"
-                            height="1684"
-                            style={{
-                              display: "block",
-                              userSelect: "none",
-                              width: "596px",
-                              height: "852px",
-                            }}
-                          ></canvas>
-
-                          <div className="react-pdf__Page__annotations annotationLayer"></div>
-                        </div>
-                      </div>
-                    </Card>
-                  }
+                  loading={<DocumentLoading />}
                 >
                   <Page
                     //   width={width || undefined}
@@ -355,7 +231,7 @@ const SinglePage = React.memo(
                   </Page>
                 </Document>
               </div>
-              <TypeView type={type} />
+              <TypeView {...typeViewData} />
             </div>
           </>
         </>
@@ -363,7 +239,7 @@ const SinglePage = React.memo(
     };
     return (
       <>
-        <PdfRender pdf={pdf} type={type} {...props} />{" "}
+        <PdfRender pdf={pdf} type={type} {...props} />
       </>
     );
   },

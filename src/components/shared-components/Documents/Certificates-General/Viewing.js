@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
-import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
-import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
+import ClassicTemplate from "./Certificate/ClassicTemplate/ClassicTemplateList";
+import ClassicTemplatePDF from "./Certificate/ClassicTemplate/ClassicTemplatePDF";
 import Paging from "./Paging";
 import { Textfit } from "react-textfit";
 

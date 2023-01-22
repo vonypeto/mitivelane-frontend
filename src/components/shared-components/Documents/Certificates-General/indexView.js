@@ -1,6 +1,6 @@
 import React from "react";
-import ClassicTemplate from "./ClassicTemplate/ClassicTemplateList";
-import ClassicTemplatePDF from "./ClassicTemplate/ClassicTemplatePDF";
+import ClassicTemplate from "./Certificate/ClassicTemplate/ClassicTemplateList";
+import ClassicTemplatePDF from "./Certificate/ClassicTemplate/ClassicTemplatePDF";
 import Paging from "./Viewing";
 
 import { Textfit } from "react-textfit";

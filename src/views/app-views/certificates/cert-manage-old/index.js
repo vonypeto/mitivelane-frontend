@@ -191,6 +191,7 @@ const Certificates = () => {
                       setParentData={setData}
                       switchCol={setSwitchCert}
                       certType={certType}
+                      width={width}
                       setCertType={setCertType}
                       templateType={templateType}
                       setTemplateType={setTemplateType}

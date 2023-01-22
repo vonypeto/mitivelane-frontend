@@ -83,6 +83,7 @@ const AccountDetails = () => {
         currentUser.updateProfile({
           displayName: res?.full_name,
         });
+        setDisplayName(res?.full_name);
       }
 
       setLoadingButton(false);
@@ -141,7 +142,7 @@ const AccountDetails = () => {
   const checkFileSize = (f) => {
     try {
       // 2.5 kilobye
-      if (f?.size > 25000) {
+      if (f?.size > 500000) {
         setFileLarge(true);
         return file;
       } else {

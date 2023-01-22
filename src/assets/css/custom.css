@@ -14,7 +14,13 @@
 .approve :visited {
   color: #fff !important;
 }
-.tabs-cards{
+.dropdown-certificate {
+  margin-top: 1px;
+}
+.dropdown-certificate .ant-select-selector {
+  border: 0px solid #e6ebf1 !important;
+}
+.tabs-cards {
   flex-direction: column;
 }
 .tabs-cards .ant-tabs-nav {

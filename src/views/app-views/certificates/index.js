@@ -10,11 +10,11 @@ const Components = ({ match }) => (
         {/* cert display list */}
         <Route
           path={`${match.url}/list`}
-          component={lazy(() => import(`./cert-display`))}
+          component={lazy(() => import(`./cert-list`))}
         />{" "}
         <Route
           path={`${match.url}/:id`}
-          component={lazy(() => import(`./cert-manage`))}
+          component={lazy(() => import(`./cert-show`))}
         />
       </Switch>
     </Suspense>{" "}
