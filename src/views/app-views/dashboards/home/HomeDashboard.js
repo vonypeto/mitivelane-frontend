@@ -118,7 +118,7 @@ export const RecentBlotterCaseData = [
   },
 ];
 
-export const DisplayDataSet = ({populationStatus}) => (
+export const DisplayDataSet = ({populationStatus, loading}) => (
   <Row gutter={16}>
     <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
       <DataDisplayWidget
@@ -128,6 +128,7 @@ export const DisplayDataSet = ({populationStatus}) => (
         color="blue"
         vertical={true}
         avatarSize={55}
+        loading={loading}
       />
       <DataDisplayWidget
         icon={<WomanOutlined />}
@@ -136,6 +137,7 @@ export const DisplayDataSet = ({populationStatus}) => (
         color="volcano"
         vertical={true}
         avatarSize={55}
+        loading={loading}
       />
     </Col>
     <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
@@ -146,6 +148,7 @@ export const DisplayDataSet = ({populationStatus}) => (
         color="lime"
         vertical={true}
         avatarSize={55}
+        loading={loading}
       />
       <DataDisplayWidget
         icon={<IdcardOutlined />}
@@ -154,6 +157,7 @@ export const DisplayDataSet = ({populationStatus}) => (
         color="cyan"
         vertical={true}
         avatarSize={55}
+        loading={loading}
       />
     </Col>
   </Row>

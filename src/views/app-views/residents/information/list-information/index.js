@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import EllipsisDropdown from "components/shared-components/EllipsisDropdown";
 import Flex from "components/shared-components/Flex";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import utils from "utils";
 import { Col, Dropdown } from "antd";
 import axios from "axios";
@@ -96,6 +96,25 @@ const ListInformation = () => {
     setIsResidentLoading(false);
   };
 
+  const getAllResident = async () => {
+    try {
+      return await axios
+        .post(
+          "/api/resident/getAll",
+          {
+            organization_id: organization_id,
+            excludeAvatar: true,
+          },
+          generateToken()[1],
+          { cancelToken }
+        )
+    } catch (error) {
+      console.log(error);
+      message.error("Error in database connection!!");
+    }
+  };
+
+
   const deleteResident = async (resident_id) => {
     await axios.post(
       "/api/resident/delete",
@@ -135,7 +154,7 @@ const ListInformation = () => {
     setShow(!selectShow);
 
     setTimeout(() => {
-      history.push(`/app/1002/residents/resident-information/add`);
+      history.push(`/app/${organization_id}/residents/resident-information/add`);
     }, 1000);
   };
 
@@ -144,7 +163,7 @@ const ListInformation = () => {
 
     setTimeout(() => {
       history.push(
-        `/app/1002/residents/resident-information/${row.resident_id}/view`
+        `/app/${organization_id}/residents/resident-information/${row.resident_id}/view`
       );
     }, 1000);
   };
@@ -153,7 +172,7 @@ const ListInformation = () => {
     setShow(!selectShow);
     setTimeout(() => {
       history.push(
-        `/app/1002/residents/resident-information/${row.resident_id}/edit`
+        `/app/${organization_id}/residents/resident-information/${row.resident_id}/edit`
       );
     }, 1000);
   };
@@ -269,66 +288,53 @@ const ListInformation = () => {
     },
   };
 
-  const onSearch = (e) => {
-    const value = e.currentTarget.value;
-    const searchArray = e.currentTarget.value ? list : ResidentListData;
-    const data = utils.wildCardSearch(searchArray, value);
-    setList(data);
-    setSelectedRowKeys([]);
-  };
-
-  // const handleShowCategory = (value) => {
-  //   if (value !== "All") {
-  //     const key = "resident_id";
-  //     const data = utils.filterArray(ResidentListData, key, value);
-  //     setList(data);
-  //   } else {
-  //     setList(ResidentListData);
-  //   }
-  // };
-
   const handleExport = () => {
-    console.log("exporting data from table");
 
-    let newList = list.map((resident) => ({
-      "First Name": resident.firstname,
-      "Last Name": resident.lastname,
-      "Middle Name": resident.firstname,
-      Alias: resident.alias,
-      Age: computeAge(resident.birthday),
-      Birthday: new Date(resident.birthday)
-        .toDateString()
-        .split(" ")
-        .slice(1)
-        .join(" "),
-      "Birth Place": resident.birth_of_place,
-      "Gender": resident.gender,
-      "Height": resident.height + " " + resident.height_unit,
-      "Weight": resident.weight  + " " + resident.height_unit,
-      "Blood type": resident.blood_type,
-      "Voter status": resident.voter_status,
-      "Civil status": resident.civil_status,
-      "Occupation": resident.occupation,
-      "Citizenship": resident.citizenship,
-      "Religion": resident.religion,
-      "Address 1": resident.address_1,
-      "Address 2": resident.address_2,
-      "Purok/Area": resident.area,
-      "Telephone": resident.telephone,
-      "Mobile number": resident.mobile_number,
-      "Email": resident.email,
-      "Father": resident.father,
-      "Mother": resident.mother,
-      "Spouse": resident.spouse,
-      "PAG_IBIG": resident.pag_ibig,
-      "PHILHEALTH": resident.philhealth,
-      "SSS": resident.sss,
-      "TIN": resident.tin,
-    }));
+    getAllResident().then((res) => {
+      console.log("exporting data from table");
+      var resdientList = res.data
 
-    // console.log("resident list", newList);
+      let newList = resdientList.map((resident) => ({
+        "First Name": resident.firstname,
+        "Last Name": resident.lastname,
+        "Middle Name": resident.firstname,
+        Alias: resident.alias,
+        Age: computeAge(resident.birthday),
+        Birthday: new Date(resident.birthday)
+          .toDateString()
+          .split(" ")
+          .slice(1)
+          .join(" "),
+        "Birth Place": resident.birth_of_place,
+        "Gender": resident.gender,
+        "Height": resident.height + " " + resident.height_unit,
+        "Weight": resident.weight + " " + resident.height_unit,
+        "Blood type": resident.blood_type,
+        "Voter status": resident.voter_status,
+        "Civil status": resident.civil_status,
+        "Occupation": resident.occupation,
+        "Citizenship": resident.citizenship,
+        "Religion": resident.religion,
+        "Address 1": resident.address_1,
+        "Address 2": resident.address_2,
+        "Purok/Area": resident.area,
+        "Telephone": resident.telephone,
+        "Mobile number": resident.mobile_number,
+        "Email": resident.email,
+        "Father": resident.father,
+        "Mother": resident.mother,
+        "Spouse": resident.spouse,
+        "PAG_IBIG": resident.pag_ibig,
+        "PHILHEALTH": resident.philhealth,
+        "SSS": resident.sss,
+        "TIN": resident.tin,
+      }));
 
-    JSONToExcel(newList, "BarangayResidentList");
+      // console.log("resident list", newList);
+
+      JSONToExcel(newList, "BarangayResidentList");
+    })
+
   };
 
   const residentMenuItems = [
@@ -353,55 +359,15 @@ const ListInformation = () => {
         <div key="demo1">
           <Card
             title="Resident Master List"
-            extra={<CustomDropdown menuItems={residentMenuItems} />}
+            extra={
+              <>
+                <Button type="primary" onClick={() => AddResident()}>
+                  Add Resident
+                </Button>
+                <CustomDropdown menuItems={residentMenuItems} />
+              </>
+            }
           >
-            <Flex
-              alignItems="center"
-              className=""
-              justifyContent="between"
-              mobileFlex={false}
-            >
-              <Flex className="mb-1" mobileFlex={false}>
-                <div className="mb-3 mr-md-3">
-                  <Input
-                    placeholder="Search"
-                    prefix={<SearchOutlined />}
-                    // onChange={(e) => onSearch(e)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <Select
-                    defaultValue="All"
-                    className="w-100"
-                    style={{ minWidth: 180 }}
-                    // onChange={handleShowCategory}
-                    placeholder="Category"
-                  >
-                    <Option value="All">All</Option>
-                    {categories.map((elm) => (
-                      <Option key={elm} value={elm}>
-                        {elm}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </Flex>
-
-              <div className="justify-content-between">
-                <Space>
-                  <Col>
-                    <Button
-                      onClick={AddResident}
-                      type="primary mb-3"
-                      icon={<PlusCircleOutlined />}
-                      block
-                    >
-                      Add Resident
-                    </Button>
-                  </Col>
-                </Space>
-              </div>
-            </Flex>
             <div className="table-responsive">
               <Table
                 columns={tableColumns}
