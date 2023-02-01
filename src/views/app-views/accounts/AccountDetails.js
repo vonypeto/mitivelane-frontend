@@ -67,7 +67,7 @@ const AccountDetails = () => {
   };
   //callback data
   const handleFileUploadResponse = (res) => {
-    console.log(res);
+    console.log("res", res);
     setTimeout(() => {
       if (res?.profile_url) {
         let data = JSON.parse(localStorage.getItem(PROFILE_URL));
@@ -111,7 +111,11 @@ const AccountDetails = () => {
             "avatar", // PATH firebase
             handleFileUploadResponse //callback
           );
-          console.log(data);
+
+          console.log("profileData", profileData)
+          console.log("profileUrl", profileUrl)
+          console.log("oldUrl", oldUrl)
+
         })
         .catch((errorInfo) => {
           console.log(errorInfo);

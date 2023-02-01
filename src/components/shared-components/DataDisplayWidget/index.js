@@ -4,11 +4,12 @@ import Flex from '../Flex'
 import CustomStatistic from '../CustomStatistic'
 
 const DataDisplayWidget = props => {
-	const { size, value, title, icon, color, avatarSize, vertical, cardClassName, centerCardBody, centerIcon } = props
+	const { loading = false, size, value, title, icon, color, avatarSize, vertical, cardClassName, centerCardBody, centerIcon } = props
 	const customStatisticProps = { size, value, title }
 	return (
 		<Card className={cardClassName}
 			bodyStyle={centerCardBody ? { display: "flex", justifyContent: "center", alignItems: "center", height: "100%" } : {}}
+			loading={loading}
 		>
 			<Flex alignItems="center" flexDirection={vertical ? 'column' : 'row'}>
 				<Avatar size={avatarSize} shape="square" icon={icon} className={`ant-avatar-${color}`} style={centerIcon ? { display: "flex", justifyContent: "center", alignItems: "center" } : {}} />

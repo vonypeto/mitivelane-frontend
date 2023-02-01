@@ -10,6 +10,7 @@ import Badge from "react-bootstrap/Badge";
 import { dummy_session } from "./fakedata";
 import "../../../../assets/css/bootstrap.badge.css";
 import { handlePageChange } from "helper/Pagination";
+import { exportColor } from "helper/AuditColorPicker";
 
 const { Option } = Select;
 
@@ -24,6 +25,7 @@ const Audit = () => {
 
   //State 
   const [auditLog, setAuditLog] = useState([])
+  const [loading, setLoading] = useState(false)
 
   //Pagination State
   const [currentPage, setCurrentPage] = useState(1)
@@ -35,19 +37,6 @@ const Audit = () => {
   const defaultSortFilter = "desc"
   const [sortFilter, setSortFilter] = useState(defaultSortFilter)
 
-  //Const for color
-  const badgeColorPicker = (action) => {
-    action = action.toLowerCase()
-    if (action == "create") {
-      return "#00A36C";
-    }
-    if (action == "update") {
-      return "#0047AB";
-    }
-    if (action == "delete") {
-      return "#FF0000";
-    }
-  };
 
   //Function
   const dateChange = (value) => {
@@ -63,6 +52,7 @@ const Audit = () => {
   }
 
   const getPage = async () => {
+    setLoading(true)
     await axios.post(
       `/api/session/page`,
       { currentPage, pageSize, dateFilter, sortFilter, organization_id: currentOrganization },
@@ -74,6 +64,7 @@ const Audit = () => {
       var total = data.total
       setAuditLog(list)
       setTotal(total)
+      setLoading(false)
     })
   }
 
@@ -90,7 +81,7 @@ const Audit = () => {
         </Col>
 
         <Col>
-          <Space align="center">
+          <Space align="center" className="mb-2">
             <p className="m-0">Date until:</p>
             <DatePicker defaultValue={currentDate} onChange={(value) => dateChange(value)} />
             <Select className="w-100" defaultValue={defaultSortFilter} onChange={(value) => sortChange(value)}>
@@ -100,7 +91,7 @@ const Audit = () => {
           </Space>
         </Col>
       </Row>
-      <Card>
+      <Card loading={loading}>
         <List
           pagination={{
             current: currentPage,
@@ -122,8 +113,8 @@ const Audit = () => {
                 avatar={
                   <img
                     style={{
-                      height: "25px",
-                      width: "25px",
+                      height: "45px",
+                      width: "45px",
                       marginRight: "5px",
                     }}
                     src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -138,7 +129,7 @@ const Audit = () => {
                 description={
                   <Space wrap>
 
-                    <Badge pill text="light" bg={null} style={{ backgroundColor: badgeColorPicker(item.action) }}>
+                    <Badge pill text="light" bg={null} style={{ backgroundColor: exportColor(item.action) }}>
                       {item.message}
                     </Badge>
                     <Badge pill bg={"dark"}>

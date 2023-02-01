@@ -1,86 +1,86 @@
 export const resident_details = {
-    number: [
-        {
-            message: "This data must be number only!!",
-            type: "email"
-        },
-    ],
-    first_name: [
-        {
-            required: true,
-            message: "Please enter first name.",
-        },
-    ],
-    last_name: [
-        {
-            required: true,
-            message: "Please enter last name.",
-        },
-    ],    
-    middle_name: [
-        {
-            required: true,
-            message: "Please enter middle name.",
-        },
-    ],
-    // alias: [
+    // number: [
     //     {
-    //         required: true,
-    //         message: "Please enter alias.",
+    //         message: "This data must be number only!!",
+    //         type: "email"
     //     },
     // ],
-    // age: [
+    // first_name: [
     //     {
     //         required: true,
-    //         message: "Please enter your age.",
-    //         type: "integer",
-    //     }
+    //         message: "Please enter first name.",
+    //     },
     // ],
-    weight: [
-        {
-            required: true,
-            message: "Please enter your weight.",
-        },
-    ],
-    height: [
-        {
-            required: true,
-            message: "Please enter your height.",
-        },
-    ],
-    birthday: [
-        {
-            required: true,
-            message: "Please enter your birthday",
-        },
-    ],
-    gender: [
-        {
-            required: true,
-            message: "Please enter your gender.",
-        },
-    ],
-    blood_type: [
-        {
-            required: true,
-            message: "Please enter your blodd type.",
-        },
-    ],
-    voter_status: [
-        {
-            required: true,
-            message: "Please enter your voter status.",
-        },
-    ],
+    // last_name: [
+    //     {
+    //         required: true,
+    //         message: "Please enter last name.",
+    //     },
+    // ],    
+    // middle_name: [
+    //     {
+    //         required: true,
+    //         message: "Please enter middle name.",
+    //     },
+    // ],
+    // // alias: [
+    // //     {
+    // //         required: true,
+    // //         message: "Please enter alias.",
+    // //     },
+    // // ],
+    // // age: [
+    // //     {
+    // //         required: true,
+    // //         message: "Please enter your age.",
+    // //         type: "integer",
+    // //     }
+    // // ],
+    // weight: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your weight.",
+    //     },
+    // ],
+    // height: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your height.",
+    //     },
+    // ],
+    // birthday: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your birthday",
+    //     },
+    // ],
+    // gender: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your gender.",
+    //     },
+    // ],
+    // blood_type: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your blodd type.",
+    //     },
+    // ],
+    // voter_status: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your voter status.",
+    //     },
+    // ],
 };
 
 export const address_contacts = {
-    address_1: [
-        {
-            required: true,
-            message: "Please enter your full address.",
-        },
-    ],
+    // address_1: [
+    //     {
+    //         required: true,
+    //         message: "Please enter your full address.",
+    //     },
+    // ],
     address_2: [],
     address_3: [],
     purok: [

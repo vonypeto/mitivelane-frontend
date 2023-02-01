@@ -16,6 +16,7 @@ import axios from "axios";
 import { useAuth } from "contexts/AuthContext";
 import { AUTH_ORGANIZATION } from "redux/constants/Auth";
 import ConfirmButton from "components/shared-components/ConfirmButton";
+import { ResidentFileUploadApi } from "api/AppController/FileUploadController/ResidentFileUploadController";
 
 const { TabPane } = Tabs;
 
@@ -48,6 +49,7 @@ const MainFormList = (props) => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [firebaseUploadData, setFirebaseUploadData] = useState({});
   const [newProfile, setNewProfile] = useState({});
 
   useEffect(() => {
@@ -56,54 +58,19 @@ const MainFormList = (props) => {
         (async () => {
           setLoading(true)
           const response = await axios.post(
-            "/api/resident/getAll",
-            { organization_id},
+            "/api/resident/get",
+            { organization_id, resident_id: id },
             generateToken()[1],
             { cancelToken }
           );
 
-          const ResidentListData = response.data;
+          var resident = response.data;
+          resident.birthday = new moment(resident.birthday)
+          setResidentData(resident);
 
-          const residentID = id;
-          setResidentFilter(residentID);
-          const residentData = ResidentListData.filter(
-            (resident) => resident.resident_id === residentID
-          );
+          form.setFieldsValue(resident);
 
-          const resident = residentData[0];
-          setResidentData(residentData[0]);
-
-          form.setFieldsValue({
-            lastname: resident.lastname,
-            firstname: resident.firstname,
-            middlename: resident.middlename,
-            alias: resident.alias,
-            height: resident.height,
-            birthday: new moment(resident.birthday),
-            occupation: resident.occupation,
-            voter_status: resident.voter_status,
-            religion: resident.religion,
-            weight: resident.weight,
-            age: resident.age,
-            civil_status: resident.civil_status,
-            citizenship: resident.citizenship,
-            birth_of_place: resident.birth_of_place,
-            address_1: resident.address_1,
-            address_2: resident.address_2,
-            area: resident.area,
-            father: resident.father,
-            mother: resident.mother,
-            spouse: resident.spouse,
-            telephone: resident.telephone,
-            mobile_number: resident.mobile_number,
-            email: resident.email,
-            pag_ibig: resident.pag_ibig,
-            philhealth: resident.philhealth,
-            sss: resident.sss,
-            tin: resident.tin,
-          });
-
-          setImage(resident.image);
+          setImage(resident.profile?.fileUrl);
           setLoading(false)
         })();
       } catch (error) {
@@ -130,27 +97,9 @@ const MainFormList = (props) => {
     return Object.keys(newProfile).length == 0
   }
 
-  const handleUploadChange = (info) => {
-    console.log("info", info)
-    if (info.file.status === "uploading") {
-      setUploadLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      getBase64(info.file.originFileObj, (imageUrl) => {
-        console.log("imageUrl", imageUrl)
-        setImage(imageUrl);
-        setUploadLoading(false);
-      });
-    }
-
-    if (info.file.status === "error") {
-      message.error("Error with the uploaded image!!")
-      setUploadLoading(false);
-    }
-  };
 
   const onFinishAdd = async (values) => {
+    console.log("values", values)
     try {
       await axios
         .post(
@@ -187,13 +136,13 @@ const MainFormList = (props) => {
         .then((res) => {
           console.log(res.data);
           message.success(`Resident information has been updated`);
-          setSubmitLoading(false);    
+          setSubmitLoading(false);
           setTimeout(() => {
             history.push(
               `/app/${organization_id}/residents/resident-information/list`
             );
             setSubmitLoading(false); form
-          }, 1000);  
+          }, 1000);
         });
 
     } catch (error) {
@@ -207,24 +156,36 @@ const MainFormList = (props) => {
     setSubmitLoading(true);
     form
       .validateFields()
-      .then((values) => {
+      .then(async (values) => {
 
-        if (newProfileNull() == false) {
-          values.avatarImg = newProfile.fileBase64
-          values.avatarImgType = newProfile.type
-        }
-
-        setTimeout(() => {
-          if (mode === ADD) {
+        setTimeout(async () => {
+          var handleNewResident
+          if (mode == ADD) {
             //RESIDENT INSERT ADD
-            onFinishAdd(values);
+            handleNewResident = onFinishAdd;
           }
-          if (mode === EDIT) {
+          if (mode == EDIT) {
             //RESIDENT INSERT EDIT
-
-            onFinishUpdate(values);
+            handleNewResident = onFinishUpdate;
           }
+
+          if (newProfileNull() == false) {
+            let profileFile = newProfile.file
+
+            await ResidentFileUploadApi(
+              values,
+              profileFile,
+              residentData.profile?.fileUrl,
+              "avatar",
+              handleNewResident
+            )
+          }
+
+          else handleNewResident
+
         }, 1500);
+
+
       })
       .catch((info) => {
         setSubmitLoading(false);
@@ -271,11 +232,20 @@ const MainFormList = (props) => {
               </h2>
               <div className="mb-3">
                 {mode === VIEW ?
-                  <Button
-                    onClick={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
-                  >
-                    Back
-                  </Button>
+                  <div>
+                    <Button
+                      className="mr-2"
+                      type="primary"
+                      onClick={() => history.replace(`/app/${organization_id}/residents/resident-information/${residentData.resident_id}/edit`)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => history.replace(`/app/${organization_id}/residents/resident-information/list`)}
+                    >
+                      Back
+                    </Button>
+                  </div>
                   :
                   <ConfirmButton
                     className="mr-2"
@@ -314,12 +284,12 @@ const MainFormList = (props) => {
                     <MainForm
                       uploadedImg={uploadedImg}
                       uploadLoading={uploadLoading}
-                      handleUploadChange={handleUploadChange}
                       hiddenFileInput={hiddenFileInput}
                       setNewProfile={setNewProfile}
                       newProfile={newProfile}
                       residentData={mode == EDIT ? residentData : []}
                       mode={mode}
+                      loading={loading}
                     />
                   </div>
                 </QueueAnim>
@@ -351,7 +321,7 @@ const MainFormList = (props) => {
           <div className="container">
             <Tabs defaultActiveKey="1" style={{ marginTop: 30 }}>
               <TabPane tab="Resident Details" key="1">
-                <MainFormView residentData={residentData} loading={loading}/>
+                <MainFormView residentData={residentData} loading={loading} />
               </TabPane>
 
               <TabPane tab="Blotter Records" key="2">
