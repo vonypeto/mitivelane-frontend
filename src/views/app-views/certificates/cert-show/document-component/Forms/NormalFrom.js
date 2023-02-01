@@ -24,7 +24,7 @@ const NormalFrom = (props) => {
               width: "100%",
             }}
             onChange={(e) => {
-              onFill(e, formItems.formName, "text");
+              onFill(e, formItems.formName, "date");
             }}
           />
         ) : null}

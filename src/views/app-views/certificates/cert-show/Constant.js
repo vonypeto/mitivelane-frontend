@@ -70,7 +70,7 @@ export const defaultGeneralCert = [
       },
       {
         id: 9,
-        formName: "ornumber",
+        formName: "or_number",
         titleName: "OR. No.",
         type: "text",
       },

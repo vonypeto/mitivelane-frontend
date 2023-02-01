@@ -6,6 +6,7 @@ import PageHeaderAlt from "components/layout-components/PageHeaderAlt";
 import Flex from "components/shared-components/Flex";
 import DocumentInput from "./DocumentInput";
 import DocumentView from "./DocumentView";
+import moment from "moment";
 
 //Libraries
 import { useParams, useHistory } from "react-router-dom";
@@ -75,6 +76,8 @@ const Certificates = () => {
     if (certificate.content[0]?.blocks.length === 0) {
       delete certificate.content;
     }
+    certificate.issued_at = moment(certificate.issued_at);
+    certificate.issued_on = moment(certificate.issued_on);
     setParentData(certificate);
     setFirstTime(!firstTime);
   };

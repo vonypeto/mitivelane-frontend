@@ -187,6 +187,16 @@ const ListItem = (props) => {
         data[`${title}`] = e.target.value;
         return setParentData(data);
       }
+      if (type == "date") {
+        console.log(e);
+        form.setFieldsValue({
+          [title]: e,
+        });
+        let data = parentData;
+
+        data[`${title}`] = e;
+        return setParentData(data);
+      }
       if (type == "multiform") {
         //default top single form
         console.log(e.target.value, title, type);

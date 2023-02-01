@@ -8,6 +8,7 @@ import {
   Font,
   Image,
 } from "@react-pdf/renderer";
+import moment from "moment";
 const Footer = (props) => {
   let data = props.data;
   let sliceCol1, sliceCol2;
@@ -123,13 +124,21 @@ const Footer = (props) => {
       )}
 
       <Text>
-        OR No. <Text style={styles.order_stat}> 888888</Text>
+        OR No. <Text style={styles.order_stat}> {data?.or_number}</Text>
       </Text>
       <Text>
-        Issued at <Text style={styles.order_stat}> 8/08/22</Text>{" "}
+        Issued at{" "}
+        <Text style={styles.order_stat}>
+          {" "}
+          {moment(data?.issued_at).calendar()}
+        </Text>
       </Text>
       <Text>
-        Issued on <Text style={styles.order_stat}> 8/08/22</Text>{" "}
+        Issued on{" "}
+        <Text style={styles.order_stat}>
+          {" "}
+          {moment(data?.issued_on).calendar()}
+        </Text>
       </Text>
       <Text style={styles.col_footer}>
         Note not valid with erasures and without the official seal of issuing
