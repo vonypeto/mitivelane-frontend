@@ -37,29 +37,54 @@ export const defaultGeneralCert = [
       },
       {
         id: 4,
+        formName: "province",
+        type: "text",
+
+        titleName: "Province",
+      },
+      {
+        id: 5,
         formName: "municipality",
         type: "text",
 
         titleName: "Municipality",
       },
       {
-        id: 5,
+        id: 6,
         formName: "organization",
         type: "text",
 
-        titleName: "Organization",
+        titleName: "Barangay",
       },
       {
-        id: 6,
+        id: 7,
         formName: "office",
         type: "text",
         titleName: "Ofiice",
       },
       {
-        id: 7,
+        id: 8,
         formName: "clearance",
         titleName: "Clearance Type",
         type: "text",
+      },
+      {
+        id: 9,
+        formName: "ornumber",
+        titleName: "OR. No.",
+        type: "text",
+      },
+      {
+        id: 10,
+        formName: "issued_at",
+        titleName: "Issued at",
+        type: "date",
+      },
+      {
+        id: 11,
+        formName: "issued_on",
+        titleName: "Issued on",
+        type: "date",
       },
     ],
   },

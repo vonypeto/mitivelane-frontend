@@ -15,18 +15,31 @@ import Footer from "./Footer";
 
 const Body = (props) => {
   const { data, fontType } = props;
+  const fontSize =
+    data.font_size === "S"
+      ? 10
+      : data.font_size === "M"
+      ? 13
+      : data.font_size === "L"
+      ? 15
+      : data.font_size === "XL"
+      ? 18
+      : data.font_size === "XS"
+      ? 7
+      : null;
+
   const styles = StyleSheet.create({
     container_body: {
       fontFamily: fontType,
       flexDirection: "row",
       display: "grid",
-      fontSize: 13,
+      fontSize: fontSize,
       gridTemplateColumn: "1fr 1fr",
       gridGap: "10px",
       height: "100%",
       //  border: " 5px solid black",
       borderTop: 0, // margi
-      lineHeight: "1.8",
+      lineHeight: data?.line_height || "1.8",
     },
 
     col_center_space_bold_clearance: {
@@ -102,7 +115,7 @@ const Body = (props) => {
           ) : null}
 
           <Text style={styles.col_center_space_bold_clearance}>
-            ORGANIZATION CLEARANCE
+            {data?.clearance}
           </Text>
           <Text style={styles.line}>TO WHOM IT MAY CONCERNS:</Text>
           <Text style={styles.indent}>

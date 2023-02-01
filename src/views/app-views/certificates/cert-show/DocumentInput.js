@@ -204,6 +204,7 @@ const DocumentInput = React.memo(
                     <CertificateForm
                       dropDownForm={dropDownForm}
                       form={form}
+                      MAX_LENGTH={MAX_LENGTH}
                       {...{ setParentData, parentData }}
                       setDropDownForm={setDropDownForm}
                       debounce={debounce}

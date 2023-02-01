@@ -7,6 +7,7 @@ import { pdf } from "@react-pdf/renderer";
 import { ArrowDownOutlined } from "@ant-design/icons";
 import ColorPicker from "components/shared-components/ColorPicker";
 import PopOverData from "components/shared-components/PopOverData";
+import debounce from "lodash.debounce";
 
 import utils from "utils/index";
 import SinglePagePDFViewer from "components/shared-components/Documents";
@@ -16,40 +17,46 @@ const CertDisplay = React.memo(
   (props) => {
     // Props State
     const { data, templateType, certType, setParentData } = props;
-
+    console.log(data);
     // Form State
     const [childData, setChildData] = useState(data);
-    const [color, setColor] = useState();
+    const [color, setColor] = useState(data?.color || "");
     const [displayColorPicker, setDisplayColorPicker] = useState(false);
     const [activeFontFamily, setActiveFontFamily] = useState(
       data ? data.font_family : "Tinos"
     );
-
-    const ontopNavColorClick = (value) => {
+    const ontopNavColorClick = debounce((value) => {
       const { rgb } = value;
       const rgba = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${rgb.a})`;
       const hex = utils.rgbaToHex(rgba);
       setColor(hex);
-    };
+      console.log(hex);
+      let data = childData;
+      data.color = hex;
+      setParentData(data);
+    }, 300);
 
-    useEffect(() => {
-      let isApiSubscribed = true;
+    // useEffect(() => {
+    //   let isApiSubscribed = true;
 
-      if (isApiSubscribed) {
-        setChildData(data);
-      }
-      return () => {
-        isApiSubscribed = false;
-      };
-    }, [data]);
+    //   if (isApiSubscribed) {
+    //     setChildData(data);
+    //   }
+    //   return () => {
+    //     isApiSubscribed = false;
+    //   };
+    // }, [data]);
 
     useEffect(() => {
       let isApiSubscribed = true;
       let data = childData;
       if (isApiSubscribed) {
         localStorage.setItem("font", activeFontFamily);
-        data.font_family = activeFontFamily;
-        setParentData(data);
+        if (!(data.font_family === activeFontFamily)) {
+          console.log(activeFontFamily, data.font_family);
+          data.font_family = activeFontFamily;
+          setParentData(data);
+        }
       }
       return () => {
         // cancel the subscription
@@ -144,15 +151,7 @@ const CertDisplay = React.memo(
             </div>
           </Card>
         </Col>
-        <Col
-          justify="center"
-          className="pr-1"
-          xs={22}
-          sm={19}
-          md={18}
-          lg={18}
-          xl={18}
-        >
+        <Col justify="center" className="pr-1">
           <GetCertificate />
         </Col>
       </Row>

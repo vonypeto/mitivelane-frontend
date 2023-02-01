@@ -77,19 +77,11 @@ const Header = (props) => {
         </View>
 
         <View style={styles.col_center}>
-          <Text style={styles.col_center_space}>
-            Republic of the Philippines
-          </Text>
-          <Text style={styles.col_center_space}>Province of Cavite</Text>
-          <Text style={styles.col_center_space_bold}>
-            MUNICIPALITY OF MARAGONDON
-          </Text>
-          <Text style={styles.col_center_space_bold}>
-            ORGANIZATION Moro {data?.organization}
-          </Text>
-          <Text style={styles.col_center_space_bold}>
-            OFFICE OF THE ORGANIZATION CAPTAIN {data?.office}
-          </Text>
+          <Text style={styles.col_center_space}>{data?.country}</Text>
+          <Text style={styles.col_center_space}>{data?.province}</Text>
+          <Text style={styles.col_center_space_bold}>{data?.municipality}</Text>
+          <Text style={styles.col_center_space_bold}>{data?.organization}</Text>
+          <Text style={styles.col_center_space_bold}>{data?.office}</Text>
         </View>
         <View style={styles.col_image}>
           {data?.secondLogo ? (

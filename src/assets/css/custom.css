@@ -14,6 +14,12 @@
 .approve :visited {
   color: #fff !important;
 }
+.MuiAccordionDetails-root {
+  display: block !important;
+}
+.MuiListItem-root {
+  display: block !important;
+}
 .dropdown-certificate {
   margin-top: 1px;
 }

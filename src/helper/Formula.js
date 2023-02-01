@@ -107,3 +107,11 @@ export const base64toBlobPdf = (data) => {
 
   return new Blob([out], { type: "application/pdf" });
 };
+
+export const isValidUrl = (urlString) => {
+  try {
+    return Boolean(new URL(urlString));
+  } catch (e) {
+    return false;
+  }
+};

@@ -30,7 +30,9 @@ import {
   createCertificate,
   getCertificateAllNew,
   getCertificateNext,
+  updateCertificateData,
 } from "api/AppController/CertificatesController/CertificatesController";
+// API
 
 const CertList = React.memo(
   (props) => {
@@ -155,6 +157,11 @@ const CertList = React.memo(
     const closeDrawer = () => {
       setDrawer(false);
       SetSelectedUser(null);
+    };
+    //Update Title
+    const onHandleDocument = (title, id) => {
+      let data = { certificate_id: id, title: title };
+      updateCertificateData(data, generateToken()[1]);
     };
 
     //UseEffect Fetch Certificate
@@ -290,6 +297,7 @@ const CertList = React.memo(
                                     setPdfFile={setPdfFile}
                                     onHandleSelect={onHandleSelect}
                                     pdf={generatePdfDocumentShow(item)}
+                                    onHandleDocument={onHandleDocument}
                                     duplicateDocument={{
                                       onClick: function () {
                                         duplicateDocument(item?.certificate_id);

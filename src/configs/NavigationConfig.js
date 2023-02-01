@@ -30,14 +30,14 @@ const dashBoardNavTree = [
         breadcrumb: false,
         submenu: [],
       },
-      {
-        key: "dashboards-campaign",
-        path: `${APP_PREFIX_PATH}//dashboards/campaign`,
-        title: "sidenav.dashboard.campaign",
-        icon: DollarCircleOutlined,
-        breadcrumb: false,
-        submenu: [],
-      },
+      // {
+      //   key: "dashboards-campaign",
+      //   path: `${APP_PREFIX_PATH}//dashboards/campaign`,
+      //   title: "sidenav.dashboard.campaign",
+      //   icon: DollarCircleOutlined,
+      //   breadcrumb: false,
+      //   submenu: [],
+      // },
       // {
       // key: "dashboards-chat",
       // path: `${APP_PREFIX_PATH}//dashboards/chat`,
